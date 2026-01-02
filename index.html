@@ -27,7 +27,10 @@
       --shadow: 0 16px 60px rgba(0,0,0,.55);
       --radius:18px;
       --radius2:14px;
-    }
+      /* Quiz açıkken kart altındaki action barı gizle */
+      .quiz.on ~ main .actions{
+     display: none !important;
+  }
 
     *{box-sizing:border-box}
     body{
@@ -164,6 +167,7 @@
       transition: transform .55s cubic-bezier(.2,.9,.2,1);
       position:relative;
       min-height: 168px;
+      overflow: hidden;
     }
     .card.flipped .actions{
   transform: rotateY(180deg) translateZ(1px);
