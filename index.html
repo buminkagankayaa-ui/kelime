@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Vocab Pocket</title>
+
+  <!-- PWA -->
+  <meta name="theme-color" content="#111111" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="VocabPocket" />
+
+  <style>
+    :root{
+      --bg:#0b0b0c; --card:#141416; --muted:#a5a5ad; --text:#f3f3f5;
+      --line:#232328; --accent:#6ee7b7; --danger:#fb7185; --warn:#fbbf24;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background:var(--bg); color:var(--text);
+      padding: env(safe-area-inset-top) 14px env(safe-area-inset-bottom) 14px;
+    }
+    header{
+      position:sticky; top:0; z-index:10;
+      background:linear-gradient(to bottom, rgba(11,11,12,0.95), rgba(11,11,12,0.65));
+      backdrop-filter: blur(10px);
+      padding: 12px 0 10px 0;
+    }
+    .titleRow{display:flex; align-items:center; justify-content:space-between; gap:12px;}
+    h1{font-size:20px; margin:0; letter-spacing:0.2px}
+    .pill{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,0.04);
+      padding:8px 10px; border-radius:999px; color:var(--text);
+      display:inline-flex; align-items:center; gap:8px; font-size:13px;
+    }
+    .btn{
+      border:1px solid var(--line); background:rgba(255,255,255,0.06);
+      color:var(--text); padding:10px 12px; border-radius:12px;
+      font-weight:600; font-size:14px;
+    }
+    .btn.primary{border-color:rgba(110,231,183,0.3); background:rgba(110,231,183,0.12)}
+    .btn.danger{border-color:rgba(251,113,133,0.35); background:rgba(251,113,133,0.10)}
+    .btn:active{transform:scale(0.99)}
+    .row{display:flex; gap:10px; align-items:center}
+    .grid{display:grid; gap:10px}
+    .controls{
+      display:grid; gap:10px; margin-top:12px;
+      grid-template-columns: 1fr;
+    }
+    .input, select, textarea{
+      width:100%; background:var(--card); border:1px solid var(--line);
+      color:var(--text); padding:12px 12px; border-radius:14px; outline:none;
+      font-size:15px;
+    }
+    textarea{min-height:84px; resize:vertical}
+    .seg{
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+    .seg button{
+      flex:1; min-width:90px;
+      border:1px solid var(--line); background:rgba(255,255,255,0.03);
+      color:var(--text); padding:10px; border-radius:999px; font-weight:700;
+    }
+    .seg button.active{border-color:rgba(110,231,183,0.35); background:rgba(110,231,183,0.12)}
+    .stats{color:var(--muted); font-size:13px; margin-top:10px}
+    .list{margin-top:12px; display:grid; gap:10px}
+    .card{
+      background:var(--card); border:1px solid var(--line);
+      border-radius:var(--radius); padding:12px;
+    }
+    .cardTop{display:flex; justify-content:space-between; align-items:flex-start; gap:10px}
+    .term{font-size:17px; font-weight:800; margin:0}
+    .badge{
+      font-size:12px; padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line); color:var(--muted);
+      background:rgba(255,255,255,0.03);
+      white-space:nowrap;
+    }
+    .meaning{margin:8px 0 0 0; color:var(--text); font-size:14px; line-height:1.35}
+    .example{margin:8px 0 0 0; color:var(--muted); font-size:13px; line-height:1.35}
+    .cardActions{display:flex; gap:8px; margin-top:10px}
+    .muted{color:var(--muted)}
+    .divider{height:1px; background:var(--line); margin:10px 0}
+    .footerActions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    dialog{
+      width:min(720px, 96vw); border:none; border-radius:18px;
+      background:var(--card); color:var(--text);
+      padding:0; overflow:hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+    }
+    dialog::backdrop{background:rgba(0,0,0,0.55)}
+    .modalHead{padding:14px 14px 10px 14px; border-bottom:1px solid var(--line)}
+    .modalHead h2{margin:0; font-size:16px}
+    .modalBody{padding:14px}
+    .modalFoot{padding:14px; border-top:1px solid var(--line); display:flex; gap:10px; justify-content:flex-end}
+    .small{font-size:12px; color:var(--muted)}
+    .toast{
+      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+      background:rgba(20,20,22,0.95); border:1px solid var(--line);
+      padding:10px 12px; border-radius:999px; font-size:13px; color:var(--text);
+      display:none;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="titleRow">
+      <div>
+        <h1>Vocab Pocket</h1>
+        <div class="small">EN / RU kelimelerini kaydet • TR anlam • örnek cümle</div>
+      </div>
+      <button class="btn primary" id="addBtn">+ Ekle</button>
+    </div>
+
+    <div class="controls">
+      <input class="input" id="search" placeholder="Ara: kelime / anlam / örnek..." />
+
+      <div class="seg" role="tablist" aria-label="Dil filtresi">
+        <button id="fAll" class="active" data-filter="ALL">Tümü</button>
+        <button id="fEN" data-filter="EN">English</button>
+        <button id="fRU" data-filter="RU">Русский</button>
+      </div>
+
+      <div class="footerActions">
+        <button class="btn" id="exportJsonBtn">JSON Dışa Aktar</button>
+        <button class="btn" id="exportCsvBtn">CSV Dışa Aktar</button>
+        <label class="btn" for="importFile" style="cursor:pointer;">
+          İçe Aktar (JSON)
+        </label>
+        <input id="importFile" type="file" accept="application/json" hidden />
+        <button class="btn danger" id="wipeBtn">Tümünü Sil</button>
+      </div>
+
+      <div class="stats" id="stats"></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="list" id="list"></div>
+  </main>
+
+  <!-- Modal -->
+  <dialog id="modal">
+    <div class="modalHead">
+      <h2 id="modalTitle">Kelime Ekle</h2>
+      <div class="small" id="modalHint">Kelime + TR anlam + örnek cümle</div>
+    </div>
+
+    <form class="modalBody grid" id="form">
+      <div>
+        <label class="small">Dil</label>
+        <select id="language">
+          <option value="EN">English (EN)</option>
+          <option value="RU">Русский (RU)</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="small">Kelime</label>
+        <input class="input" id="term" placeholder="through / shone / ... veya RU kelime" autocomplete="off" />
+      </div>
+
+      <div>
+        <label class="small">Türkçe anlam</label>
+        <input class="input" id="meaningTR" placeholder="Türkçe anlamı..." autocomplete="off" />
+      </div>
+
+      <div>
+        <label class="small">Örnek cümle (kelimenin dilinde)</label>
+        <textarea id="example" placeholder="Örn: They went on down the dark passage..."></textarea>
+      </div>
+
+      <div class="small muted">
+        İpucu: Örneği kısa tut. Sonra “Düzenle” ile güncellersin.
+      </div>
+    </form>
+
+    <div class="modalFoot">
+      <button class="btn" id="cancelBtn" type="button">İptal</button>
+      <button class="btn primary" id="saveBtn" type="button">Kaydet</button>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // --- Storage ---
+    const KEY = "vocab_pocket_items_v1";
+
+    /** @returns {Array<{id:string, lang:"EN"|"RU", term:string, meaningTR:string, example:string, createdAt:number, updatedAt:number}>} */
+    function loadItems(){
+      try{
+        return JSON.parse(localStorage.getItem(KEY)) ?? [];
+      }catch{ return []; }
+    }
+    function saveItems(items){
+      localStorage.setItem(KEY, JSON.stringify(items));
+    }
+
+    // --- State ---
+    let items = loadItems();
+    let filter = "ALL";
+    let editingId = null;
+
+    // --- Elements ---
+    const listEl = document.getElementById("list");
+    const statsEl = document.getElementById("stats");
+    const searchEl = document.getElementById("search");
+
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+
+    const langEl = document.getElementById("language");
+    const termEl = document.getElementById("term");
+    const meaningEl = document.getElementById("meaningTR");
+    const exampleEl = document.getElementById("example");
+
+    const toastEl = document.getElementById("toast");
+
+    // --- UI helpers ---
+    function toast(msg){
+      toastEl.textContent = msg;
+      toastEl.style.display = "block";
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(()=> toastEl.style.display="none", 1600);
+    }
+
+    function formatLangBadge(lang){
+      return lang === "EN" ? "EN" : "RU";
+    }
+
+    function sanitize(s){
+      return (s ?? "").toString().trim();
+    }
+
+    function matchesQuery(item, q){
+      if(!q) return true;
+      const t = (item.term + " " + item.meaningTR + " " + item.example).toLowerCase();
+      return t.includes(q);
+    }
+
+    function render(){
+      const q = searchEl.value.trim().toLowerCase();
+      const filtered = items
+        .filter(it => filter === "ALL" ? true : it.lang === filter)
+        .filter(it => matchesQuery(it, q))
+        .sort((a,b)=> (b.updatedAt ?? b.createdAt) - (a.updatedAt ?? a.createdAt));
+
+      // stats
+      const enCount = items.filter(x=>x.lang==="EN").length;
+      const ruCount = items.filter(x=>x.lang==="RU").length;
+      statsEl.textContent = `Toplam: ${items.length} • EN: ${enCount} • RU: ${ruCount} • Görünen: ${filtered.length}`;
+
+      // list
+      listEl.innerHTML = "";
+      if(filtered.length === 0){
+        listEl.innerHTML = `
+          <div class="card">
+            <div class="muted">Henüz kayıt yok ya da arama sonucu boş.</div>
+            <div class="divider"></div>
+            <button class="btn primary" onclick="document.getElementById('addBtn').click()">+ İlk kelimeyi ekle</button>
+          </div>`;
+        return;
+      }
+
+      for(const it of filtered){
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="cardTop">
+            <div>
+              <p class="term">${escapeHtml(it.term)}</p>
+              <p class="meaning">${escapeHtml(it.meaningTR)}</p>
+              ${it.example ? `<p class="example">“${escapeHtml(it.example)}”</p>` : ""}
+            </div>
+            <div class="badge">${formatLangBadge(it.lang)}</div>
+          </div>
+          <div class="cardActions">
+            <button class="btn" data-action="edit" data-id="${it.id}">Düzenle</button>
+            <button class="btn danger" data-action="delete" data-id="${it.id}">Sil</button>
+          </div>
+        `;
+        listEl.appendChild(card);
+      }
+    }
+
+    function escapeHtml(str){
+      return (str ?? "").replace(/[&<>"']/g, m => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+      }[m]));
+    }
+
+    // --- Modal control ---
+    function openAdd(){
+      editingId = null;
+      modalTitle.textContent = "Kelime Ekle";
+      langEl.value = "EN";
+      termEl.value = "";
+      meaningEl.value = "";
+      exampleEl.value = "";
+      modal.showModal();
+      setTimeout(()=>termEl.focus(), 50);
+    }
+
+    function openEdit(id){
+      const it = items.find(x=>x.id===id);
+      if(!it) return;
+      editingId = id;
+      modalTitle.textContent = "Kelime Düzenle";
+      langEl.value = it.lang;
+      termEl.value = it.term;
+      meaningEl.value = it.meaningTR;
+      exampleEl.value = it.example ?? "";
+      modal.showModal();
+      setTimeout(()=>termEl.focus(), 50);
+    }
+
+    function closeModal(){
+      modal.close();
+    }
+
+    function upsert(){
+      const lang = langEl.value;
+      const term = sanitize(termEl.value);
+      const meaningTR = sanitize(meaningEl.value);
+      const example = sanitize(exampleEl.value);
+
+      if(!term || !meaningTR){
+        toast("Kelime ve Türkçe anlam zorunlu.");
+        return;
+      }
+
+      const now = Date.now();
+
+      if(editingId){
+        const it = items.find(x=>x.id===editingId);
+        if(!it) return;
+        it.lang = lang;
+        it.term = term;
+        it.meaningTR = meaningTR;
+        it.example = example;
+        it.updatedAt = now;
+        toast("Güncellendi ✅");
+      } else {
+        items.push({
+          id: crypto.randomUUID ? crypto.randomUUID() : String(now) + Math.random().toString(16).slice(2),
+          lang,
+          term,
+          meaningTR,
+          example,
+          createdAt: now,
+          updatedAt: now
+        });
+        toast("Eklendi ✅");
+      }
+
+      saveItems(items);
+      closeModal();
+      render();
+    }
+
+    function removeItem(id){
+      const it = items.find(x=>x.id===id);
+      if(!it) return;
+      if(confirm(`Silinsin mi?\n\n${it.term} (${it.lang})`)){
+        items = items.filter(x=>x.id!==id);
+        saveItems(items);
+        toast("Silindi 🗑️");
+        render();
+      }
+    }
+
+    // --- Export / Import ---
+    function downloadFile(name, content, mime){
+      const blob = new Blob([content], {type: mime});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportJSON(){
+      const data = JSON.stringify({version:1, exportedAt: Date.now(), items}, null, 2);
+      downloadFile("vocab-pocket-backup.json", data, "application/json");
+    }
+
+    function exportCSV(){
+      const header = ["lang","term","meaningTR","example","createdAt","updatedAt"];
+      const rows = items.map(it => [
+        it.lang,
+        it.term,
+        it.meaningTR,
+        it.example ?? "",
+        new Date(it.createdAt).toISOString(),
+        new Date(it.updatedAt).toISOString()
+      ].map(csvEscape).join(","));
+      const csv = header.join(",") + "\n" + rows.join("\n");
+      downloadFile("vocab-pocket.csv", csv, "text/csv");
+    }
+
+    function csvEscape(v){
+      const s = (v ?? "").toString();
+      if(/[,"\n]/.test(s)) return `"${s.replace(/"/g,'""')}"`;
+      return s;
+    }
+
+    function importJSON(file){
+      const reader = new FileReader();
+      reader.onload = () => {
+        try{
+          const obj = JSON.parse(reader.result);
+          const incoming = obj.items ?? obj;
+          if(!Array.isArray(incoming)) throw new Error("Format");
+          // merge by id
+          const map = new Map(items.map(x=>[x.id, x]));
+          for(const it of incoming){
+            if(!it.id) continue;
+            map.set(it.id, {
+              id: String(it.id),
+              lang: (it.lang === "RU" ? "RU" : "EN"),
+              term: sanitize(it.term),
+              meaningTR: sanitize(it.meaningTR),
+              example: sanitize(it.example),
+              createdAt: Number(it.createdAt || Date.now()),
+              updatedAt: Number(it.updatedAt || Date.now())
+            });
+          }
+          items = Array.from(map.values());
+          saveItems(items);
+          toast("İçe aktarıldı ✅");
+          render();
+        }catch(e){
+          toast("JSON okunamadı ❌");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // --- Event wiring ---
+    document.getElementById("addBtn").addEventListener("click", openAdd);
+    document.getElementById("cancelBtn").addEventListener("click", closeModal);
+    document.getElementById("saveBtn").addEventListener("click", upsert);
+
+    searchEl.addEventListener("input", render);
+
+    document.getElementById("fAll").addEventListener("click", ()=>setFilter("ALL"));
+    document.getElementById("fEN").addEventListener("click", ()=>setFilter("EN"));
+    document.getElementById("fRU").addEventListener("click", ()=>setFilter("RU"));
+
+    function setFilter(f){
+      filter = f;
+      // toggle active
+      for(const btn of document.querySelectorAll(".seg button")){
+        btn.classList.toggle("active", btn.dataset.filter === f);
+      }
+      render();
+    }
+
+    listEl.addEventListener("click", (e)=>{
+      const btn = e.target.closest("button[data-action]");
+      if(!btn) return;
+      const action = btn.dataset.action;
+      const id = btn.dataset.id;
+      if(action === "edit") openEdit(id);
+      if(action === "delete") removeItem(id);
+    });
+
+    document.getElementById("exportJsonBtn").addEventListener("click", exportJSON);
+    document.getElementById("exportCsvBtn").addEventListener("click", exportCSV);
+
+    document.getElementById("importFile").addEventListener("change", (e)=>{
+      const file = e.target.files?.[0];
+      if(file) importJSON(file);
+      e.target.value = "";
+    });
+
+    document.getElementById("wipeBtn").addEventListener("click", ()=>{
+      if(items.length === 0) return toast("Zaten boş.");
+      if(confirm("Tüm kelimeler silinecek. Emin misin?")){
+        items = [];
+        saveItems(items);
+        toast("Hepsi silindi 🗑️");
+        render();
+      }
+    });
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>
