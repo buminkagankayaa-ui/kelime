@@ -158,17 +158,21 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow:hidden;
-      transform-style: preserve-3d;
+      transform-style: preserve-3d; 
+      -webkit-transform-style: preserve-3d;
+      -webkit-backface-visibility: hidden;
       transition: transform .55s cubic-bezier(.2,.9,.2,1);
       position:relative;
       min-height: 168px;
     }
-    .card.flipped{ transform: rotateY(180deg); }
-
+    .card.flipped .actions{
+  transform: rotateY(180deg) translateZ(1px);
+    }
     .face{
       position:absolute; inset:0;
       padding:14px;
       backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
       display:flex; flex-direction:column; gap:10px;
     }
     .back{
@@ -250,6 +254,10 @@
       padding:12px 14px;
       border-top:1px solid var(--line);
       background: rgba(0,0,0,.12);
+      
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transform: translateZ(1px);
     }
     .actions .btn{
       padding:10px 10px; border-radius:12px; font-weight:900;
