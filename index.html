@@ -20,17 +20,14 @@
       --line:#23233a;
       --text:#f2f2f7;
       --muted:#a6a6bb;
-      --accent:#7c3aed;   /* violet */
-      --accent2:#22c55e;  /* green */
+      --accent:#7c3aed;
+      --accent2:#22c55e;
       --danger:#fb7185;
       --warn:#fbbf24;
       --shadow: 0 16px 60px rgba(0,0,0,.55);
       --radius:18px;
       --radius2:14px;
-      /* Quiz açıkken kart altındaki action barı gizle */
-      .quiz.on ~ main .actions{
-     display: none !important;
-  }
+    }
 
     *{box-sizing:border-box}
     body{
@@ -54,11 +51,10 @@
     .topbar{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
-    .brand{
-      display:flex; flex-direction:column; gap:4px;
-    }
+    .brand{display:flex; flex-direction:column; gap:4px}
     .brand h1{margin:0; font-size:18px; letter-spacing:.2px}
     .brand .sub{font-size:12px; color:var(--muted)}
+
     .row{display:flex; gap:10px; align-items:center}
     .btn{
       border:1px solid var(--line);
@@ -66,7 +62,7 @@
       color:var(--text);
       padding:10px 12px;
       border-radius: 14px;
-      font-weight:800;
+      font-weight:900;
       font-size:13px;
       display:inline-flex; gap:8px; align-items:center;
       user-select:none;
@@ -76,9 +72,7 @@
       border-color: rgba(124,58,237,.35);
       background: rgba(124,58,237,.16);
     }
-    .btn.ghost{
-      background: transparent;
-    }
+    .btn.ghost{background: transparent;}
     .btn.danger{
       border-color: rgba(251,113,133,.35);
       background: rgba(251,113,133,.12);
@@ -101,9 +95,8 @@
       font-size:15px;
     }
     textarea{min-height:88px; resize:vertical}
-    .chips{
-      display:flex; gap:8px; flex-wrap:wrap;
-    }
+
+    .chips{display:flex; gap:8px; flex-wrap:wrap;}
     .chip{
       border:1px solid var(--line);
       background: rgba(255,255,255,.04);
@@ -126,6 +119,7 @@
       color: var(--muted); font-size:12px; margin-top:10px;
     }
     .bar .left{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
     .pill{
       border:1px solid var(--line);
       background: rgba(255,255,255,.03);
@@ -139,43 +133,40 @@
 
     main{margin-top:12px}
 
-    /* Cards grid */
     .grid{
       display:grid;
       grid-template-columns: 1fr;
       gap:12px;
     }
-    @media (min-width: 680px){
-      .grid{ grid-template-columns: 1fr 1fr; }
-    }
-    @media (min-width: 980px){
-      .grid{ grid-template-columns: 1fr 1fr 1fr; }
-    }
+    @media (min-width: 680px){ .grid{ grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 980px){ .grid{ grid-template-columns: 1fr 1fr 1fr; } }
 
-    .cardWrap{
-      perspective: 1000px;
-    }
+    /* Card shell */
     .card{
       border:1px solid var(--line);
       background: linear-gradient(180deg, rgba(21,21,35,.92), rgba(18,18,26,.92));
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow:hidden;
-      transform-style: preserve-3d; 
+    }
+
+    /* Flip section (only top part flips) */
+    .cardFlipWrap{
+      position: relative;
+      min-height: 240px;
+      perspective: 1000px;
+    }
+    .cardFlip{
+      position:absolute; inset:0;
+      transform-style: preserve-3d;
       -webkit-transform-style: preserve-3d;
-      -webkit-backface-visibility: hidden;
       transition: transform .55s cubic-bezier(.2,.9,.2,1);
-      position:relative;
-      min-height: 220px;
-      overflow: hidden;
     }
-    .card.flipped .actions{
-  transform: rotateY(180deg) translateZ(1px);
-    }
+    .cardFlip.flipped{ transform: rotateY(180deg); }
+
     .face{
       position:absolute; inset:0;
       padding:14px;
-      padding-bottom: 96px; /* actions için daha fazla yer */
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       display:flex; flex-direction:column; gap:10px;
@@ -206,24 +197,27 @@
     }
     .badge.ru .dot{ background: rgba(34,197,94,.9); box-shadow:0 0 0 4px rgba(34,197,94,.18); }
 
+    /* Favorite star: empty grey / filled yellow */
     .star{
-      width:38px; height:38px;
+      width:42px; height:42px;
       border-radius: 14px;
       border:1px solid var(--line);
       background: rgba(255,255,255,.03);
       display:grid; place-items:center;
-      font-size:18px;
+      font-size:20px;
       cursor:pointer;
       user-select:none;
+      color: var(--muted);
     }
     .star.on{
       border-color: rgba(251,191,36,.35);
       background: rgba(251,191,36,.12);
+      color: var(--warn);
     }
 
     .term{
       margin:0;
-      font-size:20px;
+      font-size:22px;
       font-weight:950;
       letter-spacing:.2px;
       line-height:1.05;
@@ -240,9 +234,10 @@
       color: var(--muted);
       font-size:13px;
       line-height:1.35;
+
       display: -webkit-box;
-     -webkit-line-clamp: 2;
-     -webkit-box-orient: vertical;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
       overflow: hidden;
     }
 
@@ -258,29 +253,28 @@
       border-radius: 999px;
     }
 
+    /* Bottom action bar - NOT inside flip */
     .actions{
-        position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 5;
-
-  display:flex; gap:8px; flex-wrap:wrap;
-  padding:12px 14px;
-  border-top:1px solid var(--line);
-  background: rgba(0,0,0,.18);
-      min-height: 72px;
-
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: translateZ(1px);
-    .card.flipped .actions{
-  transform: rotateY(180deg) translateZ(1px);
-}
+      display:flex; gap:8px; flex-wrap:wrap;
+      padding:12px 14px;
+      border-top:1px solid var(--line);
+      background: rgba(0,0,0,.14);
     }
-    .actions .btn{
-      padding:10px 10px; border-radius:12px; font-weight:900;
+    body.quiz-on .actions{ display:none !important; }
+
+    /* Quiz box */
+    .quiz{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--radius);
+      padding:12px;
+      margin-top:10px;
+      display:none;
     }
+    .quiz.on{display:block}
+    .quizTop{display:flex; justify-content:space-between; align-items:center; gap:10px}
+    .quizQ{ margin:10px 0 0 0; font-size:18px; font-weight:950; }
+    .quizHint{ margin:6px 0 0 0; color:var(--muted); font-size:13px; }
 
     /* Modal */
     dialog{
@@ -329,54 +323,6 @@
       display:none;
       z-index:999;
     }
-
-    /* Quiz bar */
-    .quiz{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      border-radius: var(--radius);
-      padding:12px;
-      margin-top:10px;
-      display:none;
-    }
-    .quiz.on{display:block}
-    .quizTop{display:flex; justify-content:space-between; align-items:center; gap:10px}
-    .quizQ{
-      margin:10px 0 0 0;
-      font-size:18px; font-weight:950;
-    }
-    .quizHint{margin:6px 0 0 0; color:var(--muted); font-size:13px}
-      /* ===== Vocab Pocket Pro - OVERRIDES (sonradan eklenen kesin düzeltmeler) ===== */
-
-/* Kart biraz daha uzun olsun */
-.card{
-  min-height: 240px !important;
-  overflow: hidden !important;
-}
-
-/* Action bar kartın dibinde sabit */
-.actions{
-  position: absolute !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  z-index: 20 !important;
-  min-height: 78px !important;
-}
-
-/* İçerik action barın üstüne binmesin */
-.face{
-  padding-bottom: 110px !important; /* burada yer açıyoruz */
-}
-
-/* Örnek cümle çok uzunsa 2 satırda kes (actions'a yaklaşmasın) */
-.example{
-  display: -webkit-box !important;
-  -webkit-box-orient: vertical !important;
-  -webkit-line-clamp: 2 !important;
-  overflow: hidden !important;
-}
-
   </style>
 </head>
 
@@ -396,11 +342,11 @@
     <div class="controls">
       <input class="input" id="search" placeholder="Ara: kelime / anlam / örnek / etiket..." />
 
-      <div class="chips" aria-label="Filtre">
-        <button class="chip active" data-filter="ALL" id="fAll">Tümü</button>
-        <button class="chip" data-filter="EN" id="fEN">English</button>
-        <button class="chip" data-filter="RU" id="fRU">Русский</button>
-        <button class="chip" data-filter="FAV" id="fFav">Favoriler</button>
+      <div class="chips">
+        <button class="chip active" data-filter="ALL">Tümü</button>
+        <button class="chip" data-filter="EN">English</button>
+        <button class="chip" data-filter="RU">Русский</button>
+        <button class="chip" data-filter="FAV">Favoriler</button>
       </div>
 
       <div class="bar">
@@ -435,7 +381,7 @@
           </div>
         </div>
         <div class="quizQ" id="quizQ">—</div>
-        <div class="quizHint" id="quizHint">Kartın üstüne tıkla: cevabı göster</div>
+        <div class="quizHint" id="quizHint">Cevabı görmek için ilgili kartı çevir.</div>
       </div>
     </div>
   </header>
@@ -444,7 +390,7 @@
     <div class="grid" id="grid"></div>
   </main>
 
-  <!-- Modal: Add/Edit -->
+  <!-- Modal -->
   <dialog id="modal">
     <div class="modalHead">
       <div>
@@ -480,7 +426,7 @@
       <div class="two">
         <div>
           <label class="small">Kelime</label>
-          <input class="input" id="term" placeholder="through / shone / ... veya RU kelime" autocomplete="off" />
+          <input class="input" id="term" placeholder="beneath / shone / ... veya RU kelime" autocomplete="off" />
         </div>
         <div>
           <label class="small">Türkçe anlam</label>
@@ -490,19 +436,19 @@
 
       <div>
         <label class="small">Örnek cümle (kelimenin dilinde)</label>
-        <textarea id="example" placeholder="Örn: They went on down the dark passage and round a bend."></textarea>
+        <textarea id="example" placeholder="Örn: George found an old, heavy key beneath a mass of rough stones."></textarea>
       </div>
 
       <div class="two">
         <div>
           <label class="small">Etiketler (virgülle)</label>
-          <input class="input" id="tags" placeholder="travel, story, daily, phrasal..." autocomplete="off" />
+          <input class="input" id="tags" placeholder="travel, story, daily..." autocomplete="off" />
         </div>
         <div class="help">
           <div><strong>İpucu</strong></div>
           <div>• Kartı çevirmek için karta dokun</div>
-          <div>• ⭐ favori yap, “Favoriler” filtresiyle gör</div>
-          <div>• Quiz: üstte 🧠 ile aç</div>
+          <div>• ★ favori: Favoriler filtresi</div>
+          <div>• Quiz: üstte 🧠</div>
         </div>
       </div>
     </form>
@@ -517,24 +463,27 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // ----------------------------
-    // Storage
-    // ----------------------------
-    const KEY = "vocab_pocket_pro_v1";
+    const KEY = "vocab_pocket_pro_v2";
+    const now = () => Date.now();
+    const clean = (s) => (s ?? "").toString().trim();
 
     function loadItems(){
       try{ return JSON.parse(localStorage.getItem(KEY)) ?? []; }
       catch{ return []; }
     }
-    function saveItems(items){
-      localStorage.setItem(KEY, JSON.stringify(items));
+    function saveItems(items){ localStorage.setItem(KEY, JSON.stringify(items)); }
+
+    function escapeHtml(str){
+      return (str ?? "").replace(/[&<>"']/g, m => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+      }[m]));
     }
 
-    // Model:
-    // { id, lang:"EN"|"RU", level:"A1"...,
-    //   term, meaningTR, example, tags:[], fav:boolean,
-    //   createdAt, updatedAt }
+    function parseTags(input){
+      return clean(input).split(",").map(t=>t.trim()).filter(Boolean).slice(0,10);
+    }
 
+    // State
     let items = loadItems();
     let filter = "ALL";
     let editingId = null;
@@ -542,9 +491,7 @@
     let quizMode = "TR2TERM"; // TR2TERM or TERM2TR
     let quizCurrentId = null;
 
-    // ----------------------------
     // Elements
-    // ----------------------------
     const gridEl = document.getElementById("grid");
     const searchEl = document.getElementById("search");
     const sortEl = document.getElementById("sort");
@@ -576,31 +523,11 @@
     const quizSwitchBtn = document.getElementById("quizSwitchBtn");
     const quizNextBtn = document.getElementById("quizNextBtn");
 
-    // ----------------------------
-    // Utils
-    // ----------------------------
-    const now = () => Date.now();
-    const clean = (s) => (s ?? "").toString().trim();
-
-    function escapeHtml(str){
-      return (str ?? "").replace(/[&<>"']/g, m => ({
-        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
-      }[m]));
-    }
-
     function toast(msg){
       toastEl.textContent = msg;
       toastEl.style.display = "block";
       clearTimeout(toastEl._t);
       toastEl._t = setTimeout(()=> toastEl.style.display="none", 1600);
-    }
-
-    function parseTags(input){
-      return clean(input)
-        .split(",")
-        .map(t => t.trim())
-        .filter(Boolean)
-        .slice(0, 10);
     }
 
     function matchesQuery(it, q){
@@ -632,9 +559,6 @@
       countRU.textContent = items.filter(x=>x.lang==="RU").length;
     }
 
-    // ----------------------------
-    // Render
-    // ----------------------------
     function render(){
       stats();
 
@@ -644,23 +568,24 @@
       view = applySort(view);
 
       countVisible.textContent = view.length;
-
       gridEl.innerHTML = "";
 
       if(view.length === 0){
         gridEl.innerHTML = `
-          <div class="cardWrap">
-            <div class="card" style="min-height:160px; position:relative;">
-              <div class="face" style="position:relative;">
-                <div class="meta">
-                  <span class="badge"><span class="dot"></span> İpucu</span>
-                </div>
-                <p class="term">Henüz kayıt yok</p>
-                <p class="meaning">Yeni kelime eklemek için <strong>＋ Ekle</strong> butonuna bas.</p>
-                <div class="tags">
-                  <span class="tag">EN/RU</span>
-                  <span class="tag">TR anlam</span>
-                  <span class="tag">Örnek</span>
+          <div class="card">
+            <div class="cardFlipWrap">
+              <div class="cardFlip">
+                <div class="face">
+                  <div class="meta">
+                    <span class="badge"><span class="dot"></span> İpucu</span>
+                  </div>
+                  <p class="term">Henüz kayıt yok</p>
+                  <p class="meaning">Yeni kelime eklemek için <strong>＋ Ekle</strong> butonuna bas.</p>
+                  <div class="tags">
+                    <span class="tag">EN/RU</span>
+                    <span class="tag">TR anlam</span>
+                    <span class="tag">Örnek</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -670,67 +595,68 @@
 
       for(const it of view){
         const badgeClass = it.lang === "RU" ? "badge ru" : "badge";
-        const dotClass = it.lang === "RU" ? "dot ru" : "dot";
         const tagsHtml = (it.tags||[]).map(t=>`<span class="tag">#${escapeHtml(t)}</span>`).join("");
-
-        const cardWrap = document.createElement("div");
-        cardWrap.className = "cardWrap";
 
         const card = document.createElement("div");
         card.className = "card";
         card.dataset.id = it.id;
 
         card.innerHTML = `
-          <div class="face front">
-            <div class="meta">
-              <span class="${badgeClass}">
-                <span class="dot"></span>
-                ${it.lang} • ${escapeHtml(it.level||"B1")}
-              </span>
-              <div class="star ${it.fav ? "on":""}" data-action="fav" title="Favori">⭐</div>
-            </div>
+          <div class="cardFlipWrap">
+            <div class="cardFlip" data-id="${it.id}">
+              <div class="face front">
+                <div class="meta">
+                  <span class="${badgeClass}">
+                    <span class="dot"></span>
+                    ${it.lang} • ${escapeHtml(it.level||"B1")}
+                  </span>
+                  <div class="star ${it.fav ? "on":""}" data-action="fav" title="Favori">
+                    ${it.fav ? "★" : "☆"}
+                  </div>
+                </div>
 
-            <p class="term">${escapeHtml(it.term)}</p>
-            <p class="example">${escapeHtml(it.example || "Karta dokun → anlamı göster")}</p>
+                <p class="term">${escapeHtml(it.term)}</p>
+                <p class="example">${escapeHtml(it.example || "Karta dokun → anlamı göster")}</p>
 
-            <div class="tags">
-              ${tagsHtml || `<span class="tag">#etiket</span>`}
-            </div>
-          </div>
+                <div class="tags">
+                  ${tagsHtml || `<span class="tag">#etiket</span>`}
+                </div>
+              </div>
 
-          <div class="face back">
-            <div class="meta">
-              <span class="${badgeClass}">
-                <span class="dot"></span>
-                TR anlam
-              </span>
-              <div class="star ${it.fav ? "on":""}" data-action="fav" title="Favori">⭐</div>
-            </div>
+              <div class="face back">
+                <div class="meta">
+                  <span class="${badgeClass}">
+                    <span class="dot"></span>
+                    TR anlam
+                  </span>
+                  <div class="star ${it.fav ? "on":""}" data-action="fav" title="Favori">
+                    ${it.fav ? "★" : "☆"}
+                  </div>
+                </div>
 
-            <p class="term">${escapeHtml(it.meaningTR)}</p>
-            <p class="example">${escapeHtml(it.example || "")}</p>
+                <p class="term">${escapeHtml(it.meaningTR)}</p>
+                <p class="example" style="-webkit-line-clamp:4">${escapeHtml(it.example || "")}</p>
 
-            <div class="tags">
-              <span class="tag">${it.lang} • ${escapeHtml(it.level||"B1")}</span>
-              ${tagsHtml}
+                <div class="tags">
+                  <span class="tag">${it.lang} • ${escapeHtml(it.level||"B1")}</span>
+                  ${tagsHtml}
+                </div>
+              </div>
             </div>
           </div>
 
           <div class="actions">
-            <button class="btn" data-action="flip">↺ Çevir</button>
-            <button class="btn" data-action="edit">✎ Düzenle</button>
-            <button class="btn danger" data-action="delete">🗑️ Sil</button>
+            <button class="btn" data-action="flip" data-id="${it.id}">↺ Çevir</button>
+            <button class="btn" data-action="edit" data-id="${it.id}">✎ Düzenle</button>
+            <button class="btn danger" data-action="delete" data-id="${it.id}">🗑️ Sil</button>
           </div>
         `;
 
-        cardWrap.appendChild(card);
-        gridEl.appendChild(cardWrap);
+        gridEl.appendChild(card);
       }
     }
 
-    // ----------------------------
     // Modal
-    // ----------------------------
     function openAdd(){
       editingId = null;
       modalTitle.textContent = "Kelime Ekle";
@@ -824,11 +750,11 @@
       }
     }
 
-    // ----------------------------
     // Quiz
-    // ----------------------------
     function toggleQuiz(){
       quizOn = !quizOn;
+      document.body.classList.toggle("quiz-on", quizOn);
+
       quizBox.classList.toggle("on", quizOn);
       quizToggleBtn.textContent = quizOn ? "🧠 Quiz: Açık" : "🧠 Quiz";
       if(quizOn) nextQuiz();
@@ -842,9 +768,6 @@
 
     function pickPool(){
       let pool = applyFilter(items);
-      // quiz’te favoriler filtresi açıksa sadece favorilerden sor
-      if(filter === "FAV") pool = pool.filter(x=>x.fav);
-      // arama varsa onunla daralt
       const q = searchEl.value.trim().toLowerCase();
       if(q) pool = pool.filter(it=>matchesQuery(it, q));
       return pool;
@@ -863,29 +786,23 @@
 
       if(quizMode === "TR2TERM"){
         quizQEl.textContent = random.meaningTR;
-        quizHintEl.textContent = "Cevap: kartı çevir (kelime ön yüzde)";
+        quizHintEl.textContent = "Cevap: ilgili kartı çevir (kelime ön yüzde)";
       } else {
         quizQEl.textContent = random.term;
-        quizHintEl.textContent = "Cevap: kartı çevir (TR anlam arka yüzde)";
+        quizHintEl.textContent = "Cevap: ilgili kartı çevir (TR arka yüzde)";
       }
 
-      // quizde ilgili kartı görünür alana kaydır
-      const card = document.querySelector(`.card[data-id="${quizCurrentId}"]`);
-      if(card) card.scrollIntoView({behavior:"smooth", block:"center"});
+      const flipEl = document.querySelector(`.cardFlip[data-id="${quizCurrentId}"]`);
+      if(flipEl) flipEl.scrollIntoView({behavior:"smooth", block:"center"});
     }
 
     function syncQuizIfNeeded(forceNext=false){
       if(!quizOn) return;
       if(forceNext) return nextQuiz();
-      // current id silindiyse
-      if(quizCurrentId && !items.some(x=>x.id===quizCurrentId)){
-        nextQuiz();
-      }
+      if(quizCurrentId && !items.some(x=>x.id===quizCurrentId)) nextQuiz();
     }
 
-    // ----------------------------
     // Export / Import
-    // ----------------------------
     function downloadFile(name, content, mime){
       const blob = new Blob([content], {type: mime});
       const url = URL.createObjectURL(blob);
@@ -899,7 +816,7 @@
     }
 
     function exportJSON(){
-      const data = JSON.stringify({version:1, exportedAt: now(), items}, null, 2);
+      const data = JSON.stringify({version:2, exportedAt: now(), items}, null, 2);
       downloadFile("vocab-pocket-pro-backup.json", data, "application/json");
     }
 
@@ -937,7 +854,6 @@
           for(const it of incoming){
             if(!it.id) continue;
             const id = String(it.id);
-
             map.set(id, {
               id,
               lang: (it.lang === "RU" ? "RU" : "EN"),
@@ -963,17 +879,15 @@
       reader.readAsText(file);
     }
 
-    // ----------------------------
     // Events
-    // ----------------------------
     document.getElementById("addBtn").addEventListener("click", openAdd);
-    document.getElementById("cancelBtn").addEventListener("click", closeModal);
-    document.getElementById("closeBtn").addEventListener("click", closeModal);
+    document.getElementById("cancelBtn").addEventListener("click", ()=>modal.close());
+    document.getElementById("closeBtn").addEventListener("click", ()=>modal.close());
     document.getElementById("saveBtn").addEventListener("click", upsert);
 
     deleteBtn.addEventListener("click", ()=>{
       if(editingId) deleteById(editingId);
-      closeModal();
+      modal.close();
     });
 
     searchEl.addEventListener("input", ()=>{ render(); syncQuizIfNeeded(); });
@@ -991,48 +905,41 @@
       });
     }
 
-    // Card actions
+    // Card actions + flip on tap
     gridEl.addEventListener("click", (e)=>{
-      const card = e.target.closest(".card");
-      if(!card) return;
-      const id = card.dataset.id;
-
       const actionBtn = e.target.closest("[data-action]");
       if(actionBtn){
         const action = actionBtn.dataset.action;
+        const id = actionBtn.dataset.id || e.target.closest(".card")?.dataset.id;
+        if(!id) return;
 
         if(action === "flip"){
-          card.classList.toggle("flipped");
+          const flipEl = document.querySelector(`.cardFlip[data-id="${id}"]`);
+          if(flipEl) flipEl.classList.toggle("flipped");
           return;
         }
-        if(action === "edit"){
-          openEdit(id);
-          return;
-        }
-        if(action === "delete"){
-          deleteById(id);
-          return;
-        }
+        if(action === "edit"){ openEdit(id); return; }
+        if(action === "delete"){ deleteById(id); return; }
         if(action === "fav"){
           const it = items.find(x=>x.id===id);
           if(!it) return;
           it.fav = !it.fav;
           it.updatedAt = now();
           saveItems(items);
-          toast(it.fav ? "Favorilere eklendi ⭐" : "Favoriden çıktı");
+          toast(it.fav ? "Favorilere eklendi ★" : "Favoriden çıktı ☆");
           render();
           syncQuizIfNeeded();
           return;
         }
       }
 
-      // Tap card (not on buttons) to flip for mobile vibe
-      if(!e.target.closest(".actions") && !e.target.closest(".star")){
-        card.classList.toggle("flipped");
+      // Tap on flip area
+      const flipEl = e.target.closest(".cardFlip");
+      if(flipEl && !e.target.closest(".actions") && !e.target.closest(".star")){
+        flipEl.classList.toggle("flipped");
       }
     });
 
-    // Export/Import/Wipe
     document.getElementById("exportJsonBtn").addEventListener("click", exportJSON);
     document.getElementById("exportCsvBtn").addEventListener("click", exportCSV);
 
@@ -1053,7 +960,7 @@
       }
     });
 
-    // Quiz
+    // Quiz events
     quizToggleBtn.addEventListener("click", toggleQuiz);
     quizSwitchBtn.addEventListener("click", switchQuizMode);
     quizNextBtn.addEventListener("click", nextQuiz);
