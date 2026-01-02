@@ -3,184 +3,454 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Vocab Pocket</title>
+  <title>Vocab Pocket Pro</title>
 
-  <!-- PWA -->
-  <meta name="theme-color" content="#111111" />
+  <!-- PWA-ish -->
+  <meta name="theme-color" content="#0b0b10" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="VocabPocket" />
 
   <style>
     :root{
-      --bg:#0b0b0c; --card:#141416; --muted:#a5a5ad; --text:#f3f3f5;
-      --line:#232328; --accent:#6ee7b7; --danger:#fb7185; --warn:#fbbf24;
-      --radius:16px;
+      --bg:#0b0b10;
+      --panel:#12121a;
+      --card:#151523;
+      --card2:#17172a;
+      --line:#23233a;
+      --text:#f2f2f7;
+      --muted:#a6a6bb;
+      --accent:#7c3aed;   /* violet */
+      --accent2:#22c55e;  /* green */
+      --danger:#fb7185;
+      --warn:#fbbf24;
+      --shadow: 0 16px 60px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:14px;
     }
+
     *{box-sizing:border-box}
     body{
-      margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      background:var(--bg); color:var(--text);
+      margin:0;
+      background:
+        radial-gradient(1100px 600px at 20% -10%, rgba(124,58,237,.25), transparent 55%),
+        radial-gradient(900px 520px at 110% 10%, rgba(34,197,94,.18), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
       padding: env(safe-area-inset-top) 14px env(safe-area-inset-bottom) 14px;
     }
+
     header{
       position:sticky; top:0; z-index:10;
-      background:linear-gradient(to bottom, rgba(11,11,12,0.95), rgba(11,11,12,0.65));
+      background: linear-gradient(to bottom, rgba(11,11,16,.92), rgba(11,11,16,.60));
       backdrop-filter: blur(10px);
-      padding: 12px 0 10px 0;
+      padding: 12px 0 12px 0;
     }
-    .titleRow{display:flex; align-items:center; justify-content:space-between; gap:12px;}
-    h1{font-size:20px; margin:0; letter-spacing:0.2px}
-    .pill{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,0.04);
-      padding:8px 10px; border-radius:999px; color:var(--text);
-      display:inline-flex; align-items:center; gap:8px; font-size:13px;
+
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
-    .btn{
-      border:1px solid var(--line); background:rgba(255,255,255,0.06);
-      color:var(--text); padding:10px 12px; border-radius:12px;
-      font-weight:600; font-size:14px;
+    .brand{
+      display:flex; flex-direction:column; gap:4px;
     }
-    .btn.primary{border-color:rgba(110,231,183,0.3); background:rgba(110,231,183,0.12)}
-    .btn.danger{border-color:rgba(251,113,133,0.35); background:rgba(251,113,133,0.10)}
-    .btn:active{transform:scale(0.99)}
+    .brand h1{margin:0; font-size:18px; letter-spacing:.2px}
+    .brand .sub{font-size:12px; color:var(--muted)}
     .row{display:flex; gap:10px; align-items:center}
-    .grid{display:grid; gap:10px}
+    .btn{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 14px;
+      font-weight:800;
+      font-size:13px;
+      display:inline-flex; gap:8px; align-items:center;
+      user-select:none;
+    }
+    .btn:active{transform:scale(.99)}
+    .btn.primary{
+      border-color: rgba(124,58,237,.35);
+      background: rgba(124,58,237,.16);
+    }
+    .btn.ghost{
+      background: transparent;
+    }
+    .btn.danger{
+      border-color: rgba(251,113,133,.35);
+      background: rgba(251,113,133,.12);
+    }
+
     .controls{
-      display:grid; gap:10px; margin-top:12px;
+      margin-top:12px;
+      display:grid; gap:10px;
       grid-template-columns: 1fr;
     }
+
     .input, select, textarea{
-      width:100%; background:var(--card); border:1px solid var(--line);
-      color:var(--text); padding:12px 12px; border-radius:14px; outline:none;
+      width:100%;
+      border:1px solid var(--line);
+      background: rgba(21,21,35,.85);
+      color:var(--text);
+      padding:12px 12px;
+      border-radius: 14px;
+      outline:none;
       font-size:15px;
     }
-    textarea{min-height:84px; resize:vertical}
-    .seg{
+    textarea{min-height:88px; resize:vertical}
+    .chips{
       display:flex; gap:8px; flex-wrap:wrap;
     }
-    .seg button{
-      flex:1; min-width:90px;
-      border:1px solid var(--line); background:rgba(255,255,255,0.03);
-      color:var(--text); padding:10px; border-radius:999px; font-weight:700;
+    .chip{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding:9px 12px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:12px;
+      flex:1;
+      min-width: 90px;
+      text-align:center;
     }
-    .seg button.active{border-color:rgba(110,231,183,0.35); background:rgba(110,231,183,0.12)}
-    .stats{color:var(--muted); font-size:13px; margin-top:10px}
-    .list{margin-top:12px; display:grid; gap:10px}
+    .chip.active{
+      border-color: rgba(34,197,94,.35);
+      background: rgba(34,197,94,.14);
+    }
+
+    .bar{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      color: var(--muted); font-size:12px; margin-top:10px;
+    }
+    .bar .left{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .pill{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      padding:8px 10px;
+      border-radius:999px;
+      color: var(--muted);
+      font-size:12px;
+      display:inline-flex; gap:8px; align-items:center;
+    }
+    .pill strong{color:var(--text); font-weight:900}
+
+    main{margin-top:12px}
+
+    /* Cards grid */
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 680px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+    }
+    @media (min-width: 980px){
+      .grid{ grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .cardWrap{
+      perspective: 1000px;
+    }
     .card{
-      background:var(--card); border:1px solid var(--line);
-      border-radius:var(--radius); padding:12px;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(21,21,35,.92), rgba(18,18,26,.92));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      transform-style: preserve-3d;
+      transition: transform .55s cubic-bezier(.2,.9,.2,1);
+      position:relative;
+      min-height: 168px;
     }
-    .cardTop{display:flex; justify-content:space-between; align-items:flex-start; gap:10px}
-    .term{font-size:17px; font-weight:800; margin:0}
+    .card.flipped{ transform: rotateY(180deg); }
+
+    .face{
+      position:absolute; inset:0;
+      padding:14px;
+      backface-visibility: hidden;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .back{
+      transform: rotateY(180deg);
+      background: linear-gradient(180deg, rgba(23,23,42,.95), rgba(18,18,26,.92));
+    }
+
+    .meta{
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+    }
     .badge{
-      font-size:12px; padding:6px 10px; border-radius:999px;
-      border:1px solid var(--line); color:var(--muted);
-      background:rgba(255,255,255,0.03);
+      display:inline-flex; gap:8px; align-items:center;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
       white-space:nowrap;
     }
-    .meaning{margin:8px 0 0 0; color:var(--text); font-size:14px; line-height:1.35}
-    .example{margin:8px 0 0 0; color:var(--muted); font-size:13px; line-height:1.35}
-    .cardActions{display:flex; gap:8px; margin-top:10px}
-    .muted{color:var(--muted)}
-    .divider{height:1px; background:var(--line); margin:10px 0}
-    .footerActions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
-    dialog{
-      width:min(720px, 96vw); border:none; border-radius:18px;
-      background:var(--card); color:var(--text);
-      padding:0; overflow:hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+    .badge .dot{
+      width:8px; height:8px; border-radius:999px;
+      background: rgba(124,58,237,.9);
+      box-shadow: 0 0 0 4px rgba(124,58,237,.18);
     }
-    dialog::backdrop{background:rgba(0,0,0,0.55)}
-    .modalHead{padding:14px 14px 10px 14px; border-bottom:1px solid var(--line)}
-    .modalHead h2{margin:0; font-size:16px}
-    .modalBody{padding:14px}
-    .modalFoot{padding:14px; border-top:1px solid var(--line); display:flex; gap:10px; justify-content:flex-end}
-    .small{font-size:12px; color:var(--muted)}
+    .badge.ru .dot{ background: rgba(34,197,94,.9); box-shadow:0 0 0 4px rgba(34,197,94,.18); }
+
+    .star{
+      width:38px; height:38px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      display:grid; place-items:center;
+      font-size:18px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .star.on{
+      border-color: rgba(251,191,36,.35);
+      background: rgba(251,191,36,.12);
+    }
+
+    .term{
+      margin:0;
+      font-size:20px;
+      font-weight:950;
+      letter-spacing:.2px;
+      line-height:1.05;
+      word-break: break-word;
+    }
+    .meaning{
+      margin:0;
+      color: rgba(242,242,247,.92);
+      font-size:14px;
+      line-height:1.35;
+    }
+    .example{
+      margin:0;
+      color: var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    .tags{
+      display:flex; flex-wrap:wrap; gap:6px; margin-top:auto;
+    }
+    .tag{
+      font-size:11px;
+      color: var(--muted);
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      padding:6px 8px;
+      border-radius: 999px;
+    }
+
+    .actions{
+      display:flex; gap:8px; flex-wrap:wrap;
+      padding:12px 14px;
+      border-top:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+    }
+    .actions .btn{
+      padding:10px 10px; border-radius:12px; font-weight:900;
+    }
+
+    /* Modal */
+    dialog{
+      width:min(760px, 96vw);
+      border:none;
+      border-radius: 18px;
+      background: rgba(18,18,26,.98);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      padding:0;
+      overflow:hidden;
+    }
+    dialog::backdrop{ background: rgba(0,0,0,.55); }
+    .modalHead{
+      padding:14px 14px 10px 14px;
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    }
+    .modalHead h2{margin:0; font-size:15px}
+    .modalHead .small{font-size:12px; color:var(--muted); margin-top:6px}
+    .modalBody{padding:14px; display:grid; gap:10px}
+    .two{display:grid; gap:10px; grid-template-columns: 1fr; }
+    @media (min-width: 680px){ .two{grid-template-columns: 1fr 1fr;} }
+    .modalFoot{
+      padding:14px;
+      border-top:1px solid var(--line);
+      display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;
+    }
+    .help{
+      font-size:12px; color:var(--muted);
+      border:1px dashed rgba(255,255,255,.18);
+      border-radius: 14px;
+      padding:10px;
+      background: rgba(255,255,255,.02);
+    }
+
     .toast{
-      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
-      background:rgba(20,20,22,0.95); border:1px solid var(--line);
-      padding:10px 12px; border-radius:999px; font-size:13px; color:var(--text);
+      position:fixed; left:50%; bottom:18px;
+      transform:translateX(-50%);
+      background: rgba(18,18,26,.95);
+      border:1px solid var(--line);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:13px;
+      color:var(--text);
+      display:none;
+      z-index:999;
+    }
+
+    /* Quiz bar */
+    .quiz{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--radius);
+      padding:12px;
+      margin-top:10px;
       display:none;
     }
+    .quiz.on{display:block}
+    .quizTop{display:flex; justify-content:space-between; align-items:center; gap:10px}
+    .quizQ{
+      margin:10px 0 0 0;
+      font-size:18px; font-weight:950;
+    }
+    .quizHint{margin:6px 0 0 0; color:var(--muted); font-size:13px}
   </style>
 </head>
 
 <body>
   <header>
-    <div class="titleRow">
-      <div>
-        <h1>Vocab Pocket</h1>
-        <div class="small">EN / RU kelimelerini kaydet • TR anlam • örnek cümle</div>
+    <div class="topbar">
+      <div class="brand">
+        <h1>Vocab Pocket Pro</h1>
+        <div class="sub">Kart gibi • Flip • Favori • Etiket • Seviye • Mini Quiz</div>
       </div>
-      <button class="btn primary" id="addBtn">+ Ekle</button>
+      <div class="row">
+        <button class="btn ghost" id="quizToggleBtn">🧠 Quiz</button>
+        <button class="btn primary" id="addBtn">＋ Ekle</button>
+      </div>
     </div>
 
     <div class="controls">
-      <input class="input" id="search" placeholder="Ara: kelime / anlam / örnek..." />
+      <input class="input" id="search" placeholder="Ara: kelime / anlam / örnek / etiket..." />
 
-      <div class="seg" role="tablist" aria-label="Dil filtresi">
-        <button id="fAll" class="active" data-filter="ALL">Tümü</button>
-        <button id="fEN" data-filter="EN">English</button>
-        <button id="fRU" data-filter="RU">Русский</button>
+      <div class="chips" aria-label="Filtre">
+        <button class="chip active" data-filter="ALL" id="fAll">Tümü</button>
+        <button class="chip" data-filter="EN" id="fEN">English</button>
+        <button class="chip" data-filter="RU" id="fRU">Русский</button>
+        <button class="chip" data-filter="FAV" id="fFav">Favoriler</button>
       </div>
 
-      <div class="footerActions">
-        <button class="btn" id="exportJsonBtn">JSON Dışa Aktar</button>
-        <button class="btn" id="exportCsvBtn">CSV Dışa Aktar</button>
-        <label class="btn" for="importFile" style="cursor:pointer;">
-          İçe Aktar (JSON)
-        </label>
-        <input id="importFile" type="file" accept="application/json" hidden />
-        <button class="btn danger" id="wipeBtn">Tümünü Sil</button>
+      <div class="bar">
+        <div class="left">
+          <span class="pill">Toplam <strong id="countAll">0</strong></span>
+          <span class="pill">EN <strong id="countEN">0</strong></span>
+          <span class="pill">RU <strong id="countRU">0</strong></span>
+          <span class="pill">Görünen <strong id="countVisible">0</strong></span>
+        </div>
+
+        <div class="row">
+          <select id="sort">
+            <option value="updated">Sırala: Son güncellenen</option>
+            <option value="created">Sırala: Son eklenen</option>
+            <option value="az">Sırala: A → Z</option>
+            <option value="za">Sırala: Z → A</option>
+          </select>
+          <button class="btn" id="exportJsonBtn">⬇︎ JSON</button>
+          <button class="btn" id="exportCsvBtn">⬇︎ CSV</button>
+          <label class="btn" for="importFile" style="cursor:pointer;">⬆︎ İçe Aktar</label>
+          <input id="importFile" type="file" accept="application/json" hidden />
+          <button class="btn danger" id="wipeBtn">🗑️ Hepsini Sil</button>
+        </div>
       </div>
 
-      <div class="stats" id="stats"></div>
+      <div class="quiz" id="quizBox">
+        <div class="quizTop">
+          <div class="pill">Mod: <strong id="quizMode">TR → Kelime</strong></div>
+          <div class="row">
+            <button class="btn" id="quizSwitchBtn">🔁 Mod değiştir</button>
+            <button class="btn primary" id="quizNextBtn">➡️ Sonraki</button>
+          </div>
+        </div>
+        <div class="quizQ" id="quizQ">—</div>
+        <div class="quizHint" id="quizHint">Kartın üstüne tıkla: cevabı göster</div>
+      </div>
     </div>
   </header>
 
   <main>
-    <div class="list" id="list"></div>
+    <div class="grid" id="grid"></div>
   </main>
 
-  <!-- Modal -->
+  <!-- Modal: Add/Edit -->
   <dialog id="modal">
     <div class="modalHead">
-      <h2 id="modalTitle">Kelime Ekle</h2>
-      <div class="small" id="modalHint">Kelime + TR anlam + örnek cümle</div>
+      <div>
+        <h2 id="modalTitle">Kelime Ekle</h2>
+        <div class="small" id="modalSub">Kelime + TR anlam + örnek + etiket</div>
+      </div>
+      <button class="btn" id="closeBtn" type="button">✕</button>
     </div>
 
-    <form class="modalBody grid" id="form">
-      <div>
-        <label class="small">Dil</label>
-        <select id="language">
-          <option value="EN">English (EN)</option>
-          <option value="RU">Русский (RU)</option>
-        </select>
+    <form class="modalBody" id="form">
+      <div class="two">
+        <div>
+          <label class="small">Dil</label>
+          <select id="language">
+            <option value="EN">English (EN)</option>
+            <option value="RU">Русский (RU)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="small">Seviye</label>
+          <select id="level">
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="B1" selected>B1</option>
+            <option value="B2">B2</option>
+            <option value="C1">C1</option>
+            <option value="C2">C2</option>
+          </select>
+        </div>
       </div>
 
-      <div>
-        <label class="small">Kelime</label>
-        <input class="input" id="term" placeholder="through / shone / ... veya RU kelime" autocomplete="off" />
-      </div>
-
-      <div>
-        <label class="small">Türkçe anlam</label>
-        <input class="input" id="meaningTR" placeholder="Türkçe anlamı..." autocomplete="off" />
+      <div class="two">
+        <div>
+          <label class="small">Kelime</label>
+          <input class="input" id="term" placeholder="through / shone / ... veya RU kelime" autocomplete="off" />
+        </div>
+        <div>
+          <label class="small">Türkçe anlam</label>
+          <input class="input" id="meaningTR" placeholder="Türkçe anlamı..." autocomplete="off" />
+        </div>
       </div>
 
       <div>
         <label class="small">Örnek cümle (kelimenin dilinde)</label>
-        <textarea id="example" placeholder="Örn: They went on down the dark passage..."></textarea>
+        <textarea id="example" placeholder="Örn: They went on down the dark passage and round a bend."></textarea>
       </div>
 
-      <div class="small muted">
-        İpucu: Örneği kısa tut. Sonra “Düzenle” ile güncellersin.
+      <div class="two">
+        <div>
+          <label class="small">Etiketler (virgülle)</label>
+          <input class="input" id="tags" placeholder="travel, story, daily, phrasal..." autocomplete="off" />
+        </div>
+        <div class="help">
+          <div><strong>İpucu</strong></div>
+          <div>• Kartı çevirmek için karta dokun</div>
+          <div>• ⭐ favori yap, “Favoriler” filtresiyle gör</div>
+          <div>• Quiz: üstte 🧠 ile aç</div>
+        </div>
       </div>
     </form>
 
     <div class="modalFoot">
+      <button class="btn danger" id="deleteBtn" type="button" style="display:none;">Sil</button>
       <button class="btn" id="cancelBtn" type="button">İptal</button>
       <button class="btn primary" id="saveBtn" type="button">Kaydet</button>
     </div>
@@ -189,105 +459,70 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // --- Storage ---
-    const KEY = "vocab_pocket_items_v1";
+    // ----------------------------
+    // Storage
+    // ----------------------------
+    const KEY = "vocab_pocket_pro_v1";
 
-    /** @returns {Array<{id:string, lang:"EN"|"RU", term:string, meaningTR:string, example:string, createdAt:number, updatedAt:number}>} */
     function loadItems(){
-      try{
-        return JSON.parse(localStorage.getItem(KEY)) ?? [];
-      }catch{ return []; }
+      try{ return JSON.parse(localStorage.getItem(KEY)) ?? []; }
+      catch{ return []; }
     }
     function saveItems(items){
       localStorage.setItem(KEY, JSON.stringify(items));
     }
 
-    // --- State ---
+    // Model:
+    // { id, lang:"EN"|"RU", level:"A1"...,
+    //   term, meaningTR, example, tags:[], fav:boolean,
+    //   createdAt, updatedAt }
+
     let items = loadItems();
     let filter = "ALL";
     let editingId = null;
+    let quizOn = false;
+    let quizMode = "TR2TERM"; // TR2TERM or TERM2TR
+    let quizCurrentId = null;
 
-    // --- Elements ---
-    const listEl = document.getElementById("list");
-    const statsEl = document.getElementById("stats");
+    // ----------------------------
+    // Elements
+    // ----------------------------
+    const gridEl = document.getElementById("grid");
     const searchEl = document.getElementById("search");
+    const sortEl = document.getElementById("sort");
+
+    const countAll = document.getElementById("countAll");
+    const countEN  = document.getElementById("countEN");
+    const countRU  = document.getElementById("countRU");
+    const countVisible = document.getElementById("countVisible");
 
     const modal = document.getElementById("modal");
     const modalTitle = document.getElementById("modalTitle");
+    const deleteBtn = document.getElementById("deleteBtn");
 
     const langEl = document.getElementById("language");
+    const levelEl = document.getElementById("level");
     const termEl = document.getElementById("term");
     const meaningEl = document.getElementById("meaningTR");
     const exampleEl = document.getElementById("example");
+    const tagsEl = document.getElementById("tags");
 
     const toastEl = document.getElementById("toast");
 
-    // --- UI helpers ---
-    function toast(msg){
-      toastEl.textContent = msg;
-      toastEl.style.display = "block";
-      clearTimeout(toastEl._t);
-      toastEl._t = setTimeout(()=> toastEl.style.display="none", 1600);
-    }
+    // Quiz
+    const quizBox = document.getElementById("quizBox");
+    const quizToggleBtn = document.getElementById("quizToggleBtn");
+    const quizModeEl = document.getElementById("quizMode");
+    const quizQEl = document.getElementById("quizQ");
+    const quizHintEl = document.getElementById("quizHint");
+    const quizSwitchBtn = document.getElementById("quizSwitchBtn");
+    const quizNextBtn = document.getElementById("quizNextBtn");
 
-    function formatLangBadge(lang){
-      return lang === "EN" ? "EN" : "RU";
-    }
-
-    function sanitize(s){
-      return (s ?? "").toString().trim();
-    }
-
-    function matchesQuery(item, q){
-      if(!q) return true;
-      const t = (item.term + " " + item.meaningTR + " " + item.example).toLowerCase();
-      return t.includes(q);
-    }
-
-    function render(){
-      const q = searchEl.value.trim().toLowerCase();
-      const filtered = items
-        .filter(it => filter === "ALL" ? true : it.lang === filter)
-        .filter(it => matchesQuery(it, q))
-        .sort((a,b)=> (b.updatedAt ?? b.createdAt) - (a.updatedAt ?? a.createdAt));
-
-      // stats
-      const enCount = items.filter(x=>x.lang==="EN").length;
-      const ruCount = items.filter(x=>x.lang==="RU").length;
-      statsEl.textContent = `Toplam: ${items.length} • EN: ${enCount} • RU: ${ruCount} • Görünen: ${filtered.length}`;
-
-      // list
-      listEl.innerHTML = "";
-      if(filtered.length === 0){
-        listEl.innerHTML = `
-          <div class="card">
-            <div class="muted">Henüz kayıt yok ya da arama sonucu boş.</div>
-            <div class="divider"></div>
-            <button class="btn primary" onclick="document.getElementById('addBtn').click()">+ İlk kelimeyi ekle</button>
-          </div>`;
-        return;
-      }
-
-      for(const it of filtered){
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <div class="cardTop">
-            <div>
-              <p class="term">${escapeHtml(it.term)}</p>
-              <p class="meaning">${escapeHtml(it.meaningTR)}</p>
-              ${it.example ? `<p class="example">“${escapeHtml(it.example)}”</p>` : ""}
-            </div>
-            <div class="badge">${formatLangBadge(it.lang)}</div>
-          </div>
-          <div class="cardActions">
-            <button class="btn" data-action="edit" data-id="${it.id}">Düzenle</button>
-            <button class="btn danger" data-action="delete" data-id="${it.id}">Sil</button>
-          </div>
-        `;
-        listEl.appendChild(card);
-      }
-    }
+    // ----------------------------
+    // Utils
+    // ----------------------------
+    const now = () => Date.now();
+    const clean = (s) => (s ?? "").toString().trim();
 
     function escapeHtml(str){
       return (str ?? "").replace(/[&<>"']/g, m => ({
@@ -295,14 +530,161 @@
       }[m]));
     }
 
-    // --- Modal control ---
+    function toast(msg){
+      toastEl.textContent = msg;
+      toastEl.style.display = "block";
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(()=> toastEl.style.display="none", 1600);
+    }
+
+    function parseTags(input){
+      return clean(input)
+        .split(",")
+        .map(t => t.trim())
+        .filter(Boolean)
+        .slice(0, 10);
+    }
+
+    function matchesQuery(it, q){
+      if(!q) return true;
+      const hay = (it.term + " " + it.meaningTR + " " + (it.example||"") + " " + (it.tags||[]).join(" ")).toLowerCase();
+      return hay.includes(q);
+    }
+
+    function applyFilter(arr){
+      if(filter === "ALL") return arr;
+      if(filter === "EN" || filter === "RU") return arr.filter(x=>x.lang===filter);
+      if(filter === "FAV") return arr.filter(x=>x.fav);
+      return arr;
+    }
+
+    function applySort(arr){
+      const s = sortEl.value;
+      const copy = [...arr];
+      if(s === "updated") copy.sort((a,b)=> (b.updatedAt||0) - (a.updatedAt||0));
+      else if(s === "created") copy.sort((a,b)=> (b.createdAt||0) - (a.createdAt||0));
+      else if(s === "az") copy.sort((a,b)=> (a.term||"").localeCompare(b.term||"", undefined, {sensitivity:"base"}));
+      else if(s === "za") copy.sort((a,b)=> (b.term||"").localeCompare(a.term||"", undefined, {sensitivity:"base"}));
+      return copy;
+    }
+
+    function stats(){
+      countAll.textContent = items.length;
+      countEN.textContent = items.filter(x=>x.lang==="EN").length;
+      countRU.textContent = items.filter(x=>x.lang==="RU").length;
+    }
+
+    // ----------------------------
+    // Render
+    // ----------------------------
+    function render(){
+      stats();
+
+      const q = searchEl.value.trim().toLowerCase();
+      let view = items.filter(it => matchesQuery(it, q));
+      view = applyFilter(view);
+      view = applySort(view);
+
+      countVisible.textContent = view.length;
+
+      gridEl.innerHTML = "";
+
+      if(view.length === 0){
+        gridEl.innerHTML = `
+          <div class="cardWrap">
+            <div class="card" style="min-height:160px; position:relative;">
+              <div class="face" style="position:relative;">
+                <div class="meta">
+                  <span class="badge"><span class="dot"></span> İpucu</span>
+                </div>
+                <p class="term">Henüz kayıt yok</p>
+                <p class="meaning">Yeni kelime eklemek için <strong>＋ Ekle</strong> butonuna bas.</p>
+                <div class="tags">
+                  <span class="tag">EN/RU</span>
+                  <span class="tag">TR anlam</span>
+                  <span class="tag">Örnek</span>
+                </div>
+              </div>
+            </div>
+          </div>`;
+        return;
+      }
+
+      for(const it of view){
+        const badgeClass = it.lang === "RU" ? "badge ru" : "badge";
+        const dotClass = it.lang === "RU" ? "dot ru" : "dot";
+        const tagsHtml = (it.tags||[]).map(t=>`<span class="tag">#${escapeHtml(t)}</span>`).join("");
+
+        const cardWrap = document.createElement("div");
+        cardWrap.className = "cardWrap";
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.dataset.id = it.id;
+
+        card.innerHTML = `
+          <div class="face front">
+            <div class="meta">
+              <span class="${badgeClass}">
+                <span class="dot"></span>
+                ${it.lang} • ${escapeHtml(it.level||"B1")}
+              </span>
+              <div class="star ${it.fav ? "on":""}" data-action="fav" title="Favori">⭐</div>
+            </div>
+
+            <p class="term">${escapeHtml(it.term)}</p>
+            <p class="example">${escapeHtml(it.example || "Karta dokun → anlamı göster")}</p>
+
+            <div class="tags">
+              ${tagsHtml || `<span class="tag">#etiket</span>`}
+            </div>
+          </div>
+
+          <div class="face back">
+            <div class="meta">
+              <span class="${badgeClass}">
+                <span class="dot"></span>
+                TR anlam
+              </span>
+              <div class="star ${it.fav ? "on":""}" data-action="fav" title="Favori">⭐</div>
+            </div>
+
+            <p class="term">${escapeHtml(it.meaningTR)}</p>
+            <p class="example">${escapeHtml(it.example || "")}</p>
+
+            <div class="tags">
+              <span class="tag">${it.lang} • ${escapeHtml(it.level||"B1")}</span>
+              ${tagsHtml}
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn" data-action="flip">↺ Çevir</button>
+            <button class="btn" data-action="edit">✎ Düzenle</button>
+            <button class="btn danger" data-action="delete">🗑️ Sil</button>
+          </div>
+        `;
+
+        cardWrap.appendChild(card);
+        gridEl.appendChild(cardWrap);
+      }
+    }
+
+    // ----------------------------
+    // Modal
+    // ----------------------------
     function openAdd(){
       editingId = null;
       modalTitle.textContent = "Kelime Ekle";
+      deleteBtn.style.display = "none";
+
       langEl.value = "EN";
+      levelEl.value = "B1";
       termEl.value = "";
       meaningEl.value = "";
       exampleEl.value = "";
+      tagsEl.value = "";
+
       modal.showModal();
       setTimeout(()=>termEl.focus(), 50);
     }
@@ -310,51 +692,58 @@
     function openEdit(id){
       const it = items.find(x=>x.id===id);
       if(!it) return;
+
       editingId = id;
       modalTitle.textContent = "Kelime Düzenle";
+      deleteBtn.style.display = "inline-flex";
+
       langEl.value = it.lang;
-      termEl.value = it.term;
-      meaningEl.value = it.meaningTR;
-      exampleEl.value = it.example ?? "";
+      levelEl.value = it.level || "B1";
+      termEl.value = it.term || "";
+      meaningEl.value = it.meaningTR || "";
+      exampleEl.value = it.example || "";
+      tagsEl.value = (it.tags||[]).join(", ");
+
       modal.showModal();
       setTimeout(()=>termEl.focus(), 50);
     }
 
-    function closeModal(){
-      modal.close();
-    }
+    function closeModal(){ modal.close(); }
 
     function upsert(){
       const lang = langEl.value;
-      const term = sanitize(termEl.value);
-      const meaningTR = sanitize(meaningEl.value);
-      const example = sanitize(exampleEl.value);
+      const level = levelEl.value;
+      const term = clean(termEl.value);
+      const meaningTR = clean(meaningEl.value);
+      const example = clean(exampleEl.value);
+      const tags = parseTags(tagsEl.value);
 
       if(!term || !meaningTR){
         toast("Kelime ve Türkçe anlam zorunlu.");
         return;
       }
 
-      const now = Date.now();
+      const t = now();
 
       if(editingId){
         const it = items.find(x=>x.id===editingId);
         if(!it) return;
+
         it.lang = lang;
+        it.level = level;
         it.term = term;
         it.meaningTR = meaningTR;
         it.example = example;
-        it.updatedAt = now;
+        it.tags = tags;
+        it.updatedAt = t;
+
         toast("Güncellendi ✅");
       } else {
+        const id = (crypto.randomUUID ? crypto.randomUUID() : String(t) + Math.random().toString(16).slice(2));
         items.push({
-          id: crypto.randomUUID ? crypto.randomUUID() : String(now) + Math.random().toString(16).slice(2),
-          lang,
-          term,
-          meaningTR,
-          example,
-          createdAt: now,
-          updatedAt: now
+          id, lang, level, term, meaningTR, example, tags,
+          fav:false,
+          createdAt:t, updatedAt:t
         });
         toast("Eklendi ✅");
       }
@@ -362,9 +751,10 @@
       saveItems(items);
       closeModal();
       render();
+      syncQuizIfNeeded();
     }
 
-    function removeItem(id){
+    function deleteById(id){
       const it = items.find(x=>x.id===id);
       if(!it) return;
       if(confirm(`Silinsin mi?\n\n${it.term} (${it.lang})`)){
@@ -372,10 +762,72 @@
         saveItems(items);
         toast("Silindi 🗑️");
         render();
+        syncQuizIfNeeded(true);
       }
     }
 
-    // --- Export / Import ---
+    // ----------------------------
+    // Quiz
+    // ----------------------------
+    function toggleQuiz(){
+      quizOn = !quizOn;
+      quizBox.classList.toggle("on", quizOn);
+      quizToggleBtn.textContent = quizOn ? "🧠 Quiz: Açık" : "🧠 Quiz";
+      if(quizOn) nextQuiz();
+    }
+
+    function switchQuizMode(){
+      quizMode = (quizMode === "TR2TERM") ? "TERM2TR" : "TR2TERM";
+      quizModeEl.textContent = (quizMode === "TR2TERM") ? "TR → Kelime" : "Kelime → TR";
+      nextQuiz();
+    }
+
+    function pickPool(){
+      let pool = applyFilter(items);
+      // quiz’te favoriler filtresi açıksa sadece favorilerden sor
+      if(filter === "FAV") pool = pool.filter(x=>x.fav);
+      // arama varsa onunla daralt
+      const q = searchEl.value.trim().toLowerCase();
+      if(q) pool = pool.filter(it=>matchesQuery(it, q));
+      return pool;
+    }
+
+    function nextQuiz(){
+      const pool = pickPool();
+      if(pool.length === 0){
+        quizQEl.textContent = "Quiz için en az 1 kayıt lazım.";
+        quizHintEl.textContent = "＋ Ekle ile kelime ekle.";
+        quizCurrentId = null;
+        return;
+      }
+      const random = pool[Math.floor(Math.random() * pool.length)];
+      quizCurrentId = random.id;
+
+      if(quizMode === "TR2TERM"){
+        quizQEl.textContent = random.meaningTR;
+        quizHintEl.textContent = "Cevap: kartı çevir (kelime ön yüzde)";
+      } else {
+        quizQEl.textContent = random.term;
+        quizHintEl.textContent = "Cevap: kartı çevir (TR anlam arka yüzde)";
+      }
+
+      // quizde ilgili kartı görünür alana kaydır
+      const card = document.querySelector(`.card[data-id="${quizCurrentId}"]`);
+      if(card) card.scrollIntoView({behavior:"smooth", block:"center"});
+    }
+
+    function syncQuizIfNeeded(forceNext=false){
+      if(!quizOn) return;
+      if(forceNext) return nextQuiz();
+      // current id silindiyse
+      if(quizCurrentId && !items.some(x=>x.id===quizCurrentId)){
+        nextQuiz();
+      }
+    }
+
+    // ----------------------------
+    // Export / Import
+    // ----------------------------
     function downloadFile(name, content, mime){
       const blob = new Blob([content], {type: mime});
       const url = URL.createObjectURL(blob);
@@ -389,28 +841,30 @@
     }
 
     function exportJSON(){
-      const data = JSON.stringify({version:1, exportedAt: Date.now(), items}, null, 2);
-      downloadFile("vocab-pocket-backup.json", data, "application/json");
-    }
-
-    function exportCSV(){
-      const header = ["lang","term","meaningTR","example","createdAt","updatedAt"];
-      const rows = items.map(it => [
-        it.lang,
-        it.term,
-        it.meaningTR,
-        it.example ?? "",
-        new Date(it.createdAt).toISOString(),
-        new Date(it.updatedAt).toISOString()
-      ].map(csvEscape).join(","));
-      const csv = header.join(",") + "\n" + rows.join("\n");
-      downloadFile("vocab-pocket.csv", csv, "text/csv");
+      const data = JSON.stringify({version:1, exportedAt: now(), items}, null, 2);
+      downloadFile("vocab-pocket-pro-backup.json", data, "application/json");
     }
 
     function csvEscape(v){
       const s = (v ?? "").toString();
       if(/[,"\n]/.test(s)) return `"${s.replace(/"/g,'""')}"`;
       return s;
+    }
+
+    function exportCSV(){
+      const header = ["lang","level","term","meaningTR","example","tags","fav","createdAt","updatedAt"];
+      const rows = items.map(it => [
+        it.lang,
+        it.level || "",
+        it.term,
+        it.meaningTR,
+        it.example || "",
+        (it.tags||[]).join("|"),
+        it.fav ? "1":"0",
+        new Date(it.createdAt).toISOString(),
+        new Date(it.updatedAt).toISOString()
+      ].map(csvEscape).join(","));
+      downloadFile("vocab-pocket-pro.csv", header.join(",") + "\n" + rows.join("\n"), "text/csv");
     }
 
     function importJSON(file){
@@ -420,24 +874,30 @@
           const obj = JSON.parse(reader.result);
           const incoming = obj.items ?? obj;
           if(!Array.isArray(incoming)) throw new Error("Format");
-          // merge by id
+
           const map = new Map(items.map(x=>[x.id, x]));
           for(const it of incoming){
             if(!it.id) continue;
-            map.set(it.id, {
-              id: String(it.id),
+            const id = String(it.id);
+
+            map.set(id, {
+              id,
               lang: (it.lang === "RU" ? "RU" : "EN"),
-              term: sanitize(it.term),
-              meaningTR: sanitize(it.meaningTR),
-              example: sanitize(it.example),
-              createdAt: Number(it.createdAt || Date.now()),
-              updatedAt: Number(it.updatedAt || Date.now())
+              level: clean(it.level) || "B1",
+              term: clean(it.term),
+              meaningTR: clean(it.meaningTR),
+              example: clean(it.example),
+              tags: Array.isArray(it.tags) ? it.tags.map(clean).filter(Boolean).slice(0,10) : parseTags(it.tags||""),
+              fav: !!it.fav,
+              createdAt: Number(it.createdAt || now()),
+              updatedAt: Number(it.updatedAt || now())
             });
           }
           items = Array.from(map.values());
           saveItems(items);
           toast("İçe aktarıldı ✅");
           render();
+          syncQuizIfNeeded(true);
         }catch(e){
           toast("JSON okunamadı ❌");
         }
@@ -445,41 +905,82 @@
       reader.readAsText(file);
     }
 
-    // --- Event wiring ---
+    // ----------------------------
+    // Events
+    // ----------------------------
     document.getElementById("addBtn").addEventListener("click", openAdd);
     document.getElementById("cancelBtn").addEventListener("click", closeModal);
+    document.getElementById("closeBtn").addEventListener("click", closeModal);
     document.getElementById("saveBtn").addEventListener("click", upsert);
 
-    searchEl.addEventListener("input", render);
-
-    document.getElementById("fAll").addEventListener("click", ()=>setFilter("ALL"));
-    document.getElementById("fEN").addEventListener("click", ()=>setFilter("EN"));
-    document.getElementById("fRU").addEventListener("click", ()=>setFilter("RU"));
-
-    function setFilter(f){
-      filter = f;
-      // toggle active
-      for(const btn of document.querySelectorAll(".seg button")){
-        btn.classList.toggle("active", btn.dataset.filter === f);
-      }
-      render();
-    }
-
-    listEl.addEventListener("click", (e)=>{
-      const btn = e.target.closest("button[data-action]");
-      if(!btn) return;
-      const action = btn.dataset.action;
-      const id = btn.dataset.id;
-      if(action === "edit") openEdit(id);
-      if(action === "delete") removeItem(id);
+    deleteBtn.addEventListener("click", ()=>{
+      if(editingId) deleteById(editingId);
+      closeModal();
     });
 
+    searchEl.addEventListener("input", ()=>{ render(); syncQuizIfNeeded(); });
+    sortEl.addEventListener("change", render);
+
+    // Filter chips
+    for(const btn of document.querySelectorAll(".chip")){
+      btn.addEventListener("click", ()=>{
+        filter = btn.dataset.filter;
+        for(const b of document.querySelectorAll(".chip")){
+          b.classList.toggle("active", b.dataset.filter === filter);
+        }
+        render();
+        syncQuizIfNeeded(true);
+      });
+    }
+
+    // Card actions
+    gridEl.addEventListener("click", (e)=>{
+      const card = e.target.closest(".card");
+      if(!card) return;
+      const id = card.dataset.id;
+
+      const actionBtn = e.target.closest("[data-action]");
+      if(actionBtn){
+        const action = actionBtn.dataset.action;
+
+        if(action === "flip"){
+          card.classList.toggle("flipped");
+          return;
+        }
+        if(action === "edit"){
+          openEdit(id);
+          return;
+        }
+        if(action === "delete"){
+          deleteById(id);
+          return;
+        }
+        if(action === "fav"){
+          const it = items.find(x=>x.id===id);
+          if(!it) return;
+          it.fav = !it.fav;
+          it.updatedAt = now();
+          saveItems(items);
+          toast(it.fav ? "Favorilere eklendi ⭐" : "Favoriden çıktı");
+          render();
+          syncQuizIfNeeded();
+          return;
+        }
+      }
+
+      // Tap card (not on buttons) to flip for mobile vibe
+      if(!e.target.closest(".actions") && !e.target.closest(".star")){
+        card.classList.toggle("flipped");
+      }
+    });
+
+    // Export/Import/Wipe
     document.getElementById("exportJsonBtn").addEventListener("click", exportJSON);
     document.getElementById("exportCsvBtn").addEventListener("click", exportCSV);
 
     document.getElementById("importFile").addEventListener("change", (e)=>{
-      const file = e.target.files?.[0];
-      if(file) importJSON(file);
+      const f = e.target.files?.[0];
+      if(f) importJSON(f);
       e.target.value = "";
     });
 
@@ -490,10 +991,17 @@
         saveItems(items);
         toast("Hepsi silindi 🗑️");
         render();
+        syncQuizIfNeeded(true);
       }
     });
 
-    // Initial render
+    // Quiz
+    quizToggleBtn.addEventListener("click", toggleQuiz);
+    quizSwitchBtn.addEventListener("click", switchQuizMode);
+    quizNextBtn.addEventListener("click", nextQuiz);
+
+    // Init
+    quizModeEl.textContent = (quizMode === "TR2TERM") ? "TR → Kelime" : "Kelime → TR";
     render();
   </script>
 </body>
