@@ -3,117 +3,96 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-  <title>Vocab Pocket Ultimate</title>
+  <title>Vocab Pocket</title>
 
   <meta name="theme-color" content="#0b0b10" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="VocabPro" />
-  <link rel="manifest" id="manifestLink" href="">
-
+  
   <style>
     :root{
       --bg:#0b0b10; --panel:#12121a; --card:#151523; --card2:#17172a;
       --line:#23233a; --text:#f2f2f7; --muted:#a6a6bb;
       --accent:#7c3aed; --accent2:#22c55e; --danger:#fb7185; --warn:#fbbf24;
-      --shadow: 0 16px 60px rgba(0,0,0,.55);
-      --radius:18px; --radius2:14px;
-      --bgGrad1: radial-gradient(1100px 600px at 20% -10%, rgba(124,58,237,.25), transparent 55%);
-      --bgGrad2: radial-gradient(900px 520px at 110% 10%, rgba(34,197,94,.18), transparent 55%);
-      --headerTop: rgba(11,11,16,.95); --headerBottom: rgba(11,11,16,.80);
+      --shadow: 0 10px 40px rgba(0,0,0,0.5);
+      --radius:16px;
+      --headerTop: rgba(11,11,16,.98); --headerBottom: rgba(11,11,16,.90);
       --inputBg: rgba(21,21,35,.85);
     }
-    body[data-theme="emerald"]{
-      --bg:#07110c; --panel:#0b1711; --card:#0f1f17; --card2:#11251b;
-      --line:#1f3a2d; --text:#eafff3; --muted:#a2c8b3;
-      --accent:#22c55e; --accent2:#7c3aed;
-      --bgGrad1: radial-gradient(1100px 600px at 20% -10%, rgba(34,197,94,.22), transparent 55%);
-      --bgGrad2: radial-gradient(900px 520px at 110% 10%, rgba(124,58,237,.16), transparent 55%);
-      --headerTop: rgba(7,17,12,.95); --headerBottom: rgba(7,17,12,.80);
-      --inputBg: rgba(15,31,23,.88);
-    }
     body[data-theme="light"]{
-      --bg:#f6f7fb; --panel:#ffffff; --card:#ffffff; --card2:#f4f6ff;
-      --line:#d7d9e6; --text:#0b0b10; --muted:#4b5563;
-      --accent:#7c3aed; --accent2:#16a34a;
-      --shadow: 0 16px 60px rgba(0,0,0,.12);
-      --bgGrad1: radial-gradient(1100px 600px at 20% -10%, rgba(124,58,237,.16), transparent 55%);
-      --bgGrad2: radial-gradient(900px 520px at 110% 10%, rgba(22,163,74,.12), transparent 55%);
-      --headerTop: rgba(246,247,251,.95); --headerBottom: rgba(246,247,251,.80);
-      --inputBg: rgba(255,255,255,.92);
+      --bg:#f2f2f7; --panel:#ffffff; --card:#ffffff; --card2:#f0f0f5;
+      --line:#d1d1d6; --text:#000000; --muted:#8e8e93;
+      --accent:#007aff; --accent2:#34c759;
+      --headerTop: rgba(242,242,247,.98); --headerBottom: rgba(242,242,247,.90);
+      --inputBg: rgba(255,255,255,.95);
     }
 
     *{box-sizing:border-box}
     body{
-      margin:0; background: var(--bgGrad1), var(--bgGrad2), var(--bg);
-      background-attachment: fixed; color:var(--text);
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-      padding: env(safe-area-inset-top) 14px 100px 14px;
+      margin:0; background: var(--bg); color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+      padding: env(safe-area-inset-top) 16px 100px 16px;
       -webkit-tap-highlight-color: transparent; overflow-x: hidden;
     }
 
-    /* --- HEADER & NAV --- */
+    /* HEADER */
     header{
       position:sticky; top:0; z-index:40;
       background: linear-gradient(to bottom, var(--headerTop), var(--headerBottom));
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      padding: 12px 14px; margin: -14px -14px 10px -14px;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      padding: 12px 0; margin: -16px -16px 16px -16px; padding-left:16px; padding-right:16px;
       border-bottom: 1px solid var(--line);
     }
-    .topbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
-    .brand h1{ margin:0; font-size:18px; letter-spacing:-0.5px; }
-    .brand .sub{ font-size:11px; color:var(--muted); }
-    .row{ display:flex; gap:8px; align-items:center; flex-wrap: wrap; justify-content: flex-end; }
+    .topbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom: 12px;}
+    .brand h1{ margin:0; font-size:22px; font-weight: 800; letter-spacing:-0.5px; }
 
-    /* --- BUTTONS --- */
-    .btn{
-      border:1px solid var(--line); background: rgba(255,255,255,.06); color:var(--text);
-      padding:10px 12px; border-radius:12px; font-weight:700; font-size:13px;
-      display:inline-flex; gap:6px; align-items:center; justify-content:center;
-      cursor:pointer; transition:transform 0.1s; user-select:none;
+    /* LANGUAGE SELECTOR (HERO) */
+    .lang-hero {
+        background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+        padding: 4px; display: flex; align-items: center; width: fit-content;
     }
-    .btn:active{ transform:scale(0.96); }
-    .btn.primary{ border-color:transparent; background: var(--accent); color:#fff; }
-    .btn.good{ border-color:transparent; background: var(--accent2); color:#000; }
-    body[data-theme="dark"] .btn.good { color: #fff; }
-    .btn.danger{ border-color: color-mix(in srgb, var(--danger) 35%, transparent); background: color-mix(in srgb, var(--danger) 15%, transparent); color:var(--danger); }
-    .btn.ghost{ background:transparent; border:none; color:var(--muted); padding: 8px; }
+    .lang-hero select {
+        background: transparent; border: none; font-weight: 700; font-size: 14px;
+        padding: 6px 12px; color: var(--accent); cursor: pointer; width: auto;
+    }
+
+    .row{ display:flex; gap:8px; align-items:center; }
+
+    /* BUTTONS */
+    .btn{
+      border:1px solid var(--line); background: rgba(255,255,255,.05); color:var(--text);
+      width: 40px; height: 40px; border-radius:12px; font-weight:700; font-size:16px;
+      display:inline-flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:transform 0.1s; user-select:none; padding: 0;
+    }
+    .btn:active{ transform:scale(0.95); }
+    .btn.primary{ border-color:transparent; background: var(--accent); color:#fff; width: auto; padding: 0 16px; }
+    .btn.text-btn { width: auto; padding: 0 12px; font-size: 13px; }
     
-    /* --- INPUTS & FILTERS --- */
+    /* INPUTS */
     .input, select, textarea{
       width:100%; border:1px solid var(--line); background: var(--inputBg); color:var(--text);
-      padding:12px; border-radius:12px; outline:none; font-size:15px;
+      padding:12px; border-radius:12px; outline:none; font-size:15px; appearance: none;
     }
-    .filters{ display:flex; gap:8px; overflow-x:auto; padding-bottom:5px; -webkit-overflow-scrolling:touch; margin-top: 8px;}
-    .filters::-webkit-scrollbar { display:none; }
-    .filters select { min-width: 120px; flex:0 0 auto; }
-
-    /* --- HEATMAP (YENİ) --- */
-    .dash-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
-    .heatmap-panel {
-        background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: var(--radius2);
-        padding: 10px; display: flex; flex-direction: column; gap: 8px;
-    }
-    .heatmap-title { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; }
-    .heatmap-grid { display: flex; gap: 4px; justify-content: space-between; }
-    .day-box {
-        flex: 1; aspect-ratio: 1; background: rgba(255,255,255,0.05); border-radius: 4px;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        font-size: 10px; color: var(--muted); position: relative;
-    }
-    .day-box.active { background: var(--accent2); color: #000; box-shadow: 0 0 10px color-mix(in srgb, var(--accent2) 40%, transparent); }
-    .day-box .d-label { font-size: 9px; opacity: 0.7; }
-
-    /* --- CARDS & GRID --- */
-    .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:16px; margin-top:16px; }
-    .card{
-      position:relative; background:transparent; perspective:1000px;
-      touch-action: pan-y; user-select:none;
-    }
-    .card.selecting { transform: scale(0.98); opacity: 0.8; }
-    .card.selected { opacity: 1; transform: scale(1); box-shadow: 0 0 0 2px var(--accent); border-radius: var(--radius); }
     
-    .cardFlipWrap{ position:relative; width:100%; min-height:240px; transform-style:preserve-3d; transition:height 0.3s; }
+    /* FILTERS SCROLL */
+    .filters{ display:flex; gap:8px; overflow-x:auto; padding-bottom:5px; margin-top: 8px;}
+    .filters::-webkit-scrollbar { display:none; }
+    .filters select { min-width: 100px; padding: 8px 12px; font-size: 13px; height: 36px;}
+
+    /* STATS BAR */
+    .stats-bar {
+        display: flex; gap: 15px; margin-top: 10px; padding: 10px;
+        background: var(--panel); border-radius: 12px; border: 1px solid var(--line);
+        font-size: 12px; color: var(--muted); justify-content: space-around;
+    }
+    .stat-item b { color: var(--text); font-size: 14px; display: block; text-align: center;}
+
+    /* CARDS */
+    .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:16px; margin-top:16px; }
+    .card{ position:relative; perspective:1000px; touch-action: pan-y; user-select:none; }
+    
+    .cardFlipWrap{ position:relative; width:100%; min-height:220px; transform-style:preserve-3d; transition:height 0.3s; }
     .cardFlip{
       position:absolute; inset:0; transform-style:preserve-3d; transition:transform 0.6s cubic-bezier(0.175,0.885,0.32,1.275);
       border-radius:var(--radius); box-shadow:var(--shadow);
@@ -123,80 +102,55 @@
     .face{
       position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
       background: linear-gradient(145deg, var(--card), var(--panel)); border:1px solid var(--line);
-      border-radius:var(--radius); padding:14px; display:flex; flex-direction:column;
+      border-radius:var(--radius); padding:16px; display:flex; flex-direction:column;
     }
     .face.back{ transform: rotateY(180deg); background: linear-gradient(145deg, var(--card2), var(--panel)); }
 
-    /* --- CARD CONTENT (IMG, SOUND, ETC) --- */
-    .card-img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background: rgba(0,0,0,0.2); display: none; }
-    .card-img.show { display: block; }
+    /* CARD INTERNAL */
+    .meta{ display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;}
+    .badge{ font-size:10px; font-weight:700; color:var(--muted); background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:6px; text-transform: uppercase; letter-spacing: 0.5px;}
     
-    .meta{ display:flex; justify-content:space-between; align-items:center; }
-    .badge{ font-size:11px; font-weight:700; color:var(--muted); background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:6px; }
-    .controls-row { display: flex; gap: 8px; align-items: center;}
-    
-    .sound-btn { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--accent); }
-    .sound-btn:active { background: var(--accent); color: white; }
+    .term{ font-size:26px; font-weight:800; margin:10px 0; line-height:1.1; }
+    .example{ font-size:14px; color:var(--muted); font-style:italic; line-height:1.4; flex:1; }
 
-    .term{ font-size:24px; font-weight:800; margin:8px 0; word-break:break-word; line-height:1.1; }
-    .example{ font-size:13px; color:var(--muted); font-style:italic; line-height:1.4; flex:1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;}
-    .star{ font-size: 20px; color: var(--muted); cursor: pointer; padding: 4px; }
-    .star.on{ color: var(--warn); }
+    .actions{ margin-top:auto; display:flex; gap:10px; padding-top:12px; border-top:1px solid var(--line); }
+    .actions .btn{ flex:1; height: 32px; font-size: 12px; }
 
-    .check-overlay {
-        position: absolute; top: 10px; right: 10px; z-index: 10;
-        width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--muted);
-        background: var(--panel); display: none; align-items: center; justify-content: center;
+    /* SOUND BTN */
+    .sound-btn {
+        width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line);
+        background: transparent; color: var(--accent); display: flex; align-items: center; justify-content: center;
     }
-    body.selection-mode .check-overlay { display: flex; }
-    .card.selected .check-overlay { background: var(--accent); border-color: var(--accent); }
-    .card.selected .check-overlay::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
 
-    .actions{ margin-top:auto; display:flex; gap:8px; padding-top:10px; border-top:1px solid var(--line); }
-    .actions .btn{ flex:1; padding:8px; font-size:12px; }
-
-    /* --- BULK ACTION BAR --- */
-    .bulk-bar {
-        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(150%);
-        background: var(--panel); border: 1px solid var(--line); padding: 10px 14px;
-        border-radius: 16px; display: flex; gap: 10px; align-items: center;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 90; transition: transform 0.3s;
-        width: min(90%, 500px);
-    }
-    .bulk-bar.active { transform: translateX(-50%) translateY(0); }
-
-    /* --- MODALS --- */
+    /* MODALS */
     dialog{
-      width:min(90vw, 500px); border:none; border-radius:20px; background:var(--panel);
+      width:min(90vw, 400px); border:none; border-radius:20px; background:var(--panel);
       color:var(--text); box-shadow:0 25px 50px rgba(0,0,0,0.5); padding:0; margin:auto;
-      max-height:90vh; overflow-y:auto;
     }
     dialog::backdrop{ background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); }
-    .modalHead{ padding:16px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; background:var(--headerTop); position:sticky; top:0; z-index:10; align-items: center;}
-    .modalBody{ padding:16px; display:flex; flex-direction:column; gap:12px; }
-    .modalFoot{ padding:16px; border-top:1px solid var(--line); display:flex; gap:10px; justify-content:flex-end; background:var(--panel); }
-    .two{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .help{ font-size:12px; color:var(--muted); background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px dashed var(--line); }
+    .modalHead{ padding:16px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items: center; background: var(--headerTop); position: sticky; top:0;}
+    .modalBody{ padding:20px; display:flex; flex-direction:column; gap:12px; max-height: 70vh; overflow-y: auto;}
+    .modalFoot{ padding:16px; border-top:1px solid var(--line); display:flex; gap:10px; justify-content:flex-end; background: var(--panel);}
 
-    /* --- QUIZ UI --- */
+    /* QUIZ FULLSCREEN */
     .quizOverlay{
       position:fixed; inset:0; z-index:100; background:var(--bg); display:none; flex-direction:column;
-      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px; overflow-y: auto;
+      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
     }
     .quizOverlay.on{ display:flex; }
-    .timer-bar { height: 4px; background: var(--line); margin-top: 10px; border-radius: 2px; overflow: hidden; }
-    .timer-fill { height: 100%; background: var(--accent); width: 100%; transition: width 1s linear; }
-    
-    .quizCard { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:16px; overflow-y:auto; }
-    .qText { font-size:32px; font-weight:900; }
-    
+    .quizCard { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:20px; }
+    .qText { font-size:36px; font-weight:900; }
+    .opt { width: 100%; padding: 16px; border: 1px solid var(--line); background: var(--panel); color: var(--text); border-radius: 12px; font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .opt.correct { background: var(--accent2); color: #fff; border-color: transparent; }
+    .opt.wrong { background: var(--danger); color: #fff; border-color: transparent; }
+
     .toast{
-      position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(20px);
-      background:var(--panel); border:1px solid var(--line); color:var(--text);
-      padding:12px 20px; border-radius:30px; font-weight:600; opacity:0; pointer-events:none;
-      transition:all 0.3s; z-index:200; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+      background:var(--text); color:var(--bg);
+      padding:10px 20px; border-radius:30px; font-weight:600; opacity:0; pointer-events:none;
+      transition:all 0.3s; z-index:200; font-size: 13px;
     }
-    .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+    .toast.show{ opacity:1; transform:translateY(-10px); }
 
   </style>
 </head>
@@ -205,714 +159,419 @@
   <header>
     <div class="topbar">
       <div class="brand">
-        <h1>Vocab Pocket Ultimate</h1>
-        <div class="sub">Yedekle • Seslendir • Yarış</div>
+        <h1>Vocab Pocket</h1>
       </div>
-      <div class="row">
-        <button class="btn ghost" id="selectModeBtn" title="Toplu Seçim">Seç</button>
-        <button class="btn" id="settingsBtn" title="Ayarlar ve Yedekleme">⚙️</button>
-        <button class="btn good" id="quizBtn">Quiz 🧠</button>
-        <button class="btn primary" id="addBtn">＋</button>
+      <div class="lang-hero">
+        <span style="font-size:18px; margin-left:8px">🏁</span>
+        <select id="activeLangSelect" title="Çalışılan Dil">
+             </select>
       </div>
     </div>
 
-    <div class="filters">
-      <div class="row" style="width:100%">
-        <input class="input" id="search" placeholder="Ara: #tag, lang:EN, level:B1..." style="flex:1">
-        <button class="btn" id="quickAddBtn" title="Excel Import">⚡</button>
-      </div>
-    </div>
-    
-    <div class="filters">
-      <select id="statusFilter"><option value="ALL">Durum: Tümü</option><option value="NEW">Yeni</option><option value="LEARNING">Öğreniliyor</option><option value="MASTERED">Öğrenildi</option><option value="DUE">Tekrar (Due)</option></select>
-      <select id="levelFilter"><option value="ALL">Seviye: Tümü</option><option value="A1">A1</option><option value="A2">A2</option><option value="B1">B1</option><option value="B2">B2</option><option value="C1">C1</option></select>
-      <select id="sort"><option value="due">Sıra: Önce Due</option><option value="date">Sıra: Son Eklenen</option><option value="az">A-Z</option></select>
-    </div>
-
-    <div class="dash-grid">
-        <div class="heatmap-panel">
-            <div style="display:flex; justify-content:space-between">
-                <span class="heatmap-title">Çalışma Zinciri</span>
-                <span class="heatmap-title" id="streakCount">0 Gün</span>
-            </div>
-            <div class="heatmap-grid" id="heatmapGrid"></div>
+    <div class="row" style="justify-content: space-between;">
+        <div style="flex:1; position: relative;">
+            <input class="input" id="search" placeholder="Kelime ara..." style="padding-left: 36px; height: 44px;">
+            <span style="position:absolute; left:12px; top:12px; opacity: 0.5">🔍</span>
         </div>
+        <button class="btn" onclick="openSettings()" title="Ayarlar">⚙️</button>
+        <button class="btn" onclick="startQuizCheck()" title="Quiz">🧠</button>
+        <button class="btn primary" onclick="openAdd()" title="Ekle">＋</button>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-item"><b id="countDue">0</b>Tekrar</div>
+        <div class="stat-item"><b id="countTotal">0</b>Kart</div>
+        <div class="stat-item"><b id="countStreak">0</b>Zincir</div>
     </div>
   </header>
 
   <main>
     <div class="grid" id="grid"></div>
-    
-    <div class="bulk-bar" id="bulkBar">
-        <span id="selCount" style="font-weight:bold; font-size:12px; color:var(--muted)">0 Seçildi</span>
-        <div style="flex:1"></div>
-        <button class="btn" onclick="bulkStatus('NEW')">Sıfırla</button>
-        <button class="btn" onclick="bulkStatus('MASTERED')">Öğrenildi</button>
-        <button class="btn danger" onclick="bulkDelete()">Sil</button>
-        <button class="btn ghost" onclick="toggleSelectMode()">Bitti</button>
-    </div>
   </main>
 
   <dialog id="modal">
     <div class="modalHead">
-      <h3 id="modalTitle" style="margin:0">Kart Ekle</h3>
-      <button class="btn ghost" onclick="modal.close()">✕</button>
+      <h3 id="modalTitle" style="margin:0">Yeni Kart</h3>
+      <button class="btn" onclick="modal.close()">✕</button>
     </div>
     <div class="modalBody">
-      <div class="two">
-        <select id="sourceLang"></select>
-        <select id="meaningLang"></select>
-      </div>
-      <input class="input" id="term" placeholder="Kelime (Örn: Apple)">
-      <input class="input" id="meaning" placeholder="Anlam (Örn: Elma)">
-      <textarea class="input" id="example" placeholder="Örnek cümle..." rows="2"></textarea>
-      
-      <div class="two">
-          <input class="input" id="level" placeholder="Seviye (B1)">
-          <input class="input" id="tags" placeholder="Etiketler (tag1, tag2)">
+      <div style="font-size:12px; color:var(--muted); text-align:center;">
+        <span id="lblSource">EN</span> → <span id="lblTarget">TR</span>
       </div>
       
-      <input class="input" id="imgUrl" placeholder="🖼️ Resim URL (Opsiyonel)">
+      <input class="input" id="term" placeholder="Kelime">
+      <input class="input" id="meaning" placeholder="Anlam">
+      <textarea class="input" id="example" placeholder="Örnek cümle" rows="2"></textarea>
+      
+      <div class="row">
+          <input class="input" id="imgUrl" placeholder="Resim URL (Opsiyonel)">
+      </div>
+      
+      <details style="font-size:12px; color:var(--muted)">
+          <summary style="padding:5px; cursor:pointer">Gelişmiş</summary>
+          <div style="margin-top:10px; display:grid; gap:10px">
+              <input class="input" id="tags" placeholder="Etiketler">
+              <input class="input" id="level" placeholder="Seviye (B1)">
+          </div>
+      </details>
     </div>
     <div class="modalFoot">
-      <button class="btn danger" id="deleteBtn" style="display:none; margin-right:auto">Sil</button>
+      <button class="btn danger text-btn" id="deleteBtn" style="display:none; margin-right:auto">Sil</button>
       <button class="btn primary" id="saveBtn">Kaydet</button>
     </div>
   </dialog>
 
-  <dialog id="quickModal">
-    <div class="modalHead">
-        <h3>Hızlı / Excel Import</h3>
-        <button class="btn ghost" onclick="quickModal.close()">✕</button>
-    </div>
-    <div class="modalBody">
-        <div class="help">Excel'den kopyalayıp yapıştırabilirsin. (Kelime [TAB] Anlam) veya (Kelime - Anlam)</div>
-        <textarea class="input" id="quickText" rows="10" placeholder="apple	elma&#10;run	koşmak&#10;book - kitap - A1"></textarea>
-    </div>
-    <div class="modalFoot">
-        <button class="btn primary" id="quickSaveBtn">İçeri Aktar</button>
-    </div>
-  </dialog>
-
   <dialog id="settingsModal">
-    <div class="modalHead">
-        <h3>Ayarlar</h3>
-        <button class="btn ghost" onclick="settingsModal.close()">✕</button>
-    </div>
+    <div class="modalHead"><h3>Ayarlar</h3><button class="btn" onclick="settingsModal.close()">✕</button></div>
     <div class="modalBody">
-        <div style="font-weight:bold; margin-bottom:5px">Görünüm</div>
+        <label>Tema</label>
         <select id="themeSelect" class="input">
-            <option value="dark">Karanlık (Dark)</option>
-            <option value="emerald">Zümrüt (Emerald)</option>
-            <option value="light">Aydınlık (Light)</option>
+            <option value="dark">Karanlık</option>
+            <option value="light">Aydınlık</option>
         </select>
-        
-        <hr style="border:0; border-top:1px solid var(--line); width:100%">
-        
-        <div style="font-weight:bold; margin-bottom:5px">Veri Yönetimi (Yedekleme)</div>
-        <div class="two">
-            <button class="btn" onclick="exportData()">💾 Yedek İndir</button>
-            <button class="btn" onclick="document.getElementById('fileInput').click()">📂 Yedek Yükle</button>
-            <input type="file" id="fileInput" style="display:none" accept=".json" onchange="importData(this)">
+        <hr style="width:100%; border:0; border-top:1px solid var(--line)">
+        <label>Yedekleme</label>
+        <div class="row">
+            <button class="btn text-btn" onclick="exportData()" style="flex:1">Yedek İndir</button>
+            <button class="btn text-btn" onclick="$('#fileInput').click()" style="flex:1">Yedek Yükle</button>
+            <input type="file" id="fileInput" hidden onchange="importData(this)">
         </div>
-        <div class="help">Verilerin tarayıcıda saklanır. Silinmemesi için haftalık yedek al.</div>
-    </div>
-  </dialog>
-
-  <dialog id="quizSetupModal">
-    <div class="modalHead"><h3>Quiz Ayarları</h3><button class="btn ghost" onclick="quizSetupModal.close()">✕</button></div>
-    <div class="modalBody">
-        <div class="two">
-            <button class="btn primary" onclick="startQuiz(false)" style="height:80px; font-size:16px">Normal Mod<br><span style="font-size:12px; font-weight:400">Sakin çöz</span></button>
-            <button class="btn danger" onclick="startQuiz(true)" style="height:80px; font-size:16px">Zaman Yarışı ⏱️<br><span style="font-size:12px; font-weight:400">60 Saniye</span></button>
-        </div>
-        <select id="quizScope" class="input"><option value="DUE">Sadece Tekrar Zamanı Gelenler</option><option value="ALL">Tüm Kelimeler</option></select>
+        <hr style="width:100%; border:0; border-top:1px solid var(--line)">
+        <label>Toplu Ekle (Excel)</label>
+        <textarea class="input" id="quickText" rows="4" placeholder="kelime - anlam"></textarea>
+        <button class="btn primary" style="width:100%" onclick="quickAdd()">Ekle</button>
     </div>
   </dialog>
 
   <div class="quizOverlay" id="quizOverlay">
     <div class="topbar">
-      <div class="brand"><h1>Quiz</h1></div>
-      <div class="row">
-          <span class="pill" id="timerBadge" style="display:none; color:var(--danger); font-weight:bold; font-size:18px;">⏱️ <b id="timeLeft">60</b></span>
-          <button class="btn" onclick="closeQuiz()">Çıkış</button>
-      </div>
+        <h3>Quiz</h3>
+        <button class="btn" onclick="closeQuiz()">✕</button>
     </div>
-    <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
-    
     <div class="quizCard" id="quizCardArea">
-      <div style="display:flex; gap:10px; margin-bottom:10px">
-        <span class="badge" id="qLang">EN</span>
-        <button class="sound-btn" onclick="speakCurrentQuiz()" title="Seslendir">🔊</button>
-      </div>
-      <div class="qText" id="qText">...</div>
-      
-      <div class="options" id="quizOptions" style="width:100%; max-width:400px; display:grid; gap:10px"></div>
-    </div>
-    
-    <div class="quizCard" id="quizResult" style="display:none">
-        <h1 style="font-size:40px">Bitti! 🎉</h1>
-        <p id="quizFinalScore" style="font-size:18px; color:var(--muted)">Skorun: 0</p>
-        <button class="btn primary" onclick="closeQuiz()">Tamam</button>
+        <div class="badge" id="qBadge">EN</div>
+        <div class="qText" id="qText">Word</div>
+        <button class="sound-btn" style="width:40px; height:40px" onclick="speakCurrent()">🔊</button>
+        <div id="quizOptions" style="width:100%; max-width:400px; margin-top:20px;"></div>
     </div>
   </div>
 
   <div class="toast" id="toast"></div>
 
   <script>
-    /* --- UTILITIES --- */
-    const $ = (s) => document.querySelector(s);
-    const $$ = (s) => document.querySelectorAll(s);
+    // --- HELPER ---
+    const $ = s => document.querySelector(s);
     const now = () => Date.now();
-    const makeId = () => 'id_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36).substr(4,4);
-    const clean = (s) => (s ?? "").toString().trim();
-    const escapeHtml = (str) => (str ?? "").toString().replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
-    const DAY = 24*60*60*1000;
-
-    /* --- DATA & STATE --- */
-    const KEY_ITEMS = 'vp_items_ultimate';
-    const KEY_THEME = 'vp_theme_ultimate';
-    const KEY_ACTIVITY = 'vp_activity_log';
+    const uuid = () => 'id-' + Math.random().toString(36).substr(2, 9);
     
-    // Legacy support (eski versiyonlardan veri çekme)
-    let items = JSON.parse(localStorage.getItem(KEY_ITEMS) || localStorage.getItem('vocab_pocket_pro_v5_items') || "[]");
-    let activity = JSON.parse(localStorage.getItem(KEY_ACTIVITY) || "{}");
+    // --- STATE ---
+    let items = JSON.parse(localStorage.getItem('vp_items') || "[]");
+    let activeLang = localStorage.getItem('vp_lang') || "EN"; // Varsayılan Çalışılan Dil
+    let userLang = "TR"; // Kullanıcının Ana Dili (Anlam Dili)
     
-    let langs = [
-        {code:"EN", name:"English"}, {code:"TR", name:"Türkçe"}, 
-        {code:"DE", name:"Deutsch"}, {code:"FR", name:"Français"}, 
-        {code:"ES", name:"Español"}, {code:"IT", name:"Italiano"}, 
-        {code:"RU", name:"Русский"}
+    const LANGS = [
+        {code:"EN", name:"İngilizce"}, {code:"DE", name:"Almanca"},
+        {code:"ES", name:"İspanyolca"}, {code:"FR", name:"Fransızca"},
+        {code:"IT", name:"İtalyanca"}, {code:"RU", name:"Rusça"}
     ];
-    
-    let editingId = null;
-    let selectionMode = false;
-    let selectedIds = new Set();
-    
-    /* --- INIT --- */
-    function init(){
-        // Veri yapısını güncelle (eski verilerde imgUrl yoksa ekle)
-        items = items.map(patchItem);
-        save();
-        
-        renderLangSelects();
-        applyTheme(localStorage.getItem(KEY_THEME) || 'dark');
-        renderHeatmap();
-        render();
-        
-        // Event Listeners
-        $('#search').addEventListener('input', render);
-        $('#statusFilter').addEventListener('change', render);
-        $('#levelFilter').addEventListener('change', render);
-        $('#sort').addEventListener('change', render);
-        $('#themeSelect').addEventListener('change', (e) => applyTheme(e.target.value));
-        
-        // Service Worker (Fake PWA Install trigger support)
-        if('serviceWorker' in navigator) {
-             // Basic dummy SW to satisfy install criteria
-             const blob = new Blob(['self.addEventListener("install",e=>self.skipWaiting());self.addEventListener("fetch",e=>{})'], {type: 'application/javascript'});
-             navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
-        }
-    }
 
-    function patchItem(it){
-        return {
-            id: it.id || makeId(),
-            term: clean(it.term),
-            meaning: clean(it.meaning),
-            example: clean(it.example),
-            level: clean(it.level) || "B1",
-            tags: Array.isArray(it.tags) ? it.tags : [],
-            sourceLang: clean(it.sourceLang) || "EN",
-            meaningLang: clean(it.meaningLang) || "TR",
-            imgUrl: clean(it.imgUrl), // Yeni alan
-            status: it.status || "NEW",
-            fav: !!it.fav,
-            createdAt: it.createdAt || now(),
-            updatedAt: it.updatedAt || now(),
-            srs: {
-                due: it.srs?.due || it.srs?.dueAt || now(),
-                interval: it.srs?.interval || 0,
-                ease: it.srs?.ease || 2.5
-            }
+    // --- INIT ---
+    function init(){
+        // Dil Seçiciyi Doldur
+        const sel = $('#activeLangSelect');
+        sel.innerHTML = LANGS.map(l => `<option value="${l.code}">${l.name}</option>`).join('');
+        sel.value = activeLang;
+        
+        sel.addEventListener('change', e => {
+            activeLang = e.target.value;
+            localStorage.setItem('vp_lang', activeLang);
+            render();
+        });
+
+        // Tema
+        const theme = localStorage.getItem('vp_theme') || 'dark';
+        document.body.setAttribute('data-theme', theme);
+        $('#themeSelect').value = theme;
+        $('#themeSelect').onchange = e => {
+            document.body.setAttribute('data-theme', e.target.value);
+            localStorage.setItem('vp_theme', e.target.value);
         };
+
+        $('#search').addEventListener('input', render);
+        
+        render();
     }
 
     function save(){
-        localStorage.setItem(KEY_ITEMS, JSON.stringify(items));
-        localStorage.setItem(KEY_ACTIVITY, JSON.stringify(activity));
+        localStorage.setItem('vp_items', JSON.stringify(items));
+        render();
     }
 
-    function logActivity(){
-        const today = new Date().toISOString().split('T')[0];
-        activity[today] = (activity[today] || 0) + 1;
-        save();
-        renderHeatmap();
-    }
-
-    /* --- RENDERING --- */
+    // --- RENDER ---
     function render(){
+        // Sadece seçili dile ait kartları filtrele
+        const langItems = items.filter(i => i.sourceLang === activeLang);
+        
+        // Arama Filtresi
+        const q = $('#search').value.toLowerCase();
+        const filtered = langItems.filter(i => (i.term + i.meaning).toLowerCase().includes(q));
+        
+        // İstatistikler (Sadece aktif dil)
+        const dueCount = langItems.filter(i => (i.due || 0) <= now()).length;
+        $('#countDue').textContent = dueCount;
+        $('#countTotal').textContent = langItems.length;
+        
+        // Grid Render
         const grid = $('#grid');
         grid.innerHTML = "";
         
-        // Advanced Search Parsing
-        const qRaw = $('#search').value.toLowerCase();
-        let qTag = null, qLang = null, qText = qRaw;
-        
-        // Parse "lang:EN" or "#tag"
-        if(qRaw.includes('lang:')){ const p = qRaw.split('lang:'); qText = p[0].trim(); qLang = p[1].split(' ')[0].toUpperCase(); }
-        if(qRaw.includes('#')){ const p = qRaw.split('#'); qText = p[0].trim(); qTag = p[1].split(' ')[0]; }
-
-        const stFilter = $('#statusFilter').value;
-        const lFilter = $('#levelFilter').value;
-        const sType = $('#sort').value;
-
-        let filtered = items.filter(it => {
-            // Text Search
-            const hay = (it.term+" "+it.meaning+" "+it.example+" "+it.tags.join(" ")).toLowerCase();
-            if(!hay.includes(qText)) return false;
-            
-            // Advanced Filters
-            if(qLang && it.sourceLang !== qLang) return false;
-            if(qTag && !it.tags.some(t=>t.toLowerCase().includes(qTag))) return false;
-            
-            // Dropdown Filters
-            if(stFilter === "DUE" && it.srs.due > now()) return false;
-            if(stFilter !== "ALL" && stFilter !== "DUE" && it.status !== stFilter) return false;
-            if(lFilter !== "ALL" && it.level !== lFilter) return false;
-            
-            return true;
-        });
-
-        // Sorting
-        if(sType === 'due') filtered.sort((a,b) => a.srs.due - b.srs.due);
-        else if(sType === 'date') filtered.sort((a,b) => b.createdAt - a.createdAt);
-        else if(sType === 'az') filtered.sort((a,b) => a.term.localeCompare(b.term));
-
-        // Empty State
-        if(filtered.length === 0) {
-            grid.innerHTML = `<div style="text-align:center; padding:40px; color:var(--muted); grid-column:1/-1;">Kayıt bulunamadı. <br>Hemen <b>+</b> butonuna bas.</div>`;
+        if(filtered.length === 0){
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--muted); padding:40px">
+                Bu dilde kart yok.<br>+ butonu ile ekle.
+            </div>`;
             return;
         }
 
+        // Due önce, sonra yeni
+        filtered.sort((a,b) => (a.due||0) - (b.due||0));
+
         filtered.forEach(it => {
-            const isDue = it.srs.due <= now();
+            const isDue = (it.due || 0) <= now();
             const el = document.createElement('div');
-            el.className = `card ${selectedIds.has(it.id) ? 'selected' : ''}`;
-            el.dataset.id = it.id;
-            
-            // Resim Alanı
-            const imgHtml = it.imgUrl ? `<img src="${it.imgUrl}" class="card-img show" alt="img" onerror="this.style.display='none'">` : '';
-
-            // Status Badge Logic
-            let statusBadge = '';
-            if(isDue) statusBadge = `<span class="badge" style="color:var(--warn)">Due</span>`;
-            else if(it.status === 'MASTERED') statusBadge = `<span class="badge" style="color:var(--accent2)">Mastered</span>`;
-
+            el.className = 'card';
             el.innerHTML = `
-                <div class="check-overlay"></div>
                 <div class="cardFlipWrap">
                     <div class="cardFlip">
                         <div class="face front">
                             <div class="meta">
-                                <span class="badge">${escapeHtml(it.level)} • ${escapeHtml(it.sourceLang)}</span>
-                                <div class="controls-row">
-                                    <button class="sound-btn" data-act="speak" data-txt="${escapeHtml(it.term)}" data-lang="${it.sourceLang}">🔊</button>
-                                    <div class="star ${it.fav?'on':''}">★</div>
-                                </div>
+                                <span class="badge" style="${isDue ? 'color:var(--warn)' : ''}">${isDue ? 'TEKRAR' : it.level || 'KELİME'}</span>
+                                <button class="sound-btn" onclick="event.stopPropagation(); speak('${it.term}', '${it.sourceLang}')">🔊</button>
                             </div>
-                            ${imgHtml}
-                            <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
-                                <div class="term">${escapeHtml(it.term)}</div>
-                                <div class="example">${escapeHtml(it.example)}</div>
-                            </div>
-                            <div class="tags" style="display:flex; gap:5px; flex-wrap:wrap">
-                                ${statusBadge}
-                                ${(it.tags||[]).map(t=>`<span class="badge" style="font-weight:400">#${t}</span>`).join('')}
-                            </div>
+                            ${it.img ? `<img src="${it.img}" style="width:100%; height:100px; object-fit:cover; border-radius:8px; margin-bottom:10px">` : ''}
+                            <div class="term">${it.term}</div>
+                            <div class="example">${it.example || ''}</div>
                         </div>
                         <div class="face back">
-                            <div class="meta">
-                                <span class="badge">Anlam</span>
-                                <button class="sound-btn" data-act="speak" data-txt="${escapeHtml(it.meaning)}" data-lang="${it.meaningLang}">🔊</button>
-                            </div>
-                            <div class="term" style="flex:1">${escapeHtml(it.meaning)}</div>
+                            <div class="meta"><span class="badge">ANLAM</span></div>
+                            <div class="term">${it.meaning}</div>
                             <div class="actions">
-                                <button class="btn" data-act="flip">↺ Çevir</button>
-                                <button class="btn" data-act="edit">✎ Düzenle</button>
+                                <button class="btn text-btn" onclick="event.stopPropagation(); openEdit('${it.id}')">Düzenle</button>
+                                <button class="btn text-btn" onclick="event.stopPropagation(); flipCard(this)">Dön</button>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
-            
-            el.addEventListener('click', (e) => handleCardClick(e, el, it));
-            initSwipe(el, it.id);
+            el.onclick = () => el.querySelector('.cardFlip').classList.toggle('flipped');
             grid.appendChild(el);
         });
         
-        // Update Count
-        $('#selCount').textContent = `${selectedIds.size} Seçildi`;
-        $('#bulkBar').classList.toggle('active', selectionMode);
-        document.body.classList.toggle('selection-mode', selectionMode);
-        $('#selectModeBtn').classList.toggle('primary', selectionMode);
+        // Kart Yükseklikleri
+        setTimeout(()=> {
+             document.querySelectorAll('.cardFlipWrap').forEach(w => {
+                 const h = Math.max(w.querySelector('.front').scrollHeight, w.querySelector('.back').scrollHeight);
+                 w.style.height = (h < 200 ? 200 : h) + 'px';
+             });
+        }, 50);
+    }
+
+    function flipCard(btn){
+        btn.closest('.cardFlip').classList.toggle('flipped');
+    }
+
+    // --- CRUD ---
+    let editId = null;
+
+    function openAdd(){
+        editId = null;
+        $('#modalTitle').textContent = "Yeni Kart";
+        $('#lblSource').textContent = activeLang;
+        $('#lblTarget').textContent = userLang;
+        $('#term').value = ""; $('#meaning').value = ""; $('#example').value = "";
+        $('#imgUrl').value = ""; $('#tags').value = ""; $('#level').value = "B1";
+        $('#deleteBtn').style.display = 'none';
+        $('#modal').showModal();
+        setTimeout(()=>$('#term').focus(), 100);
+    }
+
+    function openEdit(id){
+        editId = id;
+        const it = items.find(i => i.id === id);
+        $('#modalTitle').textContent = "Düzenle";
+        $('#term').value = it.term; $('#meaning').value = it.meaning; 
+        $('#example').value = it.example; $('#imgUrl').value = it.img || "";
+        $('#deleteBtn').style.display = 'block';
+        $('#modal').showModal();
+    }
+
+    $('#saveBtn').onclick = () => {
+        const term = $('#term').value.trim();
+        const meaning = $('#meaning').value.trim();
+        if(!term) return toast("Kelime gerekli");
+
+        const data = {
+            term, meaning, 
+            example: $('#example').value, 
+            img: $('#imgUrl').value,
+            level: $('#level').value,
+            tags: $('#tags').value,
+            sourceLang: activeLang,
+            meaningLang: userLang,
+            due: now() // Yeni kart hemen çalışılabilir
+        };
+
+        if(editId){
+            const idx = items.findIndex(i=>i.id === editId);
+            items[idx] = { ...items[idx], ...data };
+        } else {
+            items.push({ id: uuid(), ...data, interval: 0, ease: 2.5 });
+        }
+        save();
+        $('#modal').close();
+    };
+
+    $('#deleteBtn').onclick = () => {
+        if(confirm("Silmek istiyor musun?")){
+            items = items.filter(i => i.id !== editId);
+            save(); $('#modal').close();
+        }
+    };
+
+    // --- QUICK ADD (EXCEL) ---
+    function openSettings(){ $('#settingsModal').showModal(); }
+    
+    function quickAdd(){
+        const txt = $('#quickText').value;
+        if(!txt) return;
+        const lines = txt.split('\n');
+        let count = 0;
+        lines.forEach(line => {
+            // Ayırıcı: " - " veya Tab
+            let parts = line.split(' - ');
+            if(parts.length < 2) parts = line.split('\t');
+            if(parts.length >= 2){
+                items.push({
+                    id: uuid(), term: parts[0].trim(), meaning: parts[1].trim(),
+                    sourceLang: activeLang, meaningLang: userLang,
+                    due: now(), interval: 0, ease: 2.5
+                });
+                count++;
+            }
+        });
+        save();
+        $('#settingsModal').close();
+        $('#quickText').value = "";
+        toast(`${count} kart eklendi`);
+    }
+
+    // --- QUIZ ---
+    let quizPool = [];
+    let quizIdx = 0;
+
+    function startQuizCheck(){
+        // Sadece aktif dilden, zamanı gelmiş (DUE) kartları al
+        quizPool = items.filter(i => i.sourceLang === activeLang && (i.due || 0) <= now());
+        if(quizPool.length === 0){
+            // Hiç due yoksa rastgele 10 tane al
+            quizPool = items.filter(i => i.sourceLang === activeLang).sort(()=>Math.random()-0.5).slice(0, 10);
+            if(quizPool.length === 0) return toast("Quiz için kart yok.");
+            toast("Tekrar yok, rastgele pratik!");
+        } else {
+            // Karıştır
+            quizPool.sort(()=>Math.random()-0.5);
+        }
         
-        requestAnimationFrame(() => {
-            $$('.cardFlipWrap').forEach(w => {
-                 const f = w.querySelector('.front').scrollHeight;
-                 const b = w.querySelector('.back').scrollHeight;
-                 w.style.height = Math.max(f,b,240) + 'px';
-            });
+        quizIdx = 0;
+        $('#quizOverlay').classList.add('on');
+        showQuestion();
+    }
+
+    function showQuestion(){
+        if(quizIdx >= quizPool.length){
+            closeQuiz();
+            return toast("Quiz Bitti! 🎉");
+        }
+        const q = quizPool[quizIdx];
+        $('#qText').textContent = q.term;
+        $('#qBadge').textContent = q.sourceLang;
+        
+        // Şıklar (3 Yanlış + 1 Doğru)
+        let others = items.filter(i => i.id !== q.id && i.sourceLang === activeLang).sort(()=>Math.random()-0.5).slice(0, 3);
+        let opts = [...others, q].sort(()=>Math.random()-0.5);
+        
+        const area = $('#quizOptions');
+        area.innerHTML = "";
+        opts.forEach(o => {
+            const btn = document.createElement('div');
+            btn.className = 'opt';
+            btn.textContent = o.meaning;
+            btn.onclick = () => {
+                if(btn.disabled) return;
+                // Kilit
+                Array.from(area.children).forEach(b => b.disabled = true);
+                
+                const correct = o.id === q.id;
+                btn.classList.add(correct ? 'correct' : 'wrong');
+                
+                if(correct){
+                    // SRS Mantığı (Doğru bildi, arayı aç)
+                    let ivl = q.interval === 0 ? 1 : Math.round(q.interval * 2.5);
+                    q.interval = ivl;
+                    q.due = now() + (ivl * 24 * 60 * 60 * 1000);
+                    setTimeout(() => { quizIdx++; showQuestion(); }, 800);
+                } else {
+                    // Bilemedi, sıfırla
+                    q.interval = 0;
+                    q.due = now(); // Hemen tekrar sor
+                    // Doğruyu göster
+                    Array.from(area.children).forEach(b => {
+                        if(b.textContent === q.meaning) b.classList.add('correct');
+                    });
+                    setTimeout(() => { quizIdx++; showQuestion(); }, 1500);
+                }
+                save(); // Güncelle
+            };
+            area.appendChild(btn);
         });
     }
 
-    function handleCardClick(e, el, it){
-        // Special button clicks
-        if(e.target.dataset.act === 'speak'){
-            e.stopPropagation();
-            speak(e.target.dataset.txt, e.target.dataset.lang);
-            return;
-        }
-        if(e.target.classList.contains('star')){
-            e.stopPropagation();
-            it.fav = !it.fav; save();
-            e.target.classList.toggle('on');
-            return;
-        }
+    function closeQuiz(){ $('#quizOverlay').classList.remove('on'); render(); }
+    function speakCurrent(){ if(quizPool[quizIdx]) speak(quizPool[quizIdx].term, activeLang); }
 
-        // Selection Logic
-        if(selectionMode){
-            if(selectedIds.has(it.id)) selectedIds.delete(it.id);
-            else selectedIds.add(it.id);
-            el.classList.toggle('selected');
-            $('#selCount').textContent = `${selectedIds.size} Seçildi`;
-            return;
-        }
-
-        // Flip / Edit Logic
-        const act = e.target.dataset.act;
-        if(act === 'edit'){
-            e.stopPropagation();
-            openEdit(it.id);
-        } else {
-            // Default: Flip
-            el.querySelector('.cardFlip').classList.toggle('flipped');
-        }
-    }
-
-    /* --- SWIPE --- */
-    function initSwipe(el, id){
-        let sx=0, sy=0, st=0;
-        el.addEventListener('touchstart', e => { sx=e.touches[0].clientX; sy=e.touches[0].clientY; st=now(); }, {passive:true});
-        el.addEventListener('touchend', e => {
-            if(selectionMode) return; // Disable swipe in selection mode
-            const dx = e.changedTouches[0].clientX - sx;
-            const dy = e.changedTouches[0].clientY - sy;
-            if(now()-st > 500 || Math.abs(dy) > 50) return; // Scroll protection
-            
-            if(dx > 80) { // Right Swipe (Fav)
-                const it = items.find(i=>i.id===id);
-                if(it) { it.fav = !it.fav; save(); render(); toast(it.fav ? "Favorilendi" : "Favori kalktı"); }
-            }
-            else if(dx < -80) { // Left Swipe (Delete confirm)
-                if(confirm("Silmek istiyor musun?")) {
-                    items = items.filter(i=>i.id!==id); save(); render(); toast("Silindi");
-                }
-            }
-        }, {passive:true});
-    }
-
-    /* --- HEATMAP --- */
-    function renderHeatmap(){
-        const grid = $('#heatmapGrid');
-        grid.innerHTML = "";
-        const today = new Date();
-        let streak = 0;
-        let streakBroken = false;
-
-        // Last 7 days
-        for(let i=6; i>=0; i--){
-            const d = new Date(today);
-            d.setDate(d.getDate() - i);
-            const k = d.toISOString().split('T')[0];
-            const count = activity[k] || 0;
-            
-            if(count > 0 && !streakBroken) streak++;
-            else if(i !== 0) streakBroken = true;
-
-            const box = document.createElement('div');
-            box.className = `day-box ${count > 0 ? 'active' : ''}`;
-            const days = ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'];
-            box.innerHTML = `<span class="d-label">${days[d.getDay()]}</span>`;
-            grid.appendChild(box);
-        }
-        $('#streakCount').textContent = `Zincir: ${streak} Gün`;
-    }
-
-    /* --- FEATURES: TTS (Seslendirme) --- */
-    function speak(text, langCode){
-        if(!window.speechSynthesis) return toast("Cihaz desteklemiyor");
+    // --- UTILS ---
+    function speak(txt, lang){
+        if(!window.speechSynthesis) return;
         window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
-        // Dil kodu eşleştirme
-        const map = { 'EN':'en-US', 'TR':'tr-TR', 'DE':'de-DE', 'FR':'fr-FR', 'ES':'es-ES', 'IT':'it-IT', 'RU':'ru-RU' };
-        u.lang = map[langCode] || langCode;
-        u.rate = 0.9;
+        const u = new SpeechSynthesisUtterance(txt);
+        // Basit dil eşleme
+        const m = {'EN':'en-US','DE':'de-DE','TR':'tr-TR','FR':'fr-FR','ES':'es-ES'};
+        u.lang = m[lang] || lang;
         window.speechSynthesis.speak(u);
     }
 
-    /* --- FEATURES: BACKUP & EXCEL --- */
-    function exportData(){
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({items, activity, v:1}));
-        const el = document.createElement('a');
-        el.setAttribute("href", dataStr);
-        el.setAttribute("download", "vocab_backup_" + new Date().toISOString().slice(0,10) + ".json");
-        document.body.appendChild(el);
-        el.click();
-        el.remove();
-    }
-
-    function importData(input){
-        const file = input.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const data = JSON.parse(e.target.result);
-                if(data.items) items = data.items.map(patchItem);
-                if(data.activity) activity = data.activity;
-                save();
-                toast("Yedek başarıyla yüklendi! 🎉");
-                $('#settingsModal').close();
-                render();
-            } catch(err){ toast("Hatalı dosya formatı!"); }
-        };
-        reader.readAsText(file);
-    }
-
-    /* --- FEATURES: BULK ACTIONS --- */
-    function toggleSelectMode(){
-        selectionMode = !selectionMode;
-        selectedIds.clear();
-        render();
-    }
-    
-    function bulkDelete(){
-        if(!confirm(`${selectedIds.size} kartı silmek istiyor musun?`)) return;
-        items = items.filter(i => !selectedIds.has(i.id));
-        toggleSelectMode();
-        save();
-        toast("Seçilenler silindi");
-    }
-    
-    function bulkStatus(st){
-        let count = 0;
-        items.forEach(i => { 
-            if(selectedIds.has(i.id)) { i.status = st; if(st==='NEW') i.srs = {due:now(), interval:0, ease:2.5}; count++; } 
-        });
-        toggleSelectMode();
-        save();
-        toast(`${count} kart güncellendi`);
-    }
-
-    /* --- CRUD OPERATIONS --- */
-    $('#addBtn').onclick = () => { editingId=null; openModal(); };
-    $('#quickAddBtn').onclick = () => $('#quickModal').showModal();
-    $('#quickSaveBtn').onclick = () => {
-        const lines = $('#quickText').value.split('\n');
-        let added=0;
-        lines.forEach(l => {
-            // Excel (Tab) or Dash separator
-            let p = l.split(/\t| - /); 
-            if(p.length < 2) p = l.split(','); // CSV fallback
-            
-            if(p.length >= 2){
-                // Format: term, meaning, level, tags
-                items.push(createItem(p[0], p[1], p[2], {tags: p[3]?p[3].split(','):[]}));
-                added++;
-            }
-        });
-        save(); render(); $('#quickModal').close(); toast(`${added} Kelime Eklendi`);
-    };
-
-    function openModal(id){
-        // Reset inputs
-        $('#term').value = ""; $('#meaning').value = ""; $('#example').value = ""; $('#imgUrl').value = ""; $('#level').value = "B1"; $('#tags').value = "";
-        
-        if(id){
-            editingId = id;
-            const it = items.find(i=>i.id===id);
-            $('#term').value = it.term; $('#meaning').value = it.meaning; $('#example').value = it.example;
-            $('#imgUrl').value = it.imgUrl||""; $('#level').value = it.level; $('#tags').value = it.tags.join(",");
-            $('#sourceLang').value = it.sourceLang; $('#meaningLang').value = it.meaningLang;
-            $('#modalTitle').textContent = "Düzenle";
-            $('#deleteBtn').style.display='block';
-        } else { 
-            editingId = null; 
-            $('#modalTitle').textContent = "Yeni Ekle";
-            $('#deleteBtn').style.display='none'; 
-        }
-        $('#modal').showModal();
-    }
-    
-    function openEdit(id){ openModal(id); }
-
-    $('#saveBtn').onclick = () => {
-        const data = {
-            term: $('#term').value, meaning: $('#meaning').value, example: $('#example').value,
-            imgUrl: $('#imgUrl').value, level: $('#level').value, tags: $('#tags').value.split(',').filter(Boolean).map(t=>t.trim()),
-            sourceLang: $('#sourceLang').value, meaningLang: $('#meaningLang').value
-        };
-        if(!data.term) return toast("Kelime boş olamaz!");
-        
-        if(editingId){
-            const idx = items.findIndex(i=>i.id===editingId);
-            items[idx] = { ...items[idx], ...data, updatedAt: now() };
-        } else {
-            items.push(createItem(data.term, data.meaning, data.level, data));
-        }
-        save(); render(); $('#modal').close();
-    };
-    
-    $('#deleteBtn').onclick = () => {
-        if(confirm("Emin misin?")) {
-            items = items.filter(i=>i.id!==editingId);
-            save(); render(); $('#modal').close();
-        }
-    };
-
-    function createItem(term, meaning, level, extras={}){
-        return {
-            id: makeId(), term: clean(term), meaning: clean(meaning), level: clean(level)||"B1", example: clean(extras.example),
-            tags: extras.tags||[], imgUrl: clean(extras.imgUrl), sourceLang: extras.sourceLang||"EN", meaningLang: extras.meaningLang||"TR",
-            status: "NEW", fav: false, createdAt: now(), updatedAt: now(),
-            srs: { due: now(), interval: 0, ease: 2.5 }
-        };
-    }
-
-    /* --- QUIZ LOGIC --- */
-    let quizPool=[], quizIdx=0, quizScore=0, quizTimer=null, isTimeAttack=false;
-
-    $('#quizBtn').onclick = () => $('#quizSetupModal').showModal();
-    
-    function startQuiz(timeAttack){
-        isTimeAttack = timeAttack;
-        const scope = $('#quizScope').value;
-        quizPool = items.filter(i => scope === "DUE" ? i.srs.due <= now() : true)
-                        .sort(()=>Math.random()-0.5).slice(0, 20);
-        
-        if(!quizPool.length) return toast("Bu filtrede kelime yok!");
-        
-        $('#quizSetupModal').close();
-        $('#quizOverlay').classList.add('on');
-        $('#quizCardArea').style.display = 'flex';
-        $('#quizResult').style.display = 'none';
-        
-        quizIdx = 0; quizScore = 0;
-        
-        if(isTimeAttack) startTimeAttack();
-        else $('#timerBadge').style.display = 'none';
-        
-        nextQuestion();
-    }
-
-    function startTimeAttack(){
-        $('#timerBadge').style.display = 'block';
-        $('#timerFill').style.width = '100%';
-        let tl = 60;
-        $('#timeLeft').textContent = tl;
-        
-        if(quizTimer) clearInterval(quizTimer);
-        quizTimer = setInterval(() => {
-            tl--;
-            $('#timeLeft').textContent = tl;
-            $('#timerFill').style.width = (tl/60*100) + '%';
-            if(tl <= 0) endQuiz();
-        }, 1000);
-    }
-
-    function nextQuestion(){
-        if(quizIdx >= quizPool.length) return endQuiz();
-        
-        const q = quizPool[quizIdx];
-        const optsDiv = $('#quizOptions');
-        $('#qText').textContent = q.term;
-        $('#qLang').textContent = q.sourceLang;
-        
-        // Generate MCQ options
-        let others = items.filter(i => i.id !== q.id).sort(()=>Math.random()-0.5).slice(0,3);
-        let choices = [...others, q].sort(()=>Math.random()-0.5);
-        
-        optsDiv.innerHTML = "";
-        choices.forEach(c => {
-            const btn = document.createElement('button');
-            btn.className = 'btn';
-            btn.style.textAlign = 'left';
-            btn.style.padding = '16px';
-            btn.textContent = c.meaning;
-            btn.onclick = () => {
-                const correct = c.id === q.id;
-                btn.className = correct ? 'btn good' : 'btn danger';
-                if(correct) {
-                    quizScore++;
-                    if(!isTimeAttack) speak(q.term, q.sourceLang);
-                    // SRS: Increase interval
-                    q.srs.interval = q.srs.interval === 0 ? 1 : Math.round(q.srs.interval * q.srs.ease);
-                    q.srs.due = now() + (q.srs.interval * DAY);
-                    q.status = q.srs.interval > 20 ? 'MASTERED' : 'LEARNING';
-                    logActivity();
-                } else {
-                    q.srs.interval = 0;
-                    q.srs.due = now();
-                    q.status = 'LEARNING';
-                }
-                save();
-                // Delay for next q
-                setTimeout(() => { quizIdx++; nextQuestion(); }, 800);
-            };
-            optsDiv.appendChild(btn);
-        });
-    }
-
-    function endQuiz(){
-        if(quizTimer) clearInterval(quizTimer);
-        $('#quizCardArea').style.display = 'none';
-        $('#quizResult').style.display = 'flex';
-        $('#quizFinalScore').textContent = `Toplam Soru: ${quizPool.length} | Doğru: ${quizScore}`;
-        if(isTimeAttack) $('#quizFinalScore').textContent += " (Zaman Doldu!)";
-    }
-    
-    function closeQuiz(){
-        $('#quizOverlay').classList.remove('on');
-        if(quizTimer) clearInterval(quizTimer);
-        render(); // Refresh grid due to SRS changes
-    }
-    
-    function speakCurrentQuiz(){ if(quizPool[quizIdx]) speak(quizPool[quizIdx].term, quizPool[quizIdx].sourceLang); }
-
-    /* --- THEME & SETUP --- */
-    $('#settingsBtn').onclick = () => $('#settingsModal').showModal();
-    
-    function applyTheme(t){
-        document.body.setAttribute('data-theme', t);
-        localStorage.setItem(KEY_THEME, t);
-        $('#themeSelect').value = t;
-        // Meta theme color update
-        const cols = {'dark':'#0b0b10', 'emerald':'#07110c', 'light':'#f6f7fb'};
-        $('meta[name="theme-color"]').setAttribute('content', cols[t]);
-    }
-    
-    function renderLangSelects(){
-        const h = langs.map(l=>`<option value="${l.code}">${l.name}</option>`).join('');
-        $('#sourceLang').innerHTML = h; $('#meaningLang').innerHTML = h; $('#meaningLang').value="TR";
-    }
-    
     function toast(msg){
         const t = $('#toast'); t.textContent = msg; t.classList.add('show');
         setTimeout(()=>t.classList.remove('show'), 2000);
     }
+
+    function exportData(){
+        const str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(items));
+        const a = document.createElement('a');
+        a.href = str; a.download = 'vocab_backup.json';
+        document.body.appendChild(a); a.click(); a.remove();
+    }
     
-    // Start
+    function importData(input){
+        const f = input.files[0];
+        if(!f) return;
+        const r = new FileReader();
+        r.onload = e => {
+            try{ items = JSON.parse(e.target.result); save(); toast("Yüklendi"); $('#settingsModal').close(); }
+            catch(x){ toast("Hata"); }
+        };
+        r.readAsText(f);
+    }
+
     init();
   </script>
 </body>
