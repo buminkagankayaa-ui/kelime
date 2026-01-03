@@ -1,658 +1,803 @@
 <!doctype html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-  <title>Vocab Pocket Ultimate</title>
-
-  <meta name="theme-color" content="#0b0b10" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-
-  <style>
-    :root {
-      --bg: #0b0b10; --panel: #16161e; --card: #1c1c26; 
-      --line: #2e2e3e; --text: #e2e2e8; --muted: #8c8c9a;
-      --accent: #7c3aed; --accent2: #10b981; --danger: #ef4444; --warn: #f59e0b;
-      --nav-height: 64px;
-      --radius: 16px;
-      --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --font-read: "Georgia", serif;
-    }
-    body[data-theme="light"] {
-      --bg: #f4f4f5; --panel: #ffffff; --card: #ffffff;
-      --line: #e4e4e7; --text: #18181b; --muted: #71717a;
-      --accent: #6366f1; --accent2: #10b981;
-    }
-
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body {
-      margin: 0; background: var(--bg); color: var(--text);
-      font-family: var(--font-ui);
-      display: flex; flex-direction: column; height: 100vh;
-      overflow: hidden;
-    }
-
-    /* --- LAYOUT --- */
-    main { flex: 1; overflow-y: auto; position: relative; padding-bottom: 80px; }
-    .view { display: none; padding: 16px; animation: fadeIn 0.2s; }
-    .view.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* --- NAVIGATION --- */
-    .nav-bar {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      height: var(--nav-height); background: var(--panel);
-      border-top: 1px solid var(--line);
-      display: flex; justify-content: space-around; align-items: center;
-      padding-bottom: env(safe-area-inset-bottom); z-index: 50;
-    }
-    .nav-item {
-      background: none; border: none; color: var(--muted);
-      font-size: 10px; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 4px;
-      flex: 1; padding: 8px 0; cursor: pointer;
-    }
-    .nav-item.active { color: var(--accent); }
-    .nav-icon { font-size: 22px; margin-bottom: 2px; }
-
-    /* --- HEADER --- */
-    .header {
-      padding: 16px; background: var(--panel); border-bottom: 1px solid var(--line);
-      position: sticky; top: 0; z-index: 40; display: flex; justify-content: space-between; align-items: center;
-    }
-    .header h1 { margin: 0; font-size: 20px; font-weight: 800; }
-    .header-btns { display: flex; gap: 10px; }
-
-    /* --- COMMON COMPONENTS --- */
-    .btn {
-      padding: 10px 16px; border-radius: 12px; border: 1px solid var(--line);
-      background: rgba(255,255,255,0.05); color: var(--text); font-weight: 600; font-size: 13px;
-      cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    }
-    .btn:active { transform: scale(0.96); }
-    .btn.primary { background: var(--accent); border-color: transparent; color: white; }
-    .btn.ghost { background: transparent; border: none; color: var(--muted); }
-    .btn.sm { padding: 6px 10px; font-size: 12px; }
-
-    .input {
-      width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--line);
-      border-radius: 12px; color: var(--text); outline: none; font-size: 16px; margin-bottom: 10px;
-    }
-
-    /* --- DASHBOARD (HOME) --- */
-    .dash-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-    .stat-card { background: var(--card); padding: 16px; border-radius: var(--radius); border: 1px solid var(--line); }
-    .stat-val { font-size: 24px; font-weight: 900; }
-    .stat-label { font-size: 12px; color: var(--muted); }
-
-    .heatmap { display: flex; gap: 4px; justify-content: space-between; margin-top: 10px; }
-    .day-box { flex: 1; aspect-ratio: 1; background: rgba(255,255,255,0.05); border-radius: 4px; position: relative; }
-    .day-box.fill { background: var(--accent2); }
-    .day-label { font-size: 9px; color: var(--muted); text-align: center; margin-top: 4px; }
-
-    /* --- LIBRARY & READER --- */
-    .book-list { display: grid; gap: 12px; }
-    .book-item {
-      background: var(--card); padding: 16px; border-radius: var(--radius);
-      display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--line);
-    }
-    .lang-tag { font-size: 10px; font-weight: bold; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin-right: 6px; }
-
-    .reader-area { 
-        font-family: var(--font-read); font-size: 19px; line-height: 1.7; 
-        text-align: justify; padding-bottom: 40px; 
-    }
-    .r-word { cursor: pointer; border-radius: 4px; }
-    .r-word:hover { background: rgba(124, 58, 237, 0.2); }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <title>VocabMaster Pro</title>
     
-    .page-nav { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px solid var(--line); margin-top: 20px; }
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" id="manifest-placeholder">
 
-    /* --- CARDS --- */
-    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); gap: 12px; }
-    .flashcard {
-      background: var(--card); padding: 16px; border-radius: var(--radius); border: 1px solid var(--line); position: relative;
-    }
-    .fc-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
-    .fc-term { font-size: 20px; font-weight: 800; color: var(--text); }
-    .fc-meaning { font-size: 16px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); color: var(--muted); }
-    
-    /* --- QUIZ OVERLAY --- */
-    .quiz-overlay {
-      position: fixed; inset: 0; background: var(--bg); z-index: 100;
-      display: flex; flex-direction: column; padding: 20px;
-      transform: translateY(100%); transition: transform 0.3s;
-    }
-    .quiz-overlay.open { transform: translateY(0); }
-    .timer-bar { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; margin-top: 10px; }
-    .timer-fill { height: 100%; background: var(--accent); width: 100%; transition: width 1s linear; }
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary: #6366f1; --primary-dark: #4338ca;
+            --secondary: #10b981; --secondary-dark: #059669;
+            --danger: #ef4444; --warning: #f59e0b;
+            --bg-body: #0f172a; --bg-panel: #1e293b; --bg-card: #334155;
+            --text-main: #f8fafc; --text-muted: #94a3b8;
+            --border: #475569;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+            --font-ui: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+            --font-read: "Merriweather", "Georgia", serif;
+            --header-h: 60px; --nav-h: 70px;
+            --radius: 16px;
+        }
 
-    /* --- BOTTOM SHEET (Word Add) --- */
-    .sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 80; display: none; }
-    .sheet-bg.open { display: block; }
-    .sheet {
-      position: fixed; bottom: 0; left: 0; right: 0; background: var(--panel);
-      border-radius: 20px 20px 0 0; padding: 20px; z-index: 90;
-      transform: translateY(100%); transition: transform 0.3s;
-    }
-    .sheet.open { transform: translateY(0); }
-    
-    .selection-popup {
-        position: absolute; background: var(--accent); color: white; padding: 8px 12px;
-        border-radius: 8px; font-size: 12px; font-weight: bold; pointer-events: none;
-        opacity: 0; transition: opacity 0.2s; z-index: 70;
-    }
-    .selection-popup.show { opacity: 1; pointer-events: auto; }
+        [data-theme="light"] {
+            --bg-body: #f1f5f9; --bg-panel: #ffffff; --bg-card: #e2e8f0;
+            --text-main: #0f172a; --text-muted: #64748b;
+            --border: #cbd5e1;
+        }
 
-    .toast {
-      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-      background: var(--text); color: var(--bg); padding: 8px 16px;
-      border-radius: 20px; font-size: 12px; font-weight: bold; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 200;
-    }
-    .toast.show { opacity: 1; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; }
+        body {
+            background-color: var(--bg-body); color: var(--text-main);
+            font-family: var(--font-ui);
+            display: flex; flex-direction: column;
+        }
 
-  </style>
-</head>
-<body data-theme="dark">
+        /* --- TYPOGRAPHY & UTILS --- */
+        h1, h2, h3, h4, p { margin: 0; }
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .center { align-items: center; justify-content: center; }
+        .gap-2 { gap: 0.5rem; } .gap-4 { gap: 1rem; }
+        .w-full { width: 100%; }
+        .text-sm { font-size: 0.875rem; } .text-xs { font-size: 0.75rem; }
+        .font-bold { font-weight: 700; }
+        .text-muted { color: var(--text-muted); }
+        .ellipsis { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  <header class="header">
-    <h1 id="headerTitle">Ana Sayfa</h1>
-    <div class="header-btns">
-      <button class="btn ghost sm" onclick="toggleTheme()">🌗</button>
-      <button class="btn ghost sm" onclick="exportData()">💾</button>
-    </div>
-  </header>
+        /* --- ICONS (SVG Containers) --- */
+        .icon { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .icon-sm { width: 18px; height: 18px; }
 
-  <main>
-    <div id="view-home" class="view active">
-       <div class="dash-stats">
-           <div class="stat-card">
-               <div class="stat-val" id="d-total">0</div>
-               <div class="stat-label">Toplam Kelime</div>
-           </div>
-           <div class="stat-card">
-               <div class="stat-val" id="d-due" style="color:var(--warn)">0</div>
-               <div class="stat-label">Bugün Tekrar</div>
-           </div>
-       </div>
+        /* --- COMPONENT: BUTTONS --- */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer;
+            transition: all 0.2s active; border: 1px solid var(--border);
+            background: var(--bg-panel); color: var(--text-main); user-select: none;
+        }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: var(--primary); border-color: var(--primary); color: white; }
+        .btn-success { background: var(--secondary); border-color: var(--secondary); color: white; }
+        .btn-danger { background: var(--danger); border-color: var(--danger); color: white; }
+        .btn-ghost { background: transparent; border-color: transparent; color: var(--text-muted); }
+        .btn-icon { padding: 8px; border-radius: 50%; }
 
-       <div class="stat-card">
-           <div class="stat-label">Son 7 Gün Aktivitesi</div>
-           <div class="heatmap" id="heatmap"></div>
-       </div>
+        /* --- COMPONENT: INPUTS --- */
+        .input-group { margin-bottom: 1rem; }
+        .label { display: block; font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .input, .textarea, .select {
+            width: 100%; padding: 12px; border-radius: 12px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            color: var(--text-main); font-size: 1rem; outline: none;
+            transition: border-color 0.2s;
+        }
+        .input:focus { border-color: var(--primary); }
 
-       <div style="margin-top:20px">
-           <button class="btn primary" style="width:100%; padding:16px" onclick="startQuiz(false)">Hızlı Pratik Başlat (Quiz)</button>
-           <button class="btn" style="width:100%; padding:16px; margin-top:10px" onclick="startQuiz(true)">Zaman Yarışı (60sn) ⏱️</button>
-       </div>
-    </div>
+        /* --- LAYOUT: HEADER --- */
+        #app-header {
+            height: var(--header-h); background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            padding: 0 16px; display: flex; align-items: center; justify-content: space-between;
+            z-index: 50; flex-shrink: 0;
+        }
+        .brand { font-size: 1.25rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-    <div id="view-library" class="view">
-       <div id="library-list" class="book-list"></div>
-       <button class="btn primary" style="width:100%; margin-top:20px" onclick="$('#addBookModal').classList.add('open'); $('.sheet-bg').classList.add('open')">+ Yeni Kitap / Metin Ekle</button>
-    </div>
+        /* --- LAYOUT: MAIN VIEW --- */
+        #main-container {
+            flex: 1; position: relative; overflow: hidden;
+        }
+        .view-section {
+            position: absolute; inset: 0; overflow-y: auto;
+            padding: 16px; padding-bottom: 100px; /* Nav spacing */
+            display: none; opacity: 0; transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .view-section.active { display: block; opacity: 1; transform: translateY(0); }
 
-    <div id="view-reader" class="view">
-       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid var(--line); padding-bottom:10px;">
-           <button class="btn ghost sm" onclick="nav('library')">← Kitaplar</button>
-           <span style="font-size:12px; color:var(--muted)" id="page-indicator">1/10</span>
-           <button class="btn ghost sm" onclick="changeFontSize()">Aa</button>
-       </div>
-       <div id="reader-canvas" class="reader-area"></div>
-       <div class="page-nav">
-           <button class="btn ghost" onclick="changePage(-1)">Önceki</button>
-           <button class="btn ghost" onclick="changePage(1)">Sonraki</button>
-       </div>
-       <div id="selPopup" class="selection-popup" onclick="addSelection()">+ Karta Ekle</div>
-    </div>
+        /* --- LAYOUT: BOTTOM NAV --- */
+        #bottom-nav {
+            height: var(--nav-h); background: var(--bg-panel);
+            border-top: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-around;
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            color: var(--text-muted); background: none; border: none; font-size: 0.7rem; font-weight: 600;
+            flex: 1; padding: 8px 0; cursor: pointer;
+        }
+        .nav-item.active { color: var(--primary); }
+        .nav-item svg { transition: transform 0.2s; }
+        .nav-item.active svg { transform: translateY(-2px); }
 
-    <div id="view-cards" class="view">
-       <input class="input" id="search" placeholder="Kelime ara..." oninput="renderCards()">
-       <div style="display:flex; gap:8px; margin-bottom:15px; overflow-x:auto">
-           <button class="btn sm" onclick="filterCards('ALL')">Tümü</button>
-           <button class="btn sm" onclick="filterCards('NEW')">Yeni</button>
-           <button class="btn sm" onclick="filterCards('DUE')">Tekrar</button>
-       </div>
-       <div id="card-grid" class="card-grid"></div>
-    </div>
-  </main>
-
-  <nav class="nav-bar">
-    <button class="nav-item active" onclick="nav('home')" id="nav-home">
-      <span class="nav-icon">🏠</span> Ana Sayfa
-    </button>
-    <button class="nav-item" onclick="nav('library')" id="nav-library">
-      <span class="nav-icon">📚</span> Kütüphane
-    </button>
-    <button class="nav-item" onclick="nav('cards')" id="nav-cards">
-      <span class="nav-icon">🗂️</span> Kartlar
-    </button>
-  </nav>
-
-  <div class="sheet-bg" onclick="closeSheets()"></div>
-  
-  <div class="sheet" id="wordSheet">
-    <div style="display:flex; justify-content:space-between; align-items:center">
-        <h3 id="sheet-term" style="margin:0; color:var(--accent); font-size:24px;">Word</h3>
-        <div style="display:flex; gap:5px">
-             <button class="btn ghost sm" onclick="speakSheet()">🔊</button>
-             <a id="sheet-translate" href="#" target="_blank" class="btn ghost sm">🌍</a>
-        </div>
-    </div>
-    <div style="margin-top:15px">
-        <input class="input" id="sheet-meaning" placeholder="Anlamı nedir?">
-        <textarea class="input" id="sheet-example" rows="2" placeholder="Örnek cümle"></textarea>
-    </div>
-    <button class="btn primary" style="width:100%; margin-top:10px" onclick="saveCardFromSheet()">Kaydet</button>
-  </div>
-
-  <div class="sheet" id="addBookModal" style="height:80vh">
-      <h3>Yeni Metin Ekle</h3>
-      <input class="input" id="nb-title" placeholder="Başlık (Örn: Haber)">
-      <select class="input" id="nb-lang">
-          <option value="EN">İngilizce</option>
-          <option value="RU">Rusça</option>
-          <option value="DE">Almanca</option>
-      </select>
-      <textarea class="input" id="nb-content" style="height:200px" placeholder="Metni buraya yapıştır..."></textarea>
-      <button class="btn primary" style="width:100%" onclick="saveBook()">Ekle</button>
-  </div>
-
-  <div class="quiz-overlay" id="quizOverlay">
-      <div class="header" style="background:transparent; padding:0; margin-bottom:20px">
-          <h2 id="q-mode-title">Quiz</h2>
-          <button class="btn ghost" onclick="closeQuiz()">✕</button>
-      </div>
-      <div class="timer-bar" id="timerBar" style="display:none"><div class="timer-fill" id="timerFill"></div></div>
-      
-      <div id="quiz-card" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
-          <div id="q-lang" style="font-size:12px; font-weight:bold; color:var(--muted); margin-bottom:10px">EN</div>
-          <div id="q-word" style="font-size:36px; font-weight:900; margin-bottom:20px">Word</div>
-          <button class="btn ghost" onclick="speakQuiz()">🔊 Dinle</button>
-          
-          <div id="q-options" style="width:100%; max-width:400px; display:grid; gap:10px; margin-top:30px;">
-              </div>
-      </div>
-  </div>
-
-  <div class="toast" id="toast"></div>
-
-<script>
-/* ================== UTILS & STATE ================== */
-const $ = s => document.querySelector(s);
-const uuid = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
-const now = () => Date.now();
-const DAY = 86400000;
-
-// Default Data
-const DEF_BOOKS = [
-    {id:'b1', title:'Sherlock Holmes', lang:'EN', page:0, content:`To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind.`},
-    {id:'b2', title:'Anton Chekhov (RU)', lang:'RU', page:0, content:`На вокзале Николаевской железной дороги встретились два приятеля: один толстый, другой тонкий. Толстый только что пообедал на вокзале, и губы его, подернутые маслом, лоснились, как спелые вишни.`}
-];
-
-let state = {
-    cards: JSON.parse(localStorage.getItem('vp_cards') || "[]"),
-    books: JSON.parse(localStorage.getItem('vp_books')) || DEF_BOOKS,
-    activity: JSON.parse(localStorage.getItem('vp_activity') || "{}"),
-    activeBook: null,
-    fontSize: 19
-};
-
-function save() {
-    localStorage.setItem('vp_cards', JSON.stringify(state.cards));
-    localStorage.setItem('vp_books', JSON.stringify(state.books));
-    localStorage.setItem('vp_activity', JSON.stringify(state.activity));
-    updateDash();
-}
-
-function init() {
-    updateDash();
-    renderLibrary();
-    // Theme init
-    const t = localStorage.getItem('vp_theme') || 'dark';
-    document.body.setAttribute('data-theme', t);
-}
-
-/* ================== NAVIGATION ================== */
-function nav(view) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    $(`#view-${view}`).classList.add('active');
-    
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    const btn = $(`#nav-${view === 'reader' ? 'library' : view}`);
-    if(btn) btn.classList.add('active');
-
-    // Title update
-    const titles = { 'home': 'Ana Sayfa', 'library': 'Kütüphane', 'reader': 'Okuyucu', 'cards': 'Kartlarım' };
-    $('#headerTitle').textContent = titles[view] || 'Vocab Pocket';
-    
-    if(view === 'cards') renderCards();
-    if(view === 'home') updateDash();
-}
-
-/* ================== DASHBOARD & HEATMAP ================== */
-function updateDash() {
-    $('#d-total').textContent = state.cards.length;
-    $('#d-due').textContent = state.cards.filter(c => c.due <= now()).length;
-    
-    // Heatmap
-    const hm = $('#heatmap');
-    hm.innerHTML = '';
-    const today = new Date();
-    for(let i=6; i>=0; i--){
-        const d = new Date(today);
-        d.setDate(d.getDate() - i);
-        const k = d.toISOString().split('T')[0];
-        const val = state.activity[k] || 0;
+        /* --- MODULE: READER --- */
+        .reader-container {
+            font-family: var(--font-read); font-size: 1.2rem; line-height: 1.8;
+            max-width: 800px; margin: 0 auto; color: var(--text-main);
+            text-align: justify;
+        }
+        .r-word { cursor: pointer; border-radius: 4px; padding: 0 1px; transition: background 0.1s; }
+        .r-word:hover { background: rgba(99, 102, 241, 0.2); }
+        .r-sentence { background: rgba(99, 102, 241, 0.1); }
         
-        const box = document.createElement('div');
-        box.className = `day-box ${val > 0 ? 'fill' : ''}`;
-        box.innerHTML = `<div class="day-label">${['Pz','Pt','Sa','Ça','Pe','Cu','Ct'][d.getDay()]}</div>`;
-        hm.appendChild(box);
-    }
-}
+        .book-card {
+            background: var(--bg-panel); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .lang-badge {
+            background: var(--bg-card); color: var(--text-muted);
+            padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;
+            text-transform: uppercase; border: 1px solid var(--border);
+        }
 
-function logActivity() {
-    const k = new Date().toISOString().split('T')[0];
-    state.activity[k] = (state.activity[k] || 0) + 1;
-    save();
-}
+        /* --- MODULE: FLASHCARDS --- */
+        .cards-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); gap: 1rem;
+        }
+        .flashcard {
+            background: var(--bg-panel); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 1.25rem;
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .fc-header { display: flex; justify-content: space-between; align-items: center; }
+        .fc-term { font-size: 1.5rem; font-weight: 800; color: var(--primary); word-break: break-word; }
+        .fc-meaning { font-size: 1.1rem; color: var(--text-main); border-top: 1px solid var(--border); padding-top: 10px; }
+        .fc-meta { display: flex; gap: 8px; margin-top: auto; }
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
+        .badge-new { background: var(--primary); color: white; }
+        .badge-due { background: var(--warning); color: black; }
+        .badge-ok { background: var(--secondary); color: white; }
 
-/* ================== LIBRARY & READER ================== */
-function renderLibrary() {
-    const list = $('#library-list');
-    list.innerHTML = '';
-    state.books.forEach(b => {
-        const div = document.createElement('div');
-        div.className = 'book-item';
-        div.innerHTML = `
-            <div onclick="openBook('${b.id}')" style="flex:1">
-                <div style="font-weight:bold; font-size:16px">${b.title}</div>
-                <div style="font-size:12px; color:var(--muted); margin-top:4px">
-                    <span class="lang-tag">${b.lang}</span> Sayfa ${b.page+1}
+        /* --- MODULE: QUIZ --- */
+        .quiz-overlay {
+            position: fixed; inset: 0; background: var(--bg-body); z-index: 100;
+            display: flex; flex-direction: column;
+            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .quiz-overlay.open { transform: translateY(0); }
+        .quiz-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; }
+        .q-term { font-size: 2.5rem; font-weight: 900; margin-bottom: 2rem; }
+        .q-options { width: 100%; max-width: 500px; display: grid; gap: 1rem; }
+        .q-btn { width: 100%; padding: 1.25rem; text-align: left; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; font-size: 1.1rem; color: var(--text-main); }
+        .q-btn.correct { background: var(--secondary); border-color: var(--secondary); color: white; }
+        .q-btn.wrong { background: var(--danger); border-color: var(--danger); color: white; }
+
+        /* --- MODULE: DICTIONARY SHEET --- */
+        .sheet-backdrop {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 80;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
+        .bottom-sheet {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--bg-panel); border-radius: 24px 24px 0 0;
+            padding: 24px; z-index: 90; transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.1, 0.7, 0.1, 1);
+            max-height: 80vh; display: flex; flex-direction: column;
+        }
+        .bottom-sheet.open { transform: translateY(0); }
+        .sheet-handle { width: 48px; height: 6px; background: var(--border); border-radius: 3px; margin: 0 auto 20px auto; }
+
+        /* --- MODULE: CHARTS (SVG) --- */
+        .chart-container { width: 100%; height: 200px; position: relative; }
+        .heatmap-grid { display: flex; gap: 6px; margin-top: 1rem; }
+        .hm-day { flex: 1; aspect-ratio: 1; background: var(--bg-card); border-radius: 4px; position: relative; }
+        .hm-day[data-level="1"] { background: rgba(16, 185, 129, 0.3); }
+        .hm-day[data-level="2"] { background: rgba(16, 185, 129, 0.6); }
+        .hm-day[data-level="3"] { background: rgba(16, 185, 129, 1); }
+        .hm-label { position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--text-muted); }
+
+        /* UTILS */
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--text-main); color: var(--bg-body);
+            padding: 10px 24px; border-radius: 99px; font-weight: 600;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 200;
+            box-shadow: var(--shadow-lg);
+        }
+        .toast.visible { opacity: 1; transform:translate(-50%, 10px); }
+
+    </style>
+</head>
+<body>
+
+    <header id="app-header">
+        <div class="brand">VocabMaster</div>
+        <div class="flex gap-2">
+            <button class="btn btn-icon btn-ghost" id="btn-theme" title="Tema">
+                <svg class="icon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+            <button class="btn btn-icon btn-ghost" id="btn-settings" title="Ayarlar">
+                <svg class="icon"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+        </div>
+    </header>
+
+    <div id="main-container">
+        
+        <div id="view-dashboard" class="view-section active">
+            <h2 class="text-muted text-sm font-bold uppercase mb-4">Genel Bakış</h2>
+            <div class="flex gap-4" style="margin-bottom: 2rem;">
+                <div class="w-full" style="background:var(--bg-panel); padding:1.5rem; border-radius:var(--radius); border:1px solid var(--border)">
+                    <div class="text-muted text-xs">Toplam Kart</div>
+                    <div class="font-bold" style="font-size:2rem;" id="stat-total">0</div>
+                </div>
+                <div class="w-full" style="background:var(--bg-panel); padding:1.5rem; border-radius:var(--radius); border:1px solid var(--border)">
+                    <div class="text-muted text-xs">Tekrar (Due)</div>
+                    <div class="font-bold" style="font-size:2rem; color:var(--warning)" id="stat-due">0</div>
                 </div>
             </div>
-            <button class="btn ghost sm" onclick="deleteBook('${b.id}')">🗑️</button>
-        `;
-        list.appendChild(div);
-    });
-}
 
-function saveBook() {
-    const t = $('#nb-title').value, c = $('#nb-content').value, l = $('#nb-lang').value;
-    if(t && c) {
-        state.books.push({ id:uuid(), title:t, content:c, lang:l, page:0 });
-        save(); renderLibrary(); closeSheets(); toast("Kitap Eklendi");
-    }
-}
-
-function deleteBook(id) {
-    if(confirm('Sil?')) { state.books = state.books.filter(b=>b.id!==id); save(); renderLibrary(); }
-}
-
-// READER CORE
-function openBook(id) {
-    state.activeBook = state.books.find(b=>b.id===id);
-    nav('reader');
-    renderPage();
-}
-
-function getPages(txt) {
-    const pages = [];
-    const size = 600; 
-    let i=0;
-    while(i < txt.length) {
-        let e = Math.min(i+size, txt.length);
-        if(e < txt.length) {
-            let sp = txt.lastIndexOf(' ', e);
-            e = sp > i ? sp : e;
-        }
-        pages.push(txt.slice(i,e).trim());
-        i = e;
-    }
-    return pages;
-}
-
-function renderPage() {
-    const b = state.activeBook;
-    const pages = getPages(b.content);
-    if(b.page >= pages.length) b.page = pages.length - 1;
-    
-    const txt = pages[b.page];
-    const canvas = $('#reader-canvas');
-    canvas.style.fontSize = state.fontSize + 'px';
-    canvas.innerHTML = '';
-    
-    // Tokenize
-    txt.split(/(\s+)/).forEach(chunk => {
-        if(chunk.trim().length > 0 && !/^[.,!?;:"«»—-]+$/.test(chunk)) {
-            const s = document.createElement('span');
-            s.className = 'r-word';
-            s.textContent = chunk;
-            s.onclick = (e) => clickWord(e, chunk);
-            canvas.appendChild(s);
-        } else {
-            canvas.appendChild(document.createTextNode(chunk));
-        }
-    });
-    
-    $('#page-indicator').textContent = `${b.page+1}/${pages.length}`;
-}
-
-function changePage(d) {
-    state.activeBook.page = Math.max(0, state.activeBook.page + d);
-    save(); renderPage();
-}
-
-function changeFontSize() {
-    state.fontSize = state.fontSize > 24 ? 16 : state.fontSize + 2;
-    renderPage();
-}
-
-// WORD CLICK & ADD
-function clickWord(e, word) {
-    e.stopPropagation();
-    const clean = word.replace(/[.,!?;:"()]/g, "");
-    // Context: Find containing sentence approx
-    const txt = document.getElementById('reader-canvas').textContent;
-    const idx = txt.indexOf(word);
-    const ctx = "..." + txt.substring(Math.max(0, idx-20), Math.min(txt.length, idx+30)) + "...";
-    
-    $('#sheet-term').textContent = clean;
-    $('#sheet-meaning').value = "";
-    $('#sheet-example').value = ctx;
-    
-    const url = `https://translate.google.com/?sl=${state.activeBook.lang}&tl=tr&text=${clean}&op=translate`;
-    $('#sheet-translate').href = url;
-    
-    $('.sheet-bg').classList.add('open');
-    $('#wordSheet').classList.add('open');
-}
-
-function saveCardFromSheet() {
-    const term = $('#sheet-term').textContent;
-    const meaning = $('#sheet-meaning').value;
-    const example = $('#sheet-example').value;
-    const lang = state.activeBook ? state.activeBook.lang : 'EN';
-    
-    if(!meaning) return toast('Anlam gerekli');
-    
-    state.cards.push({
-        id: uuid(), term, meaning, example, lang,
-        due: now(), box: 0, createdAt: now()
-    });
-    save(); closeSheets(); toast('Kart Eklendi');
-}
-
-// SELECTION
-document.addEventListener('selectionchange', () => {
-    const sel = window.getSelection();
-    const pop = $('#selPopup');
-    if(sel.toString().length > 1 && $('#view-reader').classList.contains('active')) {
-        const r = sel.getRangeAt(0).getBoundingClientRect();
-        pop.style.top = (r.bottom + window.scrollY + 10) + 'px';
-        pop.style.left = (r.left + window.scrollX) + 'px';
-        pop.classList.add('show');
-    } else {
-        pop.classList.remove('show');
-    }
-});
-
-function addSelection() {
-    const txt = window.getSelection().toString().trim();
-    if(txt) clickWord({stopPropagation:()=>{}}, txt);
-}
-
-/* ================== CARDS & GRID ================== */
-function renderCards(filter='ALL') {
-    const g = $('#card-grid'); g.innerHTML = '';
-    const q = $('#search').value.toLowerCase();
-    
-    let list = state.cards.filter(c => (c.term+c.meaning).toLowerCase().includes(q));
-    if(filter === 'NEW') list = list.filter(c => c.box === 0);
-    if(filter === 'DUE') list = list.filter(c => c.due <= now());
-    
-    list.sort((a,b) => b.createdAt - a.createdAt);
-    
-    list.forEach(c => {
-        const d = document.createElement('div');
-        d.className = 'flashcard';
-        const due = c.due <= now() ? '<span style="color:var(--warn); font-size:10px; font-weight:bold">TEKRAR</span>' : '';
-        d.innerHTML = `
-            <div class="fc-top">
-                <span class="lang-tag">${c.lang}</span> ${due}
-                <button class="btn ghost sm" onclick="deleteCard('${c.id}')">✕</button>
+            <h2 class="text-muted text-sm font-bold uppercase mb-2">Çalışma Zinciri (Son 7 Gün)</h2>
+            <div style="background:var(--bg-panel); padding:1rem; border-radius:var(--radius); border:1px solid var(--border); margin-bottom: 2rem;">
+                 <div id="heatmap-container" class="heatmap-grid"></div>
             </div>
-            <div class="fc-term">${c.term}</div>
-            <div class="fc-meaning">${c.meaning}</div>
-        `;
-        g.appendChild(d);
-    });
-}
 
-function deleteCard(id) {
-    if(confirm('Sil?')) { state.cards = state.cards.filter(c=>c.id!==id); save(); renderCards(); }
-}
+            <h2 class="text-muted text-sm font-bold uppercase mb-2">Hızlı İşlemler</h2>
+            <button class="btn btn-primary w-full" style="padding:1.25rem; font-size:1.1rem" onclick="App.startQuiz()">
+                <svg class="icon"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                Hemen Pratik Yap
+            </button>
+        </div>
 
-/* ================== QUIZ SYSTEM ================== */
-let quizQ = [], qIdx = 0, qTimer = null;
+        <div id="view-library" class="view-section">
+            <div class="flex center" style="justify-content:space-between; margin-bottom:1rem">
+                <h2>Kütüphane</h2>
+                <button class="btn btn-sm btn-primary" onclick="App.showAddBookModal()">+ Yeni</button>
+            </div>
+            <div id="book-list" class="flex flex-col gap-4"></div>
+        </div>
 
-function startQuiz(timeAttack) {
-    // Priority: Due cards -> Then random
-    let due = state.cards.filter(c => c.due <= now());
-    if(due.length < 5) due = state.cards; // Fallback
+        <div id="view-cards" class="view-section">
+            <div class="input-group">
+                <input type="text" id="card-search" class="input" placeholder="Kartlarda ara...">
+            </div>
+            <div class="cards-grid" id="card-list"></div>
+        </div>
+        
+        <div id="view-reader" class="view-section" style="background:var(--bg-body); z-index:60">
+            <div class="flex center" style="justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:20px;">
+                <button class="btn btn-ghost" onclick="Router.go('library')">
+                    <svg class="icon"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Geri
+                </button>
+                <div class="text-sm font-bold" id="reader-title">Başlık</div>
+                <div class="text-xs text-muted" id="reader-page">1/10</div>
+            </div>
+            <div id="reader-canvas" class="reader-container"></div>
+            <div class="flex center" style="margin-top:30px; gap:20px; padding-bottom:40px">
+                <button class="btn btn-ghost" onclick="Reader.prevPage()">Önceki</button>
+                <button class="btn btn-ghost" onclick="Reader.nextPage()">Sonraki</button>
+            </div>
+        </div>
+
+    </div>
+
+    <nav id="bottom-nav">
+        <button class="nav-item active" onclick="Router.go('dashboard')" id="nav-dashboard">
+            <svg class="icon"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span>Ana Sayfa</span>
+        </button>
+        <button class="nav-item" onclick="Router.go('library')" id="nav-library">
+            <svg class="icon"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <span>Kütüphane</span>
+        </button>
+        <button class="nav-item" onclick="Router.go('cards')" id="nav-cards">
+            <svg class="icon"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            <span>Kartlar</span>
+        </button>
+    </nav>
+
+    <div class="sheet-backdrop" id="sheet-backdrop"></div>
+    <div class="bottom-sheet" id="dict-sheet">
+        <div class="sheet-handle"></div>
+        <div class="flex center" style="justify-content:space-between; margin-bottom:1rem">
+            <h2 id="sheet-term" class="text-primary font-bold" style="font-size:2rem">Word</h2>
+            <div class="flex gap-2">
+                <button class="btn btn-icon btn-ghost" onclick="TTS.speak(document.getElementById('sheet-term').textContent)">
+                    <svg class="icon"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                </button>
+                <a id="sheet-link" href="#" target="_blank" class="btn btn-icon btn-ghost">
+                    <svg class="icon"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                </a>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label class="label">Anlamı</label>
+            <input type="text" id="sheet-meaning" class="input" placeholder="Çevirisi nedir?">
+        </div>
+        <div class="input-group">
+            <label class="label">Örnek Cümle</label>
+            <textarea id="sheet-context" class="textarea" rows="2"></textarea>
+        </div>
+        <button class="btn btn-primary w-full" onclick="App.saveCardFromSheet()">Karta Ekle</button>
+    </div>
+
+    <div class="quiz-overlay" id="quiz-overlay">
+        <div id="app-header" style="background:transparent; border:none">
+            <div class="brand">Quiz Modu</div>
+            <button class="btn btn-icon btn-ghost" onclick="Quiz.close()">
+                <svg class="icon"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div class="quiz-area">
+            <div class="text-muted font-bold uppercase mb-4" id="q-lang">EN</div>
+            <div class="q-term" id="q-word">Word</div>
+            <div class="q-options" id="q-options"></div>
+        </div>
+    </div>
     
-    if(due.length === 0) return toast("Kart yok!");
-    
-    quizQ = due.sort(()=>Math.random()-0.5).slice(0, 20);
-    qIdx = 0;
-    
-    $('#quizOverlay').classList.add('open');
-    $('#q-mode-title').textContent = timeAttack ? "Zaman Yarışı (60sn)" : "Quiz";
-    
-    if(timeAttack) {
-        $('#timerBar').style.display = 'block';
-        $('#timerFill').style.width = '100%';
-        let t = 60;
-        if(qTimer) clearInterval(qTimer);
-        qTimer = setInterval(() => {
-            t--; $('#timerFill').style.width = (t/60*100)+'%';
-            if(t<=0) closeQuiz();
-        }, 1000);
-    } else {
-        $('#timerBar').style.display = 'none';
+    <div class="sheet-backdrop" id="modal-backdrop"></div>
+    <div class="bottom-sheet" id="modal-container" style="border-radius: 16px;">
+        </div>
+
+    <div class="toast" id="toast">Bildirim Mesajı</div>
+
+    <script>
+    /**
+     * ==========================================
+     * VOCABMASTER PROFESSIONAL ARCHITECTURE
+     * ==========================================
+     */
+
+    // --- MODULE: UTILS ---
+    const Utils = {
+        uuid: () => Date.now().toString(36) + Math.random().toString(36).substr(2),
+        now: () => Date.now(),
+        clean: (s) => (s || '').toString().trim(),
+        el: (id) => document.getElementById(id),
+        toast: (msg) => {
+            const t = Utils.el('toast');
+            t.textContent = msg;
+            t.classList.add('visible');
+            setTimeout(() => t.classList.remove('visible'), 3000);
+        }
+    };
+
+    // --- MODULE: DATA STORE (LOCALSTORAGE WRAPPER) ---
+    class Store {
+        constructor() {
+            this.db = {
+                cards: JSON.parse(localStorage.getItem('vm_cards') || '[]'),
+                books: JSON.parse(localStorage.getItem('vm_books') || '[]'),
+                activity: JSON.parse(localStorage.getItem('vm_activity') || '{}'),
+                settings: JSON.parse(localStorage.getItem('vm_settings') || '{"theme":"dark", "fontSize":19}')
+            };
+            this.defaults();
+        }
+
+        defaults() {
+            if (this.db.books.length === 0) {
+                this.db.books.push({
+                    id: 'demo1', title: 'Sherlock Holmes', lang: 'EN', page: 0,
+                    content: "To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler."
+                });
+                this.save();
+            }
+        }
+
+        save() {
+            localStorage.setItem('vm_cards', JSON.stringify(this.db.cards));
+            localStorage.setItem('vm_books', JSON.stringify(this.db.books));
+            localStorage.setItem('vm_activity', JSON.stringify(this.db.activity));
+            localStorage.setItem('vm_settings', JSON.stringify(this.db.settings));
+        }
+
+        addCard(card) { this.db.cards.push(card); this.save(); }
+        removeCard(id) { this.db.cards = this.db.cards.filter(c => c.id !== id); this.save(); }
+        addBook(book) { this.db.books.push(book); this.save(); }
+        removeBook(id) { this.db.books = this.db.books.filter(b => b.id !== id); this.save(); }
+        
+        logActivity() {
+            const k = new Date().toISOString().split('T')[0];
+            this.db.activity[k] = (this.db.activity[k] || 0) + 1;
+            this.save();
+        }
     }
-    
-    showQ();
-}
 
-function showQ() {
-    if(qIdx >= quizQ.length) { closeQuiz(); return toast("Quiz Bitti! 🎉"); }
-    const c = quizQ[qIdx];
-    
-    $('#q-word').textContent = c.term;
-    $('#q-lang').textContent = c.lang;
-    
-    // Options
-    let opts = state.cards.filter(x => x.id !== c.id).sort(()=>Math.random()-0.5).slice(0,3);
-    opts.push(c);
-    opts.sort(()=>Math.random()-0.5);
-    
-    const div = $('#q-options'); div.innerHTML = '';
-    opts.forEach(o => {
-        const b = document.createElement('button');
-        b.className = 'btn';
-        b.style.textAlign = 'left'; b.style.width = '100%'; b.style.padding='14px';
-        b.textContent = o.meaning;
-        b.onclick = () => answer(o.id === c.id, b);
-        div.appendChild(b);
-    });
-}
+    const DB = new Store();
 
-function answer(correct, btn) {
-    const c = quizQ[qIdx];
-    if(correct) {
-        btn.style.background = 'var(--accent2)';
-        btn.style.color = '#000';
-        // SRS
-        let ivl = c.box === 0 ? 1 : Math.round(Math.pow(2.5, c.box));
-        c.box++;
-        c.due = now() + (ivl * DAY);
-        logActivity();
-    } else {
-        btn.style.background = 'var(--danger)';
-        c.box = 0;
-        c.due = now(); // Reset
+    // --- MODULE: SRS ALGORITHM (SuperMemo-2) ---
+    class SRS {
+        static calculate(card, grade) {
+            // grade: 0-5 (0=blackout, 5=perfect)
+            let { interval, repetitions, efactor } = card.srs || { interval:0, repetitions:0, efactor:2.5 };
+            
+            if (grade >= 3) {
+                if (repetitions === 0) interval = 1;
+                else if (repetitions === 1) interval = 6;
+                else interval = Math.round(interval * efactor);
+                
+                repetitions++;
+                efactor = efactor + (0.1 - (5 - grade) * (0.08 + (5 - grade) * 0.02));
+                if (efactor < 1.3) efactor = 1.3;
+            } else {
+                repetitions = 0;
+                interval = 1;
+            }
+
+            return {
+                due: Date.now() + (interval * 24 * 60 * 60 * 1000),
+                srs: { interval, repetitions, efactor }
+            };
+        }
     }
-    save();
-    setTimeout(() => { qIdx++; showQ(); }, 600);
-}
 
-function closeQuiz() {
-    $('#quizOverlay').classList.remove('open');
-    if(qTimer) clearInterval(qTimer);
-    updateDash();
-}
+    // --- MODULE: ROUTER & UI ---
+    const Router = {
+        current: 'dashboard',
+        go: (view) => {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(`view-${view}`).classList.add('active');
+            
+            // Nav update
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const navBtn = document.getElementById(`nav-${view}`);
+            if(navBtn) navBtn.classList.add('active');
+            
+            Router.current = view;
+            if(view === 'cards') App.renderCards();
+            if(view === 'library') App.renderBooks();
+            if(view === 'dashboard') App.updateDash();
+        }
+    };
 
-function speakQuiz() { speak($('#q-word').textContent, $('#q-lang').textContent); }
+    // --- MODULE: READER ENGINE ---
+    const Reader = {
+        activeBook: null,
+        pageSize: 600, // chars approx
+        
+        open: (id) => {
+            Reader.activeBook = DB.db.books.find(b => b.id === id);
+            Router.go('reader');
+            Reader.render();
+        },
 
-/* ================== GENERAL HELPERS ================== */
-function closeSheets() {
-    $('.sheet-bg').classList.remove('open');
-    $('#wordSheet').classList.remove('open');
-    $('#addBookModal').classList.remove('open');
-}
+        getPages: (text) => {
+            const pages = [];
+            let i = 0;
+            while(i < text.length) {
+                let end = Math.min(i + Reader.pageSize, text.length);
+                if(end < text.length) {
+                    const space = text.lastIndexOf(' ', end);
+                    if(space > i) end = space;
+                }
+                pages.push(text.slice(i, end).trim());
+                i = end;
+            }
+            return pages;
+        },
 
-function speakSheet() { speak($('#sheet-term').textContent, 'EN'); }
+        render: () => {
+            const b = Reader.activeBook;
+            const pages = Reader.getPages(b.content);
+            if(b.page >= pages.length) b.page = pages.length - 1;
+            
+            Utils.el('reader-title').textContent = b.title;
+            Utils.el('reader-page').textContent = `${b.page + 1}/${pages.length}`;
+            
+            const txt = pages[b.page];
+            const canvas = Utils.el('reader-canvas');
+            canvas.style.fontSize = DB.db.settings.fontSize + 'px';
+            canvas.innerHTML = '';
 
-function speak(txt, lang) {
-    if(!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(txt);
-    const m = {'EN':'en-US', 'RU':'ru-RU', 'TR':'tr-TR', 'DE':'de-DE'};
-    u.lang = m[lang] || 'en-US';
-    window.speechSynthesis.speak(u);
-}
+            // Smart Tokenization
+            txt.split(/(\s+)/).forEach(chunk => {
+                if(chunk.trim().length > 0 && !/^[.,!?;:"«»—-]+$/.test(chunk)) {
+                    const s = document.createElement('span');
+                    s.className = 'r-word';
+                    s.textContent = chunk;
+                    s.onclick = (e) => App.openSheet(chunk, b.lang);
+                    canvas.appendChild(s);
+                } else {
+                    const s = document.createElement('span');
+                    if(chunk.includes('.')) s.className = 'r-sentence'; // Simple styling
+                    s.textContent = chunk;
+                    canvas.appendChild(s);
+                }
+            });
+        },
 
-function toast(msg) {
-    const t = $('#toast'); t.textContent = msg; t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'), 2000);
-}
+        nextPage: () => { Reader.activeBook.page++; Reader.saveState(); Reader.render(); },
+        prevPage: () => { if(Reader.activeBook.page>0) Reader.activeBook.page--; Reader.saveState(); Reader.render(); },
+        saveState: () => { DB.save(); }
+    };
 
-function toggleTheme() {
-    const n = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    document.body.setAttribute('data-theme', n);
-    localStorage.setItem('vp_theme', n);
-}
+    // --- MODULE: TEXT TO SPEECH ---
+    const TTS = {
+        speak: (txt, lang = 'EN') => {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(txt);
+            const map = {'EN':'en-US', 'TR':'tr-TR', 'RU':'ru-RU', 'DE':'de-DE'};
+            u.lang = map[lang] || 'en-US';
+            window.speechSynthesis.speak(u);
+        }
+    };
 
-function exportData() {
-    const d = JSON.stringify({cards:state.cards, books:state.books});
-    const a = document.createElement('a');
-    a.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(d);
-    a.download = 'backup.json';
-    a.click();
-}
+    // --- MODULE: QUIZ ---
+    const Quiz = {
+        queue: [],
+        current: null,
 
-init();
-</script>
+        start: () => {
+            const now = Date.now();
+            Quiz.queue = DB.db.cards.filter(c => c.due <= now);
+            if(Quiz.queue.length === 0) {
+                // Fallback: Random cards
+                Quiz.queue = [...DB.db.cards].sort(()=>Math.random()-0.5).slice(0, 10);
+                if(Quiz.queue.length === 0) return Utils.toast("Hiç kartın yok!");
+                Utils.toast("Tekrar yok, rastgele pratik!");
+            }
+            Utils.el('quiz-overlay').classList.add('open');
+            Quiz.next();
+        },
+
+        next: () => {
+            if(Quiz.queue.length === 0) return Quiz.close();
+            Quiz.current = Quiz.queue.pop();
+            
+            Utils.el('q-word').textContent = Quiz.current.term;
+            Utils.el('q-lang').textContent = Quiz.current.lang;
+            
+            // Generate Options
+            let opts = DB.db.cards.filter(c => c.id !== Quiz.current.id).sort(()=>Math.random()-0.5).slice(0,3);
+            opts.push(Quiz.current);
+            opts.sort(()=>Math.random()-0.5);
+
+            const div = Utils.el('q-options');
+            div.innerHTML = '';
+            opts.forEach(o => {
+                const btn = document.createElement('button');
+                btn.className = 'q-btn';
+                btn.textContent = o.meaning;
+                btn.onclick = () => Quiz.answer(o.id === Quiz.current.id, btn);
+                div.appendChild(btn);
+            });
+        },
+
+        answer: (correct, btn) => {
+            const card = Quiz.current;
+            if(correct) {
+                btn.classList.add('correct');
+                const res = SRS.calculate(card, 4); // Grade 4 for good
+                Object.assign(card, res);
+                DB.logActivity();
+            } else {
+                btn.classList.add('wrong');
+                const res = SRS.calculate(card, 1); // Grade 1 for wrong
+                Object.assign(card, res);
+            }
+            DB.save();
+            setTimeout(Quiz.next, 800);
+        },
+
+        close: () => {
+            Utils.el('quiz-overlay').classList.remove('open');
+            App.updateDash();
+        }
+    };
+
+    // --- MAIN APP CONTROLLER ---
+    const App = {
+        init: () => {
+            App.applyTheme(DB.db.settings.theme);
+            App.updateDash();
+            
+            // Sheet Backdrop Close
+            Utils.el('sheet-backdrop').onclick = App.closeSheet;
+            Utils.el('modal-backdrop').onclick = App.closeModal;
+            
+            // Search Listener
+            Utils.el('card-search').addEventListener('input', (e) => App.renderCards(e.target.value));
+
+            // Theme Toggle
+            Utils.el('btn-theme').onclick = () => {
+                const n = DB.db.settings.theme === 'dark' ? 'light' : 'dark';
+                DB.db.settings.theme = n;
+                DB.save();
+                App.applyTheme(n);
+            };
+
+            // Settings Modal
+            Utils.el('btn-settings').onclick = () => {
+                App.showModal(`
+                    <h2 class="font-bold mb-4">Veri Yönetimi</h2>
+                    <button class="btn btn-primary w-full mb-2" onclick="App.exportData()">Yedek İndir (JSON)</button>
+                    <button class="btn btn-ghost w-full" onclick="document.getElementById('import-file').click()">Yedek Yükle</button>
+                    <input type="file" id="import-file" hidden onchange="App.importData(this)">
+                `);
+            };
+        },
+
+        applyTheme: (t) => document.body.setAttribute('data-theme', t),
+
+        updateDash: () => {
+            Utils.el('stat-total').textContent = DB.db.cards.length;
+            Utils.el('stat-due').textContent = DB.db.cards.filter(c => c.due <= Date.now()).length;
+            
+            // Heatmap Render
+            const hm = Utils.el('heatmap-container');
+            hm.innerHTML = '';
+            const today = new Date();
+            for(let i=6; i>=0; i--){
+                const d = new Date(today);
+                d.setDate(d.getDate() - i);
+                const k = d.toISOString().split('T')[0];
+                const count = DB.db.activity[k] || 0;
+                const lvl = count > 10 ? 3 : (count > 5 ? 2 : (count > 0 ? 1 : 0));
+                
+                const day = document.createElement('div');
+                day.className = 'hm-day';
+                day.setAttribute('data-level', lvl);
+                day.innerHTML = `<span class="hm-label">${['Pz','Pt','Sa','Ça','Pe','Cu','Ct'][d.getDay()]}</span>`;
+                hm.appendChild(day);
+            }
+        },
+
+        renderBooks: () => {
+            const list = Utils.el('book-list');
+            list.innerHTML = '';
+            DB.db.books.forEach(b => {
+                const el = document.createElement('div');
+                el.className = 'book-card';
+                el.innerHTML = `
+                    <div onclick="Reader.open('${b.id}')" style="flex:1; cursor:pointer">
+                        <div class="font-bold">${b.title}</div>
+                        <div class="text-xs text-muted mt-1">
+                            <span class="lang-badge">${b.lang}</span> Sayfa ${b.page+1}
+                        </div>
+                    </div>
+                    <button class="btn btn-icon btn-ghost text-danger" onclick="App.deleteBook('${b.id}')">
+                        <svg class="icon"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                `;
+                list.appendChild(el);
+            });
+        },
+
+        renderCards: (q = '') => {
+            const grid = Utils.el('card-list');
+            grid.innerHTML = '';
+            const filtered = DB.db.cards.filter(c => (c.term + c.meaning).toLowerCase().includes(q.toLowerCase()));
+            
+            filtered.forEach(c => {
+                const el = document.createElement('div');
+                el.className = 'flashcard';
+                const isDue = c.due <= Date.now();
+                el.innerHTML = `
+                    <div class="fc-header">
+                        <span class="badge ${isDue ? 'badge-due' : 'badge-ok'}">${isDue ? 'TEKRAR' : 'OK'}</span>
+                        <button class="btn btn-icon btn-ghost" onclick="App.deleteCard('${c.id}')">✕</button>
+                    </div>
+                    <div class="fc-term">${c.term}</div>
+                    <div class="fc-meaning">${c.meaning}</div>
+                    <div class="fc-meta">
+                         <span class="badge badge-new">${c.lang}</span>
+                         <button class="btn btn-icon btn-ghost" style="margin-left:auto" onclick="TTS.speak('${c.term}','${c.lang}')">
+                            <svg class="icon-sm"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
+                         </button>
+                    </div>
+                `;
+                grid.appendChild(el);
+            });
+        },
+
+        // --- SHEET & MODAL LOGIC ---
+        openSheet: (word, lang) => {
+            // Find context
+            const ctx = "..." + word + "..."; 
+            
+            Utils.el('sheet-term').textContent = word;
+            Utils.el('sheet-meaning').value = '';
+            Utils.el('sheet-context').value = ctx;
+            Utils.el('sheet-link').href = `https://translate.google.com/?sl=${lang}&tl=tr&text=${word}&op=translate`;
+            Utils.el('sheet-term').dataset.lang = lang; // Store lang
+
+            Utils.el('sheet-backdrop').classList.add('open');
+            Utils.el('dict-sheet').classList.add('open');
+        },
+        
+        closeSheet: () => {
+            Utils.el('sheet-backdrop').classList.remove('open');
+            Utils.el('dict-sheet').classList.remove('open');
+        },
+
+        saveCardFromSheet: () => {
+            const term = Utils.el('sheet-term').textContent;
+            const lang = Utils.el('sheet-term').dataset.lang;
+            const meaning = Utils.el('sheet-meaning').value;
+            
+            if(!meaning) return Utils.toast("Anlamını yazmalısın.");
+            
+            DB.addCard({
+                id: Utils.uuid(), term, meaning, lang,
+                due: Date.now(), srs: { interval:0, repetitions:0, efactor:2.5 },
+                created: Date.now()
+            });
+            App.closeSheet();
+            Utils.toast("Kart Eklendi");
+        },
+
+        // --- BOOK MANAGEMENT ---
+        showAddBookModal: () => {
+            App.showModal(`
+                <h2 class="font-bold mb-4">Yeni Kitap Ekle</h2>
+                <input class="input mb-2" id="nb-title" placeholder="Kitap Başlığı">
+                <select class="select mb-2" id="nb-lang"><option value="EN">İngilizce</option><option value="RU">Rusça</option></select>
+                <textarea class="textarea mb-4" id="nb-content" rows="6" placeholder="Metni buraya yapıştır..."></textarea>
+                <button class="btn btn-primary w-full" onclick="App.addBookAction()">Ekle</button>
+            `);
+        },
+
+        addBookAction: () => {
+            const t = Utils.el('nb-title').value;
+            const c = Utils.el('nb-content').value;
+            if(!t || !c) return Utils.toast("Alanları doldur.");
+            DB.addBook({ id: Utils.uuid(), title: t, content: c, lang: Utils.el('nb-lang').value, page: 0 });
+            App.closeModal();
+            App.renderBooks();
+            Utils.toast("Kitap Eklendi");
+        },
+
+        deleteBook: (id) => { if(confirm("Sil?")) { DB.removeBook(id); App.renderBooks(); } },
+        deleteCard: (id) => { if(confirm("Sil?")) { DB.removeCard(id); App.renderCards(Utils.el('card-search').value); } },
+
+        // --- MODAL UTILS ---
+        showModal: (html) => {
+            const m = Utils.el('modal-container');
+            m.innerHTML = `<div class="sheet-handle"></div>` + html;
+            Utils.el('modal-backdrop').classList.add('open');
+            m.classList.add('open');
+        },
+        closeModal: () => {
+            Utils.el('modal-backdrop').classList.remove('open');
+            Utils.el('modal-container').classList.remove('open');
+        },
+
+        // --- IMPORT/EXPORT ---
+        exportData: () => {
+            const d = JSON.stringify(DB.db);
+            const a = document.createElement('a');
+            a.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(d);
+            a.download = 'vocab_backup.json';
+            a.click();
+        },
+        importData: (input) => {
+            const f = input.files[0];
+            const r = new FileReader();
+            r.onload = e => {
+                try {
+                    const d = JSON.parse(e.target.result);
+                    DB.db = d; DB.save(); App.closeModal(); Utils.toast("Veriler Yüklendi!"); window.location.reload();
+                } catch(err) { Utils.toast("Hatalı Dosya"); }
+            };
+            r.readAsText(f);
+        }
+    };
+
+    // --- QUIZ PROXY ---
+    window.App = App;
+    window.Router = Router;
+    window.Reader = Reader;
+    window.Quiz = Quiz;
+    window.TTS = TTS;
+
+    // BOOT
+    App.init();
+
+    </script>
 </body>
 </html>
