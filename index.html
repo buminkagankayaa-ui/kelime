@@ -993,6 +993,12 @@ function makeId(){
         lastReviewed: 0
       };
     }
+function makeId(){
+  try{
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  }catch(e){}
+  return "id_" + Date.now().toString(36) + "_" + Math.random().toString(16).slice(2);
+}
 
     function patchItem(it){
       const x = {...it};
@@ -2322,7 +2328,6 @@ if(quickSaveBtn){
     }
     init();
   </script>
-<dialog id="quickModal">
   <div class="modalHead">
     <div>
       <h2>Hızlı Ekle</h2>
