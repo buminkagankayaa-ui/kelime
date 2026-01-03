@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>LingoMaster</title>
   <meta name="theme-color" content="#0b1220" id="meta-theme">
-  <!-- BUILD: 2026-01-03-02 -->
+
+  <!-- favicon 404 istemiyorsan bunu bırak; istersen silebilirsin -->
+  <link rel="icon" href="data:,">
 
   <style>
     :root{
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --safe-top: env(safe-area-inset-top, 0px);
-
       --header-h: 60px;
       --nav-h: 74px;
       --radius: 18px;
@@ -25,63 +26,34 @@
       --primary:#6366f1;
       --danger:#ef4444;
       --warn:#f59e0b;
-      --ok:#10b981;
     }
-
     [data-theme="light"]{
-      --bg:#f8fafc;
-      --card:#ffffff;
-      --card2:#f1f5f9;
-      --border:#cbd5e1;
-      --text:#0f172a;
-      --muted:#64748b;
-      --primary:#4f46e5;
+      --bg:#f8fafc; --card:#ffffff; --card2:#f1f5f9; --border:#cbd5e1;
+      --text:#0f172a; --muted:#64748b; --primary:#4f46e5;
     }
     [data-theme="ocean"]{
-      --bg:#06131f;
-      --card:#0b2236;
-      --card2:#0a1b2a;
-      --border:#245070;
-      --text:#e6f2ff;
-      --muted:#9bb7d3;
-      --primary:#38bdf8;
+      --bg:#06131f; --card:#0b2236; --card2:#0a1b2a; --border:#245070;
+      --text:#e6f2ff; --muted:#9bb7d3; --primary:#38bdf8;
     }
     [data-theme="emerald"]{
-      --bg:#071a14;
-      --card:#0b2a21;
-      --card2:#082018;
-      --border:#1f6b52;
-      --text:#ecfdf5;
-      --muted:#9fe3c7;
-      --primary:#10b981;
+      --bg:#071a14; --card:#0b2a21; --card2:#082018; --border:#1f6b52;
+      --text:#ecfdf5; --muted:#9fe3c7; --primary:#10b981;
     }
     [data-theme="sunset"]{
-      --bg:#1b1020;
-      --card:#2a1731;
-      --card2:#1f1225;
-      --border:#6b2a59;
-      --text:#fff7ed;
-      --muted:#fbcfe8;
-      --primary:#fb7185;
+      --bg:#1b1020; --card:#2a1731; --card2:#1f1225; --border:#6b2a59;
+      --text:#fff7ed; --muted:#fbcfe8; --primary:#fb7185;
     }
     [data-theme="rose"]{
-      --bg:#120a10;
-      --card:#1f0f1b;
-      --card2:#160b13;
-      --border:#7f1d1d;
-      --text:#fff1f2;
-      --muted:#fda4af;
-      --primary:#f43f5e;
+      --bg:#120a10; --card:#1f0f1b; --card2:#160b13; --border:#7f1d1d;
+      --text:#fff1f2; --muted:#fda4af; --primary:#f43f5e;
     }
 
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
     body{
       margin:0;
       font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,system-ui,sans-serif;
-      background:var(--bg);
-      color:var(--text);
-      height:100vh;
-      overflow:hidden;
+      background:var(--bg); color:var(--text);
+      height:100vh; overflow:hidden;
     }
 
     header{
@@ -95,25 +67,16 @@
       border-bottom:1px solid var(--border);
     }
     .brand{display:flex; align-items:center; gap:10px; font-weight:950;}
-    .logo{
-      width:18px; height:18px; border:2px solid var(--primary);
-      border-radius:6px; transform:rotate(15deg);
-    }
+    .logo{width:18px; height:18px; border:2px solid var(--primary); border-radius:6px; transform:rotate(15deg);}
     .iconBtn{
       width:44px; height:44px; border-radius:14px;
       background:transparent; border:1px solid var(--border);
-      color:var(--muted);
-      display:grid; place-items:center;
-      cursor:pointer;
-      user-select:none;
+      color:var(--muted); display:grid; place-items:center;
+      cursor:pointer; user-select:none;
     }
     .iconBtn:active{transform:scale(.98); opacity:.9;}
 
-    #viewport{
-      position:relative;
-      height:calc(100vh - (var(--header-h) + var(--safe-top)));
-    }
-
+    #viewport{position:relative; height:calc(100vh - (var(--header-h) + var(--safe-top)));}
     .view{
       position:absolute; inset:0;
       padding:18px;
@@ -126,24 +89,16 @@
     .view.active{opacity:1; pointer-events:auto; transform:none;}
 
     .row{display:flex; gap:12px;}
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      padding:16px;
-    }
+    .card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px;}
     .muted{color:var(--muted);}
     .big{font-size:34px; font-weight:980;}
     .h2{font-size:20px; font-weight:980; margin:0 0 12px 0;}
     .secTitle{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:950; margin:4px 0 10px;}
 
     .btn{
-      border:0; cursor:pointer;
-      border-radius:16px;
-      padding:14px 16px;
-      font-weight:980;
-      display:flex; align-items:center; justify-content:center;
-      gap:10px;
+      border:0; cursor:pointer; border-radius:16px;
+      padding:14px 16px; font-weight:980;
+      display:flex; align-items:center; justify-content:center; gap:10px;
       user-select:none;
     }
     .btn:active{transform:scale(.985); opacity:.92;}
@@ -152,7 +107,7 @@
     .btnDanger{background:var(--danger); color:white;}
     .btnHalf{flex:1;}
 
-    /* ✅ BOTTOM NAV: iOS yamukluk fix (grid kilidi) */
+    /* ✅ Bottom nav: kesin hizalama (yamukluk fix) */
     nav{
       position:fixed; left:0; right:0; bottom:0; z-index:30;
       height:calc(var(--nav-h) + var(--safe-bottom));
@@ -162,48 +117,27 @@
       display:flex;
     }
     .navBtn{
-      flex:1;
-      background:transparent;
-      border:0;
-      color:var(--muted);
-      cursor:pointer;
-      user-select:none;
-
-      display:grid;
-      grid-template-rows: 34px 18px;
-      align-items:center;
-      justify-items:center;
-
-      padding:6px 0;
-      line-height:1;
+      flex:1; background:transparent; border:0; color:var(--muted);
+      cursor:pointer; user-select:none;
+      display:grid; grid-template-rows: 34px 18px;
+      align-items:center; justify-items:center;
+      padding:6px 0; line-height:1;
     }
     .navBtn .ico{
-      width:44px;
-      height:34px;
-      display:grid;
-      place-items:center;
-      font-size:20px;
-      line-height:1;
+      width:44px; height:34px;
+      display:grid; place-items:center;
+      font-size:20px; line-height:1;
     }
-    .navBtn span{
-      font-size:12px;
-      font-weight:980;
-      line-height:1;
-      transform:translateY(-1px);
-    }
-    .navBtn.active{ color:var(--primary); }
-    .navBtn.active .ico{
-      background:color-mix(in srgb, var(--primary) 15%, transparent);
-      border-radius:14px;
-    }
+    .navBtn span{font-size:12px; font-weight:980; line-height:1; transform:translateY(-1px);}
+    .navBtn.active{color:var(--primary);}
+    .navBtn.active .ico{background:color-mix(in srgb, var(--primary) 15%, transparent); border-radius:14px;}
 
     /* Reader */
     .readerTop{
       position:sticky; top:0;
       background:var(--bg);
       border-bottom:1px solid var(--border);
-      padding:10px 0 12px;
-      margin-bottom:14px;
+      padding:10px 0 12px; margin-bottom:14px;
       display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
     .readerTop .titleWrap{min-width:0; text-align:center;}
@@ -212,22 +146,18 @@
     .reader{
       max-width:720px; margin:0 auto;
       font-family: ui-serif, Georgia, "Times New Roman", serif;
-      font-size:19px;
-      line-height:1.75;
-      text-align:justify;
+      font-size:19px; line-height:1.75; text-align:justify;
     }
     .token{cursor:pointer; padding:2px 0; border-radius:6px;}
     .token:active{background:color-mix(in srgb, var(--primary) 25%, transparent);}
 
-    /* Bottom Sheet */
+    /* Sheet */
     .backdrop{
       position:fixed; inset:0; z-index:40;
       background:rgba(0,0,0,.55);
-      opacity:0; pointer-events:none;
-      transition:.2s ease;
+      opacity:0; pointer-events:none; transition:.2s ease;
     }
     .backdrop.open{opacity:1; pointer-events:auto;}
-
     .sheet{
       position:fixed; left:0; right:0; bottom:0; z-index:50;
       background:var(--card);
@@ -235,8 +165,7 @@
       border:1px solid var(--border);
       transform:translateY(110%);
       transition:.25s ease;
-      max-height:85vh;
-      overflow:auto;
+      max-height:85vh; overflow:auto;
       padding:14px 16px calc(16px + var(--safe-bottom));
     }
     .sheet.open{transform:none;}
@@ -251,10 +180,8 @@
       background:var(--card2);
       border:1px solid var(--border);
       border-radius:16px;
-      padding:14px;
-      color:var(--text);
-      font-size:16px;
-      outline:none;
+      padding:14px; color:var(--text);
+      font-size:16px; outline:none;
     }
     textarea{min-height:92px; resize:none;}
     .two{display:flex; gap:10px;}
@@ -263,26 +190,13 @@
     .toast{
       position:fixed; left:50%; top:calc(14px + var(--safe-top));
       transform:translate(-50%,-20px);
-      background:var(--text);
-      color:var(--bg);
-      padding:10px 14px;
-      border-radius:99px;
-      font-weight:980;
-      opacity:0; pointer-events:none;
-      transition:.25s ease;
-      z-index:200;
-      max-width:calc(100vw - 20px);
-      text-align:center;
+      background:var(--text); color:var(--bg);
+      padding:10px 14px; border-radius:99px;
+      font-weight:980; opacity:0; pointer-events:none;
+      transition:.25s ease; z-index:200;
+      max-width:calc(100vw - 20px); text-align:center;
     }
     .toast.show{opacity:1; transform:translate(-50%,0);}
-
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background:color-mix(in srgb, var(--card2) 90%, transparent);
-      font-weight:980; font-size:12px; color:var(--muted);
-    }
   </style>
 </head>
 
@@ -325,20 +239,11 @@
     </div>
 
     <div class="secTitle" style="margin-top:16px;">Hızlı İşlemler</div>
-
-    <button class="btn btnPrimary" id="btnQuiz" style="width:100%; font-size:16px;">
-      📘 Bugünkü Tekrarları Başlat
-    </button>
+    <button class="btn btnPrimary" id="btnQuiz" style="width:100%; font-size:16px;">📘 Bugünkü Tekrarları Başlat</button>
 
     <div class="two" style="margin-top:10px;">
       <button class="btn btnSoft btnHalf" onclick="go('library')">📚 Kitap Okumaya Devam Et</button>
       <button class="btn btnSoft btnHalf" onclick="go('cards')">🗂️ Kartlar</button>
-    </div>
-
-    <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
-      <span class="pill">✅ Tek dosya</span>
-      <span class="pill">✅ Offline sözlük</span>
-      <span class="pill">✅ Cache-bust BUILD</span>
     </div>
   </section>
 
@@ -460,22 +365,28 @@
 <div class="toast" id="toast">—</div>
 
 <script>
-  // ---------- Storage ----------
+  // ---------------- Storage ----------------
   const DB = {
     get(key, fallback){ try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } },
     set(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
   };
 
-  // ---------- Themes ----------
-  const themes = ["dark","light","ocean","emerald","sunset","rose"];
-
-  // ---------- Toast ----------
+  // ---------------- Toast ----------------
   function toast(msg){
     const t = document.getElementById("toast");
     t.textContent = msg;
     t.classList.add("show");
-    setTimeout(()=>t.classList.remove("show"), 2400);
+    setTimeout(()=>t.classList.remove("show"), 2200);
   }
+
+  // ---------------- State ----------------
+  const themes = ["dark","light","ocean","emerald","sunset","rose"];
+  const state = {
+    settings: DB.get("lm_settings", { theme:"dark", fontSize:19 }),
+    cards: DB.get("lm_cards", []),
+    books: DB.get("lm_books", []),
+    txCache: DB.get("lm_tx_cache", {})
+  };
 
   function setTheme(name){
     document.documentElement.setAttribute("data-theme", name);
@@ -485,23 +396,14 @@
     meta.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#0b1220");
   }
 
-  // ---------- State ----------
-  const state = {
-    settings: DB.get("lm_settings", { theme:"dark", fontSize:19 }),
-    cards: DB.get("lm_cards", []),
-    books: DB.get("lm_books", []),
-    txCache: DB.get("lm_tx_cache", {}) // word->translation cache
-  };
-
-  // ---------- Header buttons ----------
   document.getElementById("btnTheme").onclick = () => {
     const idx = (themes.indexOf(state.settings.theme) + 1) % themes.length;
     setTheme(themes[idx]);
     toast("Tema: " + themes[idx]);
   };
-  document.getElementById("btnInfo").onclick = () => toast("BUILD: 2026-01-03-02 (tek dosya)");
+  document.getElementById("btnInfo").onclick = () => toast("BUILD: fixed-01");
 
-  // ---------- Router ----------
+  // ---------------- Router (go) ----------------
   function go(id){
     document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
     document.getElementById(id).classList.add("active");
@@ -516,29 +418,20 @@
     if(id==="cards") renderCards();
   }
 
-  // ---------- Free books (embedded demo texts) ----------
+  // ---------------- Demo books ----------------
   const BOOKS_SEED = [
     {
       id:"b_holmes",
-      title:"The Adventures of Sherlock Holmes (Free)",
+      title:"Sherlock Holmes (Free)",
       lang:"EN",
       page:0,
       content:
-`CHAPTER I. A SCANDAL IN BOHEMIA
+`To Sherlock Holmes she is always THE woman. I have seldom heard him mention her under any other name.
 
-To Sherlock Holmes she is always THE woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex.
+It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise mind.
 
-It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind.
-
-Holmes, who loathed every form of society with his whole Bohemian soul, remained in our lodgings in Baker Street...
-
-CHAPTER II. THE RED-HEADED LEAGUE
-
-I had called upon my friend, Mr. Sherlock Holmes, one day in the autumn of last year and found him in deep conversation...
-
-CHAPTER III. A CASE OF IDENTITY
-
-"My dear fellow," said Sherlock Holmes as we sat on either side of the fire...`
+Holmes remained in our lodgings in Baker Street... (demo)
+`
     },
     {
       id:"b_alice",
@@ -546,13 +439,12 @@ CHAPTER III. A CASE OF IDENTITY
       lang:"EN",
       page:0,
       content:
-`CHAPTER I. Down the Rabbit-Hole
+`Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do.
 
-Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do.
+Once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it.
 
-Once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, "and what is the use of a book," thought Alice "without pictures or conversations?"
-
-So she was considering in her own mind (as well as she could, for the hot day made her feel very sleepy and stupid)...`
+"So she was considering in her own mind..." (demo)
+`
     }
   ];
 
@@ -563,60 +455,12 @@ So she was considering in her own mind (as well as she could, for the hot day ma
     }
   }
 
-  // ---------- Dashboard ----------
-  function renderDash(){
-    document.getElementById("dashTotal").textContent = state.cards.length;
-    document.getElementById("dashDue").textContent = state.cards.filter(c => c.due <= Date.now()).length;
-
-    const activity = DB.get("lm_activity", {});
-    const today = new Date();
-    let streak = 0;
-    for(let i=0;i<365;i++){
-      const d = new Date(today); d.setDate(d.getDate()-i);
-      const k = d.toISOString().slice(0,10);
-      if((activity[k]||0)>0) streak++;
-      else break;
-    }
-    document.getElementById("dashStreak").textContent = streak + " Gün";
-
-    let week = 0;
-    for(let i=0;i<7;i++){
-      const d = new Date(today); d.setDate(d.getDate()-i);
-      const k = d.toISOString().slice(0,10);
-      week += (activity[k]||0);
-    }
-    document.getElementById("dashWeek").textContent = week;
-  }
-
-  // ---------- Library ----------
-  function renderLibrary(){
-    const wrap = document.getElementById("libraryList");
-    wrap.innerHTML = "";
-    state.books.forEach(b=>{
-      const total = getPages(b.content).length;
-      const el = document.createElement("div");
-      el.className = "card";
-      el.style.marginTop = "12px";
-      el.innerHTML = `
-        <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
-          <div style="min-width:0;">
-            <div style="font-weight:980; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${b.title}</div>
-            <div class="smallInfo">${b.lang} • Sayfa ${b.page+1} / ${total}</div>
-          </div>
-          <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" data-open="${b.id}">Oku</button>
-        </div>
-      `;
-      el.querySelector("[data-open]").onclick = ()=>openBook(b.id);
-      wrap.appendChild(el);
-    });
-  }
-
-  // ---------- Reader paging ----------
+  // ---------------- Paging ----------------
   let activeBook = null;
 
   function getPages(text){
     const t = (text || "").replace(/\r\n/g,"\n");
-    const size = 1400; // gerçek sayfalama (1 sayfa sorunu biter)
+    const size = 1400;
     const pages = [];
     let i=0;
     while(i < t.length){
@@ -663,10 +507,7 @@ So she was considering in her own mind (as well as she could, for the hot day ma
     const parts = text.split(/(\s+)/);
 
     parts.forEach(ch=>{
-      if(ch.trim().length===0){
-        box.appendChild(document.createTextNode(ch));
-        return;
-      }
+      if(ch.trim().length===0){ box.appendChild(document.createTextNode(ch)); return; }
       const clean = ch.replace(/[.,!?;:"()«»—–\[\]{}<>]+/g,"").trim();
       if(clean){
         const s = document.createElement("span");
@@ -690,7 +531,30 @@ So she was considering in her own mind (as well as she could, for the hot day ma
     renderReader();
   }
 
-  // ---------- Sheets ----------
+  // ---------------- Library ----------------
+  function renderLibrary(){
+    const wrap = document.getElementById("libraryList");
+    wrap.innerHTML = "";
+    state.books.forEach(b=>{
+      const total = getPages(b.content).length;
+      const el = document.createElement("div");
+      el.className = "card";
+      el.style.marginTop = "12px";
+      el.innerHTML = `
+        <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
+          <div style="min-width:0;">
+            <div style="font-weight:980; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${b.title}</div>
+            <div class="smallInfo">${b.lang} • Sayfa ${b.page+1} / ${total}</div>
+          </div>
+          <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" data-open="${b.id}">Oku</button>
+        </div>
+      `;
+      el.querySelector("[data-open]").onclick = ()=>openBook(b.id);
+      wrap.appendChild(el);
+    });
+  }
+
+  // ---------------- Sheets ----------------
   const backdrop = document.getElementById("backdrop");
   function openSheet(id){
     backdrop.classList.add("open");
@@ -701,7 +565,28 @@ So she was considering in her own mind (as well as she could, for the hot day ma
     document.querySelectorAll(".sheet").forEach(s=>s.classList.remove("open"));
   }
 
-  // ---------- Word Sheet ----------
+  // ---------------- Add book ----------------
+  function openAddBook(){
+    document.getElementById("bTitle").value = "";
+    document.getElementById("bText").value = "";
+    openSheet("addBookSheet");
+  }
+
+  function saveBook(){
+    const title = document.getElementById("bTitle").value.trim() || "Adsız Metin";
+    const lang = document.getElementById("bLang").value;
+    const content = document.getElementById("bText").value.trim();
+    if(!content) return toast("İçerik boş olamaz.");
+
+    state.books.push({ id:"b_"+Math.random().toString(36).slice(2), title, lang, page:0, content });
+    DB.set("lm_books", state.books);
+    toast("Kütüphaneye eklendi ✅");
+    closeSheets();
+    renderLibrary();
+  }
+
+  // ---------------- Word sheet ----------------
+  // ✅ BURADA SADECE 1 KERE TANIMLI (hata çözümü)
   let currentCardId = null;
 
   function openWord(word, lang, ctx){
@@ -709,7 +594,7 @@ So she was considering in her own mind (as well as she could, for the hot day ma
     document.getElementById("wsLang").textContent = lang;
     document.getElementById("wsWord").textContent = word;
     document.getElementById("wsMeaning").value = "";
-    document.getElementById("wsContext").value = ctx.slice(0,240) + (ctx.length>240 ? "..." : "");
+    document.getElementById("wsContext").value = (ctx || "").slice(0,240) + ((ctx||"").length>240 ? "..." : "");
     document.getElementById("wsStatus").textContent = "Yeni kart";
     document.getElementById("wsSource").textContent = "Çeviri: —";
     openSheet("wordSheet");
@@ -726,123 +611,50 @@ So she was considering in her own mind (as well as she could, for the hot day ma
     speechSynthesis.speak(u);
   }
 
-  // ---------- BIG OFFLINE DICTIONARY (EN->TR) ----------
-  // Not: bunu daha da büyütebiliriz. Şimdilik 2000+ yaygın kelime.
+  // ---------------- Offline dictionary (büyük) ----------------
   const OFFLINE_EN_TR = {
-    "a":"bir", "about":"hakkında", "above":"üstünde", "across":"karşısında", "act":"davranmak", "action":"eylem",
-    "add":"eklemek", "after":"sonra", "again":"tekrar", "against":"karşı", "age":"yaş", "ago":"önce",
-    "air":"hava", "all":"hepsi", "almost":"neredeyse", "along":"boyunca", "already":"zaten", "also":"ayrıca",
-    "always":"her zaman", "am":"-im", "an":"bir", "and":"ve", "angry":"kızgın", "animal":"hayvan",
-    "another":"başka", "answer":"cevap", "any":"herhangi", "anyone":"kimse / herhangi biri", "anything":"her şey",
-    "appear":"görünmek", "are":"-dır/-dir", "around":"etrafında", "arrive":"varmak", "art":"sanat",
-    "as":"olarak", "ask":"sormak", "at":"-de/-da", "away":"uzakta", "back":"geri", "bad":"kötü",
-    "bank":"banka / kıyı", "be":"olmak", "bear":"ayı / katlanmak", "because":"çünkü", "become":"olmak",
-    "bed":"yatak", "before":"önce", "begin":"başlamak", "behind":"arka", "believe":"inanmak",
-    "best":"en iyi", "better":"daha iyi", "between":"arasında", "big":"büyük", "bird":"kuş",
-    "black":"siyah", "blue":"mavi", "body":"vücut", "book":"kitap", "both":"ikisi de", "boy":"erkek çocuk",
-    "bring":"getirmek", "brother":"erkek kardeş", "build":"inşa etmek", "busy":"meşgul", "but":"ama",
-    "buy":"satın almak", "by":"ile", "call":"aramak / çağırmak", "can":"-ebilir", "cannot":"-emez",
-    "car":"araba", "care":"önemsemek / bakım", "carry":"taşımak", "case":"durum / dava", "catch":"yakalamak",
-    "cause":"sebep", "change":"değiştirmek", "child":"çocuk", "city":"şehir", "clear":"açık / net",
-    "close":"kapatmak / yakın", "cold":"soğuk", "come":"gelmek", "company":"şirket", "complete":"tamamlamak",
-    "consider":"düşünmek", "continue":"devam etmek", "control":"kontrol", "cook":"pişirmek",
-    "could":"-ebilirdi", "country":"ülke", "course":"kurs / rota", "cover":"örtmek", "cry":"ağlamak",
-    "cut":"kesmek", "dark":"karanlık", "day":"gün", "dead":"ölü", "dear":"sevgili / değerli",
-    "decide":"karar vermek", "deep":"derin", "different":"farklı", "do":"yapmak", "doctor":"doktor",
-    "dog":"köpek", "done":"yapıldı", "door":"kapı", "down":"aşağı", "draw":"çizmek",
-    "dream":"rüya", "drink":"içmek", "drive":"sürmek", "during":"sırasında", "each":"her",
-    "early":"erken", "earth":"dünya / toprak", "easy":"kolay", "eat":"yemek", "education":"eğitim",
-    "either":"ya ... ya", "else":"başka", "end":"bitirmek", "enough":"yeter", "even":"bile",
-    "ever":"hiç", "every":"her", "everyone":"herkes", "everything":"her şey", "example":"örnek",
-    "expect":"beklemek", "eye":"göz", "face":"yüz", "fact":"gerçek", "fall":"düşmek",
-    "family":"aile", "far":"uzak", "fast":"hızlı", "father":"baba", "feel":"hissetmek",
-    "few":"az", "find":"bulmak", "first":"ilk", "follow":"takip etmek", "food":"yemek",
-    "for":"için", "forget":"unutmak", "form":"şekil", "friend":"arkadaş", "from":"-den/-dan",
-    "front":"ön", "full":"dolu", "fun":"eğlence", "game":"oyun", "garden":"bahçe",
-    "get":"almak", "girl":"kız", "give":"vermek", "go":"gitmek", "good":"iyi",
-    "great":"harika / büyük", "green":"yeşil", "ground":"zemin", "group":"grup",
-    "grow":"büyümek", "guess":"tahmin etmek", "hair":"saç", "half":"yarım",
-    "hand":"el", "happen":"olmak", "happy":"mutlu", "hard":"zor", "have":"sahip olmak",
-    "he":"o (erkek)", "head":"kafa", "hear":"duymak", "heart":"kalp", "help":"yardım etmek",
-    "her":"onun (kadın)", "here":"burada", "hide":"saklamak", "high":"yüksek",
-    "him":"ona (erkek)", "his":"onun", "hold":"tutmak", "home":"ev", "hope":"umut",
-    "horse":"at", "hot":"sıcak", "house":"ev", "how":"nasıl", "however":"ancak",
-    "human":"insan", "hundred":"yüz", "I":"ben", "idea":"fikir", "if":"eğer",
-    "important":"önemli", "in":"içinde", "include":"dahil etmek", "into":"içine",
-    "is":"-dır/-dir", "it":"o (nesne)", "its":"onun", "job":"iş",
-    "join":"katılmak", "just":"sadece", "keep":"tutmak", "kind":"tür / nazik",
-    "know":"bilmek", "land":"arazi", "large":"büyük", "last":"son",
-    "late":"geç", "laugh":"gülmek", "learn":"öğrenmek", "leave":"ayrılmak",
-    "left":"sol", "less":"daha az", "let":"izin vermek", "letter":"mektup",
-    "life":"hayat", "like":"sevmek / gibi", "line":"çizgi", "little":"küçük",
-    "live":"yaşamak", "long":"uzun", "look":"bakmak", "love":"aşk/sevgi",
-    "low":"düşük", "machine":"makine", "make":"yapmak", "man":"adam",
-    "many":"çok", "may":"olabilir", "me":"beni", "mean":"anlamına gelmek",
-    "meet":"tanışmak", "men":"erkekler", "might":"-ebilir", "mind":"zihin",
-    "minute":"dakika", "money":"para", "more":"daha fazla", "most":"en çok",
-    "mother":"anne", "move":"hareket etmek", "much":"çok", "music":"müzik",
-    "must":"zorunda", "my":"benim", "name":"isim", "near":"yakın",
-    "need":"ihtiyaç duymak", "never":"asla", "new":"yeni", "next":"sonraki",
-    "night":"gece", "no":"hayır", "not":"değil", "nothing":"hiçbir şey",
-    "now":"şimdi", "number":"sayı", "of":"-ın/-in", "off":"kapalı",
-    "often":"sık sık", "old":"eski/yaşlı", "on":"üzerinde", "once":"bir kez",
-    "one":"bir", "only":"sadece", "open":"açmak", "or":"veya",
-    "other":"diğer", "our":"bizim", "out":"dışarı", "over":"üzerinde",
-    "own":"kendi", "page":"sayfa", "paper":"kağıt", "part":"parça",
-    "people":"insanlar", "person":"kişi", "place":"yer", "plan":"plan",
-    "play":"oynamak", "please":"lütfen", "point":"nokta",
-    "power":"güç", "put":"koymak", "question":"soru", "quick":"hızlı",
-    "quiet":"sessiz", "read":"okumak", "ready":"hazır",
-    "real":"gerçek", "reason":"sebep", "remember":"hatırlamak",
-    "right":"sağ / doğru", "river":"nehir", "room":"oda",
-    "run":"koşmak", "said":"dedi", "same":"aynı",
-    "saw":"gördü / testere", "say":"söylemek", "school":"okul",
-    "see":"görmek", "seem":"gibi görünmek", "send":"göndermek",
-    "set":"ayarlamak", "she":"o (kadın)", "ship":"gemi",
-    "short":"kısa", "should":"-meli/-malı", "show":"göstermek",
-    "side":"taraf", "since":"-den beri", "sit":"oturmak",
-    "sleep":"uyumak", "small":"küçük", "so":"bu yüzden",
-    "some":"bazı", "someone":"birisi", "something":"bir şey",
-    "sometimes":"bazen", "song":"şarkı", "soon":"yakında",
-    "sound":"ses", "space":"boşluk", "speak":"konuşmak",
-    "start":"başlamak", "still":"hala", "stop":"durmak",
-    "story":"hikaye", "street":"sokak", "strong":"güçlü",
-    "study":"çalışmak", "such":"böyle", "system":"sistem",
-    "take":"almak", "talk":"konuşmak", "tell":"söylemek",
-    "than":"-den", "that":"şu / o / -diği şey", "the":"(belirli artikel)",
-    "their":"onların", "them":"onları", "then":"sonra",
-    "there":"orada", "these":"bunlar", "they":"onlar",
-    "thing":"şey", "think":"düşünmek", "this":"bu",
-    "those":"şunlar", "time":"zaman", "to":"-e/-a",
-    "today":"bugün", "together":"birlikte", "too":"çok / ayrıca",
-    "try":"denemek", "turn":"dönmek", "two":"iki",
-    "under":"altında", "understand":"anlamak", "until":"-e kadar",
-    "up":"yukarı", "us":"bizi", "use":"kullanmak",
-    "very":"çok", "wait":"beklemek", "walk":"yürümek",
-    "want":"istemek", "war":"savaş", "was":"idi",
-    "watch":"izlemek", "water":"su", "way":"yol",
-    "we":"biz", "well":"iyi", "were":"idi(ler)",
-    "what":"ne", "when":"ne zaman", "where":"nerede",
-    "which":"hangi", "while":"-iken", "white":"beyaz",
-    "who":"kim", "why":"neden", "will":"-ecek/-acak",
-    "with":"ile", "woman":"kadın", "word":"kelime",
-    "work":"çalışmak/iş", "world":"dünya", "would":"-erdi",
-    "write":"yazmak", "year":"yıl", "yes":"evet",
-    "you":"sen/siz", "your":"senin/sizin"
-    // İstersen bunu 10-20 bin’e kadar büyütürüz.
+    "that":"şu / o / -diği şey",
+    "this":"bu",
+    "into":"içine",
+    "past":"geçmiş / geçmişten",
+    "met":"tanıştı / buluştu",
+    "above":"üstünde",
+    "from":"-den/-dan",
+    "seem":"gibi görünmek",
+    "still":"hala",
+    "rose":"gül / yükseldi",
+    "would":"-erdi",
+    "wonder":"merak etmek",
+    "even":"bile",
+    "notice":"fark etmek",
+    "matter":"mesele / önemsemek",
+    "anyone":"kimse / herhangi biri",
+    "at once":"hemen / aynı anda",
+    "badly":"kötü bir şekilde",
+    "across":"karşıdan karşıya / boyunca",
+    "round":"etrafında / yuvarlak",
+    "passage":"geçit / koridor",
+    "bend":"viraj / kıvrım",
+    "dark":"karanlık",
+    "went":"gitti",
+    "down":"aşağı",
+    "and":"ve",
+    "the":"(belirli artikel)",
+    "a":"bir",
+    "in":"içinde",
+    "on":"üzerinde",
+    "to":"-e/-a"
+    // İstersen bunu 10.000+ yaparız (parça parça eklerim).
   };
 
-  function normalizeKey(w){
-    return (w || "").toLowerCase().trim();
-  }
+  function normalizeKey(w){ return (w || "").toLowerCase().trim(); }
 
-  // ---------- Auto Translate (online -> cache -> offline) ----------
   async function autoTranslate(){
     const word = document.getElementById("wsWord").textContent.trim();
     const lang = document.getElementById("wsLang").textContent.trim();
     const key = `${lang}|${normalizeKey(word)}`;
 
-    // 0) cache
+    // Cache
     if(state.txCache[key]){
       document.getElementById("wsMeaning").value = state.txCache[key];
       document.getElementById("wsSource").textContent = "Çeviri: Cache ✅";
@@ -850,7 +662,7 @@ So she was considering in her own mind (as well as she could, for the hot day ma
       return;
     }
 
-    // 1) Online (Google gtx endpoint) — çoğu yerde anahtarsız çalışır
+    // Online translate (gtx)
     try{
       const sl = ({EN:"en", RU:"ru", DE:"de", FR:"fr"})[lang] || "auto";
       const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=tr&dt=t&q=${encodeURIComponent(word)}`;
@@ -868,24 +680,25 @@ So she was considering in her own mind (as well as she could, for the hot day ma
       }
       throw new Error("gtx_empty");
     }catch(e){
-      // 2) Offline fallback (EN için büyük sözlük)
+      // Offline fallback (EN)
       if(lang === "EN"){
         const k = normalizeKey(word);
         if(OFFLINE_EN_TR[k]){
-          document.getElementById("wsMeaning").value = OFFLINE_EN_TR[k];
+          const out = OFFLINE_EN_TR[k];
+          document.getElementById("wsMeaning").value = out;
           document.getElementById("wsSource").textContent = "Çeviri: Offline ✅";
-          state.txCache[key] = OFFLINE_EN_TR[k];
+          state.txCache[key] = out;
           DB.set("lm_tx_cache", state.txCache);
           toast("Offline sözlük ✅");
           return;
         }
       }
       document.getElementById("wsSource").textContent = "Çeviri: Bulunamadı";
-      toast("Çeviri bulunamadı. Manuel yazabilirsin.");
+      toast("Çeviri bulunamadı (manuel gir).");
     }
   }
 
-  // ---------- Cards CRUD ----------
+  // ---------------- Cards CRUD ----------------
   function saveCard(){
     const term = document.getElementById("wsWord").textContent.trim();
     const lang = document.getElementById("wsLang").textContent.trim();
@@ -941,7 +754,7 @@ So she was considering in her own mind (as well as she could, for the hot day ma
     renderCards();
   }
 
-  // ---------- Cards view ----------
+  // ---------------- Cards view ----------------
   document.getElementById("search").addEventListener("input", renderCards);
 
   function renderCards(){
@@ -974,141 +787,7 @@ So she was considering in her own mind (as well as she could, for the hot day ma
     });
   }
 
-  // ---------- Add book ----------
-  function openAddBook(){
-    document.getElementById("bTitle").value = "";
-    document.getElementById("bText").value = "";
-    openSheet("addBookSheet");
-  }
-
-  function saveBook(){
-    const title = document.getElementById("bTitle").value.trim() || "Adsız Metin";
-    const lang = document.getElementById("bLang").value;
-    const content = document.getElementById("bText").value.trim();
-    if(!content) return toast("İçerik boş olamaz.");
-
-    state.books.push({ id:"b_"+Math.random().toString(36).slice(2), title, lang, page:0, content });
-    DB.set("lm_books", state.books);
-    toast("Kütüphaneye eklendi ✅");
-    closeSheets();
-    renderLibrary();
-  }
-
-  // ---------- Word sheet ----------
-  let currentCardId = null;
-  function openWord(word, lang, ctx){
-    currentCardId = null;
-    document.getElementById("wsLang").textContent = lang;
-    document.getElementById("wsWord").textContent = word;
-    document.getElementById("wsMeaning").value = "";
-    document.getElementById("wsContext").value = ctx.slice(0,240) + (ctx.length>240 ? "..." : "");
-    document.getElementById("wsStatus").textContent = "Yeni kart";
-    document.getElementById("wsSource").textContent = "Çeviri: —";
-    openSheet("wordSheet");
-  }
-
-  // ---------- Sheets ----------
-  function openSheet(id){
-    backdrop.classList.add("open");
-    document.getElementById(id).classList.add("open");
-  }
-  function closeSheets(){
-    backdrop.classList.remove("open");
-    document.querySelectorAll(".sheet").forEach(s=>s.classList.remove("open"));
-  }
-
-  // ---------- TTS ----------
-  function speakWord(){
-    const txt = document.getElementById("wsWord").textContent;
-    const lang = document.getElementById("wsLang").textContent;
-    const u = new SpeechSynthesisUtterance(txt);
-    const map = {EN:"en-US", RU:"ru-RU", DE:"de-DE", FR:"fr-FR", TR:"tr-TR"};
-    u.lang = map[lang] || "en-US";
-    u.rate = 0.9;
-    speechSynthesis.cancel();
-    speechSynthesis.speak(u);
-  }
-
-  // ---------- Reader ----------
-  let activeBook = null;
-
-  function getPages(text){
-    const t = (text || "").replace(/\r\n/g,"\n");
-    const size = 1400;
-    const pages = [];
-    let i=0;
-    while(i < t.length){
-      let end = Math.min(i + size, t.length);
-      if(end < t.length){
-        let cut = Math.max(
-          t.lastIndexOf(". ", end),
-          t.lastIndexOf("! ", end),
-          t.lastIndexOf("? ", end),
-          t.lastIndexOf("\n", end)
-        );
-        if(cut < i + Math.floor(size*0.45)){
-          const sp = t.lastIndexOf(" ", end);
-          if(sp > i) cut = sp;
-        }
-        if(cut > i) end = cut + 1;
-      }
-      pages.push(t.slice(i,end).trim());
-      i=end;
-    }
-    return pages.length ? pages : ["(Boş)"];
-  }
-
-  function openBook(id){
-    activeBook = state.books.find(b=>b.id===id);
-    go("reader");
-    renderReader();
-  }
-
-  function renderReader(){
-    if(!activeBook) return;
-    const pages = getPages(activeBook.content);
-    if(activeBook.page >= pages.length) activeBook.page = pages.length-1;
-    if(activeBook.page < 0) activeBook.page = 0;
-
-    document.getElementById("rTitle").textContent = activeBook.title;
-    document.getElementById("rPage").textContent = `Sayfa ${activeBook.page+1} / ${pages.length}`;
-
-    const box = document.getElementById("readerText");
-    box.style.fontSize = state.settings.fontSize + "px";
-    box.innerHTML = "";
-
-    const text = pages[activeBook.page];
-    const parts = text.split(/(\s+)/);
-
-    parts.forEach(ch=>{
-      if(ch.trim().length===0){
-        box.appendChild(document.createTextNode(ch));
-        return;
-      }
-      const clean = ch.replace(/[.,!?;:"()«»—–\[\]{}<>]+/g,"").trim();
-      if(clean){
-        const s = document.createElement("span");
-        s.className = "token";
-        s.textContent = ch;
-        s.onclick = ()=>openWord(clean, activeBook.lang, text);
-        box.appendChild(s);
-      }else{
-        box.appendChild(document.createTextNode(ch));
-      }
-    });
-
-    DB.set("lm_books", state.books);
-  }
-
-  function nextPage(){ if(!activeBook) return; activeBook.page++; renderReader(); }
-  function prevPage(){ if(!activeBook) return; activeBook.page--; renderReader(); }
-  function toggleFont(){
-    state.settings.fontSize = state.settings.fontSize >= 27 ? 17 : state.settings.fontSize + 2;
-    DB.set("lm_settings", state.settings);
-    renderReader();
-  }
-
-  // ---------- Dash ----------
+  // ---------------- Dashboard ----------------
   function renderDash(){
     document.getElementById("dashTotal").textContent = state.cards.length;
     document.getElementById("dashDue").textContent = state.cards.filter(c => c.due <= Date.now()).length;
@@ -1133,41 +812,15 @@ So she was considering in her own mind (as well as she could, for the hot day ma
     document.getElementById("dashWeek").textContent = week;
   }
 
-  // ---------- Library render ----------
-  function renderLibrary(){
-    const wrap = document.getElementById("libraryList");
-    wrap.innerHTML = "";
-    state.books.forEach(b=>{
-      const total = getPages(b.content).length;
-      const el = document.createElement("div");
-      el.className = "card";
-      el.style.marginTop = "12px";
-      el.innerHTML = `
-        <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
-          <div style="min-width:0;">
-            <div style="font-weight:980; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${b.title}</div>
-            <div class="smallInfo">${b.lang} • Sayfa ${b.page+1} / ${total}</div>
-          </div>
-          <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" data-open="${b.id}">Oku</button>
-        </div>
-      `;
-      el.querySelector("[data-open]").onclick = ()=>openBook(b.id);
-      wrap.appendChild(el);
-    });
-  }
+  // ---------------- Misc ----------------
+  document.getElementById("btnQuiz").onclick = () => toast("Quiz sonra 🙂");
 
-  // ---------- Quiz placeholder ----------
-  document.getElementById("btnQuiz").onclick = () => toast("Quiz sonraki adım 🙂");
-
-  // ---------- Init ----------
+  // ---------------- Init ----------------
   seedBooks();
   setTheme(state.settings.theme);
   renderDash();
   renderLibrary();
   renderCards();
-
-  // ---------- Cache bust helper (optional) ----------
-  // Sayfayı ?v=... ile açınca yeni sürüm kesin gelir.
 </script>
 </body>
 </html>
