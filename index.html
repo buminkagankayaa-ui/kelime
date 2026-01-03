@@ -57,7 +57,6 @@
       --headerBottom: rgba(7,17,12,.60);
       --inputBg: rgba(15,31,23,.88);
     }
-    /* LIGHT FIX: gradients + header + input backgrounds */
     body[data-theme="light"]{
       --bg:#f6f7fb; --panel:#ffffff; --card:#ffffff; --card2:#f4f6ff;
       --line:#d7d9e6; --text:#0b0b10; --muted:#4b5563;
@@ -104,6 +103,7 @@
       font-size:13px;
       display:inline-flex; gap:8px; align-items:center;
       user-select:none;
+      white-space:nowrap;
     }
     .btn:active{transform:scale(.99)}
     .btn.primary{
@@ -114,10 +114,6 @@
     .btn.danger{
       border-color: color-mix(in srgb, var(--danger) 35%, transparent);
       background: color-mix(in srgb, var(--danger) 12%, transparent);
-    }
-    .btn.ok{
-      border-color: color-mix(in srgb, var(--accent2) 35%, transparent);
-      background: color-mix(in srgb, var(--accent2) 14%, transparent);
     }
 
     .controls{
@@ -148,7 +144,7 @@
       font-weight:900;
       font-size:12px;
       flex:1;
-      min-width: 90px;
+      min-width: 110px;
       text-align:center;
       user-select:none;
     }
@@ -157,9 +153,26 @@
       background: color-mix(in srgb, var(--accent2) 14%, transparent);
     }
 
+    /* ✅ NEW: filters on ONE row (wrap nicely) */
+    .filters{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-start;
+    }
+    .filters select{
+      width:auto;
+      min-width: 160px;
+      flex: 1;
+    }
+    @media (max-width: 420px){
+      .filters select{ min-width: 140px; }
+    }
+
     .bar{
       display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
-      color: var(--muted); font-size:12px; margin-top:10px;
+      color: var(--muted); font-size:12px; margin-top:4px;
     }
     .bar .left{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
 
@@ -184,7 +197,6 @@
     @media (min-width: 680px){ .grid{ grid-template-columns: 1fr 1fr; } }
     @media (min-width: 980px){ .grid{ grid-template-columns: 1fr 1fr 1fr; } }
 
-    /* Card shell */
     .card{
       border:1px solid var(--line);
       background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, transparent), color-mix(in srgb, var(--panel) 92%, transparent));
@@ -194,26 +206,6 @@
       position:relative;
     }
 
-    /* Selection checkbox */
-    .selBox{
-      position:absolute; top:12px; right:12px;
-      width:22px; height:22px;
-      border-radius: 7px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.06);
-      display:none;
-      align-items:center; justify-content:center;
-      font-weight:950;
-      cursor:pointer;
-      z-index:5;
-    }
-    .card.select-on .selBox{ display:flex; }
-    .selBox.on{
-      border-color: color-mix(in srgb, var(--accent2) 45%, transparent);
-      background: color-mix(in srgb, var(--accent2) 18%, transparent);
-    }
-
-    /* Flip section */
     .cardFlipWrap{
       position: relative;
       min-height: 240px;
@@ -259,7 +251,6 @@
       box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
     }
 
-    /* Favorite star */
     .star{
       width:42px; height:42px;
       border-radius: 14px;
@@ -324,36 +315,13 @@
     .tag.good{ border-color: color-mix(in srgb, var(--accent2) 35%, transparent); background: color-mix(in srgb, var(--accent2) 10%, transparent); }
     .tag.bad{ border-color: color-mix(in srgb, var(--danger) 35%, transparent); background: color-mix(in srgb, var(--danger) 10%, transparent); }
 
-    /* Bottom action bar */
     .actions{
       display:flex; gap:8px; flex-wrap:wrap;
       padding:12px 14px;
       border-top:1px solid var(--line);
       background: rgba(0,0,0,.10);
     }
-    body.selecting .actions{ display:none !important; }
 
-    /* Selection bar */
-    .selectBar{
-      position:fixed;
-      left:50%; transform: translateX(-50%);
-      bottom: 18px;
-      width:min(860px, 96vw);
-      border:1px solid var(--line);
-      background: rgba(18,18,26,.92);
-      backdrop-filter: blur(10px);
-      border-radius: 18px;
-      padding:10px;
-      display:none;
-      z-index:9998;
-      box-shadow: var(--shadow);
-    }
-    body.selecting .selectBar{ display:block; }
-    .selectBarRow{ display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
-    .selectBar .count{ color:var(--muted); font-size:12px; }
-    .selectBar .count b{ color:var(--text); }
-
-    /* Dialog */
     dialog{
       width:min(760px, 96vw);
       border:none;
@@ -402,134 +370,6 @@
       z-index:9999;
     }
     body[data-theme="light"] .toast{ background: rgba(255,255,255,.95); }
-
-    /* FULLSCREEN QUIZ */
-    .quizScreen{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(10px);
-      display:none;
-      z-index:9999;
-      padding: env(safe-area-inset-top) 14px env(safe-area-inset-bottom) 14px;
-    }
-    .quizScreen.on{ display:block; }
-
-    .quizShell{
-      width:min(860px, 96vw);
-      margin: 0 auto;
-      border:1px solid var(--line);
-      border-radius: 22px;
-      box-shadow: var(--shadow);
-      background: linear-gradient(180deg, rgba(18,18,26,.98), rgba(12,12,18,.98));
-      overflow:hidden;
-    }
-    body[data-theme="light"] .quizShell{
-      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(246,247,251,.98));
-    }
-
-    .quizHead{
-      padding:14px;
-      border-bottom:1px solid var(--line);
-      display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
-    }
-    .quizTitle{ font-weight:950; font-size:18px; }
-    .quizSub{ color:var(--muted); font-size:12px; margin-top:6px; }
-
-    .quizPanel{ padding:14px; display:grid; gap:12px; }
-
-    .quizTopRow, .quizBottomRow{
-      display:flex; gap:10px; justify-content:space-between; align-items:center; flex-wrap:wrap;
-    }
-
-    .progress{
-      height:10px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      background: rgba(255,255,255,.04);
-      overflow:hidden;
-    }
-    .progress > div{
-      height:100%;
-      width:0%;
-      background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 80%, white 0%), color-mix(in srgb, var(--accent2) 80%, white 0%));
-      transition: width .35s ease;
-    }
-
-    .quizQuestion{
-      font-size:22px;
-      font-weight:950;
-      line-height:1.15;
-      padding:12px 12px;
-      border:1px solid var(--line);
-      border-radius: 16px;
-      background: rgba(255,255,255,.03);
-    }
-
-    .quizChoices{
-      display:grid;
-      gap:10px;
-      grid-template-columns: 1fr;
-    }
-    @media (min-width: 680px){
-      .quizChoices{ grid-template-columns: 1fr 1fr; }
-    }
-
-    .choiceBtn{
-      text-align:left;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color:var(--text);
-      padding:12px 12px;
-      border-radius: 16px;
-      font-weight:900;
-      font-size:14px;
-      transition: transform .08s ease;
-    }
-    .choiceBtn:active{ transform: scale(.995); }
-    .choiceBtn.correct{
-      border-color: color-mix(in srgb, var(--accent2) 45%, transparent);
-      background: color-mix(in srgb, var(--accent2) 14%, transparent);
-    }
-    .choiceBtn.wrong{
-      border-color: color-mix(in srgb, var(--danger) 45%, transparent);
-      background: color-mix(in srgb, var(--danger) 12%, transparent);
-    }
-
-    .quizFeedback{
-      color: var(--muted);
-      font-size:13px;
-      padding:10px 12px;
-      border:1px dashed color-mix(in srgb, var(--text) 18%, transparent);
-      border-radius: 16px;
-      background: rgba(255,255,255,.02);
-    }
-
-    .resultBox{
-      border:1px solid var(--line);
-      border-radius: 16px;
-      background: rgba(255,255,255,.03);
-      padding:12px;
-    }
-    .resultTitle{ font-weight:950; margin-bottom:8px; }
-    .resultList{
-      display:grid; gap:8px;
-      max-height: 260px;
-      overflow:auto;
-      padding-right: 4px;
-    }
-    .resultItem{
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.10);
-      border-radius: 14px;
-      padding:10px;
-    }
-    .resultItem .t{ font-weight:950; }
-    .resultItem .m{ color:var(--muted); font-size:12px; margin-top:4px; }
-
-    .quizBig{
-      font-size:22px;
-      font-weight:950;
-    }
   </style>
 </head>
 
@@ -538,12 +378,10 @@
     <div class="topbar">
       <div class="brand">
         <h1>Vocab Pocket Pro</h1>
-        <div class="sub">Kart gibi • Flip • Favori • Etiket • Seviye • Quiz</div>
+        <div class="sub">Kart gibi • Flip • Favori • Etiket • Seviye</div>
       </div>
       <div class="row">
-        <button class="btn ghost" id="selectToggleBtn">☑︎ Seç</button>
         <button class="btn ghost" id="langManageBtn">🌐 Diller</button>
-        <button class="btn ghost" id="quizToggleBtn">🧠 Quiz</button>
         <button class="btn primary" id="addBtn">＋ Ekle</button>
       </div>
     </div>
@@ -551,8 +389,38 @@
     <div class="controls">
       <input class="input" id="search" placeholder="Ara: kelime / anlam / örnek / etiket..." />
 
-      <!-- Dynamic chips (ALL + languages + FAV) -->
+      <!-- Chips: Tümü + diller (Favoriler kaldırıldı) -->
       <div class="chips" id="chips"></div>
+
+      <!-- ✅ Filters: side-by-side (wrap) -->
+      <div class="filters">
+        <select id="levelFilter" title="Seviye filtresi">
+          <option value="ALL" selected>Seviye: Tümü</option>
+          <option value="A1">Seviye: A1</option>
+          <option value="A2">Seviye: A2</option>
+          <option value="B1">Seviye: B1</option>
+          <option value="B2">Seviye: B2</option>
+          <option value="C1">Seviye: C1</option>
+          <option value="C2">Seviye: C2</option>
+        </select>
+
+        <select id="tagFilter" title="Etiket filtresi">
+          <option value="ALL" selected>Etiket: Tümü</option>
+        </select>
+
+        <select id="themeSelect" title="Tema">
+          <option value="dark" selected>Tema: Dark</option>
+          <option value="emerald">Tema: Emerald</option>
+          <option value="light">Tema: Light</option>
+        </select>
+
+        <select id="sort" title="Sırala">
+          <option value="updated">Sırala: Son güncellenen</option>
+          <option value="created">Sırala: Son eklenen</option>
+          <option value="az">Sırala: A → Z</option>
+          <option value="za">Sırala: Z → A</option>
+        </select>
+      </div>
 
       <div class="bar">
         <div class="left">
@@ -560,40 +428,7 @@
           <span class="pill">Görünen <strong id="countVisible">0</strong></span>
         </div>
 
-        <div class="row" style="flex:1; justify-content:flex-end;">
-          <!-- Filters -->
-          <select id="levelFilter" title="Seviye filtresi">
-            <option value="ALL" selected>Seviye: Tümü</option>
-            <option value="A1">Seviye: A1</option>
-            <option value="A2">Seviye: A2</option>
-            <option value="B1">Seviye: B1</option>
-            <option value="B2">Seviye: B2</option>
-            <option value="C1">Seviye: C1</option>
-            <option value="C2">Seviye: C2</option>
-          </select>
-
-          <select id="tagFilter" title="Etiket filtresi">
-            <option value="ALL" selected>Etiket: Tümü</option>
-          </select>
-
-          <!-- Theme -->
-          <select id="themeSelect" title="Tema">
-            <option value="dark" selected>Tema: Dark</option>
-            <option value="emerald">Tema: Emerald</option>
-            <option value="light">Tema: Light</option>
-          </select>
-
-          <select id="sort">
-            <option value="updated">Sırala: Son güncellenen</option>
-            <option value="created">Sırala: Son eklenen</option>
-            <option value="az">Sırala: A → Z</option>
-            <option value="za">Sırala: Z → A</option>
-          </select>
-
-          <button class="btn" id="exportJsonBtn">⬇︎ JSON</button>
-          <button class="btn" id="exportCsvBtn">⬇︎ CSV</button>
-          <label class="btn" for="importFile" style="cursor:pointer;">⬆︎ İçe Aktar</label>
-          <input id="importFile" type="file" accept="application/json" hidden />
+        <div class="row" style="justify-content:flex-end;">
           <button class="btn danger" id="wipeBtn">🗑️ Hepsini Sil</button>
         </div>
       </div>
@@ -603,142 +438,6 @@
   <main>
     <div class="grid" id="grid"></div>
   </main>
-
-  <!-- Selection Bar -->
-  <div class="selectBar" id="selectBar">
-    <div class="selectBarRow">
-      <div class="count">Seçili: <b id="selectedCount">0</b></div>
-      <div class="row">
-        <button class="btn" id="selectAllVisibleBtn">✅ Hepsini seç</button>
-        <button class="btn" id="clearSelectionBtn">✕ Temizle</button>
-        <button class="btn ok" id="bulkFavBtn">★ Favori</button>
-        <button class="btn" id="bulkTagBtn">🏷️ Etiket ekle</button>
-        <button class="btn danger" id="bulkDeleteBtn">🗑️ Sil</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- FULLSCREEN QUIZ SCREEN -->
-  <section class="quizScreen" id="quizScreen" aria-hidden="true">
-    <div class="quizShell">
-      <div class="quizHead">
-        <div>
-          <div class="quizTitle">🧠 Quiz</div>
-          <div class="quizSub" id="quizSub">Hazır mısın?</div>
-        </div>
-        <div class="row">
-          <button class="btn ghost" id="quizCloseBtn" type="button">✕ Kapat</button>
-        </div>
-      </div>
-
-      <!-- Setup -->
-      <div class="quizPanel" id="quizSetup">
-        <div class="two">
-          <div>
-            <label class="small">Soru modu</label>
-            <select id="quizModeSelect">
-              <option value="TR2TERM" selected>TR → Kelime</option>
-              <option value="TERM2TR">Kelime → TR</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="small">Soru sayısı</label>
-            <select id="quizCountSelect">
-              <option value="5">5</option>
-              <option value="10" selected>10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="9999">Hepsi</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="two">
-          <div>
-            <label class="small">Şık sayısı</label>
-            <select id="quizChoiceCount">
-              <option value="4" selected>4 şık</option>
-              <option value="6">6 şık</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="small">Kapsam</label>
-            <select id="quizScope">
-              <option value="CURRENT" selected>Mevcut filtre/arama</option>
-              <option value="FAV">Sadece favoriler</option>
-              <option value="WRONG">Sadece daha önce yanlışlar</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="two">
-          <div>
-            <label class="small">Tekrar</label>
-            <select id="quizRepeat">
-              <option value="NO" selected>Aynı kelimeyi tekrar sorma</option>
-              <option value="YES">Tekrar sorabilir</option>
-            </select>
-          </div>
-          <div>
-            <label class="small">Başlat</label>
-            <button class="btn primary" id="quizStartBtn" type="button" style="width:100%; justify-content:center;">
-              ▶️ Quiz’i Başlat
-            </button>
-          </div>
-        </div>
-
-        <div class="help">
-          Quiz; seçtiğin kapsama göre kelimeleri seçer, doğru/yanlış sayısını kaydeder ve bitince “bildiklerin / bilemediklerin” verir.
-        </div>
-      </div>
-
-      <!-- Play -->
-      <div class="quizPanel" id="quizPlay" style="display:none;">
-        <div class="quizTopRow">
-          <span class="pill">Soru <strong id="quizIdx">1</strong>/<strong id="quizTotal">10</strong></span>
-          <span class="pill">Puan <strong id="quizScore">0</strong></span>
-        </div>
-
-        <div class="progress"><div id="quizProgress"></div></div>
-
-        <div class="quizQuestion" id="quizQuestion">—</div>
-        <div class="quizChoices" id="quizChoices"></div>
-
-        <div class="quizBottomRow">
-          <button class="btn" id="quizSkipBtn" type="button">⏭️ Pas</button>
-          <button class="btn primary" id="quizNextBtn2" type="button" disabled>➡️ Sonraki</button>
-        </div>
-
-        <div class="quizFeedback" id="quizFeedback"></div>
-      </div>
-
-      <!-- Result -->
-      <div class="quizPanel" id="quizResult" style="display:none;">
-        <div class="quizResultTop">
-          <div class="quizBig" id="quizFinalScore">Skor: 0/0</div>
-          <div class="quizSub" id="quizFinalSub">—</div>
-        </div>
-
-        <div class="two">
-          <div class="resultBox">
-            <div class="resultTitle">✅ Bildiklerin</div>
-            <div class="resultList" id="quizKnownList"></div>
-          </div>
-          <div class="resultBox">
-            <div class="resultTitle">❌ Bilemediklerin</div>
-            <div class="resultList" id="quizUnknownList"></div>
-          </div>
-        </div>
-
-        <div class="quizBottomRow" style="margin-top:12px;">
-          <button class="btn" id="quizBackToSetupBtn" type="button">↩️ Ayarlara dön</button>
-          <button class="btn primary" id="quizRetryWrongBtn" type="button">🔁 Yanlışları tekrar çöz</button>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- Modal: Word add/edit -->
   <dialog id="modal">
@@ -773,7 +472,7 @@
       <div class="two">
         <div>
           <label class="small">Kelime</label>
-          <input class="input" id="term" placeholder="beneath / shone / ... veya yeni dil kelimesi" autocomplete="off" />
+          <input class="input" id="term" placeholder="beneath / shone / ..." autocomplete="off" />
         </div>
         <div>
           <label class="small">Türkçe anlam</label>
@@ -783,19 +482,18 @@
 
       <div>
         <label class="small">Örnek cümle (kelimenin dilinde)</label>
-        <textarea id="example" placeholder="Örn: George found an old, heavy key beneath a mass of rough stones."></textarea>
+        <textarea id="example" placeholder="Örn: George found a mass of gold beneath the dusty floor."></textarea>
       </div>
 
       <div class="two">
         <div>
           <label class="small">Etiketler (virgülle)</label>
-          <input class="input" id="tags" placeholder="travel, story, daily..." autocomplete="off" />
+          <input class="input" id="tags" placeholder="story, daily..." autocomplete="off" />
         </div>
         <div class="help">
           <div><strong>İpucu</strong></div>
           <div>• Kartı çevirmek için karta dokun</div>
-          <div>• ★ favori: Favoriler filtresi</div>
-          <div>• Quiz: üstte 🧠</div>
+          <div>• ★ favori: kart üstündeki yıldız</div>
         </div>
       </div>
     </form>
@@ -845,7 +543,7 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const KEY = "vocab_pocket_pro_v3";
+    const KEY = "vocab_pocket_pro_v4";
     const THEME_KEY = "vocab_theme_v1";
     const LANG_KEY = "vocab_languages_v1";
 
@@ -875,15 +573,6 @@
       toastEl._t = setTimeout(()=> toastEl.style.display="none", 1600);
     }
 
-    function haptic(type){
-      try{
-        if(!("vibrate" in navigator)) return;
-        if(type === "good") navigator.vibrate([18, 10, 18]);
-        else if(type === "bad") navigator.vibrate([40, 12, 40]);
-        else navigator.vibrate(15);
-      }catch{}
-    }
-
     // ===== Languages =====
     const DEFAULT_LANGS = [
       { code:"EN", name:"English" },
@@ -909,7 +598,6 @@
         if(!name) continue;
         map.set(code, {code, name});
       }
-      // ensure defaults exist
       for(const d of DEFAULT_LANGS){
         if(!map.has(d.code)) map.set(d.code, d);
       }
@@ -920,13 +608,10 @@
     let items = loadItems().map(patchItem);
     let langs = loadLangs();
 
-    let filter = "ALL";        // ALL / FAV / LANG_CODE
+    let filter = "ALL";        // ALL / LANG_CODE
     let levelFilter = "ALL";   // ALL / A1..C2
     let tagFilter = "ALL";     // ALL / tag
     let editingId = null;
-
-    let selecting = false;
-    let selectedIds = new Set();
 
     // ===== Elements =====
     const gridEl = document.getElementById("grid");
@@ -941,16 +626,6 @@
 
     const themeSelect = document.getElementById("themeSelect");
     const toastEl = document.getElementById("toast");
-
-    // Selection
-    const selectToggleBtn = document.getElementById("selectToggleBtn");
-    const selectBar = document.getElementById("selectBar");
-    const selectedCountEl = document.getElementById("selectedCount");
-    const selectAllVisibleBtn = document.getElementById("selectAllVisibleBtn");
-    const clearSelectionBtn = document.getElementById("clearSelectionBtn");
-    const bulkFavBtn = document.getElementById("bulkFavBtn");
-    const bulkTagBtn = document.getElementById("bulkTagBtn");
-    const bulkDeleteBtn = document.getElementById("bulkDeleteBtn");
 
     // Modal word
     const modal = document.getElementById("modal");
@@ -974,41 +649,7 @@
     const resetLangBtn = document.getElementById("resetLangBtn");
     const langListBox = document.getElementById("langListBox");
 
-    // Quiz
-    const quizToggleBtn = document.getElementById("quizToggleBtn");
-    const quizScreen = document.getElementById("quizScreen");
-    const quizCloseBtn = document.getElementById("quizCloseBtn");
-    const quizSubEl = document.getElementById("quizSub");
-
-    const quizSetup = document.getElementById("quizSetup");
-    const quizPlay = document.getElementById("quizPlay");
-    const quizResult = document.getElementById("quizResult");
-
-    const quizModeSelect = document.getElementById("quizModeSelect");
-    const quizCountSelect = document.getElementById("quizCountSelect");
-    const quizChoiceCountEl = document.getElementById("quizChoiceCount");
-    const quizScopeEl = document.getElementById("quizScope");
-    const quizRepeatEl = document.getElementById("quizRepeat");
-    const quizStartBtn = document.getElementById("quizStartBtn");
-
-    const quizIdxEl = document.getElementById("quizIdx");
-    const quizTotalEl = document.getElementById("quizTotal");
-    const quizScoreEl = document.getElementById("quizScore");
-    const quizProgressEl = document.getElementById("quizProgress");
-    const quizQuestionEl2 = document.getElementById("quizQuestion");
-    const quizChoicesEl = document.getElementById("quizChoices");
-    const quizFeedbackEl = document.getElementById("quizFeedback");
-    const quizSkipBtn = document.getElementById("quizSkipBtn");
-    const quizNextBtn2 = document.getElementById("quizNextBtn2");
-
-    const quizFinalScore = document.getElementById("quizFinalScore");
-    const quizFinalSub = document.getElementById("quizFinalSub");
-    const quizKnownList = document.getElementById("quizKnownList");
-    const quizUnknownList = document.getElementById("quizUnknownList");
-    const quizBackToSetupBtn = document.getElementById("quizBackToSetupBtn");
-    const quizRetryWrongBtn = document.getElementById("quizRetryWrongBtn");
-
-    // ===== Patch item (spaced repetition stats) =====
+    // ===== Patch item =====
     function patchItem(it){
       const x = {...it};
       x.lang = clean(x.lang).toUpperCase() || "EN";
@@ -1018,14 +659,6 @@
       x.example = clean(x.example);
       x.tags = Array.isArray(x.tags) ? x.tags.map(clean).filter(Boolean).slice(0,10) : parseTags(x.tags||"");
       x.fav = !!x.fav;
-
-      const s = x.stats || {};
-      x.stats = {
-        correct: Number(s.correct || 0),
-        wrong: Number(s.wrong || 0),
-        lastReviewed: Number(s.lastReviewed || 0),
-        lastResult: (s.lastResult === "good" || s.lastResult === "bad") ? s.lastResult : ""
-      };
 
       x.createdAt = Number(x.createdAt || now());
       x.updatedAt = Number(x.updatedAt || now());
@@ -1050,16 +683,12 @@
 
     function applyChipFilter(arr){
       if(filter === "ALL") return arr;
-      if(filter === "FAV") return arr.filter(x=>x.fav);
-      // language code
       return arr.filter(x=>x.lang === filter);
     }
-
     function applyLevelFilter(arr){
       if(levelFilter === "ALL") return arr;
       return arr.filter(x => (x.level || "B1") === levelFilter);
     }
-
     function applyTagFilter(arr){
       if(tagFilter === "ALL") return arr;
       return arr.filter(x => (x.tags||[]).includes(tagFilter));
@@ -1069,7 +698,7 @@
       const s = sortEl.value;
       const copy = [...arr];
       if(s === "updated") copy.sort((a,b)=> (b.updatedAt||0) - (a.updatedAt||0));
-      else if(s === "created") copy.sort((a,b)=> (b.createdAt||0) - (a.createdAt||0));
+      else if(s === "created") copy.sort((a,b)=> (b.createdAt||0) - (a.updatedAt||0));
       else if(s === "az") copy.sort((a,b)=> (a.term||"").localeCompare(b.term||"", undefined, {sensitivity:"base"}));
       else if(s === "za") copy.sort((a,b)=> (b.term||"").localeCompare(a.term||"", undefined, {sensitivity:"base"}));
       return copy;
@@ -1118,7 +747,6 @@
       for(const l of langs){
         addChip(l.name, l.code);
       }
-      addChip("Favoriler", "FAV");
     }
 
     function renderLanguageSelect(){
@@ -1126,22 +754,6 @@
       langEl.innerHTML = langs.map(l => `<option value="${l.code}">${escapeHtml(l.name)} (${escapeHtml(l.code)})</option>`).join("");
       if(langs.some(x=>x.code===prev)) langEl.value = prev;
       else langEl.value = "EN";
-    }
-
-    // ===== Selection mode =====
-    function setSelecting(on){
-      selecting = !!on;
-      document.body.classList.toggle("selecting", selecting);
-      selectToggleBtn.textContent = selecting ? "☑︎ Seçim: Açık" : "☑︎ Seç";
-      if(!selecting){
-        selectedIds.clear();
-      }
-      render(); // re-render to show/hide checkboxes
-      updateSelectionBar();
-    }
-
-    function updateSelectionBar(){
-      selectedCountEl.textContent = String(selectedIds.size);
     }
 
     // ===== Render =====
@@ -1169,7 +781,7 @@
                     <span class="tag">Dil</span>
                     <span class="tag">TR anlam</span>
                     <span class="tag">Örnek</span>
-                    <span class="tag">Quiz puanı</span>
+                    <span class="tag">Etiket</span>
                   </div>
                 </div>
               </div>
@@ -1182,24 +794,11 @@
         const langName = (langs.find(x=>x.code===it.lang)?.name) || it.lang;
         const tagsHtml = (it.tags||[]).map(t=>`<span class="tag">#${escapeHtml(t)}</span>`).join("");
 
-        const lastBadge =
-          it.stats.lastResult === "good" ? `<span class="tag good">✅ son: doğru</span>` :
-          it.stats.lastResult === "bad"  ? `<span class="tag bad">❌ son: yanlış</span>` :
-          ``;
-
         const card = document.createElement("div");
         card.className = "card";
         card.dataset.id = it.id;
 
-        if(selecting) card.classList.add("select-on");
-
-        const selOn = selectedIds.has(it.id);
-
         card.innerHTML = `
-          <div class="selBox ${selOn ? "on":""}" data-action="sel" title="Seç">
-            ${selOn ? "✓" : ""}
-          </div>
-
           <div class="cardFlipWrap">
             <div class="cardFlip" data-id="${it.id}">
               <div class="face front">
@@ -1217,13 +816,10 @@
                 <p class="example">${escapeHtml(it.example || "Karta dokun → çevir")}</p>
 
                 <div class="miniStats">
-                  <span>✅ <b>${it.stats.correct}</b></span>
-                  <span>❌ <b>${it.stats.wrong}</b></span>
                   <span>• ${escapeHtml(langName)}</span>
                 </div>
 
                 <div class="tags">
-                  ${lastBadge}
                   ${tagsHtml || `<span class="tag">#etiket</span>`}
                 </div>
               </div>
@@ -1244,7 +840,6 @@
 
                 <div class="tags">
                   <span class="tag">${escapeHtml(it.lang)} • ${escapeHtml(it.level||"B1")}</span>
-                  ${lastBadge}
                   ${tagsHtml}
                 </div>
               </div>
@@ -1260,8 +855,6 @@
 
         gridEl.appendChild(card);
       }
-
-      updateSelectionBar();
     }
 
     // ===== Word modal =====
@@ -1337,8 +930,7 @@
         items.push(patchItem({
           id, lang, level, term, meaningTR, example, tags,
           fav:false,
-          createdAt:t, updatedAt:t,
-          stats:{correct:0, wrong:0, lastReviewed:0, lastResult:""}
+          createdAt:t, updatedAt:t
         }));
         toast("Eklendi ✅");
       }
@@ -1355,85 +947,8 @@
         items = items.filter(x=>x.id!==id);
         saveItems(items);
         toast("Silindi 🗑️");
-        selectedIds.delete(id);
         render();
       }
-    }
-
-    // ===== Export / Import =====
-    function downloadFile(name, content, mime){
-      const blob = new Blob([content], {type: mime});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = name;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    function exportJSON(){
-      const data = JSON.stringify({version:3, exportedAt: now(), langs, items}, null, 2);
-      downloadFile("vocab-pocket-pro-backup.json", data, "application/json");
-    }
-
-    function csvEscape(v){
-      const s = (v ?? "").toString();
-      if(/[,"\n]/.test(s)) return `"${s.replace(/"/g,'""')}"`;
-      return s;
-    }
-
-    function exportCSV(){
-      const header = ["lang","level","term","meaningTR","example","tags","fav","correct","wrong","createdAt","updatedAt"];
-      const rows = items.map(it => [
-        it.lang,
-        it.level || "",
-        it.term,
-        it.meaningTR,
-        it.example || "",
-        (it.tags||[]).join("|"),
-        it.fav ? "1":"0",
-        String(it.stats?.correct||0),
-        String(it.stats?.wrong||0),
-        new Date(it.createdAt).toISOString(),
-        new Date(it.updatedAt).toISOString()
-      ].map(csvEscape).join(","));
-      downloadFile("vocab-pocket-pro.csv", header.join(",") + "\n" + rows.join("\n"), "text/csv");
-    }
-
-    function importJSON(file){
-      const reader = new FileReader();
-      reader.onload = () => {
-        try{
-          const obj = JSON.parse(reader.result);
-          const incomingItems = obj.items ?? obj;
-          const incomingLangs = obj.langs;
-
-          if(incomingLangs && Array.isArray(incomingLangs)){
-            langs = normalizeLangs(incomingLangs);
-            saveLangs(langs);
-          }
-
-          const incoming = incomingItems;
-          if(!Array.isArray(incoming)) throw new Error("Format");
-
-          const map = new Map(items.map(x=>[x.id, x]));
-          for(const raw of incoming){
-            const it = patchItem(raw);
-            map.set(it.id, it);
-          }
-          items = Array.from(map.values());
-          saveItems(items);
-          toast("İçe aktarıldı ✅");
-          renderChips();
-          renderLanguageSelect();
-          render();
-        }catch(e){
-          toast("JSON okunamadı ❌");
-        }
-      };
-      reader.readAsText(file);
     }
 
     // ===== Language manager modal =====
@@ -1484,343 +999,6 @@
       }
     }
 
-    // ===== Quiz engine =====
-    let quizSession = null;
-
-    function shuffle(arr){
-      const a = [...arr];
-      for(let i=a.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [a[i],a[j]]=[a[j],a[i]];
-      }
-      return a;
-    }
-
-    function uniqById(arr){
-      const m = new Map();
-      for(const it of arr){
-        if(it?.id) m.set(it.id, it);
-      }
-      return Array.from(m.values());
-    }
-
-    function resultItem(it){
-      const div = document.createElement("div");
-      div.className = "resultItem";
-      div.innerHTML = `
-        <div class="t">${escapeHtml(it.term)} <span style="opacity:.7">(${escapeHtml(it.level||"")}, ${escapeHtml(it.lang||"")})</span></div>
-        <div class="m">${escapeHtml(it.meaningTR)}</div>
-      `;
-      return div;
-    }
-
-    function pickQuizPool(scope){
-      // CURRENT: respects chips + level + tag + search
-      if(scope === "CURRENT") return getVisibleItems();
-
-      if(scope === "FAV"){
-        const q = searchEl.value.trim().toLowerCase();
-        let pool = items.filter(x=>x.fav);
-        // still allow search/level/tag to narrow
-        if(q) pool = pool.filter(it=>matchesQuery(it, q));
-        pool = applyLevelFilter(pool);
-        pool = applyTagFilter(pool);
-        pool = applySort(pool);
-        return pool;
-      }
-
-      if(scope === "WRONG"){
-        const q = searchEl.value.trim().toLowerCase();
-        let pool = items.filter(x => (x.stats?.wrong || 0) > 0);
-        if(q) pool = pool.filter(it=>matchesQuery(it, q));
-        pool = applyLevelFilter(pool);
-        pool = applyTagFilter(pool);
-        pool = applySort(pool);
-        return pool;
-      }
-
-      return getVisibleItems();
-    }
-
-    function openQuizScreen(){
-      quizScreen.classList.add("on");
-      quizScreen.setAttribute("aria-hidden", "false");
-      document.body.style.overflow = "hidden";
-      showQuizSetup();
-      quizToggleBtn.textContent = "🧠 Quiz: Açık";
-    }
-
-    function closeQuizScreen(){
-      quizScreen.classList.remove("on");
-      quizScreen.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = "";
-      quizToggleBtn.textContent = "🧠 Quiz";
-    }
-
-    function showQuizSetup(){
-      quizSetup.style.display = "grid";
-      quizPlay.style.display = "none";
-      quizResult.style.display = "none";
-      quizSession = null;
-      if(quizSubEl) quizSubEl.textContent = "Kapsamı seç, başlat. Bitince puan + listeler gelir.";
-    }
-
-    function startQuizSession({mode, count, pool, choiceCount, allowRepeat}){
-      const list = shuffle(pool);
-      const total = (count >= 9999) ? list.length : Math.min(count, list.length);
-
-      quizSession = {
-        mode,
-        list: list.slice(0, total),
-        total,
-        idx: 0,
-        score: 0,
-        known: [],
-        unknown: [],
-        current: null,
-        locked: false,
-        choiceCount,
-        allowRepeat,
-        askedIds: new Set()
-      };
-
-      quizSetup.style.display = "none";
-      quizPlay.style.display = "grid";
-      quizResult.style.display = "none";
-
-      nextQuizQuestion();
-    }
-
-    function makeChoices(correctText, poolTexts, n){
-      const set = new Set([correctText]);
-      const shuffled = shuffle(poolTexts.filter(Boolean));
-      for(const t of shuffled){
-        if(set.size >= n) break;
-        if(t !== correctText) set.add(t);
-      }
-      return shuffle(Array.from(set));
-    }
-
-    function pickNextQuestion(){
-      if(!quizSession) return null;
-
-      if(quizSession.allowRepeat) return quizSession.list[quizSession.idx];
-
-      // no repeat: try to find next not asked
-      for(let k=0;k<quizSession.list.length;k++){
-        const candidate = quizSession.list[quizSession.idx];
-        if(!quizSession.askedIds.has(candidate.id)){
-          return candidate;
-        }
-        quizSession.idx += 1;
-        if(quizSession.idx >= quizSession.total) break;
-      }
-      return null;
-    }
-
-    function nextQuizQuestion(){
-      if(!quizSession) return;
-
-      if(quizSession.idx >= quizSession.total){
-        finishQuiz();
-        return;
-      }
-
-      quizSession.locked = false;
-      quizNextBtn2.disabled = true;
-      quizFeedbackEl.textContent = "Bir şık seç. Doğru/yanlış anında gösterilir.";
-
-      const it = pickNextQuestion();
-      if(!it){
-        finishQuiz();
-        return;
-      }
-
-      quizSession.current = it;
-      quizSession.askedIds.add(it.id);
-
-      quizIdxEl.textContent = String(quizSession.idx + 1);
-      quizTotalEl.textContent = String(quizSession.total);
-      quizScoreEl.textContent = String(quizSession.score);
-
-      const pct = Math.round(((quizSession.idx) / Math.max(1, quizSession.total)) * 100);
-      quizProgressEl.style.width = pct + "%";
-
-      const question = (quizSession.mode === "TR2TERM") ? it.meaningTR : it.term;
-      const correct = (quizSession.mode === "TR2TERM") ? it.term : it.meaningTR;
-      quizQuestionEl2.textContent = question || "—";
-
-      const poolTexts = quizSession.list.map(x => (quizSession.mode === "TR2TERM") ? x.term : x.meaningTR);
-      const choices = makeChoices(correct, poolTexts, quizSession.choiceCount);
-
-      quizChoicesEl.innerHTML = "";
-      for(const c of choices){
-        const b = document.createElement("button");
-        b.className = "choiceBtn";
-        b.type = "button";
-        b.textContent = c;
-        b.addEventListener("click", ()=> chooseAnswer(c, correct));
-        quizChoicesEl.appendChild(b);
-      }
-    }
-
-    function updateItemStats(it, isCorrect){
-      it.stats = it.stats || {correct:0, wrong:0, lastReviewed:0, lastResult:""};
-      it.stats.lastReviewed = now();
-      it.stats.lastResult = isCorrect ? "good" : "bad";
-      if(isCorrect) it.stats.correct = Number(it.stats.correct||0) + 1;
-      else it.stats.wrong = Number(it.stats.wrong||0) + 1;
-      it.updatedAt = now();
-    }
-
-    function chooseAnswer(chosen, correct){
-      if(!quizSession || quizSession.locked) return;
-      quizSession.locked = true;
-
-      const it = quizSession.current;
-      if(!it) return;
-
-      const isCorrect = chosen === correct;
-
-      // UI highlight
-      const btns = Array.from(quizChoicesEl.querySelectorAll(".choiceBtn"));
-      for(const b of btns){
-        if(b.textContent === correct) b.classList.add("correct");
-        if(b.textContent === chosen && chosen !== correct) b.classList.add("wrong");
-        b.disabled = true;
-      }
-
-      // update stats & session
-      updateItemStats(it, isCorrect);
-
-      if(isCorrect){
-        quizSession.score += 1;
-        quizScoreEl.textContent = String(quizSession.score);
-        quizSession.known.push(it);
-        quizFeedbackEl.textContent = `✅ Doğru! (${correct})`;
-        haptic("good");
-      } else {
-        quizSession.unknown.push(it);
-        quizFeedbackEl.textContent = `❌ Yanlış. Doğru: ${correct}`;
-        haptic("bad");
-      }
-
-      saveItems(items);
-      quizNextBtn2.disabled = false;
-    }
-
-    function skipQuestion(){
-      if(!quizSession) return;
-      if(quizSession.locked) return;
-      const it = quizSession.current;
-      if(it){
-        quizSession.unknown.push(it);
-        updateItemStats(it, false);
-        saveItems(items);
-      }
-      quizFeedbackEl.textContent = "⏭️ Pas geçildi. Bu soru bilemediklere eklendi.";
-      haptic("tap");
-      quizSession.locked = true;
-      for(const b of quizChoicesEl.querySelectorAll(".choiceBtn")) b.disabled = true;
-      quizNextBtn2.disabled = false;
-    }
-
-    function goNextFromPlay(){
-      if(!quizSession) return;
-      quizSession.idx += 1;
-      nextQuizQuestion();
-    }
-
-    function finishQuiz(){
-      if(!quizSession) return;
-
-      quizSetup.style.display = "none";
-      quizPlay.style.display = "none";
-      quizResult.style.display = "grid";
-
-      quizProgressEl.style.width = "100%";
-
-      const total = quizSession.total;
-      const score = quizSession.score;
-
-      quizFinalScore.textContent = `Skor: ${score}/${total}`;
-      quizFinalSub.textContent = score === total
-        ? "Mükemmel! Hepsi doğru ✅"
-        : "Bitti. İstersen yanlışları tekrar çözebilirsin.";
-
-      quizKnownList.innerHTML = "";
-      quizUnknownList.innerHTML = "";
-
-      const knownUnique = uniqById(quizSession.known);
-      const unknownUnique = uniqById(quizSession.unknown);
-
-      for(const it of knownUnique) quizKnownList.appendChild(resultItem(it));
-      for(const it of unknownUnique) quizUnknownList.appendChild(resultItem(it));
-
-      quizRetryWrongBtn.disabled = unknownUnique.length === 0;
-
-      // refresh cards to show last result + stats
-      render();
-    }
-
-    // ===== Bulk operations =====
-    function bulkDelete(){
-      if(selectedIds.size === 0) return toast("Seçili yok.");
-      if(confirm(`${selectedIds.size} kayıt silinecek. Emin misin?`)){
-        items = items.filter(x => !selectedIds.has(x.id));
-        saveItems(items);
-        toast("Silindi 🗑️");
-        selectedIds.clear();
-        render();
-        updateSelectionBar();
-      }
-    }
-
-    function bulkFav(){
-      if(selectedIds.size === 0) return toast("Seçili yok.");
-      for(const it of items){
-        if(selectedIds.has(it.id)){
-          it.fav = true;
-          it.updatedAt = now();
-        }
-      }
-      saveItems(items);
-      toast("Favori yapıldı ★");
-      render();
-    }
-
-    function bulkTag(){
-      if(selectedIds.size === 0) return toast("Seçili yok.");
-      const t = prompt("Eklenecek etiket (ör: story). Virgül ile çoklu da yazabilirsin:");
-      if(!t) return;
-      const add = parseTags(t);
-      if(add.length === 0) return;
-
-      for(const it of items){
-        if(!selectedIds.has(it.id)) continue;
-        const set = new Set([...(it.tags||[])]);
-        for(const a of add) set.add(a);
-        it.tags = Array.from(set).slice(0,10);
-        it.updatedAt = now();
-      }
-      saveItems(items);
-      toast("Etiket eklendi 🏷️");
-      render();
-    }
-
-    function selectAllVisible(){
-      const view = getVisibleItems();
-      for(const it of view) selectedIds.add(it.id);
-      render();
-      toast("Görünenlerin hepsi seçildi ✅");
-    }
-
-    function clearSelection(){
-      selectedIds.clear();
-      render();
-      toast("Seçim temizlendi ✕");
-    }
-
     // ===== Events =====
     document.getElementById("addBtn").addEventListener("click", openAdd);
     document.getElementById("cancelBtn").addEventListener("click", ()=>modal.close());
@@ -1832,7 +1010,6 @@
       modal.close();
     });
 
-    // Search + filters
     searchEl.addEventListener("input", render);
     sortEl.addEventListener("change", render);
 
@@ -1846,30 +1023,10 @@
       render();
     });
 
-    // Theme
     themeSelect.addEventListener("change", (e)=> applyTheme(e.target.value));
 
-    // Selection toggle + actions
-    selectToggleBtn.addEventListener("click", ()=> setSelecting(!selecting));
-    selectAllVisibleBtn.addEventListener("click", selectAllVisible);
-    clearSelectionBtn.addEventListener("click", clearSelection);
-    bulkDeleteBtn.addEventListener("click", bulkDelete);
-    bulkFavBtn.addEventListener("click", bulkFav);
-    bulkTagBtn.addEventListener("click", bulkTag);
-
-    // Card actions + flip + selection
+    // Card actions + flip
     gridEl.addEventListener("click", (e)=>{
-      const sel = e.target.closest(".selBox");
-      if(sel){
-        const id = e.target.closest(".card")?.dataset.id;
-        if(!id) return;
-        if(selectedIds.has(id)) selectedIds.delete(id);
-        else selectedIds.add(id);
-        haptic("tap");
-        render();
-        return;
-      }
-
       const actionBtn = e.target.closest("[data-action]");
       if(actionBtn){
         const action = actionBtn.dataset.action;
@@ -1895,32 +1052,19 @@
         }
       }
 
-      // Tap on flip area (disabled in selection mode)
-      if(selecting) return;
-
       const flipEl = e.target.closest(".cardFlip");
       if(flipEl && !e.target.closest(".actions") && !e.target.closest(".star")){
         flipEl.classList.toggle("flipped");
       }
     });
 
-    // Export / Import / wipe
-    document.getElementById("exportJsonBtn").addEventListener("click", exportJSON);
-    document.getElementById("exportCsvBtn").addEventListener("click", exportCSV);
-
-    document.getElementById("importFile").addEventListener("change", (e)=>{
-      const f = e.target.files?.[0];
-      if(f) importJSON(f);
-      e.target.value = "";
-    });
-
+    // Wipe
     document.getElementById("wipeBtn").addEventListener("click", ()=>{
       if(items.length === 0) return toast("Zaten boş.");
       if(confirm("Tüm kelimeler silinecek. Emin misin?")){
         items = [];
         saveItems(items);
         toast("Hepsi silindi 🗑️");
-        selectedIds.clear();
         render();
       }
     });
@@ -1932,73 +1076,19 @@
     addLangBtn.addEventListener("click", addLanguage);
     resetLangBtn.addEventListener("click", resetLanguages);
 
-    // Quiz events
-    quizToggleBtn.addEventListener("click", openQuizScreen);
-    quizCloseBtn.addEventListener("click", closeQuizScreen);
-
-    quizStartBtn.addEventListener("click", ()=>{
-      const scope = quizScopeEl.value || "CURRENT";
-      let pool = pickQuizPool(scope);
-
-      if(pool.length === 0){
-        toast("Quiz için havuz boş. Filtre/arama çok dar olabilir.");
-        return;
-      }
-
-      const mode = quizModeSelect.value === "TERM2TR" ? "TERM2TR" : "TR2TERM";
-      const count = Number(quizCountSelect.value || 10);
-      const choiceCount = Number(quizChoiceCountEl.value || 4);
-      const allowRepeat = (quizRepeatEl.value === "YES");
-
-      startQuizSession({mode, count, pool, choiceCount, allowRepeat});
-    });
-
-    quizSkipBtn.addEventListener("click", skipQuestion);
-    quizNextBtn2.addEventListener("click", goNextFromPlay);
-
-    quizBackToSetupBtn.addEventListener("click", showQuizSetup);
-
-    quizRetryWrongBtn.addEventListener("click", ()=>{
-      if(!quizSession) return;
-      const wrongIds = uniqById(quizSession.unknown).map(x=>x.id);
-      if(wrongIds.length === 0){
-        toast("Yanlış yok ✅");
-        return;
-      }
-      // build pool only from wrong ids (respect current search/level/tag if you want)
-      let pool = items.filter(x => wrongIds.includes(x.id));
-      // still apply level/tag/search filters to narrow:
-      const q = searchEl.value.trim().toLowerCase();
-      if(q) pool = pool.filter(it=>matchesQuery(it, q));
-      pool = applyLevelFilter(pool);
-      pool = applyTagFilter(pool);
-      pool = applySort(pool);
-
-      startQuizSession({
-        mode: quizSession.mode,
-        count: 9999,
-        pool,
-        choiceCount: quizSession.choiceCount,
-        allowRepeat: true
-      });
-    });
-
     // ===== Init =====
     langs = loadLangs();
-    saveLangs(langs); // normalize & persist
+    saveLangs(langs);
+
     renderChips();
     renderLanguageSelect();
 
     applyTheme(localStorage.getItem(THEME_KEY) || "dark");
 
-    // If old versions exist, keep current KEY only (no migration tool needed)
     saveItems(items);
-
-    // initial tag filter + render
     updateTagFilterOptions();
     render();
 
-    // keep level/tag in sync
     levelFilterEl.value = levelFilter;
     tagFilterEl.value = tagFilter;
   </script>
