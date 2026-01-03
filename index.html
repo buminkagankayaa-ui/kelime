@@ -1,902 +1,1712 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LingoMaster Pro</title>
-    
-    <meta name="theme-color" content="#0f172a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="LingoMaster">
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>LingoMaster</title>
 
-    <style>
-        /* =========================================
-           1. CORE VARIABLES & THEME ENGINE
-           ========================================= */
-        :root {
-            /* Palette */
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --surface-1: #0f172a;
-            --surface-2: #1e293b;
-            --surface-3: #334155;
-            --text-1: #f8fafc;
-            --text-2: #94a3b8;
-            --border: #475569;
-            
-            /* Dimensions */
-            --header-height: 60px;
-            --nav-height: 70px;
-            --radius-sm: 8px;
-            --radius-md: 16px;
-            --radius-lg: 24px;
-            
-            /* Typography */
-            --font-ui: -apple-system, BlinkMacSystemFont, "Inter", Roboto, sans-serif;
-            --font-reader: "Merriweather", "Georgia", serif;
-            
-            /* Transitions */
-            --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
+  <!-- PWA -->
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="LingoMaster" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
 
-        /* Light Theme Override */
-        [data-theme="light"] {
-            --surface-1: #f8fafc;
-            --surface-2: #ffffff;
-            --surface-3: #e2e8f0;
-            --text-1: #0f172a;
-            --text-2: #64748b;
-            --border: #cbd5e1;
-        }
+  <style>
+    /* =========================================================
+       1) CORE VARIABLES & THEME ENGINE
+       ========================================================= */
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
 
-        /* =========================================
-           2. GLOBAL RESET & BASE STYLES
-           ========================================= */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body {
-            margin: 0; padding: 0;
-            background-color: var(--surface-1);
-            color: var(--text-1);
-            font-family: var(--font-ui);
-            height: 100vh; width: 100vw;
-            overflow: hidden; /* App-like constraint */
-            display: flex; flex-direction: column;
-        }
+      --surface-1: #0f172a;
+      --surface-2: #1e293b;
+      --surface-3: #334155;
 
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 4px; }
+      --text-1: #f8fafc;
+      --text-2: #94a3b8;
+      --border: #475569;
 
-        /* Icons (SVG) */
-        .icon { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-        .icon-sm { width: 18px; height: 18px; }
+      --header-height: 60px;
+      --nav-height: 72px;
 
-        /* Typography Utilities */
-        .h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.05rem; }
-        .h2 { font-size: 1.5rem; font-weight: 700; }
-        .h3 { font-size: 1.1rem; font-weight: 600; }
-        .text-sm { font-size: 0.875rem; color: var(--text-2); }
-        .text-xs { font-size: 0.75rem; color: var(--text-2); }
-        .bold { font-weight: 700; }
-        .truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
 
-        /* Layout Utilities */
-        .flex { display: flex; }
-        .flex-col { flex-direction: column; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .justify-center { justify-content: center; }
-        .gap-2 { gap: 0.5rem; } .gap-4 { gap: 1rem; }
-        .w-full { width: 100%; }
-        .p-4 { padding: 1rem; }
+      --font-ui: -apple-system, BlinkMacSystemFont, "Inter", Roboto, Arial, sans-serif;
+      --font-reader: "Merriweather", "Georgia", serif;
 
-        /* =========================================
-           3. UI COMPONENTS
-           ========================================= */
-        
-        /* Buttons */
-        .btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s; border: none;
-            user-select: none; font-size: 0.95rem;
-        }
-        .btn:active { transform: scale(0.96); opacity: 0.9; }
-        
-        .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
-        .btn-secondary { background: var(--surface-3); color: var(--text-1); }
-        .btn-danger { background: var(--danger); color: #fff; }
-        .btn-ghost { background: transparent; color: var(--text-2); }
-        .btn-icon { padding: 10px; border-radius: 50%; }
-        .btn-float {
-            position: absolute; bottom: 20px; right: 20px;
-            width: 56px; height: 56px; border-radius: 50%;
-            background: var(--primary); color: #fff;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4); z-index: 50;
-        }
+      --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 
-        /* Inputs */
-        .input-group { margin-bottom: 16px; }
-        .label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-2); }
-        .input, .textarea, .select {
-            width: 100%; padding: 14px; border-radius: 12px;
-            background: var(--surface-2); border: 1px solid var(--border);
-            color: var(--text-1); font-size: 1rem; outline: none;
-            transition: border-color 0.2s;
-        }
-        .input:focus { border-color: var(--primary); }
+      /* Settings defaults (override via JS) */
+      --reader-font-size: 19px;
+      --reader-page-size: 780; /* chars approx */
+    }
+    [data-theme="light"]{
+      --surface-1: #f8fafc;
+      --surface-2: #ffffff;
+      --surface-3: #e2e8f0;
+      --text-1: #0f172a;
+      --text-2: #64748b;
+      --border: #cbd5e1;
+    }
 
-        /* Cards */
-        .card {
-            background: var(--surface-2); border: 1px solid var(--border);
-            border-radius: var(--radius-md); padding: 16px;
-            position: relative; overflow: hidden;
-        }
+    /* =========================================================
+       2) BASE
+       ========================================================= */
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--surface-1);
+      color: var(--text-1);
+      font-family: var(--font-ui);
+      overflow: hidden; /* app-like */
+      display: flex;
+      flex-direction: column;
+    }
 
-        /* =========================================
-           4. APP SHELL LAYOUT
-           ========================================= */
-        #app-header {
-            height: var(--header-height);
-            background: rgba(15, 23, 42, 0.8); /* Translucent */
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-            padding: 0 16px; display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; z-index: 40;
-        }
-        [data-theme="light"] #app-header { background: rgba(255, 255, 255, 0.8); }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 4px; }
 
-        #main-viewport {
-            flex: 1; position: relative; overflow: hidden;
-        }
+    .icon { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .icon-sm { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
-        .view {
-            position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden;
-            padding: 20px; padding-bottom: 100px; /* Space for nav */
-            opacity: 0; pointer-events: none; transform: translateY(10px);
-            transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
-        }
-        .view.active { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .h1 { font-size: 2rem; font-weight: 900; letter-spacing: -0.05rem; }
+    .h2 { font-size: 1.5rem; font-weight: 800; }
+    .h3 { font-size: 1.05rem; font-weight: 700; }
+    .text-sm { font-size: 0.9rem; color: var(--text-2); }
+    .text-xs { font-size: 0.75rem; color: var(--text-2); }
+    .bold { font-weight: 800; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 
-        #bottom-nav {
-            height: var(--nav-height); background: var(--surface-2);
-            border-top: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-around;
-            padding-bottom: env(safe-area-inset-bottom);
-            position: fixed; bottom: 0; width: 100%; z-index: 50;
-        }
-        .nav-btn {
-            background: none; border: none; color: var(--text-2);
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            font-size: 0.7rem; font-weight: 600; cursor: pointer; flex: 1;
-        }
-        .nav-btn.active { color: var(--primary); }
-        .nav-btn.active svg { stroke: var(--primary); fill: rgba(99, 102, 241, 0.1); }
+    .flex { display: flex; }
+    .flex-col { display: flex; flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .justify-center { justify-content: center; }
+    .gap-1 { gap: 0.25rem; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 0.75rem; }
+    .gap-4 { gap: 1rem; }
+    .w-full { width: 100%; }
+    .mt-2 { margin-top: 0.5rem; }
+    .mt-3 { margin-top: 0.75rem; }
+    .mt-4 { margin-top: 1rem; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-3 { margin-bottom: 0.75rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .p-4 { padding: 1rem; }
 
-        /* =========================================
-           5. SPECIFIC MODULE STYLES
-           ========================================= */
-        
-        /* Reader */
-        .reader-page {
-            max-width: 700px; margin: 0 auto;
-            font-family: var(--font-reader); font-size: 1.2rem; line-height: 1.8;
-            color: var(--text-1); text-align: justify;
-        }
-        .token { cursor: pointer; border-radius: 4px; padding: 2px 0; transition: background 0.1s; }
-        .token:active { background: rgba(99, 102, 241, 0.3); }
-        .token.highlight { background: rgba(253, 224, 71, 0.3); }
-        
-        /* Flashcards Grid */
-        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); gap: 12px; }
-        .fc-front { font-size: 1.4rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
-        .fc-back { font-size: 1.1rem; color: var(--text-2); border-top: 1px solid var(--border); padding-top: 8px; }
-        .fc-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; background: var(--surface-3); text-transform: uppercase; letter-spacing: 0.5px; }
+    /* =========================================================
+       3) UI COMPONENTS
+       ========================================================= */
+    .btn{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      font-weight: 800;
+      cursor: pointer;
+      user-select: none;
+      transition: transform .1s, opacity .2s, background .2s, border-color .2s;
+      font-size: 0.95rem;
+    }
+    .btn:active { transform: scale(0.97); opacity: 0.92; }
+    .btn-primary{ background: var(--primary); color: #fff; box-shadow: 0 6px 18px rgba(99,102,241,0.25); }
+    .btn-secondary{ background: var(--surface-3); color: var(--text-1); border-color: rgba(255,255,255,0.06); }
+    .btn-danger{ background: var(--danger); color: #fff; }
+    .btn-ghost{ background: transparent; color: var(--text-2); border-color: rgba(255,255,255,0.07); }
+    [data-theme="light"] .btn-ghost{ border-color: rgba(15,23,42,0.08); }
 
-        /* Quiz Mode */
-        .quiz-overlay {
-            position: fixed; inset: 0; background: var(--surface-1); z-index: 100;
-            display: flex; flex-direction: column;
-            transform: translateX(100%); transition: transform 0.3s var(--ease);
-        }
-        .quiz-overlay.open { transform: translateX(0); }
-        .quiz-card-display {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; padding: 20px;
-        }
-        .q-word { font-size: 3rem; font-weight: 900; margin-bottom: 2rem; }
-        .q-btn-option {
-            width: 100%; max-width: 400px; padding: 16px; margin-bottom: 10px;
-            background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px;
-            font-size: 1.1rem; color: var(--text-1); text-align: left;
-        }
-        .q-btn-option.correct { border-color: var(--secondary); background: rgba(16, 185, 129, 0.1); }
-        .q-btn-option.wrong { border-color: var(--danger); background: rgba(239, 68, 68, 0.1); }
+    .btn-icon{ padding: 10px; border-radius: 999px; }
 
-        /* Stats Heatmap */
-        .heatmap-grid { display: flex; gap: 4px; justify-content: space-between; margin-top: 10px; }
-        .hm-cell {
-            flex: 1; aspect-ratio: 1; background: var(--surface-3); border-radius: 4px;
-            display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: var(--text-2);
-        }
-        .hm-cell[data-level="1"] { background: rgba(99, 102, 241, 0.4); color: white; }
-        .hm-cell[data-level="2"] { background: rgba(99, 102, 241, 0.7); color: white; }
-        .hm-cell[data-level="3"] { background: var(--primary); color: white; }
+    .input-group{ margin-bottom: 14px; }
+    .label{ display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-2); font-weight: 700; }
+    .input, .textarea, .select{
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-1);
+      outline: none;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    .input:focus, .textarea:focus, .select:focus{ border-color: var(--primary); }
+    .textarea{ resize: vertical; min-height: 90px; }
 
-        /* Bottom Sheet (Word Details) */
-        .backdrop {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 80;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s;
-        }
-        .backdrop.open { opacity: 1; pointer-events: auto; }
-        .sheet {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: var(--surface-2); border-radius: 24px 24px 0 0;
-            padding: 24px; padding-bottom: 40px; z-index: 90;
-            transform: translateY(100%); transition: transform 0.3s var(--ease);
-            max-height: 85vh; overflow-y: auto;
-        }
-        .sheet.open { transform: translateY(0); }
-        .drag-handle { width: 40px; height: 5px; background: var(--border); border-radius: 5px; margin: 0 auto 20px auto; }
+    .chip{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: var(--text-2);
+      user-select: none;
+    }
 
-        /* Toast */
-        .toast {
-            position: fixed; top: 20px; left: 50%; transform: translate(-50%, -20px);
-            background: var(--text-1); color: var(--surface-1);
-            padding: 10px 20px; border-radius: 50px; font-weight: 600; font-size: 0.9rem;
-            opacity: 0; pointer-events: none; transition: all 0.3s var(--ease); z-index: 200;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-        .toast.visible { opacity: 1; transform: translate(-50%, 0); }
+    .card{
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
 
-    </style>
+    .divider{ height: 1px; background: var(--border); opacity: 0.7; margin: 14px 0; }
+
+    /* =========================================================
+       4) APP SHELL
+       ========================================================= */
+    #app-header{
+      height: var(--header-height);
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+    [data-theme="light"] #app-header{ background: rgba(255,255,255,0.85); }
+
+    #main-viewport{ flex: 1; position: relative; overflow: hidden; }
+
+    .view{
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 18px;
+      padding-bottom: 110px; /* nav */
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: opacity .28s var(--ease), transform .28s var(--ease);
+    }
+    .view.active{
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    #bottom-nav{
+      height: var(--nav-height);
+      background: var(--surface-2);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding-bottom: env(safe-area-inset-bottom);
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      z-index: 50;
+    }
+    .nav-btn{
+      background: none;
+      border: none;
+      color: var(--text-2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      cursor: pointer;
+      flex: 1;
+      padding: 8px 0;
+    }
+    .nav-btn.active{ color: var(--primary); }
+    .nav-btn.active svg{ stroke: var(--primary); }
+
+    /* =========================================================
+       5) MODULES
+       ========================================================= */
+
+    /* Dashboard cards layout */
+    .dash-grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .stat-num{ font-size: 2rem; font-weight: 900; letter-spacing: -0.03rem; }
+    .stat-warn{ color: var(--warning); }
+
+    /* Heatmap */
+    .heatmap-grid{ display: flex; gap: 6px; justify-content: space-between; margin-top: 10px; }
+    .hm-cell{
+      flex: 1;
+      aspect-ratio: 1;
+      background: var(--surface-3);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: var(--text-2);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    [data-theme="light"] .hm-cell{ border: 1px solid rgba(15,23,42,0.08); }
+    .hm-cell[data-level="1"]{ background: rgba(99,102,241,0.35); color: #fff; }
+    .hm-cell[data-level="2"]{ background: rgba(99,102,241,0.65); color: #fff; }
+    .hm-cell[data-level="3"]{ background: rgba(99,102,241,1); color: #fff; }
+
+    /* Reader */
+    .reader-page{
+      max-width: 760px;
+      margin: 0 auto;
+      font-family: var(--font-reader);
+      font-size: var(--reader-font-size);
+      line-height: 1.8;
+      text-align: justify;
+      color: var(--text-1);
+    }
+    .token{
+      cursor: pointer;
+      border-radius: 6px;
+      padding: 2px 1px;
+      transition: background 0.08s;
+    }
+    .token:active{ background: rgba(99,102,241,0.25); }
+    .token.saved{ background: rgba(253,224,71,0.22); }
+    .token.saved:active{ background: rgba(253,224,71,0.35); }
+
+    /* Library list */
+    .book-row{ display:flex; align-items:center; justify-content:space-between; gap: 10px; }
+    .badge{
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--surface-3);
+      color: var(--text-1);
+      font-weight: 900;
+      letter-spacing: 0.02rem;
+      border: 1px solid rgba(255,255,255,0.06);
+      user-select: none;
+    }
+    .badge.warn{ background: rgba(245,158,11,0.18); color: var(--warning); border-color: rgba(245,158,11,0.35); }
+    .badge.ok{ background: rgba(16,185,129,0.12); color: var(--secondary); border-color: rgba(16,185,129,0.35); }
+
+    /* Cards grid */
+    .grid-cards{ display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .fc-front{ font-size: 1.35rem; font-weight: 900; color: var(--primary); }
+    .fc-back{ margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); color: var(--text-2); font-size: 1.05rem; }
+    .fc-meta{ margin-top: 10px; display:flex; flex-wrap:wrap; gap: 8px; align-items:center; }
+    .tiny{ font-size: 0.78rem; color: var(--text-2); font-weight: 800; }
+
+    /* Bottom sheet */
+    .backdrop{
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 80;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s;
+    }
+    .backdrop.open{ opacity: 1; pointer-events: auto; }
+    .sheet{
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      background: var(--surface-2);
+      border-radius: 24px 24px 0 0;
+      padding: 22px;
+      padding-bottom: calc(26px + env(safe-area-inset-bottom));
+      z-index: 90;
+      transform: translateY(110%);
+      transition: transform .28s var(--ease);
+      max-height: 88vh;
+      overflow-y: auto;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    [data-theme="light"] .sheet{ border-top: 1px solid rgba(15,23,42,0.08); }
+    .sheet.open{ transform: translateY(0); }
+    .drag-handle{
+      width: 44px; height: 6px;
+      background: var(--border);
+      border-radius: 999px;
+      margin: 0 auto 14px auto;
+      opacity: 0.9;
+    }
+
+    /* Review overlay */
+    .review-overlay{
+      position: fixed;
+      inset: 0;
+      background: var(--surface-1);
+      z-index: 120;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(110%);
+      transition: transform .28s var(--ease);
+    }
+    .review-overlay.open{ transform: translateX(0); }
+    .review-card{
+      flex: 1;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding: 20px;
+      text-align: center;
+    }
+    .review-term{ font-size: 3rem; font-weight: 950; letter-spacing: -0.06rem; margin-bottom: 10px; }
+    .review-meaning{
+      margin-top: 10px;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--text-2);
+      max-width: 560px;
+      line-height: 1.35;
+    }
+    .review-actions{
+      padding: 14px 16px 16px 16px;
+      border-top: 1px solid var(--border);
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: var(--surface-2);
+    }
+    .btn-grade{
+      padding: 14px 12px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface-3);
+      color: var(--text-1);
+      font-weight: 950;
+      cursor: pointer;
+    }
+    .btn-grade:active{ transform: scale(0.98); opacity: 0.95; }
+    .btn-grade.again{ border-color: rgba(239,68,68,0.35); background: rgba(239,68,68,0.12); color: #ffd1d1; }
+    .btn-grade.hard { border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.12); color: #ffe6bf; }
+    .btn-grade.good { border-color: rgba(99,102,241,0.35); background: rgba(99,102,241,0.12); }
+    .btn-grade.easy { border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.12); }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translate(-50%, -20px);
+      background: var(--text-1);
+      color: var(--surface-1);
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 0.9rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: all .25s var(--ease);
+      z-index: 200;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+      max-width: 92vw;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .toast.visible{ opacity: 1; transform: translate(-50%, 0); }
+
+    /* Small helpers */
+    .row{
+      display:flex; gap: 10px; align-items:center; justify-content: space-between;
+    }
+    .muted{
+      color: var(--text-2);
+      font-weight: 800;
+    }
+  </style>
 </head>
+
 <body>
-
-    <header id="app-header">
-        <div class="flex items-center gap-2">
-            <svg class="icon" style="color:var(--primary)"><path d="M12 2l9 4.9V17L12 22l-9-4.9V7z"/></svg>
-            <span class="bold" style="font-size:1.2rem">LingoMaster</span>
-        </div>
-        <div class="flex gap-2">
-            <button class="btn btn-ghost btn-icon" id="btn-theme">
-                <svg class="icon"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-            </button>
-            <button class="btn btn-ghost btn-icon" id="btn-settings">
-                <svg class="icon"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            </button>
-        </div>
-    </header>
-
-    <main id="main-viewport">
-        
-        <div id="view-home" class="view active">
-            <h2 class="h3 text-sm" style="margin-bottom:15px; color:var(--text-2); text-transform:uppercase;">Genel Bakış</h2>
-            
-            <div class="flex gap-4" style="margin-bottom: 20px;">
-                <div class="card w-full">
-                    <div class="text-sm">Toplam Kart</div>
-                    <div class="h1" id="dash-total">0</div>
-                </div>
-                <div class="card w-full" style="border-color: rgba(245, 158, 11, 0.3)">
-                    <div class="text-sm" style="color: var(--warning)">Tekrar (Due)</div>
-                    <div class="h1" style="color: var(--warning)" id="dash-due">0</div>
-                </div>
-            </div>
-
-            <div class="card" style="margin-bottom: 25px;">
-                <div class="flex justify-between items-center">
-                    <div class="h3">Çalışma Zinciri</div>
-                    <div class="text-sm bold" style="color:var(--primary)" id="dash-streak">0 Gün</div>
-                </div>
-                <div id="heatmap" class="heatmap-grid"></div>
-            </div>
-
-            <h2 class="h3 text-sm" style="margin-bottom:15px; color:var(--text-2); text-transform:uppercase;">Hızlı İşlemler</h2>
-            
-            <button class="btn btn-primary w-full p-4" onclick="App.startQuiz()" style="font-size:1.1rem; margin-bottom:10px;">
-                <svg class="icon"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                Bugünkü Tekrarları Başlat
-            </button>
-            <button class="btn btn-secondary w-full" onclick="Router.go('library')">
-                <svg class="icon"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                Kitap Okumaya Devam Et
-            </button>
-        </div>
-
-        <div id="view-library" class="view">
-            <div class="flex justify-between items-center mb-4" style="margin-bottom:20px">
-                <h2 class="h2">Kütüphane</h2>
-                <button class="btn btn-primary btn-icon" onclick="App.openAddBook()">
-                    <svg class="icon"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                </button>
-            </div>
-            <div id="library-list" class="flex-col gap-4" style="padding-bottom:20px"></div>
-        </div>
-
-        <div id="view-reader" class="view" style="background: var(--surface-1); z-index: 60;">
-            <div class="flex justify-between items-center" style="position:sticky; top:-20px; background:var(--surface-1); padding-bottom:10px; border-bottom:1px solid var(--border); margin-bottom:20px;">
-                <button class="btn btn-ghost" onclick="Router.go('library')">
-                    <svg class="icon"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                </button>
-                <div class="flex-col items-center">
-                    <span class="bold text-sm" id="r-title">Book Title</span>
-                    <span class="text-xs" id="r-progress">Page 1/1</span>
-                </div>
-                <button class="btn btn-ghost" onclick="Reader.adjustFont()">
-                    <svg class="icon"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
-                </button>
-            </div>
-
-            <div id="reader-canvas" class="reader-page"></div>
-
-            <div class="flex justify-between items-center" style="margin-top:30px; padding-top:20px; border-top:1px solid var(--border);">
-                <button class="btn btn-secondary" onclick="Reader.prevPage()">Önceki</button>
-                <button class="btn btn-secondary" onclick="Reader.nextPage()">Sonraki</button>
-            </div>
-        </div>
-
-        <div id="view-cards" class="view">
-            <div class="flex gap-2" style="margin-bottom:15px">
-                <input type="text" class="input" placeholder="Kart ara..." id="search-input">
-            </div>
-            <div id="cards-container" class="grid-cards"></div>
-        </div>
-
-    </main>
-
-    <nav id="bottom-nav">
-        <button class="nav-btn active" data-target="home" onclick="Router.go('home')">
-            <svg class="icon"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            <span>Ana Sayfa</span>
-        </button>
-        <button class="nav-btn" data-target="library" onclick="Router.go('library')">
-            <svg class="icon"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-            <span>Kütüphane</span>
-        </button>
-        <button class="nav-btn" data-target="cards" onclick="Router.go('cards')">
-            <svg class="icon"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-            <span>Kartlar</span>
-        </button>
-    </nav>
-
-    <div class="backdrop" id="backdrop"></div>
-    <div class="sheet" id="word-sheet">
-        <div class="drag-handle"></div>
-        <div class="flex justify-between items-center mb-4">
-            <div>
-                <span class="text-xs bold" style="color:var(--primary)" id="ws-lang">EN</span>
-                <h2 class="h1" id="ws-term">Word</h2>
-            </div>
-            <div class="flex gap-2">
-                <button class="btn btn-ghost btn-icon" onclick="TTS.speak(document.getElementById('ws-term').textContent)">
-                    <svg class="icon"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-                </button>
-            </div>
-        </div>
-        
-        <div class="input-group">
-            <label class="label">Anlamı</label>
-            <input type="text" id="ws-meaning" class="input" placeholder="Türkçesi nedir?">
-        </div>
-        <div class="input-group">
-            <label class="label">Bağlam / Cümle</label>
-            <textarea id="ws-context" class="textarea" rows="3"></textarea>
-        </div>
-        
-        <div class="flex gap-2">
-            <a id="ws-gtranslate" href="#" target="_blank" class="btn btn-secondary flex-1">Google Çeviri</a>
-            <button class="btn btn-primary flex-1" onclick="App.saveCard()">Karta Ekle</button>
-        </div>
+  <header id="app-header">
+    <div class="flex items-center gap-2">
+      <svg class="icon" style="color:var(--primary)" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2l9 4.9V17L12 22l-9-4.9V7z"></path>
+      </svg>
+      <span class="bold" style="font-size:1.15rem; letter-spacing:-0.02rem;">LingoMaster</span>
+      <span class="chip" id="pwa-badge" style="display:none;">PWA</span>
     </div>
 
-    <div class="sheet" id="book-sheet" style="height:90vh">
-        <div class="drag-handle"></div>
-        <h2 class="h2" style="margin-bottom:20px">Yeni Metin Ekle</h2>
-        <div class="input-group">
-            <label class="label">Başlık</label>
-            <input type="text" id="nb-title" class="input" placeholder="Kitap veya Makale Başlığı">
+    <div class="flex gap-2">
+      <button class="btn btn-ghost btn-icon" id="btn-theme" aria-label="Tema değiştir">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="5"></circle>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+        </svg>
+      </button>
+      <button class="btn btn-ghost btn-icon" id="btn-settings" aria-label="Ayarlar">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main-viewport">
+    <!-- HOME -->
+    <section id="view-home" class="view active">
+      <div class="text-sm bold" style="letter-spacing:0.08rem; text-transform:uppercase; margin-bottom:12px;">Genel Bakış</div>
+
+      <div class="dash-grid">
+        <div class="card">
+          <div class="text-sm">Toplam Kart</div>
+          <div class="stat-num" id="dash-total">0</div>
         </div>
-        <div class="input-group">
-            <label class="label">Dil</label>
-            <select id="nb-lang" class="select">
-                <option value="EN">İngilizce</option>
-                <option value="RU">Rusça</option>
-                <option value="DE">Almanca</option>
-                <option value="FR">Fransızca</option>
-            </select>
+        <div class="card" style="border-color: rgba(245,158,11,0.35);">
+          <div class="text-sm" style="color: var(--warning);">Tekrar (Due)</div>
+          <div class="stat-num stat-warn" id="dash-due">0</div>
         </div>
-        <div class="input-group" style="flex:1">
-            <label class="label">İçerik</label>
-            <textarea id="nb-content" class="textarea" style="height:200px" placeholder="Metni buraya yapıştırın..."></textarea>
+      </div>
+
+      <div class="card mb-4">
+        <div class="row">
+          <div class="h3">Çalışma Zinciri</div>
+          <div class="bold" style="color: var(--primary);" id="dash-streak">0 Gün</div>
         </div>
-        <button class="btn btn-primary w-full" onclick="App.saveBook()">Kütüphaneye Ekle</button>
+        <div class="heatmap-grid" id="heatmap"></div>
+        <div class="divider"></div>
+        <div class="row">
+          <div class="muted">Son 7 gün toplam</div>
+          <div class="bold" id="dash-7sum">0</div>
+        </div>
+      </div>
+
+      <div class="text-sm bold" style="letter-spacing:0.08rem; text-transform:uppercase; margin-bottom:12px;">Hızlı İşlemler</div>
+
+      <button class="btn btn-primary w-full" style="font-size:1.05rem; margin-bottom:10px;" onclick="Review.start()">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+        </svg>
+        Bugünkü Tekrarları Başlat
+      </button>
+
+      <div class="flex gap-2">
+        <button class="btn btn-secondary w-full" onclick="Router.go('library')">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
+          Kitap Okumaya Devam Et
+        </button>
+        <button class="btn btn-secondary w-full" onclick="Router.go('cards')">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+          Kartlar
+        </button>
+      </div>
+    </section>
+
+    <!-- LIBRARY -->
+    <section id="view-library" class="view">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="h2">Kütüphane</h2>
+        <button class="btn btn-primary btn-icon" onclick="Sheets.open('book')"
+                aria-label="Yeni metin ekle">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="card mb-3">
+        <div class="row">
+          <div class="muted">İpucu</div>
+          <div class="tiny">Metni ekle → kelimeye dokun → karta kaydet</div>
+        </div>
+      </div>
+
+      <div id="library-list" class="flex-col gap-3"></div>
+    </section>
+
+    <!-- READER -->
+    <section id="view-reader" class="view" style="background: var(--surface-1); z-index: 60;">
+      <div class="flex justify-between items-center"
+           style="position:sticky; top:-18px; background:var(--surface-1); padding-bottom:10px; border-bottom:1px solid var(--border); margin-bottom:16px;">
+        <button class="btn btn-ghost btn-icon" onclick="Router.go('library')" aria-label="Geri">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+
+        <div class="flex-col items-center" style="text-align:center;">
+          <div class="bold text-sm" id="r-title">Book Title</div>
+          <div class="text-xs" id="r-progress">Sayfa 1/1</div>
+        </div>
+
+        <button class="btn btn-ghost btn-icon" onclick="Reader.adjustFont()" aria-label="Yazı boyutu">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7V4h16v3"></path>
+            <path d="M9 20h6"></path>
+            <path d="M12 4v16"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div id="reader-canvas" class="reader-page"></div>
+
+      <div class="flex justify-between items-center" style="margin-top:22px; padding-top:14px; border-top:1px solid var(--border);">
+        <button class="btn btn-secondary" onclick="Reader.prevPage()">Önceki</button>
+        <button class="btn btn-secondary" onclick="Reader.nextPage()">Sonraki</button>
+      </div>
+    </section>
+
+    <!-- CARDS -->
+    <section id="view-cards" class="view">
+      <div class="flex gap-2 mb-3">
+        <input type="text" class="input" placeholder="Kart ara (word/meaning)..." id="search-input" />
+      </div>
+
+      <div class="card mb-3">
+        <div class="row">
+          <div class="muted">Filtre</div>
+          <div class="flex gap-2">
+            <button class="btn btn-ghost" style="padding:10px 12px;" onclick="Cards.setFilter('all')">Tümü</button>
+            <button class="btn btn-ghost" style="padding:10px 12px;" onclick="Cards.setFilter('due')">Due</button>
+            <button class="btn btn-ghost" style="padding:10px 12px;" onclick="Cards.setFilter('new')">Yeni</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="cards-container" class="grid-cards"></div>
+    </section>
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav id="bottom-nav" role="navigation" aria-label="Alt menü">
+    <button class="nav-btn active" data-target="home" onclick="Router.go('home')">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+      <span>Ana Sayfa</span>
+    </button>
+
+    <button class="nav-btn" data-target="library" onclick="Router.go('library')">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+      </svg>
+      <span>Kütüphane</span>
+    </button>
+
+    <button class="nav-btn" data-target="cards" onclick="Router.go('cards')">
+      <svg class="icon" viewBox="0 0 24 0 24" aria-hidden="true"></svg>
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+      </svg>
+      <span>Kartlar</span>
+    </button>
+  </nav>
+
+  <!-- Backdrop -->
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- Word Sheet -->
+  <div class="sheet" id="word-sheet" aria-hidden="true">
+    <div class="drag-handle"></div>
+
+    <div class="flex justify-between items-center mb-3">
+      <div>
+        <div class="text-xs bold" style="color: var(--primary);" id="ws-lang">EN</div>
+        <div class="h2" id="ws-term">Word</div>
+        <div class="text-xs" id="ws-sub">Yeni kart</div>
+      </div>
+
+      <div class="flex gap-2">
+        <button class="btn btn-ghost btn-icon" onclick="TTS.speak(Utils.el('ws-term').textContent, Utils.el('ws-lang').textContent)"
+                aria-label="Telaffuz">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        </button>
+      </div>
     </div>
 
-    <div class="quiz-overlay" id="quiz-view">
-        <div class="flex justify-between items-center p-4">
-            <div class="bold">Quiz Modu</div>
-            <button class="btn btn-ghost btn-icon" onclick="Quiz.stop()">
-                <svg class="icon"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-        </div>
-        
-        <div id="quiz-content" class="quiz-card-display">
-            </div>
+    <div class="input-group">
+      <label class="label">Anlamı (TR)</label>
+      <input type="text" id="ws-meaning" class="input" placeholder="Türkçesi nedir?" />
     </div>
 
-    <div class="toast" id="toast">Bildirim</div>
+    <div class="input-group">
+      <label class="label">Örnek / Bağlam</label>
+      <textarea id="ws-context" class="textarea" rows="3"></textarea>
+    </div>
 
-    <script>
-    /**
-     * =========================================================
-     * LINGOMASTER CORE ENGINE (Enterprise Pattern)
-     * =========================================================
-     */
+    <div class="flex gap-2">
+      <a id="ws-gtranslate" href="#" target="_blank" class="btn btn-secondary w-full" rel="noopener">Google Çeviri</a>
+      <button class="btn btn-primary w-full" onclick="Cards.saveFromSheet()">Kaydet</button>
+    </div>
 
-    // --- UTILS ---
+    <div class="divider"></div>
+
+    <div class="flex gap-2">
+      <button class="btn btn-ghost w-full" onclick="Cards.openEditCurrent()">Düzenle</button>
+      <button class="btn btn-danger w-full" onclick="Cards.deleteCurrent()">Sil</button>
+    </div>
+  </div>
+
+  <!-- Book Sheet -->
+  <div class="sheet" id="book-sheet" aria-hidden="true">
+    <div class="drag-handle"></div>
+    <h2 class="h2 mb-3">Yeni Metin Ekle</h2>
+
+    <div class="input-group">
+      <label class="label">Başlık</label>
+      <input type="text" id="nb-title" class="input" placeholder="Kitap veya Makale Başlığı" />
+    </div>
+
+    <div class="input-group">
+      <label class="label">Dil</label>
+      <select id="nb-lang" class="select">
+        <option value="EN">İngilizce</option>
+        <option value="TR">Türkçe</option>
+        <option value="RU">Rusça</option>
+        <option value="DE">Almanca</option>
+        <option value="FR">Fransızca</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label class="label">İçerik</label>
+      <textarea id="nb-content" class="textarea" style="min-height:220px" placeholder="Metni buraya yapıştır..."></textarea>
+    </div>
+
+    <button class="btn btn-primary w-full" onclick="Library.saveBook()">Kütüphaneye Ekle</button>
+  </div>
+
+  <!-- Settings Sheet -->
+  <div class="sheet" id="settings-sheet" aria-hidden="true">
+    <div class="drag-handle"></div>
+    <h2 class="h2 mb-3">Ayarlar & Yedek</h2>
+
+    <div class="card mb-3">
+      <div class="row">
+        <div>
+          <div class="bold">Tema</div>
+          <div class="text-xs">Koyu / Açık</div>
+        </div>
+        <button class="btn btn-secondary" onclick="App.toggleTheme()">Değiştir</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="input-group">
+        <label class="label">Reader Yazı Boyutu</label>
+        <input id="set-font" class="input" type="range" min="16" max="28" step="1" />
+        <div class="text-xs mt-2">Mevcut: <span class="bold" id="set-font-val"></span> px</div>
+      </div>
+
+      <div class="input-group">
+        <label class="label">Sayfa Boyutu (yaklaşık karakter)</label>
+        <input id="set-page" class="input" type="range" min="500" max="1100" step="10" />
+        <div class="text-xs mt-2">Mevcut: <span class="bold" id="set-page-val"></span></div>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="bold mb-2">Import / Export</div>
+      <div class="text-xs mb-3">Kartlar + kitaplar + ayarlar tek JSON ile yedeklenir.</div>
+
+      <div class="flex gap-2">
+        <button class="btn btn-secondary w-full" onclick="Backup.export()">Export JSON</button>
+        <button class="btn btn-secondary w-full" onclick="Backup.pickImport()">Import JSON</button>
+      </div>
+
+      <input id="import-file" type="file" accept="application/json" style="display:none" />
+    </div>
+
+    <div class="card">
+      <div class="bold mb-2" style="color: var(--danger);">Sıfırlama</div>
+      <div class="text-xs mb-3">Tüm verileri siler (geri alınamaz).</div>
+      <button class="btn btn-danger w-full" onclick="Backup.resetAll()">Her Şeyi Sıfırla</button>
+    </div>
+  </div>
+
+  <!-- Review Overlay -->
+  <div class="review-overlay" id="review-view" aria-hidden="true">
+    <div class="flex justify-between items-center p-4" style="border-bottom:1px solid var(--border); background:var(--surface-2);">
+      <div class="bold">Tekrar</div>
+      <div class="flex gap-2 items-center">
+        <span class="chip" id="review-progress">0/0</span>
+        <button class="btn btn-ghost btn-icon" onclick="Review.stop()" aria-label="Kapat">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="review-card" id="review-card">
+      <div class="text-sm bold" id="review-lang">EN</div>
+      <div class="review-term" id="review-term">word</div>
+
+      <button class="btn btn-ghost btn-icon" onclick="TTS.speak(Utils.el('review-term').textContent, Utils.el('review-lang').textContent)" aria-label="Telaffuz">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        </svg>
+      </button>
+
+      <div class="review-meaning" id="review-meaning" style="display:none;"></div>
+
+      <div class="mt-3">
+        <button class="btn btn-secondary" onclick="Review.flip()">Anlamı Göster</button>
+      </div>
+
+      <div class="text-xs mt-4" id="review-example"></div>
+    </div>
+
+    <div class="review-actions">
+      <button class="btn-grade again" onclick="Review.grade('again')">Again</button>
+      <button class="btn-grade hard" onclick="Review.grade('hard')">Hard</button>
+      <button class="btn-grade good" onclick="Review.grade('good')">Good</button>
+      <button class="btn-grade easy" onclick="Review.grade('easy')">Easy</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Bildirim</div>
+
+  <script>
+    /* =========================================================
+       LingoMaster PWA Edition (Single-file app + SW/manifest)
+       ========================================================= */
+
+    // ---- UTILS ----
     const Utils = {
-        uuid: () => Date.now().toString(36) + Math.random().toString(36).substr(2),
-        el: id => document.getElementById(id),
-        toast: (msg) => {
-            const t = Utils.el('toast');
-            t.textContent = msg; t.classList.add('visible');
-            setTimeout(() => t.classList.remove('visible'), 3000);
-        }
+      el: (id) => document.getElementById(id),
+      uuid: () => (crypto?.randomUUID ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2))),
+      todayKey: () => new Date().toISOString().slice(0,10),
+      clamp: (n, a, b) => Math.max(a, Math.min(b, n)),
+      toast: (msg) => {
+        const t = Utils.el('toast');
+        t.textContent = msg;
+        t.classList.add('visible');
+        clearTimeout(Utils._toastTimer);
+        Utils._toastTimer = setTimeout(() => t.classList.remove('visible'), 2600);
+      },
+      formatDue: (ts) => {
+        const d = new Date(ts);
+        const now = new Date();
+        const sameDay = d.toDateString() === now.toDateString();
+        if (sameDay) return "Bugün";
+        return d.toLocaleDateString("tr-TR", { day: "2-digit", month: "short" });
+      },
+      sanitizeToken: (w) => w.replace(/[“”"'.?,!;:()«»—–\-]/g, "").trim(),
+      safeText: (s) => (s ?? "").toString(),
     };
 
-    // --- DATA STORE (State Management) ---
+    // ---- STORE ----
     const Store = {
-        data: {
-            cards: JSON.parse(localStorage.getItem('lm_cards') || '[]'),
-            books: JSON.parse(localStorage.getItem('lm_books') || '[]'),
-            activity: JSON.parse(localStorage.getItem('lm_activity') || '{}'),
-            settings: JSON.parse(localStorage.getItem('lm_settings') || '{"theme":"dark", "fontSize":19}')
-        },
-        save() {
-            localStorage.setItem('lm_cards', JSON.stringify(this.data.cards));
-            localStorage.setItem('lm_books', JSON.stringify(this.data.books));
-            localStorage.setItem('lm_activity', JSON.stringify(this.data.activity));
-            localStorage.setItem('lm_settings', JSON.stringify(this.data.settings));
-        },
-        logActivity() {
-            const k = new Date().toISOString().split('T')[0];
-            this.data.activity[k] = (this.data.activity[k] || 0) + 1;
-            this.save();
-        },
-        seed() {
-            if (this.data.books.length === 0) {
-                this.data.books.push({
-                    id: 'b1', title: 'Sherlock Holmes (Demo)', lang: 'EN', page: 0,
-                    content: `To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind. He was, I take it, the most perfect reasoning and observing machine that the world has seen, but as a lover he would have placed himself in a false position.`
-                });
-                this.data.books.push({
-                    id: 'b2', title: 'Толстый и тонкий (Chekhov)', lang: 'RU', page: 0,
-                    content: `На вокзале Николаевской железной дороги встретились два приятеля: один толстый, другой тонкий. Толстый только что пообедал на вокзале, и губы его, подернутые маслом, лоснились, как спелые вишни. Пахло от него хересом и флер-д’оранжем. Тонкий же только что вышел из вагона и был навьючен чемоданами, узлами и картонками.`
-                });
-                this.save();
-            }
+      key: {
+        cards: "lm2_cards",
+        books: "lm2_books",
+        activity: "lm2_activity",
+        settings: "lm2_settings",
+      },
+      data: {
+        cards: [],
+        books: [],
+        activity: {},
+        settings: {
+          theme: "dark",
+          fontSize: 19,
+          pageSize: 780,
+          lastBackupAt: null
         }
+      },
+      load() {
+        try{
+          this.data.cards = JSON.parse(localStorage.getItem(this.key.cards) || "[]");
+          this.data.books = JSON.parse(localStorage.getItem(this.key.books) || "[]");
+          this.data.activity = JSON.parse(localStorage.getItem(this.key.activity) || "{}");
+          this.data.settings = JSON.parse(localStorage.getItem(this.key.settings) || JSON.stringify(this.data.settings));
+        }catch(e){
+          console.warn("Store load error:", e);
+        }
+        // Normalize settings if missing fields
+        this.data.settings.theme ??= "dark";
+        this.data.settings.fontSize ??= 19;
+        this.data.settings.pageSize ??= 780;
+      },
+      save() {
+        localStorage.setItem(this.key.cards, JSON.stringify(this.data.cards));
+        localStorage.setItem(this.key.books, JSON.stringify(this.data.books));
+        localStorage.setItem(this.key.activity, JSON.stringify(this.data.activity));
+        localStorage.setItem(this.key.settings, JSON.stringify(this.data.settings));
+      },
+      logActivity(count=1) {
+        const k = Utils.todayKey();
+        this.data.activity[k] = (this.data.activity[k] || 0) + count;
+        this.save();
+      },
+      seedDemoIfEmpty() {
+        if (this.data.books.length === 0) {
+          this.data.books.push({
+            id: "b1",
+            title: "Sherlock Holmes (Demo)",
+            lang: "EN",
+            page: 0,
+            content:
+`To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name.
+In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler.
+All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind.`
+          });
+          this.data.books.push({
+            id: "b2",
+            title: "Толстый и тонкий (Chekhov)",
+            lang: "RU",
+            page: 0,
+            content:
+`На вокзале Николаевской железной дороги встретились два приятеля: один толстый, другой тонкий.
+Толстый только что пообедал на вокзале, и губы его, подернутые маслом, лоснились, как спелые вишни.`
+          });
+          this.save();
+        }
+      }
     };
 
-    // --- SM-2 ALGORITHM (Spaced Repetition) ---
+    // ---- SRS (SM-2 + grades mapping) ----
     const SRS = {
-        calc(card, quality) {
-            // quality: 0-5. (3+ means passed)
-            let { interval, reps, ef } = card.srs || { interval:0, reps:0, ef:2.5 };
-            
-            if (quality >= 3) {
-                if (reps === 0) interval = 1;
-                else if (reps === 1) interval = 6;
-                else interval = Math.round(interval * ef);
-                
-                reps++;
-                ef = ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
-                if (ef < 1.3) ef = 1.3;
-            } else {
-                reps = 0; interval = 1;
-            }
+      // grade -> quality (0..5)
+      qualityMap: { again: 1, hard: 3, good: 4, easy: 5 },
+      calc(card, grade) {
+        const quality = this.qualityMap[grade] ?? 4;
+        let srs = card.srs || { interval: 0, reps: 0, ef: 2.5 };
 
-            const nextDue = Date.now() + (interval * 24 * 60 * 60 * 1000);
-            return { srs: { interval, reps, ef }, due: nextDue };
+        let { interval, reps, ef } = srs;
+
+        if (quality >= 3) {
+          if (reps === 0) interval = 1;
+          else if (reps === 1) interval = 6;
+          else interval = Math.round(interval * ef);
+
+          reps++;
+          ef = ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+          if (ef < 1.3) ef = 1.3;
+        } else {
+          reps = 0;
+          interval = 1;
         }
+
+        // small adjustment by grade (optional feel)
+        if (grade === "hard") interval = Math.max(1, Math.round(interval * 0.8));
+        if (grade === "easy") interval = Math.max(1, Math.round(interval * 1.3));
+
+        const nextDue = Date.now() + interval * 24 * 60 * 60 * 1000;
+        return { srs: { interval, reps, ef }, due: nextDue };
+      }
     };
 
-    // --- ROUTER ---
+    // ---- ROUTER ----
     const Router = {
-        go(viewId) {
-            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-            document.getElementById(`view-${viewId}`).classList.add('active');
-            
-            // Nav update
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            const navBtn = document.querySelector(`.nav-btn[data-target="${viewId === 'reader' ? 'library' : viewId}"]`);
-            if (navBtn) navBtn.classList.add('active');
+      go(viewId) {
+        document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
+        Utils.el(`view-${viewId}`).classList.add("active");
 
-            if(viewId === 'home') App.renderDash();
-            if(viewId === 'cards') App.renderCards();
-            if(viewId === 'library') App.renderLibrary();
-        }
+        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+        const navTarget = (viewId === "reader") ? "library" : viewId;
+        const navBtn = document.querySelector(`.nav-btn[data-target="${navTarget}"]`);
+        if (navBtn) navBtn.classList.add("active");
+
+        if(viewId === "home") App.renderDash();
+        if(viewId === "library") Library.render();
+        if(viewId === "cards") Cards.render(Utils.el("search-input").value);
+      }
     };
 
-    // --- MODULE: READER ---
-    const Reader = {
-        activeBook: null,
-        pageSize: 750, // Characters per page approx
-
-        open(id) {
-            this.activeBook = Store.data.books.find(b => b.id === id);
-            Router.go('reader');
-            this.render();
-        },
-
-        getPages(text) {
-            const pages = [];
-            let i = 0;
-            while(i < text.length) {
-                let end = Math.min(i + this.pageSize, text.length);
-                if(end < text.length) {
-                    const space = text.lastIndexOf(' ', end);
-                    if(space > i) end = space;
-                }
-                pages.push(text.slice(i, end).trim());
-                i = end;
-            }
-            return pages;
-        },
-
-        render() {
-            if(!this.activeBook) return;
-            const b = this.activeBook;
-            const pages = this.getPages(b.content);
-            if(b.page >= pages.length) b.page = pages.length - 1;
-
-            Utils.el('r-title').textContent = b.title;
-            Utils.el('r-progress').textContent = `Sayfa ${b.page + 1} / ${pages.length}`;
-            
-            const canvas = Utils.el('reader-canvas');
-            canvas.innerHTML = '';
-            canvas.style.fontSize = Store.data.settings.fontSize + 'px';
-
-            // Advanced Tokenization (keep punctuation but separate)
-            const text = pages[b.page];
-            // Split by space but capture logic
-            text.split(/(\s+)/).forEach(chunk => {
-                if (chunk.trim().length > 0 && !/^[.,!?;:"()«»—-]+$/.test(chunk)) {
-                    const span = document.createElement('span');
-                    span.className = 'token';
-                    span.textContent = chunk;
-                    span.onclick = (e) => App.openWordSheet(chunk, b.lang);
-                    canvas.appendChild(span);
-                } else {
-                    canvas.appendChild(document.createTextNode(chunk));
-                }
-            });
-        },
-
-        nextPage() {
-            const pgs = this.getPages(this.activeBook.content);
-            if (this.activeBook.page < pgs.length - 1) {
-                this.activeBook.page++; Store.save(); this.render();
-            }
-        },
-        prevPage() {
-            if (this.activeBook.page > 0) {
-                this.activeBook.page--; Store.save(); this.render();
-            }
-        },
-        adjustFont() {
-            let s = Store.data.settings.fontSize;
-            s = s > 24 ? 16 : s + 2;
-            Store.data.settings.fontSize = s; Store.save();
-            this.render();
-        }
+    // ---- SHEETS ----
+    const Sheets = {
+      open(which){
+        Utils.el("backdrop").classList.add("open");
+        Utils.el(`${which}-sheet`).classList.add("open");
+        // aria
+        Utils.el(`${which}-sheet`).setAttribute("aria-hidden","false");
+      },
+      closeAll(){
+        Utils.el("backdrop").classList.remove("open");
+        document.querySelectorAll(".sheet").forEach(s => {
+          s.classList.remove("open");
+          s.setAttribute("aria-hidden","true");
+        });
+      }
     };
 
-    // --- MODULE: QUIZ ---
-    const Quiz = {
-        queue: [],
-        current: null,
-
-        start() {
-            const now = Date.now();
-            // Prioritize DUE cards
-            this.queue = Store.data.cards.filter(c => c.due <= now);
-            
-            // If no due cards, mix some new ones or random review
-            if (this.queue.length === 0) {
-                this.queue = [...Store.data.cards].sort(() => Math.random() - 0.5).slice(0, 10);
-                if (this.queue.length === 0) return Utils.toast("Hiç kart yok!");
-                Utils.toast("Tekrar yok, rastgele pratik!");
-            }
-            
-            Utils.el('quiz-view').classList.add('open');
-            this.next();
-        },
-
-        next() {
-            if (this.queue.length === 0) return this.stop();
-            this.current = this.queue.pop();
-            
-            const container = Utils.el('quiz-content');
-            container.innerHTML = `
-                <div style="font-size:0.9rem; font-weight:700; color:var(--text-2); margin-bottom:10px">${this.current.lang}</div>
-                <div class="q-word">${this.current.term}</div>
-                <button class="btn btn-ghost btn-icon" onclick="TTS.speak('${this.current.term}', '${this.current.lang}')" style="margin-bottom:30px">
-                    <svg class="icon"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-                </button>
-                <div id="q-choices" style="width:100%; display:flex; flex-direction:column; align-items:center; gap:10px"></div>
-            `;
-
-            // Generate distractors
-            let opts = Store.data.cards
-                .filter(c => c.id !== this.current.id)
-                .sort(() => Math.random() - 0.5)
-                .slice(0, 3);
-            opts.push(this.current);
-            opts.sort(() => Math.random() - 0.5);
-
-            const choicesDiv = Utils.el('q-choices');
-            opts.forEach(o => {
-                const btn = document.createElement('button');
-                btn.className = 'q-btn-option';
-                btn.textContent = o.meaning;
-                btn.onclick = () => this.answer(o.id === this.current.id, btn);
-                choicesDiv.appendChild(btn);
-            });
-        },
-
-        answer(isCorrect, btnElement) {
-            // Visual feedback
-            const allBtns = document.querySelectorAll('.q-btn-option');
-            allBtns.forEach(b => b.disabled = true);
-            
-            if (isCorrect) {
-                btnElement.classList.add('correct');
-                const update = SRS.calc(this.current, 4); // Grade 4
-                Object.assign(this.current, update);
-                Store.logActivity();
-            } else {
-                btnElement.classList.add('wrong');
-                // Highlight correct one
-                allBtns.forEach(b => {
-                    if (b.textContent === this.current.meaning) b.classList.add('correct');
-                });
-                const update = SRS.calc(this.current, 1); // Grade 1
-                Object.assign(this.current, update);
-            }
-            Store.save();
-            setTimeout(() => this.next(), 1200);
-        },
-
-        stop() {
-            Utils.el('quiz-view').classList.remove('open');
-            App.renderDash();
-        }
-    };
-
-    // --- MODULE: TTS (Text To Speech) ---
+    // ---- TTS ----
     const TTS = {
-        speak(txt, lang='EN') {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(txt);
-            const map = {'EN':'en-US', 'RU':'ru-RU', 'DE':'de-DE', 'FR':'fr-FR', 'TR':'tr-TR'};
-            u.lang = map[lang] || 'en-US';
-            u.rate = 0.9;
-            window.speechSynthesis.speak(u);
+      speak(txt, lang="EN") {
+        try{
+          window.speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(txt);
+          const map = { EN:"en-US", RU:"ru-RU", DE:"de-DE", FR:"fr-FR", TR:"tr-TR" };
+          u.lang = map[lang] || "en-US";
+          u.rate = 0.9;
+          window.speechSynthesis.speak(u);
+        }catch(e){
+          Utils.toast("TTS desteklenmiyor.");
         }
+      }
     };
 
-    // --- MAIN CONTROLLER ---
+    // ---- READER ----
+    const Reader = {
+      activeBook: null,
+
+      open(bookId){
+        this.activeBook = Store.data.books.find(b => b.id === bookId);
+        if(!this.activeBook) return;
+        Router.go("reader");
+        this.render();
+      },
+
+      get pageSize(){
+        return Store.data.settings.pageSize || 780;
+      },
+
+      getPages(text){
+        const pages = [];
+        let i = 0;
+        while(i < text.length){
+          let end = Math.min(i + this.pageSize, text.length);
+          if(end < text.length){
+            const space = text.lastIndexOf(" ", end);
+            if(space > i) end = space;
+          }
+          pages.push(text.slice(i, end).trim());
+          i = end;
+        }
+        return pages.length ? pages : [text];
+      },
+
+      adjustFont(){
+        let s = Store.data.settings.fontSize;
+        s = (s >= 28) ? 16 : (s + 2);
+        Store.data.settings.fontSize = s;
+        Store.save();
+        App.applySettingsToCSS();
+        this.render();
+      },
+
+      prevPage(){
+        if(!this.activeBook) return;
+        if(this.activeBook.page > 0){
+          this.activeBook.page--;
+          Store.save();
+          this.render();
+        }
+      },
+      nextPage(){
+        if(!this.activeBook) return;
+        const pages = this.getPages(this.activeBook.content);
+        if(this.activeBook.page < pages.length - 1){
+          this.activeBook.page++;
+          Store.save();
+          this.render();
+        }
+      },
+
+      render(){
+        if(!this.activeBook) return;
+        const b = this.activeBook;
+        const pages = this.getPages(b.content);
+        b.page = Utils.clamp(b.page, 0, pages.length - 1);
+
+        Utils.el("r-title").textContent = b.title;
+        Utils.el("r-progress").textContent = `Sayfa ${b.page + 1} / ${pages.length}`;
+
+        const canvas = Utils.el("reader-canvas");
+        canvas.innerHTML = "";
+        canvas.style.fontSize = (Store.data.settings.fontSize || 19) + "px";
+
+        // Build a set of saved terms for highlight
+        const savedSet = new Set(Store.data.cards.map(c => (c.term || "").toLowerCase()));
+
+        const text = pages[b.page];
+
+        // Tokenizer:
+        // - splits into words, punctuation, and spaces preserving layout
+        // - makes clickable spans for words
+        const parts = text.match(/(\s+|[^\s]+)/g) || [];
+        parts.forEach(part => {
+          if(/^\s+$/.test(part)){
+            canvas.appendChild(document.createTextNode(part));
+            return;
+          }
+          // word-like part may include punctuation. We'll keep original display but click uses clean.
+          const clean = Utils.sanitizeToken(part);
+          const isPunctOnly = clean.length === 0;
+          if(isPunctOnly){
+            canvas.appendChild(document.createTextNode(part));
+            return;
+          }
+
+          const span = document.createElement("span");
+          span.className = "token";
+          span.textContent = part;
+
+          if(savedSet.has(clean.toLowerCase())){
+            span.classList.add("saved");
+          }
+
+          span.onclick = () => Cards.openWordSheet(clean, b.lang, this.findContext(text, part));
+          canvas.appendChild(span);
+        });
+      },
+
+      findContext(pageText, clickedPart){
+        const idx = pageText.indexOf(clickedPart);
+        if(idx < 0) return "";
+        const start = Math.max(0, idx - 60);
+        const end = Math.min(pageText.length, idx + 80);
+        return "..." + pageText.slice(start, end).replace(/\s+/g, " ").trim() + "...";
+      }
+    };
+
+    // ---- LIBRARY ----
+    const Library = {
+      render(){
+        const list = Utils.el("library-list");
+        list.innerHTML = "";
+
+        if(Store.data.books.length === 0){
+          const empty = document.createElement("div");
+          empty.className = "card";
+          empty.innerHTML = `
+            <div class="bold mb-2">Kütüphane boş</div>
+            <div class="text-sm mb-3">“Yeni Metin Ekle” ile içerik yapıştırabilirsin.</div>
+            <button class="btn btn-primary w-full" onclick="Sheets.open('book')">Metin Ekle</button>
+          `;
+          list.appendChild(empty);
+          return;
+        }
+
+        Store.data.books.forEach(b => {
+          const div = document.createElement("div");
+          div.className = "card";
+          div.innerHTML = `
+            <div class="book-row">
+              <div style="flex:1; min-width:0;">
+                <div class="bold" style="font-size:1.05rem; margin-bottom:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                  ${Utils.safeText(b.title)}
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="badge">${Utils.safeText(b.lang)}</span>
+                  <span class="text-xs">Sayfa ${((b.page||0) + 1)}</span>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button class="btn btn-ghost btn-icon" aria-label="Aç" onclick="event.stopPropagation(); Reader.open('${b.id}')">
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                </button>
+                <button class="btn btn-ghost btn-icon" aria-label="Sil" onclick="event.stopPropagation(); Library.deleteBook('${b.id}')">
+                  <svg class="icon-sm" viewBox="0 0 24 24" style="color:var(--danger)" aria-hidden="true">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          `;
+          div.onclick = () => Reader.open(b.id);
+          list.appendChild(div);
+        });
+      },
+
+      saveBook(){
+        const t = Utils.el("nb-title").value.trim();
+        const c = Utils.el("nb-content").value.trim();
+        const l = Utils.el("nb-lang").value;
+
+        if(!t || !c) return Utils.toast("Başlık ve içerik gerekli!");
+
+        Store.data.books.unshift({
+          id: Utils.uuid(),
+          title: t,
+          lang: l,
+          content: c,
+          page: 0
+        });
+        Store.save();
+        Sheets.closeAll();
+        this.render();
+        Utils.toast("Metin eklendi.");
+        Utils.el("nb-title").value = "";
+        Utils.el("nb-content").value = "";
+      },
+
+      deleteBook(id){
+        if(!confirm("Bu metni silmek istiyor musun?")) return;
+        Store.data.books = Store.data.books.filter(b => b.id !== id);
+        Store.save();
+        this.render();
+        Utils.toast("Silindi.");
+      }
+    };
+
+    // ---- CARDS ----
+    const Cards = {
+      filter: "all", // all|due|new
+      currentCardId: null,
+      currentSheetMode: "new", // new|edit
+
+      setFilter(f){
+        this.filter = f;
+        this.render(Utils.el("search-input").value);
+      },
+
+      openWordSheet(word, lang, ctx=""){
+        const clean = Utils.sanitizeToken(word);
+        if(!clean) return;
+
+        // Check existing card
+        const existing = Store.data.cards.find(c => (c.term||"").toLowerCase() === clean.toLowerCase() && (c.lang||"") === lang);
+        this.currentCardId = existing?.id || null;
+        this.currentSheetMode = existing ? "edit" : "new";
+
+        Utils.el("ws-term").textContent = clean;
+        Utils.el("ws-lang").textContent = lang;
+        Utils.el("ws-context").value = ctx || "";
+
+        Utils.el("ws-sub").textContent = existing ? "Mevcut kart (düzenleyebilirsin)" : "Yeni kart";
+        Utils.el("ws-meaning").value = existing ? (existing.meaning || "") : "";
+
+        Utils.el("ws-gtranslate").href =
+          `https://translate.google.com/?sl=${encodeURIComponent(lang)}&tl=tr&text=${encodeURIComponent(clean)}&op=translate`;
+
+        Sheets.open("word");
+      },
+
+      saveFromSheet(){
+        const term = Utils.el("ws-term").textContent.trim();
+        const meaning = Utils.el("ws-meaning").value.trim();
+        const example = Utils.el("ws-context").value.trim();
+        const lang = Utils.el("ws-lang").textContent.trim();
+
+        if(!meaning) return Utils.toast("Anlam gerekli!");
+
+        if(this.currentSheetMode === "edit" && this.currentCardId){
+          const c = Store.data.cards.find(x => x.id === this.currentCardId);
+          if(!c) return Utils.toast("Kart bulunamadı!");
+          c.term = term;
+          c.meaning = meaning;
+          c.example = example;
+          c.lang = lang;
+          Store.save();
+          Sheets.closeAll();
+          Utils.toast("Kart güncellendi.");
+          Cards.render(Utils.el("search-input").value);
+          Reader.render(); // refresh highlight
+          return;
+        }
+
+        // new card
+        Store.data.cards.unshift({
+          id: Utils.uuid(),
+          term,
+          meaning,
+          example,
+          lang,
+          createdAt: Date.now(),
+          due: Date.now(),
+          srs: { interval: 0, reps: 0, ef: 2.5 }
+        });
+        Store.save();
+        Sheets.closeAll();
+        Utils.toast("Kart eklendi!");
+        Cards.render(Utils.el("search-input").value);
+        Reader.render(); // refresh highlight
+      },
+
+      openEditCurrent(){
+        if(!this.currentCardId){
+          Utils.toast("Bu kelime için kayıtlı kart yok.");
+          return;
+        }
+        this.currentSheetMode = "edit";
+        Utils.el("ws-sub").textContent = "Düzenleme modu";
+      },
+
+      deleteCurrent(){
+        if(!this.currentCardId){
+          Utils.toast("Silinecek kart yok.");
+          return;
+        }
+        if(!confirm("Kartı silmek istiyor musun?")) return;
+        Store.data.cards = Store.data.cards.filter(c => c.id !== this.currentCardId);
+        Store.save();
+        Sheets.closeAll();
+        Utils.toast("Kart silindi.");
+        Cards.render(Utils.el("search-input").value);
+        Reader.render();
+      },
+
+      render(query=""){
+        const cont = Utils.el("cards-container");
+        cont.innerHTML = "";
+        query = (query || "").toLowerCase();
+
+        let list = Store.data.cards.slice();
+
+        // filter
+        const now = Date.now();
+        if(this.filter === "due") list = list.filter(c => (c.due||0) <= now);
+        if(this.filter === "new") list = list.filter(c => (c.srs?.reps || 0) === 0);
+
+        // search
+        if(query){
+          list = list.filter(c => ((c.term||"") + " " + (c.meaning||"")).toLowerCase().includes(query));
+        }
+
+        if(list.length === 0){
+          const empty = document.createElement("div");
+          empty.className = "card";
+          empty.innerHTML = `
+            <div class="bold mb-2">Kart yok</div>
+            <div class="text-sm">Reader’da kelimeye dokunup kaydedebilirsin.</div>
+          `;
+          cont.appendChild(empty);
+          return;
+        }
+
+        list.forEach(c => {
+          const isDue = (c.due||0) <= now;
+          const reps = c.srs?.reps || 0;
+          const interval = c.srs?.interval || 0;
+
+          const div = document.createElement("div");
+          div.className = "card";
+
+          div.innerHTML = `
+            <div class="row mb-2">
+              <span class="badge ${isDue ? "warn" : "ok"}">${isDue ? "DUE" : "OK"}</span>
+              <div class="flex gap-2">
+                <button class="btn btn-ghost btn-icon" style="padding:6px" aria-label="Telaffuz"
+                        onclick="event.stopPropagation(); TTS.speak('${escapeQuotes(c.term)}','${escapeQuotes(c.lang)}')">
+                  <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  </svg>
+                </button>
+                <button class="btn btn-ghost btn-icon" style="padding:6px" aria-label="Düzenle"
+                        onclick="event.stopPropagation(); Cards.editById('${c.id}')">
+                  ✎
+                </button>
+                <button class="btn btn-ghost btn-icon" style="padding:6px" aria-label="Sil"
+                        onclick="event.stopPropagation(); Cards.deleteById('${c.id}')">
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            <div class="fc-front">${escapeHtml(c.term)}</div>
+            <div class="fc-back">${escapeHtml(c.meaning)}</div>
+
+            <div class="fc-meta">
+              <span class="chip">${escapeHtml(c.lang || "EN")}</span>
+              <span class="chip">Due: ${escapeHtml(Utils.formatDue(c.due||0))}</span>
+              <span class="chip">Reps: ${reps}</span>
+              <span class="chip">Int: ${interval}d</span>
+            </div>
+
+            ${c.example ? `<div class="text-xs mt-3 mono" style="opacity:.95">${escapeHtml(c.example)}</div>` : ""}
+          `;
+
+          // tap card to open sheet
+          div.onclick = () => {
+            Cards.currentCardId = c.id;
+            Cards.currentSheetMode = "edit";
+            Utils.el("ws-term").textContent = c.term || "";
+            Utils.el("ws-lang").textContent = c.lang || "EN";
+            Utils.el("ws-meaning").value = c.meaning || "";
+            Utils.el("ws-context").value = c.example || "";
+            Utils.el("ws-sub").textContent = "Düzenleme modu";
+            Utils.el("ws-gtranslate").href =
+              `https://translate.google.com/?sl=${encodeURIComponent(c.lang||"EN")}&tl=tr&text=${encodeURIComponent(c.term||"")}&op=translate`;
+            Sheets.open("word");
+          };
+
+          cont.appendChild(div);
+        });
+      },
+
+      editById(id){
+        const c = Store.data.cards.find(x => x.id === id);
+        if(!c) return;
+        this.currentCardId = id;
+        this.currentSheetMode = "edit";
+        Utils.el("ws-term").textContent = c.term || "";
+        Utils.el("ws-lang").textContent = c.lang || "EN";
+        Utils.el("ws-meaning").value = c.meaning || "";
+        Utils.el("ws-context").value = c.example || "";
+        Utils.el("ws-sub").textContent = "Düzenleme modu";
+        Utils.el("ws-gtranslate").href =
+          `https://translate.google.com/?sl=${encodeURIComponent(c.lang||"EN")}&tl=tr&text=${encodeURIComponent(c.term||"")}&op=translate`;
+        Sheets.open("word");
+      },
+
+      deleteById(id){
+        if(!confirm("Kartı sil?")) return;
+        Store.data.cards = Store.data.cards.filter(c => c.id !== id);
+        Store.save();
+        Utils.toast("Silindi.");
+        this.render(Utils.el("search-input").value);
+        Reader.render();
+        App.renderDash();
+      }
+    };
+
+    // ---- REVIEW (Due session) ----
+    const Review = {
+      queue: [],
+      idx: 0,
+      current: null,
+      showingMeaning: false,
+
+      start(){
+        const now = Date.now();
+        // due first
+        this.queue = Store.data.cards.filter(c => (c.due||0) <= now);
+        // fallback: if no due, random practice
+        if(this.queue.length === 0){
+          const all = Store.data.cards.slice();
+          if(all.length === 0) return Utils.toast("Hiç kart yok!");
+          this.queue = all.sort(() => Math.random() - 0.5).slice(0, 15);
+          Utils.toast("Due yok, rastgele pratik!");
+        }
+
+        // stable shuffle
+        this.queue.sort(() => Math.random() - 0.5);
+        this.idx = 0;
+        Utils.el("review-view").classList.add("open");
+        Utils.el("review-view").setAttribute("aria-hidden","false");
+        this.next();
+      },
+
+      stop(){
+        Utils.el("review-view").classList.remove("open");
+        Utils.el("review-view").setAttribute("aria-hidden","true");
+        App.renderDash();
+      },
+
+      next(){
+        if(this.idx >= this.queue.length){
+          Utils.toast("Tekrar bitti 🎉");
+          this.stop();
+          return;
+        }
+        this.current = this.queue[this.idx];
+        this.showingMeaning = false;
+
+        Utils.el("review-progress").textContent = `${this.idx+1}/${this.queue.length}`;
+        Utils.el("review-lang").textContent = this.current.lang || "EN";
+        Utils.el("review-term").textContent = this.current.term || "";
+        Utils.el("review-example").textContent = this.current.example ? `Örnek: ${this.current.example}` : "";
+        Utils.el("review-meaning").style.display = "none";
+        Utils.el("review-meaning").textContent = this.current.meaning || "";
+      },
+
+      flip(){
+        this.showingMeaning = !this.showingMeaning;
+        Utils.el("review-meaning").style.display = this.showingMeaning ? "block" : "none";
+      },
+
+      grade(g){
+        if(!this.current) return;
+
+        // if meaning hidden, nudge user
+        if(!this.showingMeaning){
+          this.flip();
+          // still allow grade
+        }
+
+        const update = SRS.calc(this.current, g);
+        Object.assign(this.current, update);
+
+        // activity counts only on pass-ish grades
+        if(g !== "again") Store.logActivity(1);
+
+        Store.save();
+        this.idx++;
+        setTimeout(() => this.next(), 220);
+      }
+    };
+
+    // ---- DASHBOARD ----
     const App = {
-        init() {
-            Store.seed(); // Load defaults if empty
-            
-            // Render Heatmap on startup
-            this.renderDash();
-            
-            // Theme Init
-            document.body.setAttribute('data-theme', Store.data.settings.theme);
+      init(){
+        Store.load();
+        Store.seedDemoIfEmpty();
 
-            // Global Listeners
-            Utils.el('btn-theme').onclick = this.toggleTheme;
-            Utils.el('backdrop').onclick = this.closeSheets;
-            
-            // Settings -> Import/Export could go here
-            Utils.el('btn-settings').onclick = () => Utils.toast("Ayarlar yakında...");
-            
-            // Search
-            Utils.el('search-input').addEventListener('input', (e) => this.renderCards(e.target.value));
-        },
+        // apply theme + settings to CSS
+        document.body.setAttribute("data-theme", Store.data.settings.theme || "dark");
+        this.applySettingsToCSS();
 
-        toggleTheme() {
-            const n = Store.data.settings.theme === 'dark' ? 'light' : 'dark';
-            Store.data.settings.theme = n;
-            Store.save();
-            document.body.setAttribute('data-theme', n);
-        },
+        // listeners
+        Utils.el("btn-theme").onclick = () => App.toggleTheme();
+        Utils.el("btn-settings").onclick = () => Settings.open();
+        Utils.el("backdrop").onclick = () => Sheets.closeAll();
 
-        // --- DASHBOARD UI ---
-        renderDash() {
-            Utils.el('dash-total').textContent = Store.data.cards.length;
-            const dueCount = Store.data.cards.filter(c => c.due <= Date.now()).length;
-            Utils.el('dash-due').textContent = dueCount;
-            
-            // Heatmap logic
-            const hm = Utils.el('heatmap');
-            hm.innerHTML = '';
-            const today = new Date();
-            let streak = 0;
-            let broken = false;
+        Utils.el("search-input").addEventListener("input", (e) => Cards.render(e.target.value));
 
-            for(let i=6; i>=0; i--) {
-                const d = new Date(today);
-                d.setDate(d.getDate() - i);
-                const k = d.toISOString().split('T')[0];
-                const count = Store.data.activity[k] || 0;
-                
-                // Streak calc
-                if (count > 0 && !broken) streak++;
-                else if (i !== 0) broken = true;
+        // settings sliders
+        Utils.el("set-font").addEventListener("input", (e) => Settings.setFont(parseInt(e.target.value, 10)));
+        Utils.el("set-page").addEventListener("input", (e) => Settings.setPage(parseInt(e.target.value, 10)));
 
-                const lvl = count > 10 ? 3 : (count > 3 ? 2 : (count > 0 ? 1 : 0));
-                const div = document.createElement('div');
-                div.className = 'hm-cell';
-                div.setAttribute('data-level', lvl);
-                div.textContent = ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'][d.getDay()];
-                hm.appendChild(div);
-            }
-            Utils.el('dash-streak').textContent = `${streak} Gün`;
-        },
+        // import file
+        Utils.el("import-file").addEventListener("change", Backup.handleImportFile);
 
-        // --- LIBRARY UI ---
-        renderLibrary() {
-            const list = Utils.el('library-list');
-            list.innerHTML = '';
-            Store.data.books.forEach(b => {
-                const div = document.createElement('div');
-                div.className = 'card flex items-center justify-between';
-                div.style.marginBottom = '12px';
-                div.onclick = (e) => {
-                    if(!e.target.closest('.btn-icon')) Reader.open(b.id);
-                };
-                
-                div.innerHTML = `
-                    <div style="flex:1">
-                        <div class="bold" style="font-size:1.1rem; margin-bottom:4px">${b.title}</div>
-                        <div class="flex items-center gap-2">
-                            <span class="fc-badge">${b.lang}</span>
-                            <span class="text-xs">Sayfa ${b.page + 1}</span>
-                        </div>
-                    </div>
-                    <button class="btn btn-ghost btn-icon" onclick="App.deleteBook('${b.id}')">
-                        <svg class="icon-sm" style="color:var(--danger)"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                    </button>
-                `;
-                list.appendChild(div);
-            });
-        },
+        // initial renders
+        this.renderDash();
+        Library.render();
+        Cards.render("");
 
-        openAddBook() {
-            Utils.el('backdrop').classList.add('open');
-            Utils.el('book-sheet').classList.add('open');
-        },
+        // register SW
+        this.registerServiceWorker();
 
-        saveBook() {
-            const t = Utils.el('nb-title').value;
-            const c = Utils.el('nb-content').value;
-            const l = Utils.el('nb-lang').value;
-            
-            if (!t || !c) return Utils.toast("Eksik bilgi!");
-            
-            Store.data.books.push({
-                id: Utils.uuid(), title: t, content: c, lang: l, page: 0
-            });
-            Store.save();
-            this.closeSheets();
-            this.renderLibrary();
-            Utils.toast("Kitap eklendi.");
-        },
+        // PWA badge
+        if (window.matchMedia("(display-mode: standalone)").matches) {
+          Utils.el("pwa-badge").style.display = "inline-flex";
+        }
+      },
 
-        deleteBook(id) {
-            if(confirm("Silmek istiyor musun?")) {
-                Store.data.books = Store.data.books.filter(b => b.id !== id);
-                Store.save(); this.renderLibrary();
-            }
-        },
+      applySettingsToCSS(){
+        const fs = Store.data.settings.fontSize || 19;
+        const ps = Store.data.settings.pageSize || 780;
+        document.documentElement.style.setProperty("--reader-font-size", fs + "px");
+        document.documentElement.style.setProperty("--reader-page-size", ps);
+      },
 
-        // --- CARDS UI ---
-        renderCards(query = '') {
-            const cont = Utils.el('cards-container');
-            cont.innerHTML = '';
-            
-            const filtered = Store.data.cards.filter(c => 
-                (c.term + c.meaning).toLowerCase().includes(query.toLowerCase())
-            );
+      toggleTheme(){
+        const next = (Store.data.settings.theme === "dark") ? "light" : "dark";
+        Store.data.settings.theme = next;
+        Store.save();
+        document.body.setAttribute("data-theme", next);
+        Utils.toast(next === "dark" ? "Koyu tema" : "Açık tema");
+      },
 
-            filtered.forEach(c => {
-                const isDue = c.due <= Date.now();
-                const div = document.createElement('div');
-                div.className = 'card';
-                div.innerHTML = `
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="fc-badge" style="background:${isDue ? 'var(--warning)' : 'var(--surface-3)'}; color:${isDue?'#000':'inherit'}">${isDue ? 'DUE' : 'OK'}</span>
-                        <div class="flex gap-2">
-                            <button class="btn btn-ghost btn-icon" style="padding:4px" onclick="TTS.speak('${c.term}', '${c.lang}')">
-                                <svg class="icon-sm"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>
-                            </button>
-                            <button class="btn btn-ghost btn-icon" style="padding:4px" onclick="App.deleteCard('${c.id}')">✕</button>
-                        </div>
-                    </div>
-                    <div class="fc-front">${c.term}</div>
-                    <div class="fc-back">${c.meaning}</div>
-                `;
-                cont.appendChild(div);
-            });
-        },
+      renderDash(){
+        const total = Store.data.cards.length;
+        const dueCount = Store.data.cards.filter(c => (c.due||0) <= Date.now()).length;
+        Utils.el("dash-total").textContent = total;
+        Utils.el("dash-due").textContent = dueCount;
 
-        deleteCard(id) {
-            if(confirm("Kartı sil?")) {
-                Store.data.cards = Store.data.cards.filter(c => c.id !== id);
-                Store.save(); this.renderCards(Utils.el('search-input').value);
-            }
-        },
+        // heatmap 7 days
+        const hm = Utils.el("heatmap");
+        hm.innerHTML = "";
+        const today = new Date();
+        let streak = 0;
+        let broken = false;
+        let sum = 0;
 
-        // --- WORD SHEET LOGIC ---
-        openWordSheet(word, lang) {
-            const clean = word.replace(/[.,!?;:"()«»]/g, "");
-            // Heuristic context find (simple)
-            const txt = Utils.el('reader-canvas').textContent;
-            const idx = txt.indexOf(word);
-            const ctx = "..." + txt.substring(Math.max(0, idx-30), Math.min(txt.length, idx+40)) + "...";
+        for(let i=6; i>=0; i--){
+          const d = new Date(today);
+          d.setDate(d.getDate() - i);
+          const k = d.toISOString().slice(0,10);
+          const count = Store.data.activity[k] || 0;
+          sum += count;
 
-            Utils.el('ws-term').textContent = clean;
-            Utils.el('ws-lang').textContent = lang;
-            Utils.el('ws-meaning').value = '';
-            Utils.el('ws-context').value = ctx;
-            
-            // Google Translate Link
-            Utils.el('ws-gtranslate').href = `https://translate.google.com/?sl=${lang}&tl=tr&text=${clean}&op=translate`;
+          // streak: count>0 from today backwards until first 0
+          if(!broken){
+            if(count > 0) streak++;
+            else if(i !== 0) broken = true;
+          }
 
-            Utils.el('backdrop').classList.add('open');
-            Utils.el('word-sheet').classList.add('open');
-        },
+          const lvl = count > 10 ? 3 : (count > 3 ? 2 : (count > 0 ? 1 : 0));
+          const div = document.createElement("div");
+          div.className = "hm-cell";
+          div.setAttribute("data-level", lvl);
+          div.title = `${k} : ${count}`;
+          div.textContent = ["Pz","Pt","Sa","Ça","Pe","Cu","Ct"][d.getDay()];
+          hm.appendChild(div);
+        }
 
-        saveCard() {
-            const term = Utils.el('ws-term').textContent;
-            const meaning = Utils.el('ws-meaning').value;
-            const ctx = Utils.el('ws-context').value;
-            const lang = Utils.el('ws-lang').textContent;
+        Utils.el("dash-streak").textContent = `${streak} Gün`;
+        Utils.el("dash-7sum").textContent = sum;
+      },
 
-            if(!meaning) return Utils.toast("Anlam gerekli!");
-
-            Store.data.cards.push({
-                id: Utils.uuid(), term, meaning, example: ctx, lang,
-                due: Date.now(),
-                srs: { interval: 0, reps: 0, ef: 2.5 }
-            });
-            Store.save();
-            this.closeSheets();
-            Utils.toast("Kart Eklendi!");
-        },
-
-        closeSheets() {
-            Utils.el('backdrop').classList.remove('open');
-            document.querySelectorAll('.sheet').forEach(s => s.classList.remove('open'));
-        },
-
-        startQuiz() { Quiz.start(); }
+      async registerServiceWorker(){
+        try{
+          if("serviceWorker" in navigator){
+            await navigator.serviceWorker.register("./sw.js");
+            // optional: update toast
+          }
+        }catch(e){
+          console.warn("SW register failed:", e);
+        }
+      }
     };
 
-    // --- BOOTSTRAP ---
-    App.init();
+    // ---- SETTINGS ----
+    const Settings = {
+      open(){
+        // set slider values
+        const fs = Store.data.settings.fontSize || 19;
+        const ps = Store.data.settings.pageSize || 780;
+        Utils.el("set-font").value = fs;
+        Utils.el("set-font-val").textContent = fs;
+        Utils.el("set-page").value = ps;
+        Utils.el("set-page-val").textContent = ps;
 
-    </script>
+        Sheets.open("settings");
+      },
+
+      setFont(v){
+        Store.data.settings.fontSize = Utils.clamp(v, 16, 28);
+        Utils.el("set-font-val").textContent = Store.data.settings.fontSize;
+        Store.save();
+        App.applySettingsToCSS();
+        if(Router && Utils.el("view-reader").classList.contains("active")) Reader.render();
+      },
+
+      setPage(v){
+        Store.data.settings.pageSize = Utils.clamp(v, 500, 1100);
+        Utils.el("set-page-val").textContent = Store.data.settings.pageSize;
+        Store.save();
+        if(Router && Utils.el("view-reader").classList.contains("active")) Reader.render();
+      }
+    };
+
+    // ---- BACKUP ----
+    const Backup = {
+      export(){
+        const payload = {
+          version: 2,
+          exportedAt: new Date().toISOString(),
+          data: Store.data
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `lingomaster-backup-${Utils.todayKey()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        Store.data.settings.lastBackupAt = Date.now();
+        Store.save();
+        Utils.toast("Export hazır.");
+      },
+
+      pickImport(){
+        Utils.el("import-file").value = "";
+        Utils.el("import-file").click();
+      },
+
+      async handleImportFile(e){
+        const file = e.target.files?.[0];
+        if(!file) return;
+
+        try{
+          const text = await file.text();
+          const json = JSON.parse(text);
+
+          if(!json?.data) throw new Error("Geçersiz yedek dosyası");
+
+          // merge/replace fully (safer)
+          const ok = confirm("Import tüm mevcut verinin üzerine yazacak. Devam edilsin mi?");
+          if(!ok) return;
+
+          Store.data = json.data;
+
+          // minimal normalization
+          Store.data.cards ??= [];
+          Store.data.books ??= [];
+          Store.data.activity ??= {};
+          Store.data.settings ??= { theme:"dark", fontSize:19, pageSize:780 };
+
+          Store.save();
+          document.body.setAttribute("data-theme", Store.data.settings.theme || "dark");
+          App.applySettingsToCSS();
+
+          Sheets.closeAll();
+          App.renderDash();
+          Library.render();
+          Cards.render(Utils.el("search-input").value);
+          if(Utils.el("view-reader").classList.contains("active")) Reader.render();
+
+          Utils.toast("Import tamamlandı.");
+        }catch(err){
+          console.warn(err);
+          Utils.toast("Import başarısız: dosyayı kontrol et.");
+        }
+      },
+
+      resetAll(){
+        if(!confirm("Tüm verileri kalıcı olarak silmek istiyor musun?")) return;
+        localStorage.removeItem(Store.key.cards);
+        localStorage.removeItem(Store.key.books);
+        localStorage.removeItem(Store.key.activity);
+        localStorage.removeItem(Store.key.settings);
+        Store.data = {
+          cards: [],
+          books: [],
+          activity: {},
+          settings: { theme:"dark", fontSize:19, pageSize:780, lastBackupAt:null }
+        };
+        Store.save();
+        document.body.setAttribute("data-theme", "dark");
+        App.applySettingsToCSS();
+        Sheets.closeAll();
+        App.renderDash();
+        Library.render();
+        Cards.render("");
+        Utils.toast("Sıfırlandı.");
+      }
+    };
+
+    // ---- Helpers for safe HTML in template strings ----
+    function escapeHtml(s){
+      return Utils.safeText(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+    function escapeQuotes(s){
+      return Utils.safeText(s).replaceAll("\\","\\\\").replaceAll("'","\\'").replaceAll("\n"," ");
+    }
+
+    // ---- INIT ----
+    App.init();
+  </script>
 </body>
 </html>
