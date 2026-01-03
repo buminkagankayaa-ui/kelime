@@ -527,6 +527,7 @@
         <button class="btn ghost" id="quickBtn">⚡ Hızlı Ekle</button>
         <button class="btn good" id="quizBtn">🧠 Quiz</button>
         <button class="btn primary" id="addBtn">＋ Ekle</button>
+        <button class="btn" onclick="document.getElementById('quickModal').showModal()">⚡ Hızlı Ekle</button>
       </div>
     </div>
 
@@ -839,6 +840,43 @@
       }[m]));
     }
     function parseTags(input){
+      function parseTags(input){
+  return clean(input).split(",").map(t=>t.trim()).filter(Boolean).slice(0,10);
+        function quickParseLine(line){
+  const raw = line.trim();
+  if(!raw) return null;
+
+  const sep = raw.includes("|") ? "|" : "-";
+  const parts = raw.split(sep).map(x=>x.trim());
+
+  const term = parts[0];
+  const meaning = parts[1];
+
+  if(!term || !meaning) return null;
+
+  let level = "B1";
+  let tags = [];
+
+  if(parts[2] && /^[ABC][12]$/i.test(parts[2])) {
+    level = parts[2].toUpperCase();
+  }
+
+  if(parts[3]) {
+    tags = parseTags(parts.slice(3).join(","));
+  }
+
+  return { term, meaning, level, tags };
+}
+
+}
+
+function makeId(){
+  try{
+    if (crypto && crypto.randomUUID) return crypto.randomUUID();
+  }catch{}
+  return "id_" + Date.now().toString(36) + "_" + Math.random().toString(16).slice(2);
+}
+
       return clean(input).split(",").map(t=>t.trim()).filter(Boolean).slice(0,10);
     }
 
@@ -959,7 +997,7 @@
 
     function patchItem(it){
       const x = {...it};
-      x.id = String(x.id || (crypto.randomUUID ? crypto.randomUUID() : String(now()) + Math.random().toString(16).slice(2)));
+      const id = makeId();
       x.sourceLang = clean(x.sourceLang || x.lang || "EN").toUpperCase();
       x.meaningLang = clean(x.meaningLang || "TR").toUpperCase();
       x.level = clean(x.level) || "B1";
@@ -1604,6 +1642,48 @@
     }
 
     function upsert(){
+      function saveQuick(){
+  const text = document.getElementById("quickText").value;
+  if(!text.trim()){
+    toast("En az 1 satır yaz");
+    return;
+  }
+
+  const lines = text.split("\n").map(x=>x.trim()).filter(Boolean);
+  let added = 0;
+  const t = now();
+
+  for(const line of lines){
+    const p = quickParseLine(line);
+    if(!p) continue;
+
+    items.push({
+      id: makeId(),
+      lang: "EN",
+      level: p.level,
+      term: p.term,
+      meaningTR: p.meaning,
+      example: "",
+      tags: p.tags,
+      fav:false,
+      createdAt: t,
+      updatedAt: t
+    });
+
+    added++;
+  }
+
+  if(added === 0){
+    toast("Format yanlış. Örn: notice - fark etmek - A2 - story");
+    return;
+  }
+
+  saveItems(items);
+  toast(`Eklendi (${added})`);
+  render();
+  document.getElementById("quickText").value = "";
+}
+
       const sourceLang = (sourceLangEl.value || "EN").toUpperCase();
       const meaningLang = (meaningLangEl.value || "TR").toUpperCase();
       const level = levelEl.value || "B1";
@@ -2210,5 +2290,19 @@
     }
     init();
   </script>
+  <dialog id="quickModal">
+  <div class="modalHead">
+    <h2>Hızlı Ekle</h2>
+    <button class="btn" onclick="quickModal.close()">✕</button>
+  </div>
+
+  <div class="modalBody">
+    <textarea id="quickText" placeholder="notice - fark etmek - A2 - story"></textarea>
+  </div>
+
+  <div class="modalFoot">
+    <button class="btn primary" onclick="saveQuick()">Kaydet</button>
+  </div>
+</dialog>
 </body>
 </html>
