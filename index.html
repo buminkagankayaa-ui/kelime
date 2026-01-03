@@ -527,7 +527,6 @@
         <button class="btn ghost" id="quickBtn">⚡ Hızlı Ekle</button>
         <button class="btn good" id="quizBtn">🧠 Quiz</button>
         <button class="btn primary" id="addBtn">＋ Ekle</button>
-        <button class="btn" onclick="document.getElementById('quickModal').showModal()">⚡ Hızlı Ekle</button>
       </div>
     </div>
 
@@ -2121,6 +2120,39 @@ function makeId(){
     document.getElementById("quickBtn").addEventListener("click", openQuick);
     document.getElementById("langManageBtn").addEventListener("click", openLangModal);
     document.getElementById("quizBtn").addEventListener("click", quizOpen);
+    // Quick Add events (FIX)
+const quickModalEl = document.getElementById("quickModal");
+const quickOpenBtn = document.getElementById("quickOpenBtn");
+const quickCloseBtn = document.getElementById("quickCloseBtn");
+const quickCancelBtn = document.getElementById("quickCancelBtn");
+const quickSaveBtn = document.getElementById("quickSaveBtn");
+
+if(quickOpenBtn){
+  quickOpenBtn.addEventListener("click", ()=>{
+    if(quickModalEl) quickModalEl.showModal();
+    const qt = document.getElementById("quickText");
+    setTimeout(()=>qt && qt.focus(), 50);
+  });
+}
+
+function closeQuickModal(){
+  if(quickModalEl) quickModalEl.close();
+}
+
+if(quickCloseBtn) quickCloseBtn.addEventListener("click", closeQuickModal);
+if(quickCancelBtn) quickCancelBtn.addEventListener("click", closeQuickModal);
+
+if(quickSaveBtn){
+  quickSaveBtn.addEventListener("click", ()=>{
+    try{
+      saveQuick();         // <- senin saveQuick fonksiyonun çalışır
+      closeQuickModal();   // <- başarılıysa kapanır
+    }catch(err){
+      console.error(err);
+      toast("Hızlı ekle hata verdi. Console'a bak.");
+    }
+  });
+}
 
     // modal add/edit
     document.getElementById("cancelBtn").addEventListener("click", ()=>modal.close());
@@ -2290,18 +2322,23 @@ function makeId(){
     }
     init();
   </script>
-  <dialog id="quickModal">
+<dialog id="quickModal">
   <div class="modalHead">
-    <h2>Hızlı Ekle</h2>
-    <button class="btn" onclick="quickModal.close()">✕</button>
+    <div>
+      <h2>Hızlı Ekle</h2>
+      <div class="small">Format: kelime - anlam - seviye - etiket</div>
+    </div>
+    <button class="btn" id="quickCloseBtn" type="button">✕</button>
   </div>
 
   <div class="modalBody">
-    <textarea id="quickText" placeholder="notice - fark etmek - A2 - story"></textarea>
+    <textarea id="quickText" placeholder="notice - fark etmek - A2 - story
+beneath - altında - B1 - story"></textarea>
   </div>
 
   <div class="modalFoot">
-    <button class="btn primary" onclick="saveQuick()">Kaydet</button>
+    <button class="btn" id="quickCancelBtn" type="button">İptal</button>
+    <button class="btn primary" id="quickSaveBtn" type="button">Kaydet</button>
   </div>
 </dialog>
 </body>
