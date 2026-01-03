@@ -8,891 +8,2117 @@
   <meta name="theme-color" content="#0b0b10" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="VocabPro" />
+  <meta name="apple-mobile-web-app-title" content="VocabPocket" />
+
   <link rel="manifest" id="manifestLink" href="">
 
   <style>
-    :root {
-      --bg: #0b0b10;
-      --panel: #12121a;
-      --card: #151523;
-      --card2: #17172a;
-      --line: #23233a;
-      --text: #f2f2f7;
-      --muted: #a6a6bb;
-      --accent: #7c3aed;
-      --accent2: #22c55e;
-      --danger: #fb7185;
-      --warn: #fbbf24;
+    :root{
+      --bg:#0b0b10;
+      --panel:#12121a;
+      --card:#151523;
+      --card2:#17172a;
+      --line:#23233a;
+      --text:#f2f2f7;
+      --muted:#a6a6bb;
+      --accent:#7c3aed;
+      --accent2:#22c55e;
+      --danger:#fb7185;
+      --warn:#fbbf24;
 
-      --shadow: 0 8px 30px rgba(0,0,0,.4);
-      --radius: 18px;
-      --radius2: 14px;
+      --shadow: 0 16px 60px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:14px;
 
       --bgGrad1: radial-gradient(1100px 600px at 20% -10%, rgba(124,58,237,.25), transparent 55%);
       --bgGrad2: radial-gradient(900px 520px at 110% 10%, rgba(34,197,94,.18), transparent 55%);
       --headerTop: rgba(11,11,16,.92);
-      --headerBottom: rgba(11,11,16,.85);
+      --headerBottom: rgba(11,11,16,.60);
       --inputBg: rgba(21,21,35,.85);
     }
 
-    body[data-theme="emerald"] {
-      --bg: #07110c; --panel: #0b1711; --card: #0f1f17; --card2: #11251b;
-      --line: #1f3a2d; --text: #eafff3; --muted: #a2c8b3;
-      --accent: #22c55e; --accent2: #7c3aed;
+    body[data-theme="dark"]{
+      --bg:#0b0b10; --panel:#12121a; --card:#151523; --card2:#17172a;
+      --line:#23233a; --text:#f2f2f7; --muted:#a6a6bb;
+      --accent:#7c3aed; --accent2:#22c55e;
+      --shadow: 0 16px 60px rgba(0,0,0,.55);
+      --bgGrad1: radial-gradient(1100px 600px at 20% -10%, rgba(124,58,237,.25), transparent 55%);
+      --bgGrad2: radial-gradient(900px 520px at 110% 10%, rgba(34,197,94,.18), transparent 55%);
+      --headerTop: rgba(11,11,16,.92);
+      --headerBottom: rgba(11,11,16,.60);
+      --inputBg: rgba(21,21,35,.85);
+    }
+    body[data-theme="emerald"]{
+      --bg:#07110c; --panel:#0b1711; --card:#0f1f17; --card2:#11251b;
+      --line:#1f3a2d; --text:#eafff3; --muted:#a2c8b3;
+      --accent:#22c55e; --accent2:#7c3aed;
+      --shadow: 0 16px 60px rgba(0,0,0,.55);
       --bgGrad1: radial-gradient(1100px 600px at 20% -10%, rgba(34,197,94,.22), transparent 55%);
       --bgGrad2: radial-gradient(900px 520px at 110% 10%, rgba(124,58,237,.16), transparent 55%);
-      --headerTop: rgba(7,17,12,.92); --headerBottom: rgba(7,17,12,.85);
+      --headerTop: rgba(7,17,12,.92);
+      --headerBottom: rgba(7,17,12,.60);
       --inputBg: rgba(15,31,23,.88);
     }
-
-    body[data-theme="light"] {
-      --bg: #f6f7fb; --panel: #ffffff; --card: #ffffff; --card2: #f4f6ff;
-      --line: #d7d9e6; --text: #0b0b10; --muted: #4b5563;
-      --accent: #7c3aed; --accent2: #16a34a;
-      --shadow: 0 8px 30px rgba(0,0,0,.08);
-      --bgGrad1: radial-gradient(1100px 600px at 20% -10%, rgba(124,58,237,.12), transparent 55%);
-      --bgGrad2: radial-gradient(900px 520px at 110% 10%, rgba(22,163,74,.10), transparent 55%);
-      --headerTop: rgba(246,247,251,.95); --headerBottom: rgba(246,247,251,.90);
+    body[data-theme="light"]{
+      --bg:#f6f7fb; --panel:#ffffff; --card:#ffffff; --card2:#f4f6ff;
+      --line:#d7d9e6; --text:#0b0b10; --muted:#4b5563;
+      --accent:#7c3aed; --accent2:#16a34a;
+      --shadow: 0 16px 60px rgba(0,0,0,.12);
+      --bgGrad1: radial-gradient(1100px 600px at 20% -10%, rgba(124,58,237,.16), transparent 55%);
+      --bgGrad2: radial-gradient(900px 520px at 110% 10%, rgba(22,163,74,.12), transparent 55%);
+      --headerTop: rgba(246,247,251,.92);
+      --headerBottom: rgba(246,247,251,.72);
       --inputBg: rgba(255,255,255,.92);
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    
-    body {
-      margin: 0;
+    *{box-sizing:border-box}
+    body{
+      margin:0;
       background: var(--bgGrad1), var(--bgGrad2), var(--bg);
       background-attachment: fixed;
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      padding: env(safe-area-inset-top) 14px 80px 14px; /* Bottom padding for mobile scroll */
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      padding: env(safe-area-inset-top) 14px 80px 14px; /* Bottom padding increased for mobile */
+      -webkit-tap-highlight-color: transparent;
       overflow-x: hidden;
     }
 
-    /* === Header === */
-    header {
-      position: sticky; top: 0; z-index: 40;
-      background: var(--headerBottom);
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      margin: -14px -14px 14px -14px;
-      padding: env(safe-area-inset-top) 14px 12px 14px;
-      border-bottom: 1px solid var(--line);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    header{
+      position:sticky; top:0; z-index:20;
+      background: linear-gradient(to bottom, var(--headerTop), var(--headerBottom));
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      padding: 12px 0 12px 0;
+      margin: -14px -14px 0 -14px; /* Fix for padding parent */
+      padding-left: 14px; padding-right: 14px;
     }
 
-    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
-    .brand h1 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
-    .brand .sub { font-size: 11px; color: var(--muted); font-weight: 500; }
+    .topbar{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    }
+    .brand{display:flex; flex-direction:column; gap:4px}
+    .brand h1{margin:0; font-size:18px; letter-spacing:.2px}
+    .brand .sub{font-size:12px; color:var(--muted)}
 
-    .header-actions { display: flex; gap: 8px; }
-    
-    /* === Buttons === */
-    .btn {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.05);
-      color: var(--text);
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 13px;
-      display: inline-flex; gap: 6px; align-items: center; justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      user-select: none;
+    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .btn{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 14px;
+      font-weight:900;
+      font-size:13px;
+      display:inline-flex; gap:8px; align-items:center;
+      user-select:none;
+      white-space:nowrap;
+      cursor:pointer;
+      transition: transform 0.1s;
     }
-    .btn:active { transform: scale(0.96); opacity: 0.8; }
-    .btn.primary {
-      border-color: transparent;
-      background: var(--accent);
-      color: #fff;
-      box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 40%, transparent);
+    .btn:active{transform:scale(.95)}
+    .btn.primary{
+      border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+      background: color-mix(in srgb, var(--accent) 16%, transparent);
     }
-    .btn.good {
-      border-color: transparent;
-      background: var(--accent2);
-      color: #fff; /* Emerald theme fix */
+    .btn.good{
+      border-color: color-mix(in srgb, var(--accent2) 35%, transparent);
+      background: color-mix(in srgb, var(--accent2) 14%, transparent);
     }
-    body[data-theme="emerald"] .btn.good { color: #000; }
+    /* Emerald theme specific fix for text visibility */
+    body[data-theme="emerald"] .btn.good { color: var(--text); }
 
-    .btn.danger {
+    .btn.ghost{background: transparent;}
+    .btn.danger{
       border-color: color-mix(in srgb, var(--danger) 35%, transparent);
-      background: color-mix(in srgb, var(--danger) 15%, transparent);
-      color: var(--danger);
+      background: color-mix(in srgb, var(--danger) 12%, transparent);
     }
 
-    /* === Inputs & Filters === */
-    .input, select, textarea {
-      width: 100%;
-      border: 1px solid var(--line);
+    .controls{ margin-top:12px; display:grid; gap:10px; grid-template-columns: 1fr; }
+
+    .input, select, textarea{
+      width:100%;
+      border:1px solid var(--line);
       background: var(--inputBg);
+      color:var(--text);
+      padding:12px 12px;
+      border-radius: 14px;
+      outline:none;
+      font-size:15px;
+    }
+    textarea{min-height:88px; resize:vertical}
+
+    .chips{display:flex; gap:8px; flex-wrap:wrap;}
+    .chip{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
       color: var(--text);
-      padding: 12px;
-      border-radius: 12px;
-      outline: none;
-      font-size: 15px;
-      appearance: none;
+      padding:9px 12px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:12px;
+      flex:1;
+      min-width: 80px;
+      text-align:center;
+      user-select:none;
+      cursor:pointer;
     }
-    .input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-    
-    .filters { display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; margin-top: 10px; -webkit-overflow-scrolling: touch; }
+    .chip.active{
+      border-color: color-mix(in srgb, var(--accent2) 35%, transparent);
+      background: color-mix(in srgb, var(--accent2) 14%, transparent);
+    }
+
+    .filters{
+      display:flex;
+      gap:10px;
+      flex-wrap:nowrap; /* Mobilde yana kaydırma için */
+      overflow-x: auto;
+      align-items:center;
+      justify-content:flex-start;
+      padding-bottom: 5px;
+    }
     .filters::-webkit-scrollbar { display: none; }
-    .filters select { min-width: 130px; flex: 0 0 auto; font-size: 13px; padding: 8px 12px; }
+    .filters select{ width:auto; min-width: 140px; flex: 0 0 auto; }
 
-    /* === Dashboard === */
-    .dash { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-    .pill {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.02);
-      padding: 6px 10px;
-      border-radius: 8px;
+    .bar{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      color: var(--muted); font-size:12px; margin-top:4px;
+    }
+    .bar .left{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+    .pill{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      padding:8px 10px;
+      border-radius:999px;
       color: var(--muted);
-      font-size: 11px;
-      display: flex; gap: 6px; align-items: center;
+      font-size:12px;
+      display:inline-flex; gap:8px; align-items:center;
     }
-    .pill strong { color: var(--text); font-weight: 700; font-size: 13px; }
+    .pill strong{color:var(--text); font-weight:900}
 
-    /* === Cards Grid === */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
+    .dash{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:8px;
     }
-    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+    .dash .pill{ background: rgba(255,255,255,.02); }
 
-    .card {
-      position: relative;
-      background: transparent;
-      perspective: 1000px;
-      /* Prevent pull-to-refresh interference on cards */
-      touch-action: pan-y; 
+    main{margin-top:12px}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:16px; /* Kartlar arası boşluk */
     }
+    @media (min-width: 680px){ .grid{ grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 980px){ .grid{ grid-template-columns: 1fr 1fr 1fr; } }
 
-    .cardFlipWrap {
-      position: relative;
-      width: 100%;
-      min-height: 220px;
-      transform-style: preserve-3d;
-      transition: height 0.3s ease;
-    }
-
-    .cardFlip {
-      position: absolute; inset: 0;
-      transform-style: preserve-3d;
-      transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, transparent), color-mix(in srgb, var(--panel) 92%, transparent));
       border-radius: var(--radius);
       box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      /* CRITICAL FIX FOR MOBILE SCROLLING */
+      touch-action: pan-y; 
+      user-select: none;
     }
-    .cardFlip.flipped { transform: rotateY(180deg); }
 
-    .face {
-      position: absolute; inset: 0;
-      backface-visibility: hidden; -webkit-backface-visibility: hidden;
-      background: linear-gradient(145deg, var(--card), var(--panel));
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 16px;
-      display: flex; flex-direction: column;
+    .cardFlipWrap{
+      position: relative;
+      perspective: 1000px;
+      height: 260px;
+      transition: height 0.3s ease; /* Yumuşak yükseklik geçişi */
     }
-    .face.back {
+    .cardFlip{
+      position:absolute; inset:0;
+      transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
+      transition: transform .55s cubic-bezier(.2,.9,.2,1);
+    }
+    .cardFlip.flipped{ transform: rotateY(180deg); }
+
+    .face{
+      position:absolute; inset:0;
+      padding:14px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .back{
       transform: rotateY(180deg);
-      background: linear-gradient(145deg, var(--card2), var(--panel));
+      background: linear-gradient(180deg, color-mix(in srgb, var(--card2) 95%, transparent), color-mix(in srgb, var(--panel) 92%, transparent));
     }
 
-    /* Card Content */
-    .meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .badge {
-      font-size: 11px; font-weight: 700; color: var(--muted);
-      background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px;
-      display: flex; align-items: center; gap: 6px;
+    .meta{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .badge{
+      display:inline-flex; gap:8px; align-items:center;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      white-space:nowrap;
     }
-    .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
-
-    .star { font-size: 22px; color: var(--line); cursor: pointer; padding: 4px; transition: color 0.2s; }
-    .star.on { color: var(--warn); }
-
-    .term { font-size: 26px; font-weight: 800; margin: 10px 0; line-height: 1.1; word-break: break-word; }
-    .example { font-size: 14px; color: var(--muted); margin: 0; line-height: 1.5; font-style: italic; flex: 1; }
-
-    .tags { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
-    .tag { font-size: 10px; color: var(--muted); border: 1px solid var(--line); padding: 4px 8px; border-radius: 20px; }
-
-    .actions {
-      margin-top: 10px;
-      display: flex; gap: 8px;
+    .badge .dot{
+      width:8px; height:8px; border-radius:999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent);
     }
-    .actions .btn { flex: 1; padding: 8px; font-size: 12px; }
 
-    /* === Modals === */
-    dialog {
-      width: min(90vw, 500px);
-      border: none;
-      border-radius: 20px;
-      background: var(--panel);
+    .star{
+      width:42px; height:42px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      display:grid; place-items:center;
+      font-size:20px;
+      user-select:none;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .star.on{
+      border-color: color-mix(in srgb, var(--warn) 35%, transparent);
+      background: color-mix(in srgb, var(--warn) 12%, transparent);
+      color: var(--warn);
+    }
+
+    .term{
+      margin:0;
+      font-size:22px;
+      font-weight:950;
+      letter-spacing:.2px;
+      line-height:1.05;
+      word-break: break-word;
+    }
+    .example{
+      margin:0;
+      color: var(--muted);
+      font-size:13px;
+      line-height:1.35;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+    }
+
+    .miniStats{
+      display:flex; gap:8px; flex-wrap:wrap;
+      color: var(--muted);
+      font-size:12px;
+      margin-top: 2px;
+    }
+    .statusPill{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:6px 9px;
+      font-size:11px;
+      color:var(--muted);
+      background: rgba(255,255,255,.02);
+    }
+    .statusPill.new{ border-color: color-mix(in srgb, var(--warn) 35%, transparent); background: color-mix(in srgb, var(--warn) 10%, transparent); }
+    .statusPill.learning{ border-color: color-mix(in srgb, var(--accent) 35%, transparent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+    .statusPill.mastered{ border-color: color-mix(in srgb, var(--accent2) 35%, transparent); background: color-mix(in srgb, var(--accent2) 10%, transparent); }
+
+    .tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; }
+    .tag{
+      font-size:11px;
+      color: var(--muted);
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      padding:6px 8px;
+      border-radius: 999px;
+    }
+
+    .actions{
+      display:flex; gap:8px; flex-wrap:wrap;
+      padding:12px 14px;
+      border-top:1px solid var(--line);
+      background: rgba(0,0,0,.10);
+      /* Butonlara tıklayınca kartın dönmemesi için */
+      z-index: 5;
+      position: relative;
+    }
+    .actions .btn { flex: 1; justify-content: center; }
+
+    dialog{
+      width:min(760px, 96vw);
+      border:none;
+      border-radius: 18px;
+      background: rgba(18,18,26,.98);
       color: var(--text);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      padding: 0;
+      box-shadow: var(--shadow);
+      padding:0;
+      overflow:hidden;
+      z-index:50;
       margin: auto;
-      max-height: 90vh;
+    }
+    body[data-theme="light"] dialog{ background: rgba(255,255,255,.98); }
+    dialog::backdrop{ background: rgba(0,0,0,.55); backdrop-filter: blur(4px); }
+    .modalHead{
+      padding:14px 14px 10px 14px;
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      background: var(--headerTop);
+    }
+    .modalHead h2{margin:0; font-size:15px}
+    .modalHead .small{font-size:12px; color:var(--muted); margin-top:6px}
+    .modalBody{padding:14px; display:grid; gap:10px; max-height: 70vh; overflow-y: auto;}
+    .two{display:grid; gap:10px; grid-template-columns: 1fr; }
+    @media (min-width: 680px){ .two{grid-template-columns: 1fr 1fr;} }
+    .modalFoot{
+      padding:14px;
+      border-top:1px solid var(--line);
+      display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;
+      background: var(--panel);
+    }
+    .help{
+      font-size:12px; color:var(--muted);
+      border:1px dashed color-mix(in srgb, var(--text) 18%, transparent);
+      border-radius: 14px;
+      padding:10px;
+      background: rgba(255,255,255,.02);
+      white-space:pre-wrap;
+      line-height:1.35;
+    }
+
+    .toast{
+      position:fixed; left:50%; bottom:24px;
+      transform:translateX(-50%);
+      background: var(--panel);
+      border:1px solid var(--line);
+      padding:12px 20px;
+      border-radius:999px;
+      font-size:13px; font-weight: 700;
+      color:var(--text);
+      display:none;
+      z-index:9999;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    body[data-theme="light"] .toast{ background: #fff; color: #000; }
+
+    /* ===== QUIZ FULLSCREEN OVERLAY ===== */
+    .quizOverlay{
+      position:fixed; inset:0;
+      z-index:60;
+      display:none;
+      background: var(--bg);
+      padding: env(safe-area-inset-top) 14px env(safe-area-inset-bottom) 14px;
       overflow-y: auto;
     }
-    dialog::backdrop { background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); }
-    
-    .modalHead { padding: 16px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; background: var(--headerTop); position: sticky; top: 0; z-index: 10; }
-    .modalBody { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-    .modalFoot { padding: 16px; border-top: 1px solid var(--line); display: flex; gap: 10px; justify-content: flex-end; background: var(--panel); }
-    
-    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .quizOverlay.on{ display:block; }
 
-    /* === Quiz Overlay === */
-    .quizOverlay {
-      position: fixed; inset: 0; z-index: 100;
-      background: var(--bg);
-      display: none; flex-direction: column;
-      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
+    .quizShell{
+      max-width: 820px;
+      margin: 0 auto;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      height: 100%;
     }
-    .quizOverlay.on { display: flex; }
-    
-    .quizHeader { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
-    .quizStats { font-size: 12px; color: var(--muted); display: flex; gap: 10px; }
-    .quizCard { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 20px; overflow-y: auto; }
-    .qText { font-size: 28px; font-weight: 900; }
-    .qSub { color: var(--muted); }
-    
-    .quizOptions { display: grid; gap: 10px; width: 100%; max-width: 400px; }
-    .opt { text-align: left; padding: 16px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--text); font-size: 16px; font-weight: 600; cursor: pointer; }
-    .opt.good { background: rgba(34, 197, 94, 0.2); border-color: var(--accent2); }
-    .opt.bad { background: rgba(251, 113, 133, 0.2); border-color: var(--danger); }
 
-    .quizControls { padding-top: 20px; display: flex; gap: 10px; width: 100%; max-width: 400px; margin: 0 auto; }
-    .quizReveal { width: 100%; max-width: 400px; background: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; display: none; text-align: center; margin: 0 auto;}
-    .quizReveal.on { display: block; animation: slideUp 0.3s ease; }
-
-    @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-    /* === Toast === */
-    .toast {
-      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
-      background: var(--panel); border: 1px solid var(--line); color: var(--text);
-      padding: 12px 20px; border-radius: 30px; font-weight: 600; font-size: 14px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 200;
-      opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    .quizTop{
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center; justify-content:space-between;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--radius);
+      padding:12px;
     }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .quizTop .left{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .quizTop .right{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
 
+    .quizCard{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--radius);
+      padding:14px;
+      flex: 1;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      overflow:auto;
+    }
+    .quizQ{
+      font-size:22px;
+      font-weight:950;
+      letter-spacing:.2px;
+      margin:0;
+      word-break: break-word;
+    }
+    .quizSub{
+      margin:0;
+      color: var(--muted);
+      font-size:13px;
+      line-height:1.4;
+    }
+    .quizReveal{
+      border:1px dashed color-mix(in srgb, var(--text) 22%, transparent);
+      border-radius: var(--radius2);
+      padding:12px;
+      background: rgba(255,255,255,.02);
+      display:none;
+    }
+    .quizReveal.on{ display:block; }
+    .quizReveal .ans{
+      font-size:18px;
+      font-weight:950;
+      margin:0 0 6px 0;
+    }
+    .quizReveal .ex{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.4;
+    }
+
+    .options{
+      display:grid;
+      gap:10px;
+      margin-top:10px;
+    }
+    .opt{
+      text-align:left;
+      width:100%;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding:12px;
+      border-radius: 14px;
+      font-weight:900;
+      font-size:14px;
+      cursor:pointer;
+    }
+    .opt:active{ transform:scale(.995); }
+    .opt.good{ border-color: color-mix(in srgb, var(--accent2) 35%, transparent); background: color-mix(in srgb, var(--accent2) 12%, transparent); }
+    .opt.bad{ border-color: color-mix(in srgb, var(--danger) 35%, transparent); background: color-mix(in srgb, var(--danger) 12%, transparent); }
+
+    .quizBottom{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      border-radius: var(--radius);
+      padding:12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .quizBottom .left{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .quizBottom .right{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+    .listBox{
+      border:1px solid var(--line);
+      border-radius: var(--radius2);
+      padding:12px;
+      background: rgba(255,255,255,.02);
+      display:grid;
+      gap:8px;
+    }
+    .listBox h3{
+      margin:0;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .listBox .item{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px;
+      border:1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      font-size:13px;
+    }
+    .listBox .item b{ color:var(--text); }
   </style>
 </head>
 
-<body>
+<body data-theme="dark">
   <header>
     <div class="topbar">
       <div class="brand">
         <h1>Vocab Pocket Pro</h1>
-        <div class="sub">Mobil Flashcard & SRS</div>
+        <div class="sub">Kart • Flip • Favori • Etiket • Seviye • SRS • Quiz</div>
       </div>
-      <div class="header-actions">
-        <button class="btn primary" id="addBtn">＋</button>
-        <button class="btn good" id="quizBtn">🧠</button>
-        <button class="btn" id="menuBtn">☰</button>
+      <div class="row">
+        <button class="btn ghost" id="langManageBtn">🌐 Diller</button>
+        <button class="btn ghost" id="quickBtn">⚡ Hızlı</button>
+        <button class="btn good" id="quizBtn">🧠 Quiz</button>
+        <button class="btn primary" id="addBtn">＋ Ekle</button>
       </div>
     </div>
 
-    <div class="input-group" style="position:relative">
-      <input class="input" id="search" placeholder="Ara..." style="padding-left: 36px;">
-      <span style="position:absolute; left:12px; top:12px; opacity:0.5">🔍</span>
-    </div>
+    <div class="controls">
+      <input class="input" id="search" placeholder="Ara: kelime / anlam / örnek / etiket... (örn: #story  level:B1  lang:EN)" />
+      <div class="chips" id="chips"></div>
 
-    <div class="filters">
-      <select id="langFilter"><option value="ALL">Dil: Tümü</option></select>
-      <select id="statusFilter">
-        <option value="ALL">Durum: Tümü</option>
-        <option value="NEW">Yeni</option>
-        <option value="LEARNING">Öğreniliyor</option>
-        <option value="MASTERED">Öğrenildi</option>
-        <option value="DUE">Tekrar Zamanı (Due)</option>
-      </select>
-      <select id="themeSelect">
-        <option value="dark">Tema: Dark</option>
-        <option value="emerald">Tema: Emerald</option>
-        <option value="light">Tema: Light</option>
-      </select>
-    </div>
+      <div class="filters">
+        <select id="statusFilter" title="Durum filtresi">
+          <option value="ALL" selected>Durum: Tümü</option>
+          <option value="NEW">Durum: Yeni</option>
+          <option value="LEARNING">Durum: Öğreniliyor</option>
+          <option value="MASTERED">Durum: Öğrenildi</option>
+          <option value="DUE">Durum: Bugün (Due)</option>
+        </select>
 
-    <div class="dash" id="dash">
+        <select id="levelFilter" title="Seviye filtresi">
+          <option value="ALL" selected>Seviye: Tümü</option>
+          <option value="A1">Seviye: A1</option>
+          <option value="A2">Seviye: A2</option>
+          <option value="B1">Seviye: B1</option>
+          <option value="B2">Seviye: B2</option>
+          <option value="C1">Seviye: C1</option>
+          <option value="C2">Seviye: C2</option>
+        </select>
+
+        <select id="tagFilter" title="Etiket filtresi">
+          <option value="ALL" selected>Etiket: Tümü</option>
+        </select>
+
+        <select id="themeSelect" title="Tema">
+          <option value="dark" selected>Tema: Dark</option>
+          <option value="emerald">Tema: Emerald</option>
+          <option value="light">Tema: Light</option>
+        </select>
+
+        <select id="sort" title="Sırala">
+          <option value="due">Sırala: Due önce</option>
+          <option value="updated">Sırala: Son güncellenen</option>
+          <option value="created">Sırala: Son eklenen</option>
+          <option value="az">Sırala: A → Z</option>
+          <option value="za">Sırala: Z → A</option>
+        </select>
       </div>
+
+      <div class="dash" id="dash"></div>
+
+      <div class="bar">
+        <div class="left">
+          <span class="pill">Toplam <strong id="countAll">0</strong></span>
+          <span class="pill">Görünen <strong id="countVisible">0</strong></span>
+          <span class="pill">Bugün due <strong id="countDue">0</strong></span>
+        </div>
+        <div class="row" style="justify-content:flex-end;">
+          <button class="btn danger" id="wipeBtn">🗑️ Hepsini Sil</button>
+        </div>
+      </div>
+    </div>
   </header>
 
   <main>
+    <datalist id="tagDatalist"></datalist>
     <div class="grid" id="grid"></div>
-    <div style="text-align:center; padding: 40px; color:var(--muted); font-size:13px; display:none" id="emptyState">
-      Henüz kelime yok.<br>Sağ üstteki <b>＋</b> butonuna basarak ekle.
-    </div>
   </main>
 
   <dialog id="modal">
     <div class="modalHead">
-      <h3 id="modalTitle" style="margin:0">Kelime Ekle</h3>
-      <button class="btn" id="closeModal">✕</button>
+      <div>
+        <h2 id="modalTitle">Kelime Ekle</h2>
+        <div class="small">Kelime + anlam zorunlu. Etiketleri virgülle ayır.</div>
+      </div>
+      <button class="btn" id="closeBtn" type="button">✕</button>
     </div>
+
     <div class="modalBody">
       <div class="two">
-        <select id="sourceLang"></select>
-        <select id="meaningLang"></select>
+        <div>
+          <label class="small">Kelime dili</label>
+          <select id="sourceLang"></select>
+        </div>
+        <div>
+          <label class="small">Anlam dili</label>
+          <select id="meaningLang"></select>
+        </div>
       </div>
-      <input class="input" id="term" placeholder="Kelime (Örn: Apple)">
-      <input class="input" id="meaning" placeholder="Anlam (Örn: Elma)">
-      <textarea class="input" id="example" placeholder="Örnek cümle..." rows="2"></textarea>
-      <input class="input" id="tags" placeholder="Etiketler (virgülle ayır)">
+
+      <div class="two">
+        <div>
+          <label class="small">Seviye</label>
+          <select id="level">
+            <option>A1</option><option>A2</option><option selected>B1</option><option>B2</option><option>C1</option><option>C2</option>
+          </select>
+        </div>
+        <div>
+          <label class="small">Durum</label>
+          <select id="status">
+            <option value="NEW" selected>NEW</option>
+            <option value="LEARNING">LEARNING</option>
+            <option value="MASTERED">MASTERED</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="two">
+        <div>
+          <label class="small">Kelime</label>
+          <input class="input" id="term" placeholder="notice" />
+        </div>
+        <div>
+          <label class="small">Anlam</label>
+          <input class="input" id="meaning" placeholder="fark etmek" />
+        </div>
+      </div>
+
+      <div>
+        <label class="small">Örnek</label>
+        <textarea id="example" placeholder="Would the others notice that there was something the matter?"></textarea>
+      </div>
+
+      <div>
+        <label class="small">Etiketler</label>
+        <input class="input" id="tags" list="tagDatalist" placeholder="story, daily" />
+      </div>
     </div>
+
     <div class="modalFoot">
-      <button class="btn danger" id="deleteBtn" style="display:none; margin-right:auto">🗑️ Sil</button>
-      <button class="btn primary" id="saveBtn" style="width:100px">Kaydet</button>
+      <button class="btn danger" id="deleteBtn" type="button" style="display:none;">🗑️ Sil</button>
+      <button class="btn" id="cancelBtn" type="button">İptal</button>
+      <button class="btn primary" id="saveBtn" type="button">Kaydet</button>
     </div>
   </dialog>
 
   <dialog id="quickModal">
     <div class="modalHead">
-        <h3 style="margin:0">Hızlı Ekle</h3>
-        <button class="btn" id="closeQuick">✕</button>
+      <div>
+        <h2>⚡ Hızlı Ekle</h2>
+        <div class="small">Format: <b>term - meaning - level - tags</b> (level/tags opsiyonel). Örn: <i>notice - fark etmek - A2 - story, daily</i></div>
+      </div>
+      <button class="btn" id="quickCloseBtn" type="button">✕</button>
     </div>
+
     <div class="modalBody">
-        <div class="sub" style="color:var(--muted); font-size:12px">Format: <b>kelime - anlam</b> (Her satıra bir tane)</div>
-        <textarea class="input" id="quickText" rows="8" placeholder="apple - elma&#10;run - koşmak"></textarea>
+      <div class="two">
+        <div>
+          <label class="small">Kelime dili</label>
+          <select id="quickSourceLang"></select>
+        </div>
+        <div>
+          <label class="small">Anlam dili</label>
+          <select id="quickMeaningLang"></select>
+        </div>
+      </div>
+
+      <textarea id="quickText" placeholder="Her satır 1 kayıt…"></textarea>
+      <div class="help">Ayraç olarak <b>-</b> veya <b>|</b> kullanabilirsin. Örnek: <i>beneath | altında | B1 | story</i></div>
     </div>
+
     <div class="modalFoot">
-        <button class="btn primary" id="quickSaveBtn">Toplu Ekle</button>
+      <button class="btn" id="quickCancelBtn" type="button">İptal</button>
+      <button class="btn primary" id="quickSaveBtn" type="button">Ekle</button>
     </div>
   </dialog>
 
-  <div class="quizOverlay" id="quizOverlay">
-    <div class="quizHeader">
-      <div class="brand">
-        <h1>Quiz Modu</h1>
+  <dialog id="langModal">
+    <div class="modalHead">
+      <div>
+        <h2>Diller</h2>
+        <div class="small">Yeni dil ekle (ör: DE - Deutsch). Kod 2-5 harf.</div>
       </div>
-      <button class="btn" id="quizExit">Çıkış</button>
+      <button class="btn" id="langCloseBtn" type="button">✕</button>
     </div>
-    
-    <div style="display:flex; justify-content:center; gap:10px; padding:10px;">
-        <select id="quizTypeSelect" class="input" style="width:auto">
-            <option value="MCQ">Çoktan Seçmeli</option>
-            <option value="FLIP">Kart Çevirme</option>
-        </select>
-        <div class="quizStats">
-            <span class="pill">Skor: <strong id="qScore">0</strong></span>
-            <span class="pill"><strong id="qProgress">0/0</strong></span>
+
+    <div class="modalBody">
+      <div class="two">
+        <div>
+          <label class="small">Dil Kodu</label>
+          <input class="input" id="newLangCode" placeholder="DE" maxlength="5" />
         </div>
+        <div>
+          <label class="small">Dil Adı</label>
+          <input class="input" id="newLangName" placeholder="Deutsch" />
+        </div>
+      </div>
+
+      <div class="two">
+        <button class="btn primary" id="addLangBtn" type="button" style="justify-content:center;">＋ Dil Ekle</button>
+        <button class="btn danger" id="resetLangBtn" type="button" style="justify-content:center;">↺ Varsayılanlara dön</button>
+      </div>
+
+      <div class="help" id="langListBox">—</div>
     </div>
 
-    <div class="quizCard" id="quizCardArea">
-      <div class="qSub" id="qLabel">Anlamı nedir?</div>
-      <div class="qText" id="qText">...</div>
-      
-      <div class="quizOptions" id="quizOptions"></div>
+    <div class="modalFoot">
+      <button class="btn" id="langDoneBtn" type="button">Tamam</button>
+    </div>
+  </dialog>
 
-      <div class="quizReveal" id="quizReveal">
-        <div style="font-size:20px; font-weight:bold; margin-bottom:4px" id="qAnswer">Cevap</div>
-        <div style="color:var(--muted); font-size:13px" id="qExample">Örnek</div>
+  <div class="quizOverlay" id="quizOverlay" aria-hidden="true">
+    <div class="quizShell">
+      <div class="quizTop">
+        <div class="left">
+          <span class="pill">Quiz <strong id="quizProgress">0/0</strong></span>
+          <span class="pill">Skor <strong id="quizScore">0</strong></span>
+          <span class="pill">Doğru <strong id="quizCorrect">0</strong></span>
+          <span class="pill">Yanlış <strong id="quizWrong">0</strong></span>
+        </div>
+        <div class="right">
+          <select id="quizType" title="Soru tipi">
+            <option value="TR2TERM" selected>Anlam → Kelime</option>
+            <option value="TERM2TR">Kelime → Anlam</option>
+            <option value="MCQ_TR2TERM">Çoktan seçmeli (Anlam→Kelime)</option>
+            <option value="MCQ_TERM2TR">Çoktan seçmeli (Kelime→Anlam)</option>
+          </select>
+          <select id="quizScope" title="Kapsam">
+            <option value="DUE" selected>Bugün Due</option>
+            <option value="VISIBLE">Görünen filtre</option>
+            <option value="ALL">Tümü</option>
+          </select>
+          <button class="btn" id="quizExitBtn">✕ Çık</button>
+        </div>
+      </div>
+
+      <div class="quizCard" id="quizCard">
+        <p class="quizSub" id="quizMeta">—</p>
+        <p class="quizQ" id="quizQ">—</p>
+
+        <div class="options" id="quizOptions" style="display:none;"></div>
+
+        <div class="quizReveal" id="quizReveal">
+          <p class="ans" id="quizAnswer">—</p>
+          <p class="ex" id="quizExample">—</p>
+        </div>
+      </div>
+
+      <div class="quizBottom">
+        <div class="left">
+          <button class="btn" id="quizShowBtn">👀 Cevabı Göster</button>
+          <button class="btn" id="quizPassBtn">⏭️ Pas</button>
+        </div>
+        <div class="right">
+          <button class="btn danger" id="quizWrongBtn">✗ Yanlış</button>
+          <button class="btn good" id="quizRightBtn">✓ Doğru</button>
+          <button class="btn primary" id="quizNextBtn">➡️ Sonraki</button>
+        </div>
+      </div>
+
+      <div class="quizCard" id="quizSummary" style="display:none;">
+        <p class="quizQ" style="margin:0;">Bitti ✅</p>
+        <p class="quizSub" id="quizSummaryText">—</p>
+        <div class="two">
+          <div class="listBox" id="knownBox">
+            <h3>Bildiklerin</h3>
+            <div id="knownList"></div>
+          </div>
+          <div class="listBox" id="unknownBox">
+            <h3>Bilemediklerin</h3>
+            <div id="unknownList"></div>
+          </div>
+        </div>
+        <div class="quizBottom" style="margin-top:12px;">
+          <div class="left">
+            <button class="btn" id="quizAgainWrongBtn">🔁 Sadece yanlışları çöz</button>
+          </div>
+          <div class="right">
+            <button class="btn primary" id="quizDoneBtn">Tamam</button>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="quizControls" id="quizControls">
-        </div>
   </div>
 
-  <div class="toast" id="toast">Mesaj</div>
+  <div class="toast" id="toast"></div>
 
   <script>
-    // --- UTILS ---
-    const $ = (sel) => document.querySelector(sel);
-    const $$ = (sel) => document.querySelectorAll(sel);
-    const now = () => Date.now();
-    const makeId = () => 'id_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
-    
-    // --- STATE ---
-    const KEY_ITEMS = 'vp_items_v6';
-    const KEY_THEME = 'vp_theme';
-    
-    let items = JSON.parse(localStorage.getItem(KEY_ITEMS) || "[]");
-    let currentTheme = localStorage.getItem(KEY_THEME) || "dark";
-    let editingId = null;
+    /* =======================
+       Storage keys (v5)
+    ======================= */
+    const KEY_ITEMS   = "vocab_pocket_pro_v5_items";
+    const KEY_THEME   = "vocab_theme_v1";
+    const KEY_LANGS   = "vocab_languages_v2";
+    const KEY_STATS   = "vocab_stats_v1";
 
-    // Default Langs
-    const LANGS = [
-        {code:"EN", name:"İngilizce"},
-        {code:"TR", name:"Türkçe"},
-        {code:"DE", name:"Almanca"},
-        {code:"ES", name:"İspanyolca"},
-        {code:"FR", name:"Fransızca"}
+    const DAY = 24*60*60*1000;
+    const now = () => Date.now();
+    const clean = (s) => (s ?? "").toString().trim();
+
+    function escapeHtml(str){
+      return (str ?? "").toString().replace(/[&<>"']/g, m => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+      }[m]));
+    }
+
+    function parseTags(input){
+      return clean(input)
+        .split(",")
+        .map(t=>t.trim())
+        .filter(Boolean)
+        .slice(0,10);
+    }
+
+    // Safer ID gen for mobile browsers
+    function makeId(){
+        return "id_" + Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+    }
+
+    /* =======================
+       Toast
+    ======================= */
+    const toastEl = document.getElementById("toast");
+    function toast(msg){
+      toastEl.textContent = msg;
+      toastEl.style.display = "block";
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(()=> toastEl.style.display="none", 1600);
+    }
+
+    /* =======================
+       Languages
+    ======================= */
+    const DEFAULT_LANGS = [
+      { code:"EN", name:"English" },
+      { code:"RU", name:"Русский" },
+      { code:"TR", name:"Türkçe" }
     ];
 
-    // --- THEME ---
-    function setTheme(t) {
-        document.body.setAttribute('data-theme', t);
-        localStorage.setItem(KEY_THEME, t);
-        $('#themeSelect').value = t;
-        
-        // Meta theme color update
-        let color = "#0b0b10";
-        if(t === "light") color = "#f6f7fb";
-        if(t === "emerald") color = "#07110c";
-        $('meta[name="theme-color"]').setAttribute("content", color);
+    function normalizeLangs(list){
+      const map = new Map();
+      for(const x of (list||[])){
+        const code = clean(x.code).toUpperCase();
+        const name = clean(x.name);
+        if(!code || code.length < 2 || code.length > 5) continue;
+        if(!name) continue;
+        map.set(code, {code, name});
+      }
+      for(const d of DEFAULT_LANGS){
+        if(!map.has(d.code)) map.set(d.code, d);
+      }
+      return Array.from(map.values()).sort((a,b)=>a.code.localeCompare(b.code));
     }
-    setTheme(currentTheme); // Init immediately
+    function loadLangs(){
+      try{
+        const v = JSON.parse(localStorage.getItem(KEY_LANGS));
+        if(Array.isArray(v) && v.length) return normalizeLangs(v);
+      }catch{}
+      return DEFAULT_LANGS.slice();
+    }
+    function saveLangs(list){ localStorage.setItem(KEY_LANGS, JSON.stringify(normalizeLangs(list))); }
 
-    // --- DATA MIGRATION/PATCHING ---
-    function patchItem(it) {
-        return {
-            id: it.id || makeId(),
-            term: it.term || "",
-            meaning: it.meaning || "",
-            example: it.example || "",
-            tags: it.tags || [],
-            sourceLang: it.sourceLang || "EN",
-            meaningLang: it.meaningLang || "TR",
+    /* =======================
+       Items + Migration
+    ======================= */
+    function defaultSRS(){
+      return {
+        ease: 2.0,
+        interval: 0,
+        dueAt: now(),
+        streak: 0,
+        correct: 0,
+        wrong: 0,
+        lastReviewed: 0
+      };
+    }
+    function clamp(n, a, b){ return Math.min(b, Math.max(a, n)); }
+    function isDue(it){ return (it.srs?.dueAt || 0) <= now(); }
+
+    function patchItem(it){
+      const x = {...it};
+      x.id = clean(x.id) || makeId(); 
+
+      x.sourceLang = clean(x.sourceLang || x.lang || "EN").toUpperCase();
+      x.meaningLang = clean(x.meaningLang || "TR").toUpperCase();
+
+      x.level = clean(x.level) || "B1";
+      x.term = clean(x.term);
+      x.meaning = clean(x.meaning || x.meaningTR);
+      x.example = clean(x.example);
+
+      x.tags = Array.isArray(x.tags)
+        ? x.tags.map(clean).filter(Boolean).slice(0,10)
+        : parseTags(x.tags||"");
+
+      x.fav = !!x.fav;
+
+      const st = clean(x.status).toUpperCase();
+      x.status = (st === "LEARNING" || st === "MASTERED") ? st : "NEW";
+
+      x.srs = x.srs && typeof x.srs === "object"
+        ? {...defaultSRS(), ...x.srs}
+        : defaultSRS();
+
+      x.srs.ease = clamp(Number(x.srs.ease || 2.0), 1.3, 2.6);
+      x.srs.interval = Math.max(0, Number(x.srs.interval || 0));
+      x.srs.dueAt = Number(x.srs.dueAt || now());
+      x.srs.streak = Math.max(0, Number(x.srs.streak || 0));
+      x.srs.correct = Math.max(0, Number(x.srs.correct || 0));
+      x.srs.wrong = Math.max(0, Number(x.srs.wrong || 0));
+      x.srs.lastReviewed = Number(x.srs.lastReviewed || 0);
+
+      x.createdAt = Number(x.createdAt || now());
+      x.updatedAt = Number(x.updatedAt || now());
+      return x;
+    }
+
+    function loadItems(){
+      try{
+        const v = JSON.parse(localStorage.getItem(KEY_ITEMS));
+        if(Array.isArray(v)) return v.map(patchItem);
+      }catch{}
+
+      // fallback: v4 (Recover old data if exists)
+      try{
+        const v4 = JSON.parse(localStorage.getItem("vocab_pocket_pro_v4"));
+        if(Array.isArray(v4)){
+          const migrated = v4.map(it => patchItem({
+            id: it.id,
+            sourceLang: (it.lang || "EN"),
+            meaningLang: "TR",
+            level: it.level || "B1",
+            term: it.term,
+            meaning: it.meaningTR,
+            example: it.example,
+            tags: it.tags,
             fav: !!it.fav,
-            status: it.status || "NEW", // NEW, LEARNING, MASTERED
-            srs: {
-                due: it.srs?.due || now(),
-                interval: it.srs?.interval || 0,
-                ease: it.srs?.ease || 2.5
-            },
-            createdAt: it.createdAt || now()
-        };
+            status: "NEW",
+            createdAt: it.createdAt,
+            updatedAt: it.updatedAt
+          }));
+          localStorage.setItem(KEY_ITEMS, JSON.stringify(migrated));
+          return migrated;
+        }
+      }catch{}
+
+      return [];
     }
-    // Verileri temizle/güncelle
-    items = items.map(patchItem);
-    
-    function save() {
-        localStorage.setItem(KEY_ITEMS, JSON.stringify(items));
-        render();
+    function saveItems(items){ localStorage.setItem(KEY_ITEMS, JSON.stringify(items)); }
+
+    /* =======================
+       SRS update rules
+    ======================= */
+    function srsCorrect(it){
+      const s = it.srs;
+      s.correct += 1;
+      s.streak += 1;
+      s.ease = clamp(s.ease + 0.05, 1.3, 2.6);
+
+      if(s.interval === 0) s.interval = 1;
+      else if(s.interval === 1) s.interval = 3;
+      else s.interval = Math.round(s.interval * s.ease);
+
+      s.dueAt = now() + s.interval * DAY;
+      s.lastReviewed = now();
+
+      if(it.status === "NEW") it.status = "LEARNING";
+      if(s.streak >= 5 && s.interval >= 14) it.status = "MASTERED";
+      it.updatedAt = now();
     }
 
-    // --- RENDERING ---
-    function render() {
-        const grid = $('#grid');
-        grid.innerHTML = "";
-        
-        // Filters
-        const sFilter = $('#search').value.toLowerCase();
-        const lFilter = $('#langFilter').value;
-        const stFilter = $('#statusFilter').value;
+    function srsWrong(it){
+      const s = it.srs;
+      s.wrong += 1;
+      s.streak = 0;
+      s.ease = clamp(s.ease - 0.2, 1.3, 2.6);
+      s.interval = 1;
+      s.dueAt = now() + 1 * DAY;
+      s.lastReviewed = now();
+      if(it.status === "MASTERED") it.status = "LEARNING";
+      else if(it.status === "NEW") it.status = "LEARNING";
+      it.updatedAt = now();
+    }
 
-        let filtered = items.filter(it => {
-            if (lFilter !== "ALL" && it.sourceLang !== lFilter) return false;
-            if (stFilter !== "ALL") {
-                if(stFilter === "DUE") { if(it.srs.due > now()) return false; }
-                else if(it.status !== stFilter) return false;
-            }
-            if (sFilter && !it.term.toLowerCase().includes(sFilter) && !it.meaning.toLowerCase().includes(sFilter)) return false;
-            return true;
+    function srsPass(it){
+      const s = it.srs;
+      s.dueAt = Math.max(now() + 6*60*60*1000, s.dueAt);
+      it.updatedAt = now();
+    }
+
+    /* =======================
+       Search: supports #tag, lang:EN, level:B1
+    ======================= */
+    function parseAdvancedQuery(q){
+      const out = { text: "", tag: null, lang: null, level: null };
+      const parts = q.split(/\s+/).filter(Boolean);
+      const rest = [];
+      for(const p of parts){
+        const low = p.toLowerCase();
+        if(low.startsWith("#")) out.tag = p.slice(1);
+        else if(low.startsWith("lang:")) out.lang = p.slice(5).toUpperCase();
+        else if(low.startsWith("level:")) out.level = p.slice(6).toUpperCase();
+        else rest.push(p);
+      }
+      out.text = rest.join(" ").toLowerCase();
+      return out;
+    }
+
+    function matchesQuery(it, qObj){
+      if(qObj.lang && it.sourceLang !== qObj.lang) return false;
+      if(qObj.level && (it.level || "B1") !== qObj.level) return false;
+      if(qObj.tag && !(it.tags||[]).includes(qObj.tag)) return false;
+
+      if(!qObj.text) return true;
+      const hay = (it.term + " " + it.meaning + " " + (it.example||"") + " " + (it.tags||[]).join(" ")).toLowerCase();
+      return hay.includes(qObj.text);
+    }
+
+    /* =======================
+       Theme
+    ======================= */
+    const themeSelect = document.getElementById("themeSelect");
+    function applyTheme(t){
+      const theme = (t === "emerald" || t === "light") ? t : "dark";
+      document.body.setAttribute("data-theme", theme);
+      localStorage.setItem(KEY_THEME, theme);
+      themeSelect.value = theme;
+      
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if(meta){
+        let color = "#0b0b10";
+        if(theme === "light") color = "#f6f7fb";
+        if(theme === "emerald") color = "#07110c";
+        meta.setAttribute("content", color);
+      }
+    }
+
+    /* =======================
+       Stats history (simple)
+    ======================= */
+    function loadStats(){
+      try{
+        const s = JSON.parse(localStorage.getItem(KEY_STATS));
+        if(s && typeof s === "object") return s;
+      }catch{}
+      return { daily: {} };
+    }
+    function saveStats(s){ localStorage.setItem(KEY_STATS, JSON.stringify(s)); }
+    function dayKey(ts=now()){
+      const d = new Date(ts);
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const da = String(d.getDate()).padStart(2,"0");
+      return `${y}-${m}-${da}`;
+    }
+    function bumpDaily(correctDelta, wrongDelta){
+      const k = dayKey();
+      stats.daily[k] = stats.daily[k] || {correct:0, wrong:0};
+      stats.daily[k].correct += correctDelta;
+      stats.daily[k].wrong += wrongDelta;
+      saveStats(stats);
+    }
+    function accuracyLastNDays(n=7){
+      const keys = [];
+      for(let i=0;i<n;i++){
+        const t = now() - i*DAY;
+        keys.push(dayKey(t));
+      }
+      let c=0,w=0;
+      for(const k of keys){
+        const v = stats.daily[k];
+        if(!v) continue;
+        c += v.correct||0;
+        w += v.wrong||0;
+      }
+      const total = c+w;
+      return total ? Math.round((c/total)*100) : 0;
+    }
+
+    /* =======================
+       UI elements
+    ======================= */
+    const gridEl = document.getElementById("grid");
+    const chipsEl = document.getElementById("chips");
+    const dashEl = document.getElementById("dash");
+
+    const searchEl = document.getElementById("search");
+    const sortEl = document.getElementById("sort");
+    const levelFilterEl = document.getElementById("levelFilter");
+    const tagFilterEl = document.getElementById("tagFilter");
+    const statusFilterEl = document.getElementById("statusFilter");
+
+    const countAll = document.getElementById("countAll");
+    const countVisible = document.getElementById("countVisible");
+    const countDue = document.getElementById("countDue");
+
+    const tagDatalist = document.getElementById("tagDatalist");
+
+    // modal add/edit
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const deleteBtn = document.getElementById("deleteBtn");
+    const sourceLangEl = document.getElementById("sourceLang");
+    const meaningLangEl = document.getElementById("meaningLang");
+    const levelEl = document.getElementById("level");
+    const statusEl = document.getElementById("status");
+    const termEl = document.getElementById("term");
+    const meaningEl = document.getElementById("meaning");
+    const exampleEl = document.getElementById("example");
+    const tagsEl = document.getElementById("tags");
+
+    // quick add
+    const quickModal = document.getElementById("quickModal");
+    const quickSourceLang = document.getElementById("quickSourceLang");
+    const quickMeaningLang = document.getElementById("quickMeaningLang");
+    const quickText = document.getElementById("quickText");
+
+    // language manager
+    const langModal = document.getElementById("langModal");
+    const langListBox = document.getElementById("langListBox");
+    const newLangCode = document.getElementById("newLangCode");
+    const newLangName = document.getElementById("newLangName");
+
+    // quiz
+    const quizOverlay = document.getElementById("quizOverlay");
+    const quizTypeEl = document.getElementById("quizType");
+    const quizScopeEl = document.getElementById("quizScope");
+    const quizProgressEl = document.getElementById("quizProgress");
+    const quizScoreEl = document.getElementById("quizScore");
+    const quizCorrectEl = document.getElementById("quizCorrect");
+    const quizWrongEl = document.getElementById("quizWrong");
+
+    const quizMetaEl = document.getElementById("quizMeta");
+    const quizQEl = document.getElementById("quizQ");
+    const quizOptionsEl = document.getElementById("quizOptions");
+    const quizRevealEl = document.getElementById("quizReveal");
+    const quizAnswerEl = document.getElementById("quizAnswer");
+    const quizExampleEl = document.getElementById("quizExample");
+
+    const quizSummaryEl = document.getElementById("quizSummary");
+    const quizCardEl = document.getElementById("quizCard");
+    const quizSummaryTextEl = document.getElementById("quizSummaryText");
+    const knownListEl = document.getElementById("knownList");
+    const unknownListEl = document.getElementById("unknownList");
+
+    /* =======================
+       State
+    ======================= */
+    let langs = loadLangs();
+    let items = loadItems();
+    let stats = loadStats();
+
+    let editingId = null;
+
+    let filterLang = "ALL";
+    let levelFilter = "ALL";
+    let tagFilter = "ALL";
+    let statusFilter = "ALL";
+
+    let quiz = {
+      on:false,
+      pool:[],
+      idx:0,
+      score:0,
+      correct:0,
+      wrong:0,
+      current:null,
+      knownIds:new Set(),
+      unknownIds:new Set(),
+      onlyWrongMode:false,
+      wrongPoolIds:[]
+    };
+
+    /* =======================
+       Build selects and chips
+    ======================= */
+    function renderLangSelects(){
+      const opts = langs.map(l=>`<option value="${l.code}">${escapeHtml(l.name)} (${escapeHtml(l.code)})</option>`).join("");
+      sourceLangEl.innerHTML = opts;
+      meaningLangEl.innerHTML = opts;
+      quickSourceLang.innerHTML = opts;
+      quickMeaningLang.innerHTML = opts;
+
+      sourceLangEl.value = langs.some(x=>x.code==="EN") ? "EN" : (langs[0]?.code||"EN");
+      meaningLangEl.value = langs.some(x=>x.code==="TR") ? "TR" : (langs[0]?.code||"TR");
+
+      quickSourceLang.value = sourceLangEl.value;
+      quickMeaningLang.value = meaningLangEl.value;
+    }
+
+    function renderChips(){
+      chipsEl.innerHTML = "";
+      function chip(label, value){
+        const b = document.createElement("button");
+        b.className = "chip" + (filterLang === value ? " active" : "");
+        b.textContent = label;
+        b.addEventListener("click", ()=>{
+          filterLang = value;
+          renderChips();
+          render();
         });
+        chipsEl.appendChild(b);
+      }
+      chip("Tümü", "ALL");
+      for(const l of langs) chip(l.name, l.code);
+    }
 
-        // Sort: Due date descending, then Created descending
-        filtered.sort((a,b) => (a.srs.due - b.srs.due) || (b.createdAt - a.createdAt));
+    function renderLangListBox(){
+      langListBox.textContent = langs.map(l=>`• ${l.code} — ${l.name}`).join("\n") || "—";
+    }
 
-        $('#emptyState').style.display = filtered.length ? 'none' : 'block';
-        $('#dash').innerHTML = `
-            <span class="pill">Toplam <strong>${items.length}</strong></span>
-            <span class="pill">Gösterilen <strong>${filtered.length}</strong></span>
-            <span class="pill" style="border-color:var(--warn)">Due <strong>${items.filter(i=>i.srs.due <= now()).length}</strong></span>
+    function updateTagDatalist(){
+      const set = new Set();
+      for(const it of items){
+        for(const t of (it.tags||[])) set.add(t);
+      }
+      const list = Array.from(set).sort((a,b)=>a.localeCompare(b, undefined, {sensitivity:"base"}));
+      tagDatalist.innerHTML = list.map(t=>`<option value="${escapeHtml(t)}"></option>`).join("");
+    }
+
+    function updateTagFilterOptions(){
+      const set = new Set();
+      for(const it of items){
+        for(const t of (it.tags||[])) set.add(t);
+      }
+      const list = Array.from(set).sort((a,b)=>a.localeCompare(b, undefined, {sensitivity:"base"}));
+      const prev = tagFilterEl.value || "ALL";
+      tagFilterEl.innerHTML = `<option value="ALL">Etiket: Tümü</option>` + list.map(t=>`<option value="${escapeHtml(t)}">${escapeHtml("#"+t)}</option>`).join("");
+      tagFilterEl.value = list.includes(prev) ? prev : "ALL";
+      tagFilter = tagFilterEl.value;
+    }
+
+    /* =======================
+       View pipeline
+    ======================= */
+    function applyFilters(arr){
+      let out = [...arr];
+
+      if(filterLang !== "ALL") out = out.filter(x=>x.sourceLang === filterLang);
+      if(levelFilter !== "ALL") out = out.filter(x=>(x.level||"B1") === levelFilter);
+      if(tagFilter !== "ALL") out = out.filter(x=>(x.tags||[]).includes(tagFilter));
+
+      if(statusFilter === "NEW") out = out.filter(x=>x.status==="NEW");
+      else if(statusFilter === "LEARNING") out = out.filter(x=>x.status==="LEARNING");
+      else if(statusFilter === "MASTERED") out = out.filter(x=>x.status==="MASTERED");
+      else if(statusFilter === "DUE") out = out.filter(x=>isDue(x));
+
+      const q = searchEl.value.trim();
+      const qObj = parseAdvancedQuery(q);
+      if(q || qObj.tag || qObj.lang || qObj.level){
+        out = out.filter(it=>matchesQuery(it, qObj));
+      }
+      return out;
+    }
+
+    function applySort(arr){
+      const s = sortEl.value;
+      const copy = [...arr];
+      if(s === "due"){
+        copy.sort((a,b)=>{
+          const ad = (a.srs?.dueAt||0), bd = (b.srs?.dueAt||0);
+          if(ad !== bd) return ad - bd;
+          return (b.updatedAt||0) - (a.updatedAt||0);
+        });
+      } else if(s === "updated"){
+        copy.sort((a,b)=> (b.updatedAt||0) - (a.updatedAt||0));
+      } else if(s === "created"){
+        copy.sort((a,b)=> (b.createdAt||0) - (a.createdAt||0));
+      } else if(s === "az"){
+        copy.sort((a,b)=> (a.term||"").localeCompare(b.term||"", undefined, {sensitivity:"base"}));
+      } else if(s === "za"){
+        copy.sort((a,b)=> (b.term||"").localeCompare(a.term||"", undefined, {sensitivity:"base"}));
+      }
+      return copy;
+    }
+
+    function getVisibleItems(){
+      let v = applyFilters(items);
+      v = applySort(v);
+      return v;
+    }
+
+    /* =======================
+       Dashboard + stats
+    ======================= */
+    function renderDash(){
+      const due = items.filter(isDue).length;
+      const mastered = items.filter(x=>x.status==="MASTERED").length;
+      const learning = items.filter(x=>x.status==="LEARNING").length;
+      const acc7 = accuracyLastNDays(7);
+
+      dashEl.innerHTML = `
+        <span class="pill">Öğreniliyor <strong>${learning}</strong></span>
+        <span class="pill">Öğrenildi <strong>${mastered}</strong></span>
+        <span class="pill">7g doğruluk <strong>${acc7}%</strong></span>
+        <span class="pill">Due <strong>${due}</strong></span>
+      `;
+    }
+
+    function statusLabel(st){
+      if(st==="NEW") return ["Yeni","new"];
+      if(st==="MASTERED") return ["Öğrenildi","mastered"];
+      return ["Öğreniliyor","learning"];
+    }
+
+    function render(){
+      const due = items.filter(isDue).length;
+      countAll.textContent = items.length;
+      countDue.textContent = due;
+
+      const view = getVisibleItems();
+      countVisible.textContent = view.length;
+
+      updateTagDatalist();
+      updateTagFilterOptions();
+      renderDash();
+
+      gridEl.innerHTML = "";
+
+      if(view.length === 0){
+        gridEl.innerHTML = `
+          <div class="card" style="grid-column: 1/-1;">
+            <div class="cardFlipWrap" style="height:200px">
+              <div class="cardFlip">
+                <div class="face front" style="justify-content:center; text-align:center;">
+                  <p class="term">Kayıt bulunamadı</p>
+                  <p class="example">"Ekle" butonuna basarak yeni kelimeler ekle.</p>
+                </div>
+              </div>
+            </div>
+          </div>`;
+        return;
+      }
+
+      for(const it of view){
+        const sourceName = (langs.find(x=>x.code===it.sourceLang)?.name) || it.sourceLang;
+        const meaningName = (langs.find(x=>x.code===it.meaningLang)?.name) || it.meaningLang;
+
+        const [stText, stClass] = statusLabel(it.status);
+        const dueTxt = isDue(it) ? "Due" : `Due: ${new Date(it.srs.dueAt).toLocaleDateString("tr-TR")}`;
+
+        const tagsHtml = (it.tags||[]).map(t=>`<span class="tag">#${escapeHtml(t)}</span>`).join("");
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.dataset.id = it.id;
+
+        card.innerHTML = `
+          <div class="cardFlipWrap">
+            <div class="cardFlip" data-id="${it.id}">
+              <div class="face front">
+                <div class="meta">
+                  <span class="badge">
+                    <span class="dot"></span>
+                    ${escapeHtml(it.sourceLang)} • ${escapeHtml(it.level||"B1")}
+                  </span>
+                  <div class="star ${it.fav ? "on":""}" data-action="fav" title="Favori">
+                    ${it.fav ? "★" : "☆"}
+                  </div>
+                </div>
+
+                <p class="term">${escapeHtml(it.term)}</p>
+                <p class="example">${escapeHtml(it.example || "Karta dokun → çevir")}</p>
+
+                <div class="miniStats">
+                  <span class="statusPill ${stClass}">${stText}</span>
+                  <span class="statusPill">${escapeHtml(sourceName)} → ${escapeHtml(meaningName)}</span>
+                  <span class="statusPill">${escapeHtml(dueTxt)}</span>
+                </div>
+
+                <div class="tags">
+                  ${tagsHtml || `<span class="tag">#etiket</span>`}
+                </div>
+              </div>
+
+              <div class="face back">
+                <div class="meta">
+                  <span class="badge">
+                    <span class="dot"></span>
+                    Anlam (${escapeHtml(it.meaningLang)})
+                  </span>
+                  <div class="star ${it.fav ? "on":""}" data-action="fav" title="Favori">
+                    ${it.fav ? "★" : "☆"}
+                  </div>
+                </div>
+
+                <p class="term">${escapeHtml(it.meaning)}</p>
+                <p class="example" style="-webkit-line-clamp:4">${escapeHtml(it.example || "")}</p>
+
+                <div class="tags">
+                  <span class="tag">${escapeHtml(it.sourceLang)} • ${escapeHtml(it.level||"B1")} • ${stText}</span>
+                  ${tagsHtml}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn" data-action="flip" data-id="${it.id}">↺ Çevir</button>
+            <button class="btn" data-action="edit" data-id="${it.id}">✎ Düzenle</button>
+            <button class="btn danger" data-action="delete" data-id="${it.id}">🗑️ Sil</button>
+          </div>
         `;
 
-        filtered.forEach(it => {
-            const isDue = it.srs.due <= now();
-            const el = document.createElement('div');
-            el.className = 'card';
-            el.dataset.id = it.id;
-            
-            el.innerHTML = `
-                <div class="cardFlipWrap">
-                    <div class="cardFlip">
-                        <div class="face front">
-                            <div class="meta">
-                                <span class="badge"><span class="dot"></span> ${it.sourceLang}</span>
-                                <div class="star ${it.fav?'on':''}">★</div>
-                            </div>
-                            <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
-                                <div class="term">${esc(it.term)}</div>
-                                <div class="example">${esc(it.example)}</div>
-                            </div>
-                            <div class="tags">
-                                ${it.status === 'MASTERED' ? '<span class="tag" style="color:var(--accent2); border-color:var(--accent2)">Mastered</span>' : ''}
-                                ${isDue ? '<span class="tag" style="color:var(--warn); border-color:var(--warn)">Tekrar Zamanı</span>' : ''}
-                            </div>
-                        </div>
-                        <div class="face back">
-                            <div class="meta">
-                                <span class="badge">Anlam</span>
-                                <div class="star ${it.fav?'on':''}">★</div>
-                            </div>
-                            <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
-                                <div class="term">${esc(it.meaning)}</div>
-                            </div>
-                            <div class="actions">
-                                <button class="btn" data-act="flip">↺ Çevir</button>
-                                <button class="btn" data-act="edit">✎ Düzenle</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            // Swipe handlers
-            attachSwipe(el, it.id);
-            grid.appendChild(el);
-        });
-        
-        // Auto-height adjustment
-        setTimeout(() => {
-            $$('.cardFlipWrap').forEach(w => {
-                const f = w.querySelector('.front');
-                const b = w.querySelector('.back');
-                const h = Math.max(f.scrollHeight, b.scrollHeight, 200);
-                w.style.height = h + 'px';
-            });
-        }, 50);
+        gridEl.appendChild(card);
+      }
+
+      requestAnimationFrame(autoFitFlipHeights);
+      initSwipeHandlers();
     }
 
-    function esc(s) { return s ? s.replace(/</g, "&lt;") : ""; }
+    function autoFitFlipHeights(){
+      const cards = document.querySelectorAll(".card");
+      for(const c of cards){
+        const wrap = c.querySelector(".cardFlipWrap");
+        const front = c.querySelector(".face.front");
+        const back  = c.querySelector(".face.back");
+        if(!wrap || !front || !back) continue;
 
-    // --- INTERACTION ---
-    const grid = $('#grid');
-    grid.addEventListener('click', (e) => {
-        const card = e.target.closest('.card');
-        if(!card) return;
-        const id = card.dataset.id;
-        
-        // Star Click
-        if(e.target.classList.contains('star')) {
-            e.stopPropagation();
-            const it = items.find(i=>i.id === id);
-            it.fav = !it.fav;
-            save();
-            return;
-        }
+        const flip = c.querySelector(".cardFlip");
+        const wasFlipped = flip.classList.contains("flipped");
 
-        // Action Buttons
-        const btn = e.target.closest('button[data-act]');
-        if(btn) {
-            e.stopPropagation();
-            const act = btn.dataset.act;
-            if(act === 'flip') card.querySelector('.cardFlip').classList.toggle('flipped');
-            if(act === 'edit') openEdit(id);
-            return;
-        }
+        flip.classList.remove("flipped");
+        const h1 = front.scrollHeight;
 
-        // Card Flip (if not clicking buttons)
-        card.querySelector('.cardFlip').classList.toggle('flipped');
+        flip.classList.add("flipped");
+        const h2 = back.scrollHeight;
+
+        if(!wasFlipped) flip.classList.remove("flipped");
+
+        const target = Math.max(h1, h2, 240);
+        wrap.style.height = (target + 4) + "px";
+      }
+    }
+
+    /* =======================
+       Swipe Logic (Improved for Mobile)
+    ======================= */
+    function initSwipeHandlers(){
+      const cards = document.querySelectorAll(".card");
+      for(const card of cards){
+        if(card._swipeBound) continue;
+        card._swipeBound = true;
+
+        let sx=0, sy=0, st=0;
+
+        card.addEventListener("touchstart", (e)=>{
+          const t = e.touches[0];
+          sx = t.clientX; sy = t.clientY; st = now();
+        }, {passive:true});
+
+        card.addEventListener("touchend", (e)=>{
+          const t = e.changedTouches[0];
+          const dx = t.clientX - sx;
+          const dy = t.clientY - sy;
+          const dt = now() - st;
+
+          if(dt > 600) return; // Too slow
+
+          // If vertical scroll was dominant, ignore horizontal action
+          if(Math.abs(dy) > Math.abs(dx)) return;
+
+          const id = card.dataset.id;
+          if(!id) return;
+
+          // Right Swipe > 80px (Fav)
+          if(dx > 80){
+            toggleFav(id, true);
+          }
+          // Left Swipe < -80px (Delete confirm)
+          else if(dx < -80){
+            // Optional: Ask confirm
+            if(confirm("Silmek istiyor musun?")) deleteById(id);
+          }
+        }, {passive:true});
+      }
+    }
+
+    /* =======================
+       Modal Add/Edit
+    ======================= */
+    function openAdd(){
+      editingId = null;
+      modalTitle.textContent = "Kelime Ekle";
+      deleteBtn.style.display = "none";
+
+      renderLangSelects();
+
+      sourceLangEl.value = langs.some(x=>x.code==="EN") ? "EN" : (langs[0]?.code||"EN");
+      meaningLangEl.value = langs.some(x=>x.code==="TR") ? "TR" : (langs[0]?.code||"TR");
+      levelEl.value = "B1";
+      statusEl.value = "NEW";
+      termEl.value = "";
+      meaningEl.value = "";
+      exampleEl.value = "";
+      tagsEl.value = "";
+
+      modal.showModal();
+      setTimeout(()=>termEl.focus(), 50);
+    }
+
+    function openEdit(id){
+      const it = items.find(x=>x.id===id);
+      if(!it) return;
+
+      editingId = id;
+      modalTitle.textContent = "Kelime Düzenle";
+      deleteBtn.style.display = "inline-flex";
+
+      renderLangSelects();
+
+      sourceLangEl.value = it.sourceLang;
+      meaningLangEl.value = it.meaningLang;
+      levelEl.value = it.level || "B1";
+      statusEl.value = it.status || "NEW";
+      termEl.value = it.term || "";
+      meaningEl.value = it.meaning || "";
+      exampleEl.value = it.example || "";
+      tagsEl.value = (it.tags||[]).join(", ");
+
+      modal.showModal();
+      setTimeout(()=>termEl.focus(), 50);
+    }
+
+    function upsert(){
+      const sourceLang = (sourceLangEl.value || "EN").toUpperCase();
+      const meaningLang = (meaningLangEl.value || "TR").toUpperCase();
+      const level = levelEl.value || "B1";
+      const status = (statusEl.value || "NEW").toUpperCase();
+
+      const term = clean(termEl.value);
+      const meaning = clean(meaningEl.value);
+      const example = clean(exampleEl.value);
+      const tags = parseTags(tagsEl.value);
+
+      if(!term || !meaning){
+        toast("Kelime ve anlam zorunlu.");
+        return;
+      }
+
+      const t = now();
+
+      if(editingId){
+        const it = items.find(x=>x.id===editingId);
+        if(!it) return;
+
+        it.sourceLang = sourceLang;
+        it.meaningLang = meaningLang;
+        it.level = level;
+        it.status = (status==="LEARNING"||status==="MASTERED") ? status : "NEW";
+        it.term = term;
+        it.meaning = meaning;
+        it.example = example;
+        it.tags = tags;
+        it.updatedAt = t;
+
+        toast("Güncellendi ✅");
+      } else {
+        const it = patchItem({
+          sourceLang, meaningLang, level, status,
+          term, meaning, example, tags,
+          fav:false,
+          createdAt:t, updatedAt:t
+        });
+        it.srs.dueAt = now();
+        items.push(it);
+        toast("Eklendi ✅");
+      }
+
+      saveItems(items);
+      modal.close();
+      render();
+    }
+
+    function deleteById(id){
+      const it = items.find(x=>x.id===id);
+      if(!it) return;
+      // Confirmation handled by caller if swipe, or here if button
+      // But button already asks? No, let's ask here if not swipe
+      // Actually actions button calls this directly. Let's ask.
+      // Wait, swipe logic called confirm() already.
+      items = items.filter(x=>x.id!==id);
+      saveItems(items);
+      toast("Silindi 🗑️");
+      render();
+    }
+
+    function toggleFav(id){
+      const it = items.find(x=>x.id===id);
+      if(!it) return;
+      it.fav = !it.fav;
+      it.updatedAt = now();
+      saveItems(items);
+      toast(it.fav ? "Favori ★" : "Favori kaldırıldı ☆");
+      render();
+    }
+
+    /* =======================
+       Quick add
+    ======================= */
+    function openQuick(){
+      renderLangSelects();
+      quickSourceLang.value = langs.some(x=>x.code==="EN") ? "EN" : (langs[0]?.code||"EN");
+      quickMeaningLang.value = langs.some(x=>x.code==="TR") ? "TR" : (langs[0]?.code||"TR");
+      quickText.value = "";
+      quickModal.showModal();
+      setTimeout(()=>quickText.focus(), 50);
+    }
+
+    function quickParseLine(line){
+      const raw = line.trim();
+      if(!raw) return null;
+      const sep = raw.includes("|") ? "|" : "-";
+      const parts = raw.split(sep).map(x=>x.trim()).filter(Boolean);
+
+      const term = parts[0] || "";
+      const meaning = parts[1] || "";
+      let level = "B1";
+      let tags = [];
+      if(parts[2] && /^[ABC][12]$/i.test(parts[2])) level = parts[2].toUpperCase();
+      if(parts[3]) tags = parseTags(parts.slice(3).join(","));
+      return {term, meaning, level, tags};
+    }
+
+    function saveQuick(){
+      const src = (quickSourceLang.value || "EN").toUpperCase();
+      const trg = (quickMeaningLang.value || "TR").toUpperCase();
+      const lines = quickText.value.split("\n").map(x=>x.trim()).filter(Boolean);
+      if(lines.length === 0){ toast("En az 1 satır yaz."); return; }
+
+      let added = 0;
+      const t = now();
+
+      for(const line of lines){
+        const p = quickParseLine(line);
+        if(!p || !p.term || !p.meaning) continue;
+
+        const it = patchItem({
+          sourceLang: src,
+          meaningLang: trg,
+          level: p.level || "B1",
+          status: "NEW",
+          term: p.term,
+          meaning: p.meaning,
+          example: "",
+          tags: p.tags || [],
+          fav:false,
+          createdAt: t,
+          updatedAt: t
+        });
+        it.srs.dueAt = now();
+        items.push(it);
+        added++;
+      }
+
+      if(added === 0){
+        toast("Format yanlış. Örn: notice - fark etmek - A2 - story");
+        return;
+      }
+
+      saveItems(items);
+      toast(`Eklendi ✅ (${added})`);
+      quickModal.close();
+      render();
+    }
+
+    /* =======================
+       Languages modal
+    ======================= */
+    function openLangModal(){
+      renderLangListBox();
+      newLangCode.value = "";
+      newLangName.value = "";
+      langModal.showModal();
+      setTimeout(()=>newLangCode.focus(), 50);
+    }
+
+    function addLanguage(){
+      const code = clean(newLangCode.value).toUpperCase();
+      const name = clean(newLangName.value);
+      if(!code || code.length < 2 || code.length > 5){ toast("Dil kodu 2-5 harf olmalı."); return; }
+      if(!name){ toast("Dil adı boş olamaz."); return; }
+
+      langs = normalizeLangs([...langs, {code, name}]);
+      saveLangs(langs);
+      toast("Dil eklendi ✅");
+      renderLangListBox();
+      renderLangSelects();
+      renderChips();
+      render();
+    }
+
+    function resetLanguages(){
+      if(confirm("Diller varsayılanlara dönecek (EN/RU/TR). Emin misin?")){
+        langs = DEFAULT_LANGS.slice();
+        saveLangs(langs);
+        toast("Sıfırlandı ✅");
+        renderLangListBox();
+        renderLangSelects();
+        renderChips();
+        render();
+      }
+    }
+
+    /* =======================
+       Quiz (fullscreen)
+    ======================= */
+    function buildQuizPool(scope){
+      if(scope === "ALL") return [...items];
+      if(scope === "VISIBLE") return getVisibleItems();
+      const due = items.filter(isDue);
+      return due.length ? due : items;
+    }
+
+    function shuffle(a){
+      const arr = [...a];
+      for(let i=arr.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]] = [arr[j],arr[i]];
+      }
+      return arr;
+    }
+
+    function formatLangName(code){
+      return (langs.find(x=>x.code===code)?.name) || code;
+    }
+
+    function makeOptions(correctText, poolTexts){
+      const uniq = Array.from(new Set(poolTexts.filter(Boolean).filter(t=>t!==correctText)));
+      const picks = shuffle(uniq).slice(0,3);
+      return shuffle([correctText, ...picks]);
+    }
+
+    function quizUpdateTop(){
+      quizProgressEl.textContent = `${Math.min(quiz.idx+1, quiz.pool.length)}/${quiz.pool.length}`;
+      quizScoreEl.textContent = String(quiz.score);
+      quizCorrectEl.textContent = String(quiz.correct);
+      quizWrongEl.textContent = String(quiz.wrong);
+    }
+
+    function nextQuestion(){
+      if(quiz.idx >= quiz.pool.length) return quizFinish();
+
+      quiz.current = quiz.pool[quiz.idx];
+      quizRevealEl.classList.remove("on");
+      quizOptionsEl.style.display = "none";
+      quizOptionsEl.innerHTML = "";
+
+      const it = quiz.current;
+      const t = quizTypeEl.value;
+
+      quizMetaEl.textContent =
+        `${it.sourceLang} (${formatLangName(it.sourceLang)})  •  Anlam: ${it.meaningLang} (${formatLangName(it.meaningLang)})  •  Seviye: ${it.level}  •  Durum: ${it.status}`;
+
+      let questionText = "";
+      let answerText = "";
+      let options = null;
+
+      if(t === "TR2TERM"){
+        questionText = it.meaning;
+        answerText = it.term;
+      } else if(t === "TERM2TR"){
+        questionText = it.term;
+        answerText = it.meaning;
+      } else if(t === "MCQ_TR2TERM"){
+        questionText = it.meaning;
+        answerText = it.term;
+        options = makeOptions(answerText, quiz.pool.map(x=>x.term));
+      } else if(t === "MCQ_TERM2TR"){
+        questionText = it.term;
+        answerText = it.meaning;
+        options = makeOptions(answerText, quiz.pool.map(x=>x.meaning));
+      }
+
+      quizQEl.textContent = questionText || "—";
+      quizAnswerEl.textContent = answerText || "—";
+      quizExampleEl.textContent = it.example ? `Örnek: ${it.example}` : "Örnek yok.";
+
+      if(options){
+        quizOptionsEl.style.display = "grid";
+        quizOptionsEl.innerHTML = options.map(o=>`<button class="opt" type="button">${escapeHtml(o)}</button>`).join("");
+      }
+
+      quizUpdateTop();
+    }
+
+    function quizOpen(){
+      quiz.on = true;
+      quiz.knownIds = new Set();
+      quiz.unknownIds = new Set();
+      quiz.idx = 0;
+      quiz.score = 0;
+      quiz.correct = 0;
+      quiz.wrong = 0;
+      quiz.current = null;
+
+      quiz.pool = shuffle(buildQuizPool(quizScopeEl.value)).slice(0, 50);
+      if(quiz.pool.length === 0){
+        toast("Quiz için kayıt lazım.");
+        return;
+      }
+
+      quizOverlay.classList.add("on");
+      quizOverlay.setAttribute("aria-hidden","false");
+      document.body.style.overflow = "hidden";
+
+      quizSummaryEl.style.display = "none";
+      quizCardEl.style.display = "flex";
+
+      nextQuestion();
+    }
+
+    function quizClose(){
+      quiz.on = false;
+      quizOverlay.classList.remove("on");
+      quizOverlay.setAttribute("aria-hidden","true");
+      document.body.style.overflow = "";
+      quizRevealEl.classList.remove("on");
+      quizOptionsEl.style.display = "none";
+      quizOptionsEl.innerHTML = "";
+      render();
+    }
+
+    function quizShowAnswer(){ quizRevealEl.classList.add("on"); }
+
+    function quizMarkCorrect(){
+      const it = quiz.current;
+      if(!it) return;
+      quiz.correct += 1;
+      quiz.score += 1;
+      quiz.knownIds.add(it.id);
+      srsCorrect(it);
+      bumpDaily(1,0);
+      saveItems(items);
+      quizUpdateTop();
+    }
+
+    function quizMarkWrong(){
+      const it = quiz.current;
+      if(!it) return;
+      quiz.wrong += 1;
+      quiz.score = Math.max(0, quiz.score - 1);
+      quiz.unknownIds.add(it.id);
+      srsWrong(it);
+      bumpDaily(0,1);
+      saveItems(items);
+      quizUpdateTop();
+    }
+
+    function quizPass(){
+      const it = quiz.current;
+      if(!it) return;
+      srsPass(it);
+      saveItems(items);
+      toast("Pas ⏭️");
+    }
+
+    function quizNext(){ quiz.idx += 1; nextQuestion(); }
+
+    function quizFinish(){
+      quizCardEl.style.display = "none";
+      quizSummaryEl.style.display = "block";
+
+      const total = quiz.pool.length;
+      const known = Array.from(quiz.knownIds);
+      const unknown = Array.from(quiz.unknownIds);
+
+      quizSummaryTextEl.textContent = `Toplam: ${total} • Doğru: ${quiz.correct} • Yanlış: ${quiz.wrong} • Skor: ${quiz.score}`;
+
+      knownListEl.innerHTML = known.length
+        ? known.map(id => {
+            const it = items.find(x=>x.id===id);
+            if(!it) return "";
+            return `<div class="item"><span><b>${escapeHtml(it.term)}</b> — ${escapeHtml(it.meaning)}</span><span class="statusPill">${escapeHtml(it.level)}</span></div>`;
+          }).join("")
+        : `<div class="quizSub">—</div>`;
+
+      unknownListEl.innerHTML = unknown.length
+        ? unknown.map(id => {
+            const it = items.find(x=>x.id===id);
+            if(!it) return "";
+            return `<div class="item"><span><b>${escapeHtml(it.term)}</b> — ${escapeHtml(it.meaning)}</span><span class="statusPill">${escapeHtml(it.level)}</span></div>`;
+          }).join("")
+        : `<div class="quizSub">—</div>`;
+
+      quiz.wrongPoolIds = unknown;
+      quizUpdateTop();
+    }
+
+    function quizAgainWrong(){
+      if(!quiz.wrongPoolIds || quiz.wrongPoolIds.length === 0){
+        toast("Yanlış yok ✅");
+        return;
+      }
+      quiz.pool = shuffle(quiz.wrongPoolIds.map(id => items.find(x=>x.id===id)).filter(Boolean));
+      quiz.idx = 0;
+      quiz.score = 0;
+      quiz.correct = 0;
+      quiz.wrong = 0;
+      quiz.knownIds = new Set();
+      quiz.unknownIds = new Set();
+
+      quizSummaryEl.style.display = "none";
+      quizCardEl.style.display = "flex";
+      nextQuestion();
+    }
+
+    /* =======================
+       Quiz MCQ click handler
+    ======================= */
+    quizOptionsEl.addEventListener("click", (e)=>{
+      const btn = e.target.closest(".opt");
+      if(!btn) return;
+
+      const picked = btn.textContent;
+      const correct = quizAnswerEl.textContent;
+
+      for(const b of quizOptionsEl.querySelectorAll(".opt")){
+        if(b.textContent === correct) b.classList.add("good");
+        else if(b.textContent === picked) b.classList.add("bad");
+        b.disabled = true;
+      }
+
+      quizRevealEl.classList.add("on");
+
+      if(picked === correct) quizMarkCorrect();
+      else quizMarkWrong();
     });
 
-    // --- SWIPE LOGIC ---
-    function attachSwipe(el, id) {
-        let touchStartX = 0;
-        let touchStartY = 0;
-        
-        el.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
-        }, {passive: true});
+    /* =======================
+       Events
+    ======================= */
+    document.getElementById("addBtn").addEventListener("click", openAdd);
+    document.getElementById("quickBtn").addEventListener("click", openQuick);
+    document.getElementById("langManageBtn").addEventListener("click", openLangModal);
+    document.getElementById("quizBtn").addEventListener("click", quizOpen);
 
-        el.addEventListener('touchend', e => {
-            const touchEndX = e.changedTouches[0].screenX;
-            const touchEndY = e.changedTouches[0].screenY;
-            
-            const diffX = touchEndX - touchStartX;
-            const diffY = touchEndY - touchStartY;
+    document.getElementById("cancelBtn").addEventListener("click", ()=>modal.close());
+    document.getElementById("closeBtn").addEventListener("click", ()=>modal.close());
+    document.getElementById("saveBtn").addEventListener("click", upsert);
 
-            // Only horizontal swipe, ignore vertical scroll
-            if (Math.abs(diffX) > 80 && Math.abs(diffY) < 40) {
-                if (diffX < 0) {
-                    // Swipe Left: Delete (Ask first)
-                    if(confirm("Bu kart silinsin mi?")) {
-                        items = items.filter(i => i.id !== id);
-                        save();
-                        toast("Kart silindi");
-                    }
-                } else {
-                    // Swipe Right: Toggle Fav
-                    const it = items.find(i=>i.id === id);
-                    it.fav = !it.fav;
-                    save();
-                    toast(it.fav ? "Favorilere eklendi" : "Favorilerden çıktı");
-                }
-            }
-        }, {passive: true});
-    }
-
-    // --- MODALS ---
-    const modal = $('#modal');
-    const quickModal = $('#quickModal');
-
-    function openEdit(id) {
-        editingId = id;
-        const it = items.find(i=>i.id === id);
-        
-        $('#modalTitle').textContent = "Düzenle";
-        $('#sourceLang').value = it.sourceLang;
-        $('#meaningLang').value = it.meaningLang;
-        $('#term').value = it.term;
-        $('#meaning').value = it.meaning;
-        $('#example').value = it.example;
-        $('#tags').value = it.tags.join(', ');
-        $('#deleteBtn').style.display = 'block';
-        
-        modal.showModal();
-    }
-
-    $('#addBtn').onclick = () => {
-        editingId = null;
-        $('#modalTitle').textContent = "Yeni Ekle";
-        $('#term').value = "";
-        $('#meaning').value = "";
-        $('#example').value = "";
-        $('#tags').value = "";
-        $('#deleteBtn').style.display = 'none';
-        modal.showModal();
-        setTimeout(()=>$('#term').focus(), 100);
-    };
-
-    $('#menuBtn').onclick = () => {
-        quickModal.showModal();
-    };
-
-    $('#closeModal').onclick = () => modal.close();
-    $('#closeQuick').onclick = () => quickModal.close();
-
-    $('#saveBtn').onclick = () => {
-        const term = $('#term').value.trim();
-        const meaning = $('#meaning').value.trim();
-        if(!term || !meaning) return toast("Kelime ve anlam gerekli!");
-
-        const data = {
-            term, meaning,
-            example: $('#example').value.trim(),
-            tags: $('#tags').value.split(',').map(t=>t.trim()).filter(Boolean),
-            sourceLang: $('#sourceLang').value,
-            meaningLang: $('#meaningLang').value
-        };
-
-        if(editingId) {
-            const idx = items.findIndex(i=>i.id===editingId);
-            items[idx] = { ...items[idx], ...data };
-            toast("Güncellendi");
-        } else {
-            items.push(patchItem(data));
-            toast("Eklendi");
-        }
-        
-        save();
+    deleteBtn.addEventListener("click", ()=>{
+      if(editingId && confirm("Bu kartı silmek istediğine emin misin?")) {
+        deleteById(editingId);
         modal.close();
-    };
+      }
+    });
 
-    $('#deleteBtn').onclick = () => {
-        if(confirm("Silmek istediğine emin misin?")) {
-            items = items.filter(i=>i.id !== editingId);
-            save();
-            modal.close();
-            toast("Silindi");
+    document.getElementById("quickCloseBtn").addEventListener("click", ()=>quickModal.close());
+    document.getElementById("quickCancelBtn").addEventListener("click", ()=>quickModal.close());
+    document.getElementById("quickSaveBtn").addEventListener("click", saveQuick);
+
+    document.getElementById("langCloseBtn").addEventListener("click", ()=>langModal.close());
+    document.getElementById("langDoneBtn").addEventListener("click", ()=>langModal.close());
+    document.getElementById("addLangBtn").addEventListener("click", addLanguage);
+    document.getElementById("resetLangBtn").addEventListener("click", resetLanguages);
+
+    searchEl.addEventListener("input", render);
+    sortEl.addEventListener("change", render);
+    levelFilterEl.addEventListener("change", ()=>{ levelFilter = levelFilterEl.value; render(); });
+    tagFilterEl.addEventListener("change", ()=>{ tagFilter = tagFilterEl.value; render(); });
+    statusFilterEl.addEventListener("change", ()=>{ statusFilter = statusFilterEl.value; render(); });
+
+    themeSelect.addEventListener("change", (e)=> applyTheme(e.target.value));
+
+    gridEl.addEventListener("click", (e)=>{
+      const actionBtn = e.target.closest("[data-action]");
+      if(actionBtn){
+        // Stop propagation to prevent card flip or swipe confusion
+        e.stopPropagation();
+
+        const action = actionBtn.dataset.action;
+        const id = actionBtn.dataset.id || e.target.closest(".card")?.dataset.id;
+        if(!id) return;
+
+        if(action === "flip"){
+          const flipEl = document.querySelector(`.cardFlip[data-id="${id}"]`);
+          if(flipEl) flipEl.classList.toggle("flipped");
+          return;
         }
-    };
-
-    $('#quickSaveBtn').onclick = () => {
-        const lines = $('#quickText').value.split('\n');
-        let count = 0;
-        lines.forEach(line => {
-            const parts = line.includes('-') ? line.split('-') : line.split(' ');
-            if(parts.length >= 2) {
-                items.push(patchItem({
-                    term: parts[0].trim(),
-                    meaning: parts.slice(1).join(' ').trim()
-                }));
-                count++;
-            }
-        });
-        if(count > 0) {
-            save();
-            $('#quickText').value = "";
-            quickModal.close();
-            toast(`${count} kelime eklendi`);
-        } else {
-            toast("Format hatalı. Örn: elma - apple");
+        if(action === "edit"){ openEdit(id); return; }
+        if(action === "delete"){ 
+            if(confirm("Silinsin mi?")) deleteById(id); 
+            return; 
         }
-    };
+        if(action === "fav"){ toggleFav(id); return; }
+      }
 
-    // --- QUIZ LOGIC ---
-    let quizPool = [];
-    let quizIdx = 0;
-    let quizScore = 0;
-    let quizActive = false;
+      // Check if clicked strictly on card body (not buttons)
+      const flipEl = e.target.closest(".cardFlip");
+      if(flipEl && !e.target.closest(".actions") && !e.target.closest(".star")){
+        flipEl.classList.toggle("flipped");
+      }
+    });
 
-    $('#quizBtn').onclick = startQuiz;
-    $('#quizExit').onclick = () => { $('#quizOverlay').classList.remove('on'); quizActive = false; render(); };
-    $('#quizTypeSelect').onchange = () => { loadQuizQuestion(); };
-
-    function startQuiz() {
-        // Due (Zamanı gelen) veya hepsi
-        let pool = items.filter(i => i.srs.due <= now());
-        if(pool.length === 0) pool = [...items]; // Hiç due yoksa hepsinden sor
-        
-        // Shuffle
-        pool.sort(() => Math.random() - 0.5);
-        
-        if(pool.length === 0) return toast("Quiz için kelime yok!");
-
-        quizPool = pool;
-        quizIdx = 0;
-        quizScore = 0;
-        quizActive = true;
-        
-        $('#quizOverlay').classList.add('on');
-        loadQuizQuestion();
-    }
-
-    function loadQuizQuestion() {
-        if(quizIdx >= quizPool.length) {
-            // End
-            alert(`Quiz Bitti! Skor: ${quizScore}/${quizPool.length}`);
-            $('#quizOverlay').classList.remove('on');
-            render();
-            return;
-        }
-
-        const q = quizPool[quizIdx];
-        const type = $('#quizTypeSelect').value;
-        const controls = $('#quizControls');
-        const optsDiv = $('#quizOptions');
-        const revealDiv = $('#quizReveal');
-        
-        $('#qProgress').textContent = `${quizIdx+1}/${quizPool.length}`;
-        $('#qScore').textContent = quizScore;
-        
-        $('#qText').textContent = q.term;
-        $('#qAnswer').textContent = q.meaning;
-        $('#qExample').textContent = q.example || "";
-
-        optsDiv.innerHTML = "";
-        revealDiv.classList.remove('on');
-        controls.innerHTML = "";
-
-        if (type === 'MCQ') {
-            optsDiv.style.display = 'grid';
-            
-            // Generate wrong answers
-            let others = items.filter(i => i.id !== q.id);
-            // Havuz çok küçükse duplicate izin ver ya da sadece flip'e geç
-            if(others.length < 3 && items.length < 4) {
-                 // Fallback to Flip because not enough items for MCQ
-                 toast("Yetersiz kelime sayısı. Kart moduna geçiliyor.");
-                 $('#quizTypeSelect').value = "FLIP";
-                 loadQuizQuestion();
-                 return;
-            }
-
-            others.sort(() => Math.random() - 0.5);
-            let choices = others.slice(0, 3).map(i => ({txt: i.meaning, correct: false}));
-            choices.push({txt: q.meaning, correct: true});
-            choices.sort(() => Math.random() - 0.5);
-
-            choices.forEach(c => {
-                const btn = document.createElement('button');
-                btn.className = 'opt';
-                btn.textContent = c.txt;
-                btn.onclick = () => {
-                    if(btn.disabled) return;
-                    $$('.opt').forEach(b => b.disabled = true);
-                    
-                    if(c.correct) {
-                        btn.classList.add('good');
-                        processResult(true);
-                    } else {
-                        btn.classList.add('bad');
-                        // Show correct one
-                        $$('.opt').forEach(b => { if(b.textContent === q.meaning) b.classList.add('good'); });
-                        processResult(false);
-                    }
-                    setTimeout(() => { quizIdx++; loadQuizQuestion(); }, 1200);
-                };
-                optsDiv.appendChild(btn);
-            });
-
-        } else {
-            // FLIP MODE
-            optsDiv.style.display = 'none';
-            controls.innerHTML = `
-                <button class="btn" style="flex:1; padding:15px" onclick="document.getElementById('quizReveal').classList.add('on')">Göster</button>
-                <div style="display:flex; gap:10px; width:100%; margin-top:10px">
-                    <button class="btn danger" style="flex:1" onclick="handleFlip(false)">Bilemedim</button>
-                    <button class="btn good" style="flex:1" onclick="handleFlip(true)">Bildim</button>
-                </div>
-            `;
-        }
-    }
-    
-    // Global scope functions for HTML onclick attributes
-    window.handleFlip = (isCorrect) => {
-        processResult(isCorrect);
-        quizIdx++;
-        loadQuizQuestion();
-    };
-
-    function processResult(isCorrect) {
-        const item = quizPool[quizIdx];
-        if(isCorrect) {
-            quizScore++;
-            // SRS Logic: Increase interval
-            item.status = "LEARNING";
-            item.srs.interval = item.srs.interval === 0 ? 1 : Math.round(item.srs.interval * item.srs.ease);
-            item.srs.due = now() + (item.srs.interval * 24 * 60 * 60 * 1000);
-            if(item.srs.interval > 20) item.status = "MASTERED";
-        } else {
-            // Reset
-            item.srs.interval = 0;
-            item.srs.due = now(); // Due immediately
-            item.status = "LEARNING";
-        }
-        save();
-    }
-
-    // --- INIT ---
-    function init() {
-        // Populate Selects
-        const makeOpts = () => LANGS.map(l => `<option value="${l.code}">${l.name}</option>`).join('');
-        $('#sourceLang').innerHTML = makeOpts();
-        $('#meaningLang').innerHTML = makeOpts();
-        $('#meaningLang').value = "TR";
-        
-        const lFilter = $('#langFilter');
-        LANGS.forEach(l => {
-            const o = document.createElement('option');
-            o.value = l.code; o.textContent = l.name;
-            lFilter.appendChild(o);
-        });
-
-        $('#themeSelect').addEventListener('change', e => setTheme(e.target.value));
-        $('#search').addEventListener('input', render);
-        $('#langFilter').addEventListener('change', render);
-        $('#statusFilter').addEventListener('change', render);
-
+    document.getElementById("wipeBtn").addEventListener("click", ()=>{
+      if(items.length === 0) return toast("Zaten boş.");
+      if(confirm("Tüm kelimeler silinecek. Emin misin?")){
+        items = [];
+        saveItems(items);
+        toast("Hepsi silindi 🗑️");
         render();
-    }
-    
-    function toast(msg) {
-        const t = $('#toast');
-        t.textContent = msg;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 2000);
-    }
-    
-    // Service Worker Register (Mock for PWA installability)
-    if('serviceWorker' in navigator) {
-        // Blob for inline SW to avoid extra file
-        const swBlob = new Blob([`
-            self.addEventListener('install', e => self.skipWaiting());
-            self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
-        `], {type: 'application/javascript'});
-        navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+      }
+    });
+
+    document.getElementById("quizExitBtn").addEventListener("click", quizClose);
+    document.getElementById("quizShowBtn").addEventListener("click", quizShowAnswer);
+    document.getElementById("quizPassBtn").addEventListener("click", ()=>{ quizPass(); quizNext(); });
+    document.getElementById("quizRightBtn").addEventListener("click", ()=>{ quizRevealEl.classList.add("on"); quizMarkCorrect(); });
+    document.getElementById("quizWrongBtn").addEventListener("click", ()=>{ quizRevealEl.classList.add("on"); quizMarkWrong(); });
+    document.getElementById("quizNextBtn").addEventListener("click", quizNext);
+    document.getElementById("quizDoneBtn").addEventListener("click", quizClose);
+    document.getElementById("quizAgainWrongBtn").addEventListener("click", quizAgainWrong);
+
+    quizTypeEl.addEventListener("change", ()=>{ if(quiz.on) { quiz.idx = 0; quiz.pool = shuffle(buildQuizPool(quizScopeEl.value)).slice(0,50); nextQuestion(); } });
+    quizScopeEl.addEventListener("change", ()=>{ if(quiz.on) { quiz.idx = 0; quiz.pool = shuffle(buildQuizPool(quizScopeEl.value)).slice(0,50); nextQuestion(); } });
+
+    /* =======================
+       PWA improvements (simple)
+    ======================= */
+    function setupManifest(){
+      const manifest = {
+        name: "Vocab Pocket Pro",
+        short_name: "VocabPocket",
+        start_url: ".",
+        display: "standalone",
+        background_color: "#0b0b10",
+        theme_color: "#0b0b10",
+        icons: []
+      };
+      const blob = new Blob([JSON.stringify(manifest)], {type:"application/manifest+json"});
+      const url = URL.createObjectURL(blob);
+      const link = document.getElementById("manifestLink");
+      if(link) link.href = url;
     }
 
+    async function setupServiceWorker(){
+      if(!("serviceWorker" in navigator)) return;
+
+      const swCode = `
+        const CACHE = "vocab-pocket-pro-cache-v1";
+        self.addEventListener("install", (e)=>{
+          e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(["./"])));
+          self.skipWaiting();
+        });
+        self.addEventListener("activate", (e)=>{ e.waitUntil(self.clients.claim()); });
+        self.addEventListener("fetch", (e)=>{
+          const req = e.request;
+          e.respondWith(
+            caches.match(req).then(cached => cached || fetch(req).then(res => {
+              const copy = res.clone();
+              caches.open(CACHE).then(c => c.put(req, copy)).catch(()=>{});
+              return res;
+            }).catch(()=>cached))
+          );
+        });
+      `;
+      const blob = new Blob([swCode], {type:"text/javascript"});
+      const swUrl = URL.createObjectURL(blob);
+      try{
+        await navigator.serviceWorker.register(swUrl, {scope:"./"});
+      }catch{}
+    }
+
+    function init(){
+      langs = loadLangs();
+      saveLangs(langs);
+
+      items = items.map(patchItem);
+      saveItems(items);
+
+      renderLangSelects();
+      renderLangListBox();
+      renderChips();
+
+      applyTheme(localStorage.getItem(KEY_THEME) || "dark");
+
+      levelFilter = levelFilterEl.value;
+      tagFilter = tagFilterEl.value;
+      statusFilter = statusFilterEl.value;
+
+      setupManifest();
+      setupServiceWorker();
+
+      render();
+    }
     init();
   </script>
 </body>
