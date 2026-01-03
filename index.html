@@ -1,476 +1,546 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <title>VocabMaster Pro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>LingoMaster Pro</title>
     
     <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" id="manifest-placeholder">
+    <meta name="apple-mobile-web-app-title" content="LingoMaster">
 
     <style>
-        /* --- CSS VARIABLES & RESET --- */
+        /* =========================================
+           1. CORE VARIABLES & THEME ENGINE
+           ========================================= */
         :root {
-            --primary: #6366f1; --primary-dark: #4338ca;
-            --secondary: #10b981; --secondary-dark: #059669;
-            --danger: #ef4444; --warning: #f59e0b;
-            --bg-body: #0f172a; --bg-panel: #1e293b; --bg-card: #334155;
-            --text-main: #f8fafc; --text-muted: #94a3b8;
+            /* Palette */
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --surface-1: #0f172a;
+            --surface-2: #1e293b;
+            --surface-3: #334155;
+            --text-1: #f8fafc;
+            --text-2: #94a3b8;
             --border: #475569;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
-            --font-ui: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
-            --font-read: "Merriweather", "Georgia", serif;
-            --header-h: 60px; --nav-h: 70px;
-            --radius: 16px;
+            
+            /* Dimensions */
+            --header-height: 60px;
+            --nav-height: 70px;
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            
+            /* Typography */
+            --font-ui: -apple-system, BlinkMacSystemFont, "Inter", Roboto, sans-serif;
+            --font-reader: "Merriweather", "Georgia", serif;
+            
+            /* Transitions */
+            --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
+        /* Light Theme Override */
         [data-theme="light"] {
-            --bg-body: #f1f5f9; --bg-panel: #ffffff; --bg-card: #e2e8f0;
-            --text-main: #0f172a; --text-muted: #64748b;
+            --surface-1: #f8fafc;
+            --surface-2: #ffffff;
+            --surface-3: #e2e8f0;
+            --text-1: #0f172a;
+            --text-2: #64748b;
             --border: #cbd5e1;
         }
 
+        /* =========================================
+           2. GLOBAL RESET & BASE STYLES
+           ========================================= */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        html, body { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; }
+        
         body {
-            background-color: var(--bg-body); color: var(--text-main);
+            margin: 0; padding: 0;
+            background-color: var(--surface-1);
+            color: var(--text-1);
             font-family: var(--font-ui);
+            height: 100vh; width: 100vw;
+            overflow: hidden; /* App-like constraint */
             display: flex; flex-direction: column;
         }
 
-        /* --- TYPOGRAPHY & UTILS --- */
-        h1, h2, h3, h4, p { margin: 0; }
-        .hidden { display: none !important; }
-        .flex { display: flex; }
-        .flex-col { flex-direction: column; }
-        .center { align-items: center; justify-content: center; }
-        .gap-2 { gap: 0.5rem; } .gap-4 { gap: 1rem; }
-        .w-full { width: 100%; }
-        .text-sm { font-size: 0.875rem; } .text-xs { font-size: 0.75rem; }
-        .font-bold { font-weight: 700; }
-        .text-muted { color: var(--text-muted); }
-        .ellipsis { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 4px; }
 
-        /* --- ICONS (SVG Containers) --- */
-        .icon { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        /* Icons (SVG) */
+        .icon { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
         .icon-sm { width: 18px; height: 18px; }
 
-        /* --- COMPONENT: BUTTONS --- */
+        /* Typography Utilities */
+        .h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.05rem; }
+        .h2 { font-size: 1.5rem; font-weight: 700; }
+        .h3 { font-size: 1.1rem; font-weight: 600; }
+        .text-sm { font-size: 0.875rem; color: var(--text-2); }
+        .text-xs { font-size: 0.75rem; color: var(--text-2); }
+        .bold { font-weight: 700; }
+        .truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Layout Utilities */
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .gap-2 { gap: 0.5rem; } .gap-4 { gap: 1rem; }
+        .w-full { width: 100%; }
+        .p-4 { padding: 1rem; }
+
+        /* =========================================
+           3. UI COMPONENTS
+           ========================================= */
+        
+        /* Buttons */
         .btn {
             display: inline-flex; align-items: center; justify-content: center; gap: 8px;
             padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer;
-            transition: all 0.2s active; border: 1px solid var(--border);
-            background: var(--bg-panel); color: var(--text-main); user-select: none;
+            transition: transform 0.1s, opacity 0.2s; border: none;
+            user-select: none; font-size: 0.95rem;
         }
-        .btn:active { transform: scale(0.96); }
-        .btn-primary { background: var(--primary); border-color: var(--primary); color: white; }
-        .btn-success { background: var(--secondary); border-color: var(--secondary); color: white; }
-        .btn-danger { background: var(--danger); border-color: var(--danger); color: white; }
-        .btn-ghost { background: transparent; border-color: transparent; color: var(--text-muted); }
-        .btn-icon { padding: 8px; border-radius: 50%; }
+        .btn:active { transform: scale(0.96); opacity: 0.9; }
+        
+        .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+        .btn-secondary { background: var(--surface-3); color: var(--text-1); }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-ghost { background: transparent; color: var(--text-2); }
+        .btn-icon { padding: 10px; border-radius: 50%; }
+        .btn-float {
+            position: absolute; bottom: 20px; right: 20px;
+            width: 56px; height: 56px; border-radius: 50%;
+            background: var(--primary); color: #fff;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4); z-index: 50;
+        }
 
-        /* --- COMPONENT: INPUTS --- */
-        .input-group { margin-bottom: 1rem; }
-        .label { display: block; font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem; }
+        /* Inputs */
+        .input-group { margin-bottom: 16px; }
+        .label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-2); }
         .input, .textarea, .select {
-            width: 100%; padding: 12px; border-radius: 12px;
-            background: var(--bg-card); border: 1px solid var(--border);
-            color: var(--text-main); font-size: 1rem; outline: none;
+            width: 100%; padding: 14px; border-radius: 12px;
+            background: var(--surface-2); border: 1px solid var(--border);
+            color: var(--text-1); font-size: 1rem; outline: none;
             transition: border-color 0.2s;
         }
         .input:focus { border-color: var(--primary); }
 
-        /* --- LAYOUT: HEADER --- */
+        /* Cards */
+        .card {
+            background: var(--surface-2); border: 1px solid var(--border);
+            border-radius: var(--radius-md); padding: 16px;
+            position: relative; overflow: hidden;
+        }
+
+        /* =========================================
+           4. APP SHELL LAYOUT
+           ========================================= */
         #app-header {
-            height: var(--header-h); background: var(--bg-panel);
+            height: var(--header-height);
+            background: rgba(15, 23, 42, 0.8); /* Translucent */
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
             padding: 0 16px; display: flex; align-items: center; justify-content: space-between;
-            z-index: 50; flex-shrink: 0;
+            position: sticky; top: 0; z-index: 40;
         }
-        .brand { font-size: 1.25rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        [data-theme="light"] #app-header { background: rgba(255, 255, 255, 0.8); }
 
-        /* --- LAYOUT: MAIN VIEW --- */
-        #main-container {
+        #main-viewport {
             flex: 1; position: relative; overflow: hidden;
         }
-        .view-section {
-            position: absolute; inset: 0; overflow-y: auto;
-            padding: 16px; padding-bottom: 100px; /* Nav spacing */
-            display: none; opacity: 0; transform: translateY(10px);
-            transition: opacity 0.3s, transform 0.3s;
-        }
-        .view-section.active { display: block; opacity: 1; transform: translateY(0); }
 
-        /* --- LAYOUT: BOTTOM NAV --- */
+        .view {
+            position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden;
+            padding: 20px; padding-bottom: 100px; /* Space for nav */
+            opacity: 0; pointer-events: none; transform: translateY(10px);
+            transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+        }
+        .view.active { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
         #bottom-nav {
-            height: var(--nav-h); background: var(--bg-panel);
+            height: var(--nav-height); background: var(--surface-2);
             border-top: 1px solid var(--border);
             display: flex; align-items: center; justify-content: space-around;
-            position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
             padding-bottom: env(safe-area-inset-bottom);
+            position: fixed; bottom: 0; width: 100%; z-index: 50;
         }
-        .nav-item {
+        .nav-btn {
+            background: none; border: none; color: var(--text-2);
             display: flex; flex-direction: column; align-items: center; gap: 4px;
-            color: var(--text-muted); background: none; border: none; font-size: 0.7rem; font-weight: 600;
-            flex: 1; padding: 8px 0; cursor: pointer;
+            font-size: 0.7rem; font-weight: 600; cursor: pointer; flex: 1;
         }
-        .nav-item.active { color: var(--primary); }
-        .nav-item svg { transition: transform 0.2s; }
-        .nav-item.active svg { transform: translateY(-2px); }
+        .nav-btn.active { color: var(--primary); }
+        .nav-btn.active svg { stroke: var(--primary); fill: rgba(99, 102, 241, 0.1); }
 
-        /* --- MODULE: READER --- */
-        .reader-container {
-            font-family: var(--font-read); font-size: 1.2rem; line-height: 1.8;
-            max-width: 800px; margin: 0 auto; color: var(--text-main);
-            text-align: justify;
-        }
-        .r-word { cursor: pointer; border-radius: 4px; padding: 0 1px; transition: background 0.1s; }
-        .r-word:hover { background: rgba(99, 102, 241, 0.2); }
-        .r-sentence { background: rgba(99, 102, 241, 0.1); }
+        /* =========================================
+           5. SPECIFIC MODULE STYLES
+           ========================================= */
         
-        .book-card {
-            background: var(--bg-panel); border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
-            display: flex; align-items: center; justify-content: space-between;
+        /* Reader */
+        .reader-page {
+            max-width: 700px; margin: 0 auto;
+            font-family: var(--font-reader); font-size: 1.2rem; line-height: 1.8;
+            color: var(--text-1); text-align: justify;
         }
-        .lang-badge {
-            background: var(--bg-card); color: var(--text-muted);
-            padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;
-            text-transform: uppercase; border: 1px solid var(--border);
-        }
+        .token { cursor: pointer; border-radius: 4px; padding: 2px 0; transition: background 0.1s; }
+        .token:active { background: rgba(99, 102, 241, 0.3); }
+        .token.highlight { background: rgba(253, 224, 71, 0.3); }
+        
+        /* Flashcards Grid */
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); gap: 12px; }
+        .fc-front { font-size: 1.4rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+        .fc-back { font-size: 1.1rem; color: var(--text-2); border-top: 1px solid var(--border); padding-top: 8px; }
+        .fc-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; background: var(--surface-3); text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* --- MODULE: FLASHCARDS --- */
-        .cards-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); gap: 1rem;
-        }
-        .flashcard {
-            background: var(--bg-panel); border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 1.25rem;
-            position: relative; overflow: hidden;
-            display: flex; flex-direction: column; gap: 10px;
-        }
-        .fc-header { display: flex; justify-content: space-between; align-items: center; }
-        .fc-term { font-size: 1.5rem; font-weight: 800; color: var(--primary); word-break: break-word; }
-        .fc-meaning { font-size: 1.1rem; color: var(--text-main); border-top: 1px solid var(--border); padding-top: 10px; }
-        .fc-meta { display: flex; gap: 8px; margin-top: auto; }
-        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
-        .badge-new { background: var(--primary); color: white; }
-        .badge-due { background: var(--warning); color: black; }
-        .badge-ok { background: var(--secondary); color: white; }
-
-        /* --- MODULE: QUIZ --- */
+        /* Quiz Mode */
         .quiz-overlay {
-            position: fixed; inset: 0; background: var(--bg-body); z-index: 100;
+            position: fixed; inset: 0; background: var(--surface-1); z-index: 100;
             display: flex; flex-direction: column;
-            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(100%); transition: transform 0.3s var(--ease);
         }
-        .quiz-overlay.open { transform: translateY(0); }
-        .quiz-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; }
-        .q-term { font-size: 2.5rem; font-weight: 900; margin-bottom: 2rem; }
-        .q-options { width: 100%; max-width: 500px; display: grid; gap: 1rem; }
-        .q-btn { width: 100%; padding: 1.25rem; text-align: left; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; font-size: 1.1rem; color: var(--text-main); }
-        .q-btn.correct { background: var(--secondary); border-color: var(--secondary); color: white; }
-        .q-btn.wrong { background: var(--danger); border-color: var(--danger); color: white; }
+        .quiz-overlay.open { transform: translateX(0); }
+        .quiz-card-display {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 20px;
+        }
+        .q-word { font-size: 3rem; font-weight: 900; margin-bottom: 2rem; }
+        .q-btn-option {
+            width: 100%; max-width: 400px; padding: 16px; margin-bottom: 10px;
+            background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px;
+            font-size: 1.1rem; color: var(--text-1); text-align: left;
+        }
+        .q-btn-option.correct { border-color: var(--secondary); background: rgba(16, 185, 129, 0.1); }
+        .q-btn-option.wrong { border-color: var(--danger); background: rgba(239, 68, 68, 0.1); }
 
-        /* --- MODULE: DICTIONARY SHEET --- */
-        .sheet-backdrop {
+        /* Stats Heatmap */
+        .heatmap-grid { display: flex; gap: 4px; justify-content: space-between; margin-top: 10px; }
+        .hm-cell {
+            flex: 1; aspect-ratio: 1; background: var(--surface-3); border-radius: 4px;
+            display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: var(--text-2);
+        }
+        .hm-cell[data-level="1"] { background: rgba(99, 102, 241, 0.4); color: white; }
+        .hm-cell[data-level="2"] { background: rgba(99, 102, 241, 0.7); color: white; }
+        .hm-cell[data-level="3"] { background: var(--primary); color: white; }
+
+        /* Bottom Sheet (Word Details) */
+        .backdrop {
             position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 80;
             opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
-        .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
-        .bottom-sheet {
+        .backdrop.open { opacity: 1; pointer-events: auto; }
+        .sheet {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: var(--bg-panel); border-radius: 24px 24px 0 0;
-            padding: 24px; z-index: 90; transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.1, 0.7, 0.1, 1);
-            max-height: 80vh; display: flex; flex-direction: column;
+            background: var(--surface-2); border-radius: 24px 24px 0 0;
+            padding: 24px; padding-bottom: 40px; z-index: 90;
+            transform: translateY(100%); transition: transform 0.3s var(--ease);
+            max-height: 85vh; overflow-y: auto;
         }
-        .bottom-sheet.open { transform: translateY(0); }
-        .sheet-handle { width: 48px; height: 6px; background: var(--border); border-radius: 3px; margin: 0 auto 20px auto; }
+        .sheet.open { transform: translateY(0); }
+        .drag-handle { width: 40px; height: 5px; background: var(--border); border-radius: 5px; margin: 0 auto 20px auto; }
 
-        /* --- MODULE: CHARTS (SVG) --- */
-        .chart-container { width: 100%; height: 200px; position: relative; }
-        .heatmap-grid { display: flex; gap: 6px; margin-top: 1rem; }
-        .hm-day { flex: 1; aspect-ratio: 1; background: var(--bg-card); border-radius: 4px; position: relative; }
-        .hm-day[data-level="1"] { background: rgba(16, 185, 129, 0.3); }
-        .hm-day[data-level="2"] { background: rgba(16, 185, 129, 0.6); }
-        .hm-day[data-level="3"] { background: rgba(16, 185, 129, 1); }
-        .hm-label { position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--text-muted); }
-
-        /* UTILS */
+        /* Toast */
         .toast {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            background: var(--text-main); color: var(--bg-body);
-            padding: 10px 24px; border-radius: 99px; font-weight: 600;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 200;
-            box-shadow: var(--shadow-lg);
+            position: fixed; top: 20px; left: 50%; transform: translate(-50%, -20px);
+            background: var(--text-1); color: var(--surface-1);
+            padding: 10px 20px; border-radius: 50px; font-weight: 600; font-size: 0.9rem;
+            opacity: 0; pointer-events: none; transition: all 0.3s var(--ease); z-index: 200;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
-        .toast.visible { opacity: 1; transform:translate(-50%, 10px); }
+        .toast.visible { opacity: 1; transform: translate(-50%, 0); }
 
     </style>
 </head>
 <body>
 
     <header id="app-header">
-        <div class="brand">VocabMaster</div>
+        <div class="flex items-center gap-2">
+            <svg class="icon" style="color:var(--primary)"><path d="M12 2l9 4.9V17L12 22l-9-4.9V7z"/></svg>
+            <span class="bold" style="font-size:1.2rem">LingoMaster</span>
+        </div>
         <div class="flex gap-2">
-            <button class="btn btn-icon btn-ghost" id="btn-theme" title="Tema">
-                <svg class="icon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <button class="btn btn-ghost btn-icon" id="btn-theme">
+                <svg class="icon"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
             </button>
-            <button class="btn btn-icon btn-ghost" id="btn-settings" title="Ayarlar">
-                <svg class="icon"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <button class="btn btn-ghost btn-icon" id="btn-settings">
+                <svg class="icon"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </button>
         </div>
     </header>
 
-    <div id="main-container">
+    <main id="main-viewport">
         
-        <div id="view-dashboard" class="view-section active">
-            <h2 class="text-muted text-sm font-bold uppercase mb-4">Genel Bakış</h2>
-            <div class="flex gap-4" style="margin-bottom: 2rem;">
-                <div class="w-full" style="background:var(--bg-panel); padding:1.5rem; border-radius:var(--radius); border:1px solid var(--border)">
-                    <div class="text-muted text-xs">Toplam Kart</div>
-                    <div class="font-bold" style="font-size:2rem;" id="stat-total">0</div>
+        <div id="view-home" class="view active">
+            <h2 class="h3 text-sm" style="margin-bottom:15px; color:var(--text-2); text-transform:uppercase;">Genel Bakış</h2>
+            
+            <div class="flex gap-4" style="margin-bottom: 20px;">
+                <div class="card w-full">
+                    <div class="text-sm">Toplam Kart</div>
+                    <div class="h1" id="dash-total">0</div>
                 </div>
-                <div class="w-full" style="background:var(--bg-panel); padding:1.5rem; border-radius:var(--radius); border:1px solid var(--border)">
-                    <div class="text-muted text-xs">Tekrar (Due)</div>
-                    <div class="font-bold" style="font-size:2rem; color:var(--warning)" id="stat-due">0</div>
+                <div class="card w-full" style="border-color: rgba(245, 158, 11, 0.3)">
+                    <div class="text-sm" style="color: var(--warning)">Tekrar (Due)</div>
+                    <div class="h1" style="color: var(--warning)" id="dash-due">0</div>
                 </div>
             </div>
 
-            <h2 class="text-muted text-sm font-bold uppercase mb-2">Çalışma Zinciri (Son 7 Gün)</h2>
-            <div style="background:var(--bg-panel); padding:1rem; border-radius:var(--radius); border:1px solid var(--border); margin-bottom: 2rem;">
-                 <div id="heatmap-container" class="heatmap-grid"></div>
+            <div class="card" style="margin-bottom: 25px;">
+                <div class="flex justify-between items-center">
+                    <div class="h3">Çalışma Zinciri</div>
+                    <div class="text-sm bold" style="color:var(--primary)" id="dash-streak">0 Gün</div>
+                </div>
+                <div id="heatmap" class="heatmap-grid"></div>
             </div>
 
-            <h2 class="text-muted text-sm font-bold uppercase mb-2">Hızlı İşlemler</h2>
-            <button class="btn btn-primary w-full" style="padding:1.25rem; font-size:1.1rem" onclick="App.startQuiz()">
-                <svg class="icon"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-                Hemen Pratik Yap
+            <h2 class="h3 text-sm" style="margin-bottom:15px; color:var(--text-2); text-transform:uppercase;">Hızlı İşlemler</h2>
+            
+            <button class="btn btn-primary w-full p-4" onclick="App.startQuiz()" style="font-size:1.1rem; margin-bottom:10px;">
+                <svg class="icon"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Bugünkü Tekrarları Başlat
+            </button>
+            <button class="btn btn-secondary w-full" onclick="Router.go('library')">
+                <svg class="icon"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                Kitap Okumaya Devam Et
             </button>
         </div>
 
-        <div id="view-library" class="view-section">
-            <div class="flex center" style="justify-content:space-between; margin-bottom:1rem">
-                <h2>Kütüphane</h2>
-                <button class="btn btn-sm btn-primary" onclick="App.showAddBookModal()">+ Yeni</button>
-            </div>
-            <div id="book-list" class="flex flex-col gap-4"></div>
-        </div>
-
-        <div id="view-cards" class="view-section">
-            <div class="input-group">
-                <input type="text" id="card-search" class="input" placeholder="Kartlarda ara...">
-            </div>
-            <div class="cards-grid" id="card-list"></div>
-        </div>
-        
-        <div id="view-reader" class="view-section" style="background:var(--bg-body); z-index:60">
-            <div class="flex center" style="justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:20px;">
-                <button class="btn btn-ghost" onclick="Router.go('library')">
-                    <svg class="icon"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Geri
+        <div id="view-library" class="view">
+            <div class="flex justify-between items-center mb-4" style="margin-bottom:20px">
+                <h2 class="h2">Kütüphane</h2>
+                <button class="btn btn-primary btn-icon" onclick="App.openAddBook()">
+                    <svg class="icon"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 </button>
-                <div class="text-sm font-bold" id="reader-title">Başlık</div>
-                <div class="text-xs text-muted" id="reader-page">1/10</div>
             </div>
-            <div id="reader-canvas" class="reader-container"></div>
-            <div class="flex center" style="margin-top:30px; gap:20px; padding-bottom:40px">
-                <button class="btn btn-ghost" onclick="Reader.prevPage()">Önceki</button>
-                <button class="btn btn-ghost" onclick="Reader.nextPage()">Sonraki</button>
+            <div id="library-list" class="flex-col gap-4" style="padding-bottom:20px"></div>
+        </div>
+
+        <div id="view-reader" class="view" style="background: var(--surface-1); z-index: 60;">
+            <div class="flex justify-between items-center" style="position:sticky; top:-20px; background:var(--surface-1); padding-bottom:10px; border-bottom:1px solid var(--border); margin-bottom:20px;">
+                <button class="btn btn-ghost" onclick="Router.go('library')">
+                    <svg class="icon"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                </button>
+                <div class="flex-col items-center">
+                    <span class="bold text-sm" id="r-title">Book Title</span>
+                    <span class="text-xs" id="r-progress">Page 1/1</span>
+                </div>
+                <button class="btn btn-ghost" onclick="Reader.adjustFont()">
+                    <svg class="icon"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+                </button>
+            </div>
+
+            <div id="reader-canvas" class="reader-page"></div>
+
+            <div class="flex justify-between items-center" style="margin-top:30px; padding-top:20px; border-top:1px solid var(--border);">
+                <button class="btn btn-secondary" onclick="Reader.prevPage()">Önceki</button>
+                <button class="btn btn-secondary" onclick="Reader.nextPage()">Sonraki</button>
             </div>
         </div>
 
-    </div>
+        <div id="view-cards" class="view">
+            <div class="flex gap-2" style="margin-bottom:15px">
+                <input type="text" class="input" placeholder="Kart ara..." id="search-input">
+            </div>
+            <div id="cards-container" class="grid-cards"></div>
+        </div>
+
+    </main>
 
     <nav id="bottom-nav">
-        <button class="nav-item active" onclick="Router.go('dashboard')" id="nav-dashboard">
-            <svg class="icon"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <button class="nav-btn active" data-target="home" onclick="Router.go('home')">
+            <svg class="icon"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span>Ana Sayfa</span>
         </button>
-        <button class="nav-item" onclick="Router.go('library')" id="nav-library">
-            <svg class="icon"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        <button class="nav-btn" data-target="library" onclick="Router.go('library')">
+            <svg class="icon"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
             <span>Kütüphane</span>
         </button>
-        <button class="nav-item" onclick="Router.go('cards')" id="nav-cards">
-            <svg class="icon"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        <button class="nav-btn" data-target="cards" onclick="Router.go('cards')">
+            <svg class="icon"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
             <span>Kartlar</span>
         </button>
     </nav>
 
-    <div class="sheet-backdrop" id="sheet-backdrop"></div>
-    <div class="bottom-sheet" id="dict-sheet">
-        <div class="sheet-handle"></div>
-        <div class="flex center" style="justify-content:space-between; margin-bottom:1rem">
-            <h2 id="sheet-term" class="text-primary font-bold" style="font-size:2rem">Word</h2>
+    <div class="backdrop" id="backdrop"></div>
+    <div class="sheet" id="word-sheet">
+        <div class="drag-handle"></div>
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <span class="text-xs bold" style="color:var(--primary)" id="ws-lang">EN</span>
+                <h2 class="h1" id="ws-term">Word</h2>
+            </div>
             <div class="flex gap-2">
-                <button class="btn btn-icon btn-ghost" onclick="TTS.speak(document.getElementById('sheet-term').textContent)">
-                    <svg class="icon"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                <button class="btn btn-ghost btn-icon" onclick="TTS.speak(document.getElementById('ws-term').textContent)">
+                    <svg class="icon"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
                 </button>
-                <a id="sheet-link" href="#" target="_blank" class="btn btn-icon btn-ghost">
-                    <svg class="icon"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                </a>
             </div>
         </div>
         
         <div class="input-group">
             <label class="label">Anlamı</label>
-            <input type="text" id="sheet-meaning" class="input" placeholder="Çevirisi nedir?">
+            <input type="text" id="ws-meaning" class="input" placeholder="Türkçesi nedir?">
         </div>
         <div class="input-group">
-            <label class="label">Örnek Cümle</label>
-            <textarea id="sheet-context" class="textarea" rows="2"></textarea>
+            <label class="label">Bağlam / Cümle</label>
+            <textarea id="ws-context" class="textarea" rows="3"></textarea>
         </div>
-        <button class="btn btn-primary w-full" onclick="App.saveCardFromSheet()">Karta Ekle</button>
+        
+        <div class="flex gap-2">
+            <a id="ws-gtranslate" href="#" target="_blank" class="btn btn-secondary flex-1">Google Çeviri</a>
+            <button class="btn btn-primary flex-1" onclick="App.saveCard()">Karta Ekle</button>
+        </div>
     </div>
 
-    <div class="quiz-overlay" id="quiz-overlay">
-        <div id="app-header" style="background:transparent; border:none">
-            <div class="brand">Quiz Modu</div>
-            <button class="btn btn-icon btn-ghost" onclick="Quiz.close()">
-                <svg class="icon"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    <div class="sheet" id="book-sheet" style="height:90vh">
+        <div class="drag-handle"></div>
+        <h2 class="h2" style="margin-bottom:20px">Yeni Metin Ekle</h2>
+        <div class="input-group">
+            <label class="label">Başlık</label>
+            <input type="text" id="nb-title" class="input" placeholder="Kitap veya Makale Başlığı">
+        </div>
+        <div class="input-group">
+            <label class="label">Dil</label>
+            <select id="nb-lang" class="select">
+                <option value="EN">İngilizce</option>
+                <option value="RU">Rusça</option>
+                <option value="DE">Almanca</option>
+                <option value="FR">Fransızca</option>
+            </select>
+        </div>
+        <div class="input-group" style="flex:1">
+            <label class="label">İçerik</label>
+            <textarea id="nb-content" class="textarea" style="height:200px" placeholder="Metni buraya yapıştırın..."></textarea>
+        </div>
+        <button class="btn btn-primary w-full" onclick="App.saveBook()">Kütüphaneye Ekle</button>
+    </div>
+
+    <div class="quiz-overlay" id="quiz-view">
+        <div class="flex justify-between items-center p-4">
+            <div class="bold">Quiz Modu</div>
+            <button class="btn btn-ghost btn-icon" onclick="Quiz.stop()">
+                <svg class="icon"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
         </div>
-        <div class="quiz-area">
-            <div class="text-muted font-bold uppercase mb-4" id="q-lang">EN</div>
-            <div class="q-term" id="q-word">Word</div>
-            <div class="q-options" id="q-options"></div>
-        </div>
+        
+        <div id="quiz-content" class="quiz-card-display">
+            </div>
     </div>
-    
-    <div class="sheet-backdrop" id="modal-backdrop"></div>
-    <div class="bottom-sheet" id="modal-container" style="border-radius: 16px;">
-        </div>
 
-    <div class="toast" id="toast">Bildirim Mesajı</div>
+    <div class="toast" id="toast">Bildirim</div>
 
     <script>
     /**
-     * ==========================================
-     * VOCABMASTER PROFESSIONAL ARCHITECTURE
-     * ==========================================
+     * =========================================================
+     * LINGOMASTER CORE ENGINE (Enterprise Pattern)
+     * =========================================================
      */
 
-    // --- MODULE: UTILS ---
+    // --- UTILS ---
     const Utils = {
         uuid: () => Date.now().toString(36) + Math.random().toString(36).substr(2),
-        now: () => Date.now(),
-        clean: (s) => (s || '').toString().trim(),
-        el: (id) => document.getElementById(id),
+        el: id => document.getElementById(id),
         toast: (msg) => {
             const t = Utils.el('toast');
-            t.textContent = msg;
-            t.classList.add('visible');
+            t.textContent = msg; t.classList.add('visible');
             setTimeout(() => t.classList.remove('visible'), 3000);
         }
     };
 
-    // --- MODULE: DATA STORE (LOCALSTORAGE WRAPPER) ---
-    class Store {
-        constructor() {
-            this.db = {
-                cards: JSON.parse(localStorage.getItem('vm_cards') || '[]'),
-                books: JSON.parse(localStorage.getItem('vm_books') || '[]'),
-                activity: JSON.parse(localStorage.getItem('vm_activity') || '{}'),
-                settings: JSON.parse(localStorage.getItem('vm_settings') || '{"theme":"dark", "fontSize":19}')
-            };
-            this.defaults();
-        }
-
-        defaults() {
-            if (this.db.books.length === 0) {
-                this.db.books.push({
-                    id: 'demo1', title: 'Sherlock Holmes', lang: 'EN', page: 0,
-                    content: "To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler."
+    // --- DATA STORE (State Management) ---
+    const Store = {
+        data: {
+            cards: JSON.parse(localStorage.getItem('lm_cards') || '[]'),
+            books: JSON.parse(localStorage.getItem('lm_books') || '[]'),
+            activity: JSON.parse(localStorage.getItem('lm_activity') || '{}'),
+            settings: JSON.parse(localStorage.getItem('lm_settings') || '{"theme":"dark", "fontSize":19}')
+        },
+        save() {
+            localStorage.setItem('lm_cards', JSON.stringify(this.data.cards));
+            localStorage.setItem('lm_books', JSON.stringify(this.data.books));
+            localStorage.setItem('lm_activity', JSON.stringify(this.data.activity));
+            localStorage.setItem('lm_settings', JSON.stringify(this.data.settings));
+        },
+        logActivity() {
+            const k = new Date().toISOString().split('T')[0];
+            this.data.activity[k] = (this.data.activity[k] || 0) + 1;
+            this.save();
+        },
+        seed() {
+            if (this.data.books.length === 0) {
+                this.data.books.push({
+                    id: 'b1', title: 'Sherlock Holmes (Demo)', lang: 'EN', page: 0,
+                    content: `To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind. He was, I take it, the most perfect reasoning and observing machine that the world has seen, but as a lover he would have placed himself in a false position.`
+                });
+                this.data.books.push({
+                    id: 'b2', title: 'Толстый и тонкий (Chekhov)', lang: 'RU', page: 0,
+                    content: `На вокзале Николаевской железной дороги встретились два приятеля: один толстый, другой тонкий. Толстый только что пообедал на вокзале, и губы его, подернутые маслом, лоснились, как спелые вишни. Пахло от него хересом и флер-д’оранжем. Тонкий же только что вышел из вагона и был навьючен чемоданами, узлами и картонками.`
                 });
                 this.save();
             }
         }
+    };
 
-        save() {
-            localStorage.setItem('vm_cards', JSON.stringify(this.db.cards));
-            localStorage.setItem('vm_books', JSON.stringify(this.db.books));
-            localStorage.setItem('vm_activity', JSON.stringify(this.db.activity));
-            localStorage.setItem('vm_settings', JSON.stringify(this.db.settings));
-        }
-
-        addCard(card) { this.db.cards.push(card); this.save(); }
-        removeCard(id) { this.db.cards = this.db.cards.filter(c => c.id !== id); this.save(); }
-        addBook(book) { this.db.books.push(book); this.save(); }
-        removeBook(id) { this.db.books = this.db.books.filter(b => b.id !== id); this.save(); }
-        
-        logActivity() {
-            const k = new Date().toISOString().split('T')[0];
-            this.db.activity[k] = (this.db.activity[k] || 0) + 1;
-            this.save();
-        }
-    }
-
-    const DB = new Store();
-
-    // --- MODULE: SRS ALGORITHM (SuperMemo-2) ---
-    class SRS {
-        static calculate(card, grade) {
-            // grade: 0-5 (0=blackout, 5=perfect)
-            let { interval, repetitions, efactor } = card.srs || { interval:0, repetitions:0, efactor:2.5 };
+    // --- SM-2 ALGORITHM (Spaced Repetition) ---
+    const SRS = {
+        calc(card, quality) {
+            // quality: 0-5. (3+ means passed)
+            let { interval, reps, ef } = card.srs || { interval:0, reps:0, ef:2.5 };
             
-            if (grade >= 3) {
-                if (repetitions === 0) interval = 1;
-                else if (repetitions === 1) interval = 6;
-                else interval = Math.round(interval * efactor);
+            if (quality >= 3) {
+                if (reps === 0) interval = 1;
+                else if (reps === 1) interval = 6;
+                else interval = Math.round(interval * ef);
                 
-                repetitions++;
-                efactor = efactor + (0.1 - (5 - grade) * (0.08 + (5 - grade) * 0.02));
-                if (efactor < 1.3) efactor = 1.3;
+                reps++;
+                ef = ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+                if (ef < 1.3) ef = 1.3;
             } else {
-                repetitions = 0;
-                interval = 1;
+                reps = 0; interval = 1;
             }
 
-            return {
-                due: Date.now() + (interval * 24 * 60 * 60 * 1000),
-                srs: { interval, repetitions, efactor }
-            };
-        }
-    }
-
-    // --- MODULE: ROUTER & UI ---
-    const Router = {
-        current: 'dashboard',
-        go: (view) => {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.getElementById(`view-${view}`).classList.add('active');
-            
-            // Nav update
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            const navBtn = document.getElementById(`nav-${view}`);
-            if(navBtn) navBtn.classList.add('active');
-            
-            Router.current = view;
-            if(view === 'cards') App.renderCards();
-            if(view === 'library') App.renderBooks();
-            if(view === 'dashboard') App.updateDash();
+            const nextDue = Date.now() + (interval * 24 * 60 * 60 * 1000);
+            return { srs: { interval, reps, ef }, due: nextDue };
         }
     };
 
-    // --- MODULE: READER ENGINE ---
+    // --- ROUTER ---
+    const Router = {
+        go(viewId) {
+            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+            document.getElementById(`view-${viewId}`).classList.add('active');
+            
+            // Nav update
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            const navBtn = document.querySelector(`.nav-btn[data-target="${viewId === 'reader' ? 'library' : viewId}"]`);
+            if (navBtn) navBtn.classList.add('active');
+
+            if(viewId === 'home') App.renderDash();
+            if(viewId === 'cards') App.renderCards();
+            if(viewId === 'library') App.renderLibrary();
+        }
+    };
+
+    // --- MODULE: READER ---
     const Reader = {
         activeBook: null,
-        pageSize: 600, // chars approx
-        
-        open: (id) => {
-            Reader.activeBook = DB.db.books.find(b => b.id === id);
+        pageSize: 750, // Characters per page approx
+
+        open(id) {
+            this.activeBook = Store.data.books.find(b => b.id === id);
             Router.go('reader');
-            Reader.render();
+            this.render();
         },
 
-        getPages: (text) => {
+        getPages(text) {
             const pages = [];
             let i = 0;
             while(i < text.length) {
-                let end = Math.min(i + Reader.pageSize, text.length);
+                let end = Math.min(i + this.pageSize, text.length);
                 if(end < text.length) {
                     const space = text.lastIndexOf(' ', end);
                     if(space > i) end = space;
@@ -481,49 +551,51 @@
             return pages;
         },
 
-        render: () => {
-            const b = Reader.activeBook;
-            const pages = Reader.getPages(b.content);
+        render() {
+            if(!this.activeBook) return;
+            const b = this.activeBook;
+            const pages = this.getPages(b.content);
             if(b.page >= pages.length) b.page = pages.length - 1;
-            
-            Utils.el('reader-title').textContent = b.title;
-            Utils.el('reader-page').textContent = `${b.page + 1}/${pages.length}`;
-            
-            const txt = pages[b.page];
-            const canvas = Utils.el('reader-canvas');
-            canvas.style.fontSize = DB.db.settings.fontSize + 'px';
-            canvas.innerHTML = '';
 
-            // Smart Tokenization
-            txt.split(/(\s+)/).forEach(chunk => {
-                if(chunk.trim().length > 0 && !/^[.,!?;:"«»—-]+$/.test(chunk)) {
-                    const s = document.createElement('span');
-                    s.className = 'r-word';
-                    s.textContent = chunk;
-                    s.onclick = (e) => App.openSheet(chunk, b.lang);
-                    canvas.appendChild(s);
+            Utils.el('r-title').textContent = b.title;
+            Utils.el('r-progress').textContent = `Sayfa ${b.page + 1} / ${pages.length}`;
+            
+            const canvas = Utils.el('reader-canvas');
+            canvas.innerHTML = '';
+            canvas.style.fontSize = Store.data.settings.fontSize + 'px';
+
+            // Advanced Tokenization (keep punctuation but separate)
+            const text = pages[b.page];
+            // Split by space but capture logic
+            text.split(/(\s+)/).forEach(chunk => {
+                if (chunk.trim().length > 0 && !/^[.,!?;:"()«»—-]+$/.test(chunk)) {
+                    const span = document.createElement('span');
+                    span.className = 'token';
+                    span.textContent = chunk;
+                    span.onclick = (e) => App.openWordSheet(chunk, b.lang);
+                    canvas.appendChild(span);
                 } else {
-                    const s = document.createElement('span');
-                    if(chunk.includes('.')) s.className = 'r-sentence'; // Simple styling
-                    s.textContent = chunk;
-                    canvas.appendChild(s);
+                    canvas.appendChild(document.createTextNode(chunk));
                 }
             });
         },
 
-        nextPage: () => { Reader.activeBook.page++; Reader.saveState(); Reader.render(); },
-        prevPage: () => { if(Reader.activeBook.page>0) Reader.activeBook.page--; Reader.saveState(); Reader.render(); },
-        saveState: () => { DB.save(); }
-    };
-
-    // --- MODULE: TEXT TO SPEECH ---
-    const TTS = {
-        speak: (txt, lang = 'EN') => {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(txt);
-            const map = {'EN':'en-US', 'TR':'tr-TR', 'RU':'ru-RU', 'DE':'de-DE'};
-            u.lang = map[lang] || 'en-US';
-            window.speechSynthesis.speak(u);
+        nextPage() {
+            const pgs = this.getPages(this.activeBook.content);
+            if (this.activeBook.page < pgs.length - 1) {
+                this.activeBook.page++; Store.save(); this.render();
+            }
+        },
+        prevPage() {
+            if (this.activeBook.page > 0) {
+                this.activeBook.page--; Store.save(); this.render();
+            }
+        },
+        adjustFont() {
+            let s = Store.data.settings.fontSize;
+            s = s > 24 ? 16 : s + 2;
+            Store.data.settings.fontSize = s; Store.save();
+            this.render();
         }
     };
 
@@ -532,270 +604,297 @@
         queue: [],
         current: null,
 
-        start: () => {
+        start() {
             const now = Date.now();
-            Quiz.queue = DB.db.cards.filter(c => c.due <= now);
-            if(Quiz.queue.length === 0) {
-                // Fallback: Random cards
-                Quiz.queue = [...DB.db.cards].sort(()=>Math.random()-0.5).slice(0, 10);
-                if(Quiz.queue.length === 0) return Utils.toast("Hiç kartın yok!");
+            // Prioritize DUE cards
+            this.queue = Store.data.cards.filter(c => c.due <= now);
+            
+            // If no due cards, mix some new ones or random review
+            if (this.queue.length === 0) {
+                this.queue = [...Store.data.cards].sort(() => Math.random() - 0.5).slice(0, 10);
+                if (this.queue.length === 0) return Utils.toast("Hiç kart yok!");
                 Utils.toast("Tekrar yok, rastgele pratik!");
             }
-            Utils.el('quiz-overlay').classList.add('open');
-            Quiz.next();
+            
+            Utils.el('quiz-view').classList.add('open');
+            this.next();
         },
 
-        next: () => {
-            if(Quiz.queue.length === 0) return Quiz.close();
-            Quiz.current = Quiz.queue.pop();
+        next() {
+            if (this.queue.length === 0) return this.stop();
+            this.current = this.queue.pop();
             
-            Utils.el('q-word').textContent = Quiz.current.term;
-            Utils.el('q-lang').textContent = Quiz.current.lang;
-            
-            // Generate Options
-            let opts = DB.db.cards.filter(c => c.id !== Quiz.current.id).sort(()=>Math.random()-0.5).slice(0,3);
-            opts.push(Quiz.current);
-            opts.sort(()=>Math.random()-0.5);
+            const container = Utils.el('quiz-content');
+            container.innerHTML = `
+                <div style="font-size:0.9rem; font-weight:700; color:var(--text-2); margin-bottom:10px">${this.current.lang}</div>
+                <div class="q-word">${this.current.term}</div>
+                <button class="btn btn-ghost btn-icon" onclick="TTS.speak('${this.current.term}', '${this.current.lang}')" style="margin-bottom:30px">
+                    <svg class="icon"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                </button>
+                <div id="q-choices" style="width:100%; display:flex; flex-direction:column; align-items:center; gap:10px"></div>
+            `;
 
-            const div = Utils.el('q-options');
-            div.innerHTML = '';
+            // Generate distractors
+            let opts = Store.data.cards
+                .filter(c => c.id !== this.current.id)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3);
+            opts.push(this.current);
+            opts.sort(() => Math.random() - 0.5);
+
+            const choicesDiv = Utils.el('q-choices');
             opts.forEach(o => {
                 const btn = document.createElement('button');
-                btn.className = 'q-btn';
+                btn.className = 'q-btn-option';
                 btn.textContent = o.meaning;
-                btn.onclick = () => Quiz.answer(o.id === Quiz.current.id, btn);
-                div.appendChild(btn);
+                btn.onclick = () => this.answer(o.id === this.current.id, btn);
+                choicesDiv.appendChild(btn);
             });
         },
 
-        answer: (correct, btn) => {
-            const card = Quiz.current;
-            if(correct) {
-                btn.classList.add('correct');
-                const res = SRS.calculate(card, 4); // Grade 4 for good
-                Object.assign(card, res);
-                DB.logActivity();
+        answer(isCorrect, btnElement) {
+            // Visual feedback
+            const allBtns = document.querySelectorAll('.q-btn-option');
+            allBtns.forEach(b => b.disabled = true);
+            
+            if (isCorrect) {
+                btnElement.classList.add('correct');
+                const update = SRS.calc(this.current, 4); // Grade 4
+                Object.assign(this.current, update);
+                Store.logActivity();
             } else {
-                btn.classList.add('wrong');
-                const res = SRS.calculate(card, 1); // Grade 1 for wrong
-                Object.assign(card, res);
+                btnElement.classList.add('wrong');
+                // Highlight correct one
+                allBtns.forEach(b => {
+                    if (b.textContent === this.current.meaning) b.classList.add('correct');
+                });
+                const update = SRS.calc(this.current, 1); // Grade 1
+                Object.assign(this.current, update);
             }
-            DB.save();
-            setTimeout(Quiz.next, 800);
+            Store.save();
+            setTimeout(() => this.next(), 1200);
         },
 
-        close: () => {
-            Utils.el('quiz-overlay').classList.remove('open');
-            App.updateDash();
+        stop() {
+            Utils.el('quiz-view').classList.remove('open');
+            App.renderDash();
         }
     };
 
-    // --- MAIN APP CONTROLLER ---
+    // --- MODULE: TTS (Text To Speech) ---
+    const TTS = {
+        speak(txt, lang='EN') {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(txt);
+            const map = {'EN':'en-US', 'RU':'ru-RU', 'DE':'de-DE', 'FR':'fr-FR', 'TR':'tr-TR'};
+            u.lang = map[lang] || 'en-US';
+            u.rate = 0.9;
+            window.speechSynthesis.speak(u);
+        }
+    };
+
+    // --- MAIN CONTROLLER ---
     const App = {
-        init: () => {
-            App.applyTheme(DB.db.settings.theme);
-            App.updateDash();
+        init() {
+            Store.seed(); // Load defaults if empty
             
-            // Sheet Backdrop Close
-            Utils.el('sheet-backdrop').onclick = App.closeSheet;
-            Utils.el('modal-backdrop').onclick = App.closeModal;
+            // Render Heatmap on startup
+            this.renderDash();
             
-            // Search Listener
-            Utils.el('card-search').addEventListener('input', (e) => App.renderCards(e.target.value));
+            // Theme Init
+            document.body.setAttribute('data-theme', Store.data.settings.theme);
 
-            // Theme Toggle
-            Utils.el('btn-theme').onclick = () => {
-                const n = DB.db.settings.theme === 'dark' ? 'light' : 'dark';
-                DB.db.settings.theme = n;
-                DB.save();
-                App.applyTheme(n);
-            };
-
-            // Settings Modal
-            Utils.el('btn-settings').onclick = () => {
-                App.showModal(`
-                    <h2 class="font-bold mb-4">Veri Yönetimi</h2>
-                    <button class="btn btn-primary w-full mb-2" onclick="App.exportData()">Yedek İndir (JSON)</button>
-                    <button class="btn btn-ghost w-full" onclick="document.getElementById('import-file').click()">Yedek Yükle</button>
-                    <input type="file" id="import-file" hidden onchange="App.importData(this)">
-                `);
-            };
+            // Global Listeners
+            Utils.el('btn-theme').onclick = this.toggleTheme;
+            Utils.el('backdrop').onclick = this.closeSheets;
+            
+            // Settings -> Import/Export could go here
+            Utils.el('btn-settings').onclick = () => Utils.toast("Ayarlar yakında...");
+            
+            // Search
+            Utils.el('search-input').addEventListener('input', (e) => this.renderCards(e.target.value));
         },
 
-        applyTheme: (t) => document.body.setAttribute('data-theme', t),
+        toggleTheme() {
+            const n = Store.data.settings.theme === 'dark' ? 'light' : 'dark';
+            Store.data.settings.theme = n;
+            Store.save();
+            document.body.setAttribute('data-theme', n);
+        },
 
-        updateDash: () => {
-            Utils.el('stat-total').textContent = DB.db.cards.length;
-            Utils.el('stat-due').textContent = DB.db.cards.filter(c => c.due <= Date.now()).length;
+        // --- DASHBOARD UI ---
+        renderDash() {
+            Utils.el('dash-total').textContent = Store.data.cards.length;
+            const dueCount = Store.data.cards.filter(c => c.due <= Date.now()).length;
+            Utils.el('dash-due').textContent = dueCount;
             
-            // Heatmap Render
-            const hm = Utils.el('heatmap-container');
+            // Heatmap logic
+            const hm = Utils.el('heatmap');
             hm.innerHTML = '';
             const today = new Date();
-            for(let i=6; i>=0; i--){
+            let streak = 0;
+            let broken = false;
+
+            for(let i=6; i>=0; i--) {
                 const d = new Date(today);
                 d.setDate(d.getDate() - i);
                 const k = d.toISOString().split('T')[0];
-                const count = DB.db.activity[k] || 0;
-                const lvl = count > 10 ? 3 : (count > 5 ? 2 : (count > 0 ? 1 : 0));
+                const count = Store.data.activity[k] || 0;
                 
-                const day = document.createElement('div');
-                day.className = 'hm-day';
-                day.setAttribute('data-level', lvl);
-                day.innerHTML = `<span class="hm-label">${['Pz','Pt','Sa','Ça','Pe','Cu','Ct'][d.getDay()]}</span>`;
-                hm.appendChild(day);
+                // Streak calc
+                if (count > 0 && !broken) streak++;
+                else if (i !== 0) broken = true;
+
+                const lvl = count > 10 ? 3 : (count > 3 ? 2 : (count > 0 ? 1 : 0));
+                const div = document.createElement('div');
+                div.className = 'hm-cell';
+                div.setAttribute('data-level', lvl);
+                div.textContent = ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'][d.getDay()];
+                hm.appendChild(div);
+            }
+            Utils.el('dash-streak').textContent = `${streak} Gün`;
+        },
+
+        // --- LIBRARY UI ---
+        renderLibrary() {
+            const list = Utils.el('library-list');
+            list.innerHTML = '';
+            Store.data.books.forEach(b => {
+                const div = document.createElement('div');
+                div.className = 'card flex items-center justify-between';
+                div.style.marginBottom = '12px';
+                div.onclick = (e) => {
+                    if(!e.target.closest('.btn-icon')) Reader.open(b.id);
+                };
+                
+                div.innerHTML = `
+                    <div style="flex:1">
+                        <div class="bold" style="font-size:1.1rem; margin-bottom:4px">${b.title}</div>
+                        <div class="flex items-center gap-2">
+                            <span class="fc-badge">${b.lang}</span>
+                            <span class="text-xs">Sayfa ${b.page + 1}</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-ghost btn-icon" onclick="App.deleteBook('${b.id}')">
+                        <svg class="icon-sm" style="color:var(--danger)"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                `;
+                list.appendChild(div);
+            });
+        },
+
+        openAddBook() {
+            Utils.el('backdrop').classList.add('open');
+            Utils.el('book-sheet').classList.add('open');
+        },
+
+        saveBook() {
+            const t = Utils.el('nb-title').value;
+            const c = Utils.el('nb-content').value;
+            const l = Utils.el('nb-lang').value;
+            
+            if (!t || !c) return Utils.toast("Eksik bilgi!");
+            
+            Store.data.books.push({
+                id: Utils.uuid(), title: t, content: c, lang: l, page: 0
+            });
+            Store.save();
+            this.closeSheets();
+            this.renderLibrary();
+            Utils.toast("Kitap eklendi.");
+        },
+
+        deleteBook(id) {
+            if(confirm("Silmek istiyor musun?")) {
+                Store.data.books = Store.data.books.filter(b => b.id !== id);
+                Store.save(); this.renderLibrary();
             }
         },
 
-        renderBooks: () => {
-            const list = Utils.el('book-list');
-            list.innerHTML = '';
-            DB.db.books.forEach(b => {
-                const el = document.createElement('div');
-                el.className = 'book-card';
-                el.innerHTML = `
-                    <div onclick="Reader.open('${b.id}')" style="flex:1; cursor:pointer">
-                        <div class="font-bold">${b.title}</div>
-                        <div class="text-xs text-muted mt-1">
-                            <span class="lang-badge">${b.lang}</span> Sayfa ${b.page+1}
+        // --- CARDS UI ---
+        renderCards(query = '') {
+            const cont = Utils.el('cards-container');
+            cont.innerHTML = '';
+            
+            const filtered = Store.data.cards.filter(c => 
+                (c.term + c.meaning).toLowerCase().includes(query.toLowerCase())
+            );
+
+            filtered.forEach(c => {
+                const isDue = c.due <= Date.now();
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="fc-badge" style="background:${isDue ? 'var(--warning)' : 'var(--surface-3)'}; color:${isDue?'#000':'inherit'}">${isDue ? 'DUE' : 'OK'}</span>
+                        <div class="flex gap-2">
+                            <button class="btn btn-ghost btn-icon" style="padding:4px" onclick="TTS.speak('${c.term}', '${c.lang}')">
+                                <svg class="icon-sm"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>
+                            </button>
+                            <button class="btn btn-ghost btn-icon" style="padding:4px" onclick="App.deleteCard('${c.id}')">✕</button>
                         </div>
                     </div>
-                    <button class="btn btn-icon btn-ghost text-danger" onclick="App.deleteBook('${b.id}')">
-                        <svg class="icon"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                    </button>
+                    <div class="fc-front">${c.term}</div>
+                    <div class="fc-back">${c.meaning}</div>
                 `;
-                list.appendChild(el);
+                cont.appendChild(div);
             });
         },
 
-        renderCards: (q = '') => {
-            const grid = Utils.el('card-list');
-            grid.innerHTML = '';
-            const filtered = DB.db.cards.filter(c => (c.term + c.meaning).toLowerCase().includes(q.toLowerCase()));
+        deleteCard(id) {
+            if(confirm("Kartı sil?")) {
+                Store.data.cards = Store.data.cards.filter(c => c.id !== id);
+                Store.save(); this.renderCards(Utils.el('search-input').value);
+            }
+        },
+
+        // --- WORD SHEET LOGIC ---
+        openWordSheet(word, lang) {
+            const clean = word.replace(/[.,!?;:"()«»]/g, "");
+            // Heuristic context find (simple)
+            const txt = Utils.el('reader-canvas').textContent;
+            const idx = txt.indexOf(word);
+            const ctx = "..." + txt.substring(Math.max(0, idx-30), Math.min(txt.length, idx+40)) + "...";
+
+            Utils.el('ws-term').textContent = clean;
+            Utils.el('ws-lang').textContent = lang;
+            Utils.el('ws-meaning').value = '';
+            Utils.el('ws-context').value = ctx;
             
-            filtered.forEach(c => {
-                const el = document.createElement('div');
-                el.className = 'flashcard';
-                const isDue = c.due <= Date.now();
-                el.innerHTML = `
-                    <div class="fc-header">
-                        <span class="badge ${isDue ? 'badge-due' : 'badge-ok'}">${isDue ? 'TEKRAR' : 'OK'}</span>
-                        <button class="btn btn-icon btn-ghost" onclick="App.deleteCard('${c.id}')">✕</button>
-                    </div>
-                    <div class="fc-term">${c.term}</div>
-                    <div class="fc-meaning">${c.meaning}</div>
-                    <div class="fc-meta">
-                         <span class="badge badge-new">${c.lang}</span>
-                         <button class="btn btn-icon btn-ghost" style="margin-left:auto" onclick="TTS.speak('${c.term}','${c.lang}')">
-                            <svg class="icon-sm"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
-                         </button>
-                    </div>
-                `;
-                grid.appendChild(el);
+            // Google Translate Link
+            Utils.el('ws-gtranslate').href = `https://translate.google.com/?sl=${lang}&tl=tr&text=${clean}&op=translate`;
+
+            Utils.el('backdrop').classList.add('open');
+            Utils.el('word-sheet').classList.add('open');
+        },
+
+        saveCard() {
+            const term = Utils.el('ws-term').textContent;
+            const meaning = Utils.el('ws-meaning').value;
+            const ctx = Utils.el('ws-context').value;
+            const lang = Utils.el('ws-lang').textContent;
+
+            if(!meaning) return Utils.toast("Anlam gerekli!");
+
+            Store.data.cards.push({
+                id: Utils.uuid(), term, meaning, example: ctx, lang,
+                due: Date.now(),
+                srs: { interval: 0, reps: 0, ef: 2.5 }
             });
+            Store.save();
+            this.closeSheets();
+            Utils.toast("Kart Eklendi!");
         },
 
-        // --- SHEET & MODAL LOGIC ---
-        openSheet: (word, lang) => {
-            // Find context
-            const ctx = "..." + word + "..."; 
-            
-            Utils.el('sheet-term').textContent = word;
-            Utils.el('sheet-meaning').value = '';
-            Utils.el('sheet-context').value = ctx;
-            Utils.el('sheet-link').href = `https://translate.google.com/?sl=${lang}&tl=tr&text=${word}&op=translate`;
-            Utils.el('sheet-term').dataset.lang = lang; // Store lang
-
-            Utils.el('sheet-backdrop').classList.add('open');
-            Utils.el('dict-sheet').classList.add('open');
-        },
-        
-        closeSheet: () => {
-            Utils.el('sheet-backdrop').classList.remove('open');
-            Utils.el('dict-sheet').classList.remove('open');
+        closeSheets() {
+            Utils.el('backdrop').classList.remove('open');
+            document.querySelectorAll('.sheet').forEach(s => s.classList.remove('open'));
         },
 
-        saveCardFromSheet: () => {
-            const term = Utils.el('sheet-term').textContent;
-            const lang = Utils.el('sheet-term').dataset.lang;
-            const meaning = Utils.el('sheet-meaning').value;
-            
-            if(!meaning) return Utils.toast("Anlamını yazmalısın.");
-            
-            DB.addCard({
-                id: Utils.uuid(), term, meaning, lang,
-                due: Date.now(), srs: { interval:0, repetitions:0, efactor:2.5 },
-                created: Date.now()
-            });
-            App.closeSheet();
-            Utils.toast("Kart Eklendi");
-        },
-
-        // --- BOOK MANAGEMENT ---
-        showAddBookModal: () => {
-            App.showModal(`
-                <h2 class="font-bold mb-4">Yeni Kitap Ekle</h2>
-                <input class="input mb-2" id="nb-title" placeholder="Kitap Başlığı">
-                <select class="select mb-2" id="nb-lang"><option value="EN">İngilizce</option><option value="RU">Rusça</option></select>
-                <textarea class="textarea mb-4" id="nb-content" rows="6" placeholder="Metni buraya yapıştır..."></textarea>
-                <button class="btn btn-primary w-full" onclick="App.addBookAction()">Ekle</button>
-            `);
-        },
-
-        addBookAction: () => {
-            const t = Utils.el('nb-title').value;
-            const c = Utils.el('nb-content').value;
-            if(!t || !c) return Utils.toast("Alanları doldur.");
-            DB.addBook({ id: Utils.uuid(), title: t, content: c, lang: Utils.el('nb-lang').value, page: 0 });
-            App.closeModal();
-            App.renderBooks();
-            Utils.toast("Kitap Eklendi");
-        },
-
-        deleteBook: (id) => { if(confirm("Sil?")) { DB.removeBook(id); App.renderBooks(); } },
-        deleteCard: (id) => { if(confirm("Sil?")) { DB.removeCard(id); App.renderCards(Utils.el('card-search').value); } },
-
-        // --- MODAL UTILS ---
-        showModal: (html) => {
-            const m = Utils.el('modal-container');
-            m.innerHTML = `<div class="sheet-handle"></div>` + html;
-            Utils.el('modal-backdrop').classList.add('open');
-            m.classList.add('open');
-        },
-        closeModal: () => {
-            Utils.el('modal-backdrop').classList.remove('open');
-            Utils.el('modal-container').classList.remove('open');
-        },
-
-        // --- IMPORT/EXPORT ---
-        exportData: () => {
-            const d = JSON.stringify(DB.db);
-            const a = document.createElement('a');
-            a.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(d);
-            a.download = 'vocab_backup.json';
-            a.click();
-        },
-        importData: (input) => {
-            const f = input.files[0];
-            const r = new FileReader();
-            r.onload = e => {
-                try {
-                    const d = JSON.parse(e.target.result);
-                    DB.db = d; DB.save(); App.closeModal(); Utils.toast("Veriler Yüklendi!"); window.location.reload();
-                } catch(err) { Utils.toast("Hatalı Dosya"); }
-            };
-            r.readAsText(f);
-        }
+        startQuiz() { Quiz.start(); }
     };
 
-    // --- QUIZ PROXY ---
-    window.App = App;
-    window.Router = Router;
-    window.Reader = Reader;
-    window.Quiz = Quiz;
-    window.TTS = TTS;
-
-    // BOOT
+    // --- BOOTSTRAP ---
     App.init();
 
     </script>
