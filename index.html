@@ -1,1712 +1,873 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>LingoMaster</title>
 
-  <!-- PWA -->
-  <meta name="theme-color" content="#0f172a" />
+  <meta name="theme-color" content="#0f172a" id="meta-theme" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="LingoMaster" />
   <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="icon" href="./icons/icon-192.png" />
-  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
 
   <style>
-    /* =========================================================
-       1) CORE VARIABLES & THEME ENGINE
-       ========================================================= */
-    :root {
-      --primary: #6366f1;
-      --primary-dark: #4f46e5;
-      --secondary: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
+    :root{
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --nav-h: 70px;
+      --header-h: 60px;
+      --radius: 18px;
 
-      --surface-1: #0f172a;
-      --surface-2: #1e293b;
-      --surface-3: #334155;
-
-      --text-1: #f8fafc;
-      --text-2: #94a3b8;
-      --border: #475569;
-
-      --header-height: 60px;
-      --nav-height: 72px;
-
-      --radius-sm: 10px;
-      --radius-md: 16px;
-      --radius-lg: 24px;
-
-      --font-ui: -apple-system, BlinkMacSystemFont, "Inter", Roboto, Arial, sans-serif;
-      --font-reader: "Merriweather", "Georgia", serif;
-
-      --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-
-      /* Settings defaults (override via JS) */
-      --reader-font-size: 19px;
-      --reader-page-size: 780; /* chars approx */
+      --bg:#0b1220;
+      --card:#111b2d;
+      --card2:#0f172a;
+      --border:#25324a;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --primary:#6366f1;
+      --danger:#ef4444;
+      --warn:#f59e0b;
     }
+
     [data-theme="light"]{
-      --surface-1: #f8fafc;
-      --surface-2: #ffffff;
-      --surface-3: #e2e8f0;
-      --text-1: #0f172a;
-      --text-2: #64748b;
-      --border: #cbd5e1;
+      --bg:#f8fafc;
+      --card:#ffffff;
+      --card2:#f1f5f9;
+      --border:#cbd5e1;
+      --text:#0f172a;
+      --muted:#64748b;
+      --primary:#4f46e5;
     }
 
-    /* =========================================================
-       2) BASE
-       ========================================================= */
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      background: var(--surface-1);
-      color: var(--text-1);
-      font-family: var(--font-ui);
-      overflow: hidden; /* app-like */
-      display: flex;
-      flex-direction: column;
+    [data-theme="ocean"]{
+      --bg:#06131f;
+      --card:#0b2236;
+      --card2:#0a1b2a;
+      --border:#245070;
+      --text:#e6f2ff;
+      --muted:#9bb7d3;
+      --primary:#38bdf8;
     }
 
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 4px; }
-
-    .icon { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-    .icon-sm { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-
-    .h1 { font-size: 2rem; font-weight: 900; letter-spacing: -0.05rem; }
-    .h2 { font-size: 1.5rem; font-weight: 800; }
-    .h3 { font-size: 1.05rem; font-weight: 700; }
-    .text-sm { font-size: 0.9rem; color: var(--text-2); }
-    .text-xs { font-size: 0.75rem; color: var(--text-2); }
-    .bold { font-weight: 800; }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-
-    .flex { display: flex; }
-    .flex-col { display: flex; flex-direction: column; }
-    .items-center { align-items: center; }
-    .justify-between { justify-content: space-between; }
-    .justify-center { justify-content: center; }
-    .gap-1 { gap: 0.25rem; }
-    .gap-2 { gap: 0.5rem; }
-    .gap-3 { gap: 0.75rem; }
-    .gap-4 { gap: 1rem; }
-    .w-full { width: 100%; }
-    .mt-2 { margin-top: 0.5rem; }
-    .mt-3 { margin-top: 0.75rem; }
-    .mt-4 { margin-top: 1rem; }
-    .mb-2 { margin-bottom: 0.5rem; }
-    .mb-3 { margin-bottom: 0.75rem; }
-    .mb-4 { margin-bottom: 1rem; }
-    .p-4 { padding: 1rem; }
-
-    /* =========================================================
-       3) UI COMPONENTS
-       ========================================================= */
-    .btn{
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 16px;
-      border-radius: 14px;
-      border: 1px solid transparent;
-      font-weight: 800;
-      cursor: pointer;
-      user-select: none;
-      transition: transform .1s, opacity .2s, background .2s, border-color .2s;
-      font-size: 0.95rem;
-    }
-    .btn:active { transform: scale(0.97); opacity: 0.92; }
-    .btn-primary{ background: var(--primary); color: #fff; box-shadow: 0 6px 18px rgba(99,102,241,0.25); }
-    .btn-secondary{ background: var(--surface-3); color: var(--text-1); border-color: rgba(255,255,255,0.06); }
-    .btn-danger{ background: var(--danger); color: #fff; }
-    .btn-ghost{ background: transparent; color: var(--text-2); border-color: rgba(255,255,255,0.07); }
-    [data-theme="light"] .btn-ghost{ border-color: rgba(15,23,42,0.08); }
-
-    .btn-icon{ padding: 10px; border-radius: 999px; }
-
-    .input-group{ margin-bottom: 14px; }
-    .label{ display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-2); font-weight: 700; }
-    .input, .textarea, .select{
-      width: 100%;
-      padding: 14px;
-      border-radius: 14px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      color: var(--text-1);
-      outline: none;
-      font-size: 1rem;
-      transition: border-color 0.2s;
-    }
-    .input:focus, .textarea:focus, .select:focus{ border-color: var(--primary); }
-    .textarea{ resize: vertical; min-height: 90px; }
-
-    .chip{
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.03);
-      padding: 8px 10px;
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: 0.8rem;
-      color: var(--text-2);
-      user-select: none;
+    [data-theme="emerald"]{
+      --bg:#071a14;
+      --card:#0b2a21;
+      --card2:#082018;
+      --border:#1f6b52;
+      --text:#ecfdf5;
+      --muted:#9fe3c7;
+      --primary:#10b981;
     }
 
-    .card{
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 16px;
-      position: relative;
-      overflow: hidden;
+    [data-theme="sunset"]{
+      --bg:#1b1020;
+      --card:#2a1731;
+      --card2:#1f1225;
+      --border:#6b2a59;
+      --text:#fff7ed;
+      --muted:#fbcfe8;
+      --primary:#fb7185;
     }
 
-    .divider{ height: 1px; background: var(--border); opacity: 0.7; margin: 14px 0; }
+    [data-theme="rose"]{
+      --bg:#120a10;
+      --card:#1f0f1b;
+      --card2:#160b13;
+      --border:#7f1d1d;
+      --text:#fff1f2;
+      --muted:#fda4af;
+      --primary:#f43f5e;
+    }
 
-    /* =========================================================
-       4) APP SHELL
-       ========================================================= */
-    #app-header{
-      height: var(--header-height);
-      background: rgba(15, 23, 42, 0.8);
+    *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,system-ui,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      height:100vh;
+      overflow:hidden;
+    }
+
+    header{
+      position:sticky; top:0; z-index:20;
+      height:calc(var(--header-h) + var(--safe-top));
+      padding-top:var(--safe-top);
+      display:flex; align-items:center; justify-content:space-between;
+      padding-left:16px; padding-right:16px;
+      background:color-mix(in srgb, var(--bg) 75%, transparent);
       backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 40;
+      border-bottom:1px solid var(--border);
     }
-    [data-theme="light"] #app-header{ background: rgba(255,255,255,0.85); }
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800;}
+    .logo{
+      width:18px; height:18px; border:2px solid var(--primary);
+      border-radius:6px; transform:rotate(15deg);
+    }
+    .iconBtn{
+      width:44px; height:44px; border-radius:14px;
+      background:transparent; border:1px solid var(--border);
+      color:var(--muted);
+      display:grid; place-items:center;
+      cursor:pointer;
+    }
+    .iconBtn:active{transform:scale(.98); opacity:.9;}
 
-    #main-viewport{ flex: 1; position: relative; overflow: hidden; }
+    #viewport{position:relative; height:calc(100vh - (var(--header-h) + var(--safe-top)));}
 
     .view{
-      position: absolute;
-      inset: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding: 18px;
-      padding-bottom: 110px; /* nav */
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(10px);
-      transition: opacity .28s var(--ease), transform .28s var(--ease);
+      position:absolute; inset:0;
+      padding:18px;
+      padding-bottom:calc(var(--nav-h) + var(--safe-bottom) + 18px);
+      overflow:auto;
+      opacity:0; pointer-events:none;
+      transform:translateY(8px);
+      transition:.25s ease;
     }
-    .view.active{
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
+    .view.active{opacity:1; pointer-events:auto; transform:none;}
 
-    #bottom-nav{
-      height: var(--nav-height);
-      background: var(--surface-2);
-      border-top: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      padding-bottom: env(safe-area-inset-bottom);
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      z-index: 50;
+    .row{display:flex; gap:12px;}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:16px;
     }
-    .nav-btn{
-      background: none;
-      border: none;
-      color: var(--text-2);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      font-size: 0.72rem;
-      font-weight: 900;
-      cursor: pointer;
-      flex: 1;
-      padding: 8px 0;
-    }
-    .nav-btn.active{ color: var(--primary); }
-    .nav-btn.active svg{ stroke: var(--primary); }
+    .muted{color:var(--muted);}
+    .big{font-size:34px; font-weight:900;}
+    .h2{font-size:20px; font-weight:800; margin:0 0 12px 0;}
+    .secTitle{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:800; margin:4px 0 10px;}
 
-    /* =========================================================
-       5) MODULES
-       ========================================================= */
+    .btn{
+      border:0; cursor:pointer;
+      border-radius:16px;
+      padding:14px 16px;
+      font-weight:800;
+      display:flex; align-items:center; justify-content:center;
+      gap:10px;
+    }
+    .btn:active{transform:scale(.98); opacity:.92;}
+    .btnPrimary{background:var(--primary); color:white;}
+    .btnSoft{background:color-mix(in srgb, var(--card2) 100%, transparent); color:var(--text); border:1px solid var(--border);}
+    .btnDanger{background:var(--danger); color:white;}
+    .btnHalf{flex:1;}
 
-    /* Dashboard cards layout */
-    .dash-grid{
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 18px;
+    /* Bottom Nav — FIXED (yamuk durma bitti) */
+    nav{
+      position:fixed; left:0; right:0; bottom:0; z-index:30;
+      height:calc(var(--nav-h) + var(--safe-bottom));
+      padding-bottom:var(--safe-bottom);
+      background:var(--card2);
+      border-top:1px solid var(--border);
+      display:flex;
     }
-    .stat-num{ font-size: 2rem; font-weight: 900; letter-spacing: -0.03rem; }
-    .stat-warn{ color: var(--warning); }
-
-    /* Heatmap */
-    .heatmap-grid{ display: flex; gap: 6px; justify-content: space-between; margin-top: 10px; }
-    .hm-cell{
-      flex: 1;
-      aspect-ratio: 1;
-      background: var(--surface-3);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.65rem;
-      color: var(--text-2);
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-    [data-theme="light"] .hm-cell{ border: 1px solid rgba(15,23,42,0.08); }
-    .hm-cell[data-level="1"]{ background: rgba(99,102,241,0.35); color: #fff; }
-    .hm-cell[data-level="2"]{ background: rgba(99,102,241,0.65); color: #fff; }
-    .hm-cell[data-level="3"]{ background: rgba(99,102,241,1); color: #fff; }
-
-    /* Reader */
-    .reader-page{
-      max-width: 760px;
-      margin: 0 auto;
-      font-family: var(--font-reader);
-      font-size: var(--reader-font-size);
-      line-height: 1.8;
-      text-align: justify;
-      color: var(--text-1);
-    }
-    .token{
-      cursor: pointer;
-      border-radius: 6px;
-      padding: 2px 1px;
-      transition: background 0.08s;
-    }
-    .token:active{ background: rgba(99,102,241,0.25); }
-    .token.saved{ background: rgba(253,224,71,0.22); }
-    .token.saved:active{ background: rgba(253,224,71,0.35); }
-
-    /* Library list */
-    .book-row{ display:flex; align-items:center; justify-content:space-between; gap: 10px; }
-    .badge{
-      font-size: 0.72rem;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: var(--surface-3);
-      color: var(--text-1);
-      font-weight: 900;
-      letter-spacing: 0.02rem;
-      border: 1px solid rgba(255,255,255,0.06);
-      user-select: none;
-    }
-    .badge.warn{ background: rgba(245,158,11,0.18); color: var(--warning); border-color: rgba(245,158,11,0.35); }
-    .badge.ok{ background: rgba(16,185,129,0.12); color: var(--secondary); border-color: rgba(16,185,129,0.35); }
-
-    /* Cards grid */
-    .grid-cards{ display: grid; grid-template-columns: 1fr; gap: 12px; }
-    .fc-front{ font-size: 1.35rem; font-weight: 900; color: var(--primary); }
-    .fc-back{ margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); color: var(--text-2); font-size: 1.05rem; }
-    .fc-meta{ margin-top: 10px; display:flex; flex-wrap:wrap; gap: 8px; align-items:center; }
-    .tiny{ font-size: 0.78rem; color: var(--text-2); font-weight: 800; }
-
-    /* Bottom sheet */
-    .backdrop{
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 80;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .25s;
-    }
-    .backdrop.open{ opacity: 1; pointer-events: auto; }
-    .sheet{
-      position: fixed;
-      left: 0; right: 0; bottom: 0;
-      background: var(--surface-2);
-      border-radius: 24px 24px 0 0;
-      padding: 22px;
-      padding-bottom: calc(26px + env(safe-area-inset-bottom));
-      z-index: 90;
-      transform: translateY(110%);
-      transition: transform .28s var(--ease);
-      max-height: 88vh;
-      overflow-y: auto;
-      border-top: 1px solid rgba(255,255,255,0.06);
-    }
-    [data-theme="light"] .sheet{ border-top: 1px solid rgba(15,23,42,0.08); }
-    .sheet.open{ transform: translateY(0); }
-    .drag-handle{
-      width: 44px; height: 6px;
-      background: var(--border);
-      border-radius: 999px;
-      margin: 0 auto 14px auto;
-      opacity: 0.9;
-    }
-
-    /* Review overlay */
-    .review-overlay{
-      position: fixed;
-      inset: 0;
-      background: var(--surface-1);
-      z-index: 120;
-      display: flex;
-      flex-direction: column;
-      transform: translateX(110%);
-      transition: transform .28s var(--ease);
-    }
-    .review-overlay.open{ transform: translateX(0); }
-    .review-card{
-      flex: 1;
+    .navBtn{
+      flex:1;
+      background:transparent;
+      border:0;
+      color:var(--muted);
       display:flex;
       flex-direction:column;
       align-items:center;
       justify-content:center;
-      padding: 20px;
-      text-align: center;
+      gap:6px;
+      font-weight:900;
+      font-size:12px;
+      padding:10px 0;
+      line-height:1;
+      cursor:pointer;
     }
-    .review-term{ font-size: 3rem; font-weight: 950; letter-spacing: -0.06rem; margin-bottom: 10px; }
-    .review-meaning{
-      margin-top: 10px;
-      font-size: 1.4rem;
-      font-weight: 900;
-      color: var(--text-2);
-      max-width: 560px;
-      line-height: 1.35;
-    }
-    .review-actions{
-      padding: 14px 16px 16px 16px;
-      border-top: 1px solid var(--border);
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      background: var(--surface-2);
-    }
-    .btn-grade{
-      padding: 14px 12px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: var(--surface-3);
-      color: var(--text-1);
-      font-weight: 950;
-      cursor: pointer;
-    }
-    .btn-grade:active{ transform: scale(0.98); opacity: 0.95; }
-    .btn-grade.again{ border-color: rgba(239,68,68,0.35); background: rgba(239,68,68,0.12); color: #ffd1d1; }
-    .btn-grade.hard { border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.12); color: #ffe6bf; }
-    .btn-grade.good { border-color: rgba(99,102,241,0.35); background: rgba(99,102,241,0.12); }
-    .btn-grade.easy { border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.12); }
+    .navBtn span{display:block;}
+    .navBtn.active{color:var(--primary);}
 
-    /* Toast */
+    /* Reader */
+    .readerTop{
+      position:sticky; top:0;
+      background:var(--bg);
+      border-bottom:1px solid var(--border);
+      padding:10px 0 12px;
+      margin-bottom:14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .readerTop .titleWrap{min-width:0; text-align:center;}
+    .readerTop .title{font-weight:900; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+    .readerTop .sub{font-size:12px; color:var(--muted); font-weight:800;}
+    .reader{
+      max-width:720px; margin:0 auto;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      font-size:19px;
+      line-height:1.75;
+      text-align:justify;
+    }
+    .token{cursor:pointer; padding:2px 0; border-radius:6px;}
+    .token:active{background:color-mix(in srgb, var(--primary) 25%, transparent);}
+
+    /* Bottom Sheet */
+    .backdrop{
+      position:fixed; inset:0; z-index:40;
+      background:rgba(0,0,0,.55);
+      opacity:0; pointer-events:none;
+      transition:.2s ease;
+    }
+    .backdrop.open{opacity:1; pointer-events:auto;}
+
+    .sheet{
+      position:fixed; left:0; right:0; bottom:0; z-index:50;
+      background:var(--card);
+      border-radius:26px 26px 0 0;
+      border:1px solid var(--border);
+      transform:translateY(110%);
+      transition:.25s ease;
+      max-height:85vh;
+      overflow:auto;
+      padding:14px 16px calc(16px + var(--safe-bottom));
+    }
+    .sheet.open{transform:none;}
+    .handle{width:48px; height:5px; border-radius:99px; background:var(--border); margin:6px auto 14px;}
+    .sheetHeader{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:10px;}
+    .sheetHeader .word{font-size:34px; font-weight:950; margin:2px 0;}
+    .sheetHeader .lang{font-size:12px; font-weight:900; color:var(--primary); letter-spacing:.08em;}
+    .field{margin:10px 0;}
+    label{display:block; font-size:12px; font-weight:900; color:var(--muted); margin-bottom:6px;}
+    input, textarea, select{
+      width:100%;
+      background:var(--card2);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px;
+      color:var(--text);
+      font-size:16px;
+      outline:none;
+    }
+    textarea{min-height:92px; resize:none;}
+    .two{display:flex; gap:10px;}
+    .smallInfo{font-size:12px; color:var(--muted); font-weight:800; margin-top:6px;}
+
     .toast{
-      position: fixed;
-      top: 18px;
-      left: 50%;
-      transform: translate(-50%, -20px);
-      background: var(--text-1);
-      color: var(--surface-1);
-      padding: 10px 16px;
-      border-radius: 999px;
-      font-weight: 900;
-      font-size: 0.9rem;
-      opacity: 0;
-      pointer-events: none;
-      transition: all .25s var(--ease);
-      z-index: 200;
-      box-shadow: 0 12px 28px rgba(0,0,0,0.25);
-      max-width: 92vw;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      position:fixed; left:50%; top:calc(14px + var(--safe-top));
+      transform:translate(-50%,-20px);
+      background:var(--text);
+      color:var(--bg);
+      padding:10px 14px;
+      border-radius:99px;
+      font-weight:900;
+      opacity:0; pointer-events:none;
+      transition:.25s ease;
+      z-index:200;
+      max-width:calc(100vw - 20px);
+      text-align:center;
     }
-    .toast.visible{ opacity: 1; transform: translate(-50%, 0); }
-
-    /* Small helpers */
-    .row{
-      display:flex; gap: 10px; align-items:center; justify-content: space-between;
-    }
-    .muted{
-      color: var(--text-2);
-      font-weight: 800;
-    }
+    .toast.show{opacity:1; transform:translate(-50%,0);}
   </style>
 </head>
 
 <body>
-  <header id="app-header">
-    <div class="flex items-center gap-2">
-      <svg class="icon" style="color:var(--primary)" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 2l9 4.9V17L12 22l-9-4.9V7z"></path>
-      </svg>
-      <span class="bold" style="font-size:1.15rem; letter-spacing:-0.02rem;">LingoMaster</span>
-      <span class="chip" id="pwa-badge" style="display:none;">PWA</span>
+<header>
+  <div class="brand">
+    <div class="logo"></div>
+    <div>LingoMaster</div>
+  </div>
+  <div style="display:flex; gap:10px;">
+    <button class="iconBtn" id="btnTheme" title="Tema">☀️</button>
+    <button class="iconBtn" id="btnInfo" title="Bilgi">⚙️</button>
+  </div>
+</header>
+
+<div id="viewport">
+  <!-- HOME -->
+  <section class="view active" id="home">
+    <div class="secTitle">Genel Bakış</div>
+
+    <div class="row">
+      <div class="card" style="flex:1;">
+        <div class="muted" style="font-weight:900;">Toplam Kart</div>
+        <div class="big" id="dashTotal">0</div>
+      </div>
+      <div class="card" style="flex:1; border-color:color-mix(in srgb, var(--warn) 45%, var(--border));">
+        <div style="font-weight:900; color:var(--warn);">Tekrar (Due)</div>
+        <div class="big" style="color:var(--warn);" id="dashDue">0</div>
+      </div>
     </div>
 
-    <div class="flex gap-2">
-      <button class="btn btn-ghost btn-icon" id="btn-theme" aria-label="Tema değiştir">
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="5"></circle>
-          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
-        </svg>
-      </button>
-      <button class="btn btn-ghost btn-icon" id="btn-settings" aria-label="Ayarlar">
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="3"></circle>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-        </svg>
-      </button>
+    <div class="card" style="margin-top:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-size:18px; font-weight:950;">Çalışma Zinciri</div>
+        <div style="font-weight:950; color:var(--primary);" id="dashStreak">0 Gün</div>
+      </div>
+      <div class="muted" style="margin-top:10px; font-weight:850;">Son 7 gün toplam: <span id="dashWeek">0</span></div>
     </div>
-  </header>
 
-  <main id="main-viewport">
-    <!-- HOME -->
-    <section id="view-home" class="view active">
-      <div class="text-sm bold" style="letter-spacing:0.08rem; text-transform:uppercase; margin-bottom:12px;">Genel Bakış</div>
+    <div class="secTitle" style="margin-top:16px;">Hızlı İşlemler</div>
 
-      <div class="dash-grid">
-        <div class="card">
-          <div class="text-sm">Toplam Kart</div>
-          <div class="stat-num" id="dash-total">0</div>
-        </div>
-        <div class="card" style="border-color: rgba(245,158,11,0.35);">
-          <div class="text-sm" style="color: var(--warning);">Tekrar (Due)</div>
-          <div class="stat-num stat-warn" id="dash-due">0</div>
-        </div>
-      </div>
-
-      <div class="card mb-4">
-        <div class="row">
-          <div class="h3">Çalışma Zinciri</div>
-          <div class="bold" style="color: var(--primary);" id="dash-streak">0 Gün</div>
-        </div>
-        <div class="heatmap-grid" id="heatmap"></div>
-        <div class="divider"></div>
-        <div class="row">
-          <div class="muted">Son 7 gün toplam</div>
-          <div class="bold" id="dash-7sum">0</div>
-        </div>
-      </div>
-
-      <div class="text-sm bold" style="letter-spacing:0.08rem; text-transform:uppercase; margin-bottom:12px;">Hızlı İşlemler</div>
-
-      <button class="btn btn-primary w-full" style="font-size:1.05rem; margin-bottom:10px;" onclick="Review.start()">
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-          <polyline points="14 2 14 8 20 8"></polyline>
-        </svg>
-        Bugünkü Tekrarları Başlat
-      </button>
-
-      <div class="flex gap-2">
-        <button class="btn btn-secondary w-full" onclick="Router.go('library')">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-          </svg>
-          Kitap Okumaya Devam Et
-        </button>
-        <button class="btn btn-secondary w-full" onclick="Router.go('cards')">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-          </svg>
-          Kartlar
-        </button>
-      </div>
-    </section>
-
-    <!-- LIBRARY -->
-    <section id="view-library" class="view">
-      <div class="flex justify-between items-center mb-3">
-        <h2 class="h2">Kütüphane</h2>
-        <button class="btn btn-primary btn-icon" onclick="Sheets.open('book')"
-                aria-label="Yeni metin ekle">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-        </button>
-      </div>
-
-      <div class="card mb-3">
-        <div class="row">
-          <div class="muted">İpucu</div>
-          <div class="tiny">Metni ekle → kelimeye dokun → karta kaydet</div>
-        </div>
-      </div>
-
-      <div id="library-list" class="flex-col gap-3"></div>
-    </section>
-
-    <!-- READER -->
-    <section id="view-reader" class="view" style="background: var(--surface-1); z-index: 60;">
-      <div class="flex justify-between items-center"
-           style="position:sticky; top:-18px; background:var(--surface-1); padding-bottom:10px; border-bottom:1px solid var(--border); margin-bottom:16px;">
-        <button class="btn btn-ghost btn-icon" onclick="Router.go('library')" aria-label="Geri">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-        </button>
-
-        <div class="flex-col items-center" style="text-align:center;">
-          <div class="bold text-sm" id="r-title">Book Title</div>
-          <div class="text-xs" id="r-progress">Sayfa 1/1</div>
-        </div>
-
-        <button class="btn btn-ghost btn-icon" onclick="Reader.adjustFont()" aria-label="Yazı boyutu">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 7V4h16v3"></path>
-            <path d="M9 20h6"></path>
-            <path d="M12 4v16"></path>
-          </svg>
-        </button>
-      </div>
-
-      <div id="reader-canvas" class="reader-page"></div>
-
-      <div class="flex justify-between items-center" style="margin-top:22px; padding-top:14px; border-top:1px solid var(--border);">
-        <button class="btn btn-secondary" onclick="Reader.prevPage()">Önceki</button>
-        <button class="btn btn-secondary" onclick="Reader.nextPage()">Sonraki</button>
-      </div>
-    </section>
-
-    <!-- CARDS -->
-    <section id="view-cards" class="view">
-      <div class="flex gap-2 mb-3">
-        <input type="text" class="input" placeholder="Kart ara (word/meaning)..." id="search-input" />
-      </div>
-
-      <div class="card mb-3">
-        <div class="row">
-          <div class="muted">Filtre</div>
-          <div class="flex gap-2">
-            <button class="btn btn-ghost" style="padding:10px 12px;" onclick="Cards.setFilter('all')">Tümü</button>
-            <button class="btn btn-ghost" style="padding:10px 12px;" onclick="Cards.setFilter('due')">Due</button>
-            <button class="btn btn-ghost" style="padding:10px 12px;" onclick="Cards.setFilter('new')">Yeni</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="cards-container" class="grid-cards"></div>
-    </section>
-  </main>
-
-  <!-- Bottom Nav -->
-  <nav id="bottom-nav" role="navigation" aria-label="Alt menü">
-    <button class="nav-btn active" data-target="home" onclick="Router.go('home')">
-      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-      </svg>
-      <span>Ana Sayfa</span>
+    <button class="btn btnPrimary" id="btnQuiz" style="width:100%; font-size:16px;">
+      📘 Bugünkü Tekrarları Başlat
     </button>
 
-    <button class="nav-btn" data-target="library" onclick="Router.go('library')">
-      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-      </svg>
-      <span>Kütüphane</span>
-    </button>
+    <div class="two" style="margin-top:10px;">
+      <button class="btn btnSoft btnHalf" onclick="go('library')">📚 Kitap Okumaya Devam Et</button>
+      <button class="btn btnSoft btnHalf" onclick="go('cards')">🗂️ Kartlar</button>
+    </div>
+  </section>
 
-    <button class="nav-btn" data-target="cards" onclick="Router.go('cards')">
-      <svg class="icon" viewBox="0 0 24 0 24" aria-hidden="true"></svg>
-      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-      </svg>
-      <span>Kartlar</span>
-    </button>
-  </nav>
-
-  <!-- Backdrop -->
-  <div class="backdrop" id="backdrop"></div>
-
-  <!-- Word Sheet -->
-  <div class="sheet" id="word-sheet" aria-hidden="true">
-    <div class="drag-handle"></div>
-
-    <div class="flex justify-between items-center mb-3">
-      <div>
-        <div class="text-xs bold" style="color: var(--primary);" id="ws-lang">EN</div>
-        <div class="h2" id="ws-term">Word</div>
-        <div class="text-xs" id="ws-sub">Yeni kart</div>
-      </div>
-
-      <div class="flex gap-2">
-        <button class="btn btn-ghost btn-icon" onclick="TTS.speak(Utils.el('ws-term').textContent, Utils.el('ws-lang').textContent)"
-                aria-label="Telaffuz">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-          </svg>
-        </button>
+  <!-- LIBRARY -->
+  <section class="view" id="library">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+      <h2 class="h2">Kütüphane</h2>
+      <div style="display:flex; gap:10px;">
+        <button class="iconBtn" onclick="openFreeBooks()" title="Ücretsiz Kitap">⬇️</button>
+        <button class="iconBtn" onclick="openAddBook()" title="Metin ekle">➕</button>
       </div>
     </div>
+    <div id="libraryList"></div>
+  </section>
 
-    <div class="input-group">
-      <label class="label">Anlamı (TR)</label>
-      <input type="text" id="ws-meaning" class="input" placeholder="Türkçesi nedir?" />
+  <!-- READER -->
+  <section class="view" id="reader">
+    <div class="readerTop">
+      <button class="iconBtn" onclick="go('library')" title="Geri">←</button>
+      <div class="titleWrap">
+        <div class="title" id="rTitle">—</div>
+        <div class="sub" id="rPage">Sayfa 1 / 1</div>
+      </div>
+      <button class="iconBtn" onclick="toggleFont()" title="Yazı">T</button>
     </div>
 
-    <div class="input-group">
-      <label class="label">Örnek / Bağlam</label>
-      <textarea id="ws-context" class="textarea" rows="3"></textarea>
-    </div>
+    <div class="reader" id="readerText"></div>
 
-    <div class="flex gap-2">
-      <a id="ws-gtranslate" href="#" target="_blank" class="btn btn-secondary w-full" rel="noopener">Google Çeviri</a>
-      <button class="btn btn-primary w-full" onclick="Cards.saveFromSheet()">Kaydet</button>
+    <div class="two" style="margin-top:16px;">
+      <button class="btn btnSoft btnHalf" onclick="prevPage()">Önceki</button>
+      <button class="btn btnSoft btnHalf" onclick="nextPage()">Sonraki</button>
     </div>
+  </section>
 
-    <div class="divider"></div>
+  <!-- CARDS -->
+  <section class="view" id="cards">
+    <h2 class="h2">Kartlar</h2>
+    <input id="search" placeholder="Kart ara..." />
+    <div id="cardsList" style="margin-top:12px;"></div>
+  </section>
+</div>
 
-    <div class="flex gap-2">
-      <button class="btn btn-ghost w-full" onclick="Cards.openEditCurrent()">Düzenle</button>
-      <button class="btn btn-danger w-full" onclick="Cards.deleteCurrent()">Sil</button>
+<nav>
+  <button class="navBtn active" id="navHome" onclick="go('home')"><span>🏠</span><span>Ana Sayfa</span></button>
+  <button class="navBtn" id="navLibrary" onclick="go('library')"><span>📚</span><span>Kütüphane</span></button>
+  <button class="navBtn" id="navCards" onclick="go('cards')"><span>🗂️</span><span>Kartlar</span></button>
+</nav>
+
+<div class="backdrop" id="backdrop" onclick="closeSheets()"></div>
+
+<!-- WORD SHEET -->
+<div class="sheet" id="wordSheet">
+  <div class="handle"></div>
+
+  <div class="sheetHeader">
+    <div style="min-width:0;">
+      <div class="lang" id="wsLang">EN</div>
+      <div class="word" id="wsWord">word</div>
+      <div class="smallInfo" id="wsStatus">Yeni kart</div>
     </div>
+    <button class="iconBtn" onclick="speakWord()" title="Oku">🔊</button>
   </div>
 
-  <!-- Book Sheet -->
-  <div class="sheet" id="book-sheet" aria-hidden="true">
-    <div class="drag-handle"></div>
-    <h2 class="h2 mb-3">Yeni Metin Ekle</h2>
-
-    <div class="input-group">
-      <label class="label">Başlık</label>
-      <input type="text" id="nb-title" class="input" placeholder="Kitap veya Makale Başlığı" />
-    </div>
-
-    <div class="input-group">
-      <label class="label">Dil</label>
-      <select id="nb-lang" class="select">
-        <option value="EN">İngilizce</option>
-        <option value="TR">Türkçe</option>
-        <option value="RU">Rusça</option>
-        <option value="DE">Almanca</option>
-        <option value="FR">Fransızca</option>
-      </select>
-    </div>
-
-    <div class="input-group">
-      <label class="label">İçerik</label>
-      <textarea id="nb-content" class="textarea" style="min-height:220px" placeholder="Metni buraya yapıştır..."></textarea>
-    </div>
-
-    <button class="btn btn-primary w-full" onclick="Library.saveBook()">Kütüphaneye Ekle</button>
+  <div class="field">
+    <label>Anlamı (TR)</label>
+    <input id="wsMeaning" placeholder="Türkçesi nedir?" />
   </div>
 
-  <!-- Settings Sheet -->
-  <div class="sheet" id="settings-sheet" aria-hidden="true">
-    <div class="drag-handle"></div>
-    <h2 class="h2 mb-3">Ayarlar & Yedek</h2>
-
-    <div class="card mb-3">
-      <div class="row">
-        <div>
-          <div class="bold">Tema</div>
-          <div class="text-xs">Koyu / Açık</div>
-        </div>
-        <button class="btn btn-secondary" onclick="App.toggleTheme()">Değiştir</button>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="input-group">
-        <label class="label">Reader Yazı Boyutu</label>
-        <input id="set-font" class="input" type="range" min="16" max="28" step="1" />
-        <div class="text-xs mt-2">Mevcut: <span class="bold" id="set-font-val"></span> px</div>
-      </div>
-
-      <div class="input-group">
-        <label class="label">Sayfa Boyutu (yaklaşık karakter)</label>
-        <input id="set-page" class="input" type="range" min="500" max="1100" step="10" />
-        <div class="text-xs mt-2">Mevcut: <span class="bold" id="set-page-val"></span></div>
-      </div>
-    </div>
-
-    <div class="card mb-3">
-      <div class="bold mb-2">Import / Export</div>
-      <div class="text-xs mb-3">Kartlar + kitaplar + ayarlar tek JSON ile yedeklenir.</div>
-
-      <div class="flex gap-2">
-        <button class="btn btn-secondary w-full" onclick="Backup.export()">Export JSON</button>
-        <button class="btn btn-secondary w-full" onclick="Backup.pickImport()">Import JSON</button>
-      </div>
-
-      <input id="import-file" type="file" accept="application/json" style="display:none" />
-    </div>
-
-    <div class="card">
-      <div class="bold mb-2" style="color: var(--danger);">Sıfırlama</div>
-      <div class="text-xs mb-3">Tüm verileri siler (geri alınamaz).</div>
-      <button class="btn btn-danger w-full" onclick="Backup.resetAll()">Her Şeyi Sıfırla</button>
-    </div>
+  <div class="field">
+    <label>Örnek / Bağlam</label>
+    <textarea id="wsContext"></textarea>
   </div>
 
-  <!-- Review Overlay -->
-  <div class="review-overlay" id="review-view" aria-hidden="true">
-    <div class="flex justify-between items-center p-4" style="border-bottom:1px solid var(--border); background:var(--surface-2);">
-      <div class="bold">Tekrar</div>
-      <div class="flex gap-2 items-center">
-        <span class="chip" id="review-progress">0/0</span>
-        <button class="btn btn-ghost btn-icon" onclick="Review.stop()" aria-label="Kapat">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <div class="review-card" id="review-card">
-      <div class="text-sm bold" id="review-lang">EN</div>
-      <div class="review-term" id="review-term">word</div>
-
-      <button class="btn btn-ghost btn-icon" onclick="TTS.speak(Utils.el('review-term').textContent, Utils.el('review-lang').textContent)" aria-label="Telaffuz">
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-        </svg>
-      </button>
-
-      <div class="review-meaning" id="review-meaning" style="display:none;"></div>
-
-      <div class="mt-3">
-        <button class="btn btn-secondary" onclick="Review.flip()">Anlamı Göster</button>
-      </div>
-
-      <div class="text-xs mt-4" id="review-example"></div>
-    </div>
-
-    <div class="review-actions">
-      <button class="btn-grade again" onclick="Review.grade('again')">Again</button>
-      <button class="btn-grade hard" onclick="Review.grade('hard')">Hard</button>
-      <button class="btn-grade good" onclick="Review.grade('good')">Good</button>
-      <button class="btn-grade easy" onclick="Review.grade('easy')">Easy</button>
-    </div>
+  <div class="two" style="margin-top:10px;">
+    <button class="btn btnSoft btnHalf" onclick="autoTranslate()">Otomatik Çevir</button>
+    <button class="btn btnPrimary btnHalf" onclick="saveCard()">Kaydet</button>
   </div>
 
-  <div class="toast" id="toast">Bildirim</div>
+  <div class="two" style="margin-top:10px;">
+    <button class="btn btnSoft btnHalf" onclick="editCard()">Düzenle</button>
+    <button class="btn btnDanger btnHalf" onclick="deleteCard()">Sil</button>
+  </div>
+</div>
 
-  <script>
-    /* =========================================================
-       LingoMaster PWA Edition (Single-file app + SW/manifest)
-       ========================================================= */
+<!-- ADD BOOK SHEET -->
+<div class="sheet" id="addBookSheet">
+  <div class="handle"></div>
+  <h2 class="h2">Yeni Metin Ekle</h2>
 
-    // ---- UTILS ----
-    const Utils = {
-      el: (id) => document.getElementById(id),
-      uuid: () => (crypto?.randomUUID ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2))),
-      todayKey: () => new Date().toISOString().slice(0,10),
-      clamp: (n, a, b) => Math.max(a, Math.min(b, n)),
-      toast: (msg) => {
-        const t = Utils.el('toast');
-        t.textContent = msg;
-        t.classList.add('visible');
-        clearTimeout(Utils._toastTimer);
-        Utils._toastTimer = setTimeout(() => t.classList.remove('visible'), 2600);
-      },
-      formatDue: (ts) => {
-        const d = new Date(ts);
-        const now = new Date();
-        const sameDay = d.toDateString() === now.toDateString();
-        if (sameDay) return "Bugün";
-        return d.toLocaleDateString("tr-TR", { day: "2-digit", month: "short" });
-      },
-      sanitizeToken: (w) => w.replace(/[“”"'.?,!;:()«»—–\-]/g, "").trim(),
-      safeText: (s) => (s ?? "").toString(),
-    };
+  <div class="field">
+    <label>Başlık</label>
+    <input id="bTitle" placeholder="Kitap / Makale Başlığı" />
+  </div>
 
-    // ---- STORE ----
-    const Store = {
-      key: {
-        cards: "lm2_cards",
-        books: "lm2_books",
-        activity: "lm2_activity",
-        settings: "lm2_settings",
-      },
-      data: {
-        cards: [],
-        books: [],
-        activity: {},
-        settings: {
-          theme: "dark",
-          fontSize: 19,
-          pageSize: 780,
-          lastBackupAt: null
-        }
-      },
-      load() {
-        try{
-          this.data.cards = JSON.parse(localStorage.getItem(this.key.cards) || "[]");
-          this.data.books = JSON.parse(localStorage.getItem(this.key.books) || "[]");
-          this.data.activity = JSON.parse(localStorage.getItem(this.key.activity) || "{}");
-          this.data.settings = JSON.parse(localStorage.getItem(this.key.settings) || JSON.stringify(this.data.settings));
-        }catch(e){
-          console.warn("Store load error:", e);
-        }
-        // Normalize settings if missing fields
-        this.data.settings.theme ??= "dark";
-        this.data.settings.fontSize ??= 19;
-        this.data.settings.pageSize ??= 780;
-      },
-      save() {
-        localStorage.setItem(this.key.cards, JSON.stringify(this.data.cards));
-        localStorage.setItem(this.key.books, JSON.stringify(this.data.books));
-        localStorage.setItem(this.key.activity, JSON.stringify(this.data.activity));
-        localStorage.setItem(this.key.settings, JSON.stringify(this.data.settings));
-      },
-      logActivity(count=1) {
-        const k = Utils.todayKey();
-        this.data.activity[k] = (this.data.activity[k] || 0) + count;
-        this.save();
-      },
-      seedDemoIfEmpty() {
-        if (this.data.books.length === 0) {
-          this.data.books.push({
-            id: "b1",
-            title: "Sherlock Holmes (Demo)",
-            lang: "EN",
-            page: 0,
-            content:
-`To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name.
+  <div class="field">
+    <label>Dil</label>
+    <select id="bLang">
+      <option value="EN">İngilizce</option>
+      <option value="RU">Rusça</option>
+      <option value="DE">Almanca</option>
+      <option value="FR">Fransızca</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>URL’den çek (opsiyonel)</label>
+    <input id="bUrl" placeholder="Örn: Project Gutenberg .txt linki" />
+    <div class="smallInfo">URL girersen otomatik indirir. Girmezsen aşağıdaki metni kaydeder.</div>
+  </div>
+
+  <div class="field">
+    <label>İçerik</label>
+    <textarea id="bText" placeholder="Metni buraya yapıştır..."></textarea>
+  </div>
+
+  <button class="btn btnPrimary" style="width:100%;" onclick="saveBook()">Kütüphaneye Ekle</button>
+</div>
+
+<!-- FREE BOOK SHEET -->
+<div class="sheet" id="freeBookSheet" style="max-height:75vh;">
+  <div class="handle"></div>
+  <h2 class="h2">Ücretsiz Kitaplar</h2>
+  <div class="smallInfo" style="margin-bottom:10px;">Tek tıkla indirip kütüphaneye ekler (internet gerekli).</div>
+  <div id="freeBooks"></div>
+</div>
+
+<div class="toast" id="toast">—</div>
+
+<script>
+  // PWA
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+  }
+
+  // Store
+  const DB = {
+    get(key, fallback){ try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } },
+    set(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+  };
+
+  const state = {
+    settings: DB.get("lm_settings", { theme:"dark", fontSize:19, themeIndex:0 }),
+    cards: DB.get("lm_cards", []),
+    books: DB.get("lm_books", []),
+    activity: DB.get("lm_activity", {})
+  };
+
+  const themes = ["dark","light","ocean","emerald","sunset","rose"];
+
+  function toast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 2400);
+  }
+
+  function setTheme(name){
+    document.documentElement.setAttribute("data-theme", name);
+    state.settings.theme = name;
+    DB.set("lm_settings", state.settings);
+    const meta = document.getElementById("meta-theme");
+    meta.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#0f172a");
+  }
+
+  document.getElementById("btnTheme").onclick = () => {
+    const idx = (themes.indexOf(state.settings.theme) + 1) % themes.length;
+    setTheme(themes[idx]);
+    toast("Tema: " + themes[idx]);
+  };
+
+  document.getElementById("btnInfo").onclick = () => toast("Ayarlar yakında.");
+
+  // Router
+  function go(id){
+    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+
+    document.querySelectorAll(".navBtn").forEach(b=>b.classList.remove("active"));
+    if(id==="home") document.getElementById("navHome").classList.add("active");
+    if(id==="library" || id==="reader") document.getElementById("navLibrary").classList.add("active");
+    if(id==="cards") document.getElementById("navCards").classList.add("active");
+
+    if(id==="home") renderDash();
+    if(id==="library") renderLibrary();
+    if(id==="cards") renderCards();
+  }
+
+  // Seed demo (kısa demo + 1 ücretsiz kitap listesi)
+  function seed(){
+    if(state.books.length===0){
+      state.books.push({
+        id:"demo",
+        title:"Sherlock Holmes (Demo)",
+        lang:"EN",
+        page:0,
+        content:`To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name.
 In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler.
-All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind.`
-          });
-          this.data.books.push({
-            id: "b2",
-            title: "Толстый и тонкий (Chekhov)",
-            lang: "RU",
-            page: 0,
-            content:
-`На вокзале Николаевской железной дороги встретились два приятеля: один толстый, другой тонкий.
-Толстый только что пообедал на вокзале, и губы его, подернутые маслом, лоснились, как спелые вишни.`
-          });
-          this.save();
-        }
-      }
-    };
 
-    // ---- SRS (SM-2 + grades mapping) ----
-    const SRS = {
-      // grade -> quality (0..5)
-      qualityMap: { again: 1, hard: 3, good: 4, easy: 5 },
-      calc(card, grade) {
-        const quality = this.qualityMap[grade] ?? 4;
-        let srs = card.srs || { interval: 0, reps: 0, ef: 2.5 };
-
-        let { interval, reps, ef } = srs;
-
-        if (quality >= 3) {
-          if (reps === 0) interval = 1;
-          else if (reps === 1) interval = 6;
-          else interval = Math.round(interval * ef);
-
-          reps++;
-          ef = ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
-          if (ef < 1.3) ef = 1.3;
-        } else {
-          reps = 0;
-          interval = 1;
-        }
-
-        // small adjustment by grade (optional feel)
-        if (grade === "hard") interval = Math.max(1, Math.round(interval * 0.8));
-        if (grade === "easy") interval = Math.max(1, Math.round(interval * 1.3));
-
-        const nextDue = Date.now() + interval * 24 * 60 * 60 * 1000;
-        return { srs: { interval, reps, ef }, due: nextDue };
-      }
-    };
-
-    // ---- ROUTER ----
-    const Router = {
-      go(viewId) {
-        document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
-        Utils.el(`view-${viewId}`).classList.add("active");
-
-        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-        const navTarget = (viewId === "reader") ? "library" : viewId;
-        const navBtn = document.querySelector(`.nav-btn[data-target="${navTarget}"]`);
-        if (navBtn) navBtn.classList.add("active");
-
-        if(viewId === "home") App.renderDash();
-        if(viewId === "library") Library.render();
-        if(viewId === "cards") Cards.render(Utils.el("search-input").value);
-      }
-    };
-
-    // ---- SHEETS ----
-    const Sheets = {
-      open(which){
-        Utils.el("backdrop").classList.add("open");
-        Utils.el(`${which}-sheet`).classList.add("open");
-        // aria
-        Utils.el(`${which}-sheet`).setAttribute("aria-hidden","false");
-      },
-      closeAll(){
-        Utils.el("backdrop").classList.remove("open");
-        document.querySelectorAll(".sheet").forEach(s => {
-          s.classList.remove("open");
-          s.setAttribute("aria-hidden","true");
-        });
-      }
-    };
-
-    // ---- TTS ----
-    const TTS = {
-      speak(txt, lang="EN") {
-        try{
-          window.speechSynthesis.cancel();
-          const u = new SpeechSynthesisUtterance(txt);
-          const map = { EN:"en-US", RU:"ru-RU", DE:"de-DE", FR:"fr-FR", TR:"tr-TR" };
-          u.lang = map[lang] || "en-US";
-          u.rate = 0.9;
-          window.speechSynthesis.speak(u);
-        }catch(e){
-          Utils.toast("TTS desteklenmiyor.");
-        }
-      }
-    };
-
-    // ---- READER ----
-    const Reader = {
-      activeBook: null,
-
-      open(bookId){
-        this.activeBook = Store.data.books.find(b => b.id === bookId);
-        if(!this.activeBook) return;
-        Router.go("reader");
-        this.render();
-      },
-
-      get pageSize(){
-        return Store.data.settings.pageSize || 780;
-      },
-
-      getPages(text){
-        const pages = [];
-        let i = 0;
-        while(i < text.length){
-          let end = Math.min(i + this.pageSize, text.length);
-          if(end < text.length){
-            const space = text.lastIndexOf(" ", end);
-            if(space > i) end = space;
-          }
-          pages.push(text.slice(i, end).trim());
-          i = end;
-        }
-        return pages.length ? pages : [text];
-      },
-
-      adjustFont(){
-        let s = Store.data.settings.fontSize;
-        s = (s >= 28) ? 16 : (s + 2);
-        Store.data.settings.fontSize = s;
-        Store.save();
-        App.applySettingsToCSS();
-        this.render();
-      },
-
-      prevPage(){
-        if(!this.activeBook) return;
-        if(this.activeBook.page > 0){
-          this.activeBook.page--;
-          Store.save();
-          this.render();
-        }
-      },
-      nextPage(){
-        if(!this.activeBook) return;
-        const pages = this.getPages(this.activeBook.content);
-        if(this.activeBook.page < pages.length - 1){
-          this.activeBook.page++;
-          Store.save();
-          this.render();
-        }
-      },
-
-      render(){
-        if(!this.activeBook) return;
-        const b = this.activeBook;
-        const pages = this.getPages(b.content);
-        b.page = Utils.clamp(b.page, 0, pages.length - 1);
-
-        Utils.el("r-title").textContent = b.title;
-        Utils.el("r-progress").textContent = `Sayfa ${b.page + 1} / ${pages.length}`;
-
-        const canvas = Utils.el("reader-canvas");
-        canvas.innerHTML = "";
-        canvas.style.fontSize = (Store.data.settings.fontSize || 19) + "px";
-
-        // Build a set of saved terms for highlight
-        const savedSet = new Set(Store.data.cards.map(c => (c.term || "").toLowerCase()));
-
-        const text = pages[b.page];
-
-        // Tokenizer:
-        // - splits into words, punctuation, and spaces preserving layout
-        // - makes clickable spans for words
-        const parts = text.match(/(\s+|[^\s]+)/g) || [];
-        parts.forEach(part => {
-          if(/^\s+$/.test(part)){
-            canvas.appendChild(document.createTextNode(part));
-            return;
-          }
-          // word-like part may include punctuation. We'll keep original display but click uses clean.
-          const clean = Utils.sanitizeToken(part);
-          const isPunctOnly = clean.length === 0;
-          if(isPunctOnly){
-            canvas.appendChild(document.createTextNode(part));
-            return;
-          }
-
-          const span = document.createElement("span");
-          span.className = "token";
-          span.textContent = part;
-
-          if(savedSet.has(clean.toLowerCase())){
-            span.classList.add("saved");
-          }
-
-          span.onclick = () => Cards.openWordSheet(clean, b.lang, this.findContext(text, part));
-          canvas.appendChild(span);
-        });
-      },
-
-      findContext(pageText, clickedPart){
-        const idx = pageText.indexOf(clickedPart);
-        if(idx < 0) return "";
-        const start = Math.max(0, idx - 60);
-        const end = Math.min(pageText.length, idx + 80);
-        return "..." + pageText.slice(start, end).replace(/\s+/g, " ").trim() + "...";
-      }
-    };
-
-    // ---- LIBRARY ----
-    const Library = {
-      render(){
-        const list = Utils.el("library-list");
-        list.innerHTML = "";
-
-        if(Store.data.books.length === 0){
-          const empty = document.createElement("div");
-          empty.className = "card";
-          empty.innerHTML = `
-            <div class="bold mb-2">Kütüphane boş</div>
-            <div class="text-sm mb-3">“Yeni Metin Ekle” ile içerik yapıştırabilirsin.</div>
-            <button class="btn btn-primary w-full" onclick="Sheets.open('book')">Metin Ekle</button>
-          `;
-          list.appendChild(empty);
-          return;
-        }
-
-        Store.data.books.forEach(b => {
-          const div = document.createElement("div");
-          div.className = "card";
-          div.innerHTML = `
-            <div class="book-row">
-              <div style="flex:1; min-width:0;">
-                <div class="bold" style="font-size:1.05rem; margin-bottom:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                  ${Utils.safeText(b.title)}
-                </div>
-                <div class="flex items-center gap-2">
-                  <span class="badge">${Utils.safeText(b.lang)}</span>
-                  <span class="text-xs">Sayfa ${((b.page||0) + 1)}</span>
-                </div>
-              </div>
-              <div class="flex gap-2">
-                <button class="btn btn-ghost btn-icon" aria-label="Aç" onclick="event.stopPropagation(); Reader.open('${b.id}')">
-                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                  </svg>
-                </button>
-                <button class="btn btn-ghost btn-icon" aria-label="Sil" onclick="event.stopPropagation(); Library.deleteBook('${b.id}')">
-                  <svg class="icon-sm" viewBox="0 0 24 24" style="color:var(--danger)" aria-hidden="true">
-                    <path d="M3 6h18"></path>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
-                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          `;
-          div.onclick = () => Reader.open(b.id);
-          list.appendChild(div);
-        });
-      },
-
-      saveBook(){
-        const t = Utils.el("nb-title").value.trim();
-        const c = Utils.el("nb-content").value.trim();
-        const l = Utils.el("nb-lang").value;
-
-        if(!t || !c) return Utils.toast("Başlık ve içerik gerekli!");
-
-        Store.data.books.unshift({
-          id: Utils.uuid(),
-          title: t,
-          lang: l,
-          content: c,
-          page: 0
-        });
-        Store.save();
-        Sheets.closeAll();
-        this.render();
-        Utils.toast("Metin eklendi.");
-        Utils.el("nb-title").value = "";
-        Utils.el("nb-content").value = "";
-      },
-
-      deleteBook(id){
-        if(!confirm("Bu metni silmek istiyor musun?")) return;
-        Store.data.books = Store.data.books.filter(b => b.id !== id);
-        Store.save();
-        this.render();
-        Utils.toast("Silindi.");
-      }
-    };
-
-    // ---- CARDS ----
-    const Cards = {
-      filter: "all", // all|due|new
-      currentCardId: null,
-      currentSheetMode: "new", // new|edit
-
-      setFilter(f){
-        this.filter = f;
-        this.render(Utils.el("search-input").value);
-      },
-
-      openWordSheet(word, lang, ctx=""){
-        const clean = Utils.sanitizeToken(word);
-        if(!clean) return;
-
-        // Check existing card
-        const existing = Store.data.cards.find(c => (c.term||"").toLowerCase() === clean.toLowerCase() && (c.lang||"") === lang);
-        this.currentCardId = existing?.id || null;
-        this.currentSheetMode = existing ? "edit" : "new";
-
-        Utils.el("ws-term").textContent = clean;
-        Utils.el("ws-lang").textContent = lang;
-        Utils.el("ws-context").value = ctx || "";
-
-        Utils.el("ws-sub").textContent = existing ? "Mevcut kart (düzenleyebilirsin)" : "Yeni kart";
-        Utils.el("ws-meaning").value = existing ? (existing.meaning || "") : "";
-
-        Utils.el("ws-gtranslate").href =
-          `https://translate.google.com/?sl=${encodeURIComponent(lang)}&tl=tr&text=${encodeURIComponent(clean)}&op=translate`;
-
-        Sheets.open("word");
-      },
-
-      saveFromSheet(){
-        const term = Utils.el("ws-term").textContent.trim();
-        const meaning = Utils.el("ws-meaning").value.trim();
-        const example = Utils.el("ws-context").value.trim();
-        const lang = Utils.el("ws-lang").textContent.trim();
-
-        if(!meaning) return Utils.toast("Anlam gerekli!");
-
-        if(this.currentSheetMode === "edit" && this.currentCardId){
-          const c = Store.data.cards.find(x => x.id === this.currentCardId);
-          if(!c) return Utils.toast("Kart bulunamadı!");
-          c.term = term;
-          c.meaning = meaning;
-          c.example = example;
-          c.lang = lang;
-          Store.save();
-          Sheets.closeAll();
-          Utils.toast("Kart güncellendi.");
-          Cards.render(Utils.el("search-input").value);
-          Reader.render(); // refresh highlight
-          return;
-        }
-
-        // new card
-        Store.data.cards.unshift({
-          id: Utils.uuid(),
-          term,
-          meaning,
-          example,
-          lang,
-          createdAt: Date.now(),
-          due: Date.now(),
-          srs: { interval: 0, reps: 0, ef: 2.5 }
-        });
-        Store.save();
-        Sheets.closeAll();
-        Utils.toast("Kart eklendi!");
-        Cards.render(Utils.el("search-input").value);
-        Reader.render(); // refresh highlight
-      },
-
-      openEditCurrent(){
-        if(!this.currentCardId){
-          Utils.toast("Bu kelime için kayıtlı kart yok.");
-          return;
-        }
-        this.currentSheetMode = "edit";
-        Utils.el("ws-sub").textContent = "Düzenleme modu";
-      },
-
-      deleteCurrent(){
-        if(!this.currentCardId){
-          Utils.toast("Silinecek kart yok.");
-          return;
-        }
-        if(!confirm("Kartı silmek istiyor musun?")) return;
-        Store.data.cards = Store.data.cards.filter(c => c.id !== this.currentCardId);
-        Store.save();
-        Sheets.closeAll();
-        Utils.toast("Kart silindi.");
-        Cards.render(Utils.el("search-input").value);
-        Reader.render();
-      },
-
-      render(query=""){
-        const cont = Utils.el("cards-container");
-        cont.innerHTML = "";
-        query = (query || "").toLowerCase();
-
-        let list = Store.data.cards.slice();
-
-        // filter
-        const now = Date.now();
-        if(this.filter === "due") list = list.filter(c => (c.due||0) <= now);
-        if(this.filter === "new") list = list.filter(c => (c.srs?.reps || 0) === 0);
-
-        // search
-        if(query){
-          list = list.filter(c => ((c.term||"") + " " + (c.meaning||"")).toLowerCase().includes(query));
-        }
-
-        if(list.length === 0){
-          const empty = document.createElement("div");
-          empty.className = "card";
-          empty.innerHTML = `
-            <div class="bold mb-2">Kart yok</div>
-            <div class="text-sm">Reader’da kelimeye dokunup kaydedebilirsin.</div>
-          `;
-          cont.appendChild(empty);
-          return;
-        }
-
-        list.forEach(c => {
-          const isDue = (c.due||0) <= now;
-          const reps = c.srs?.reps || 0;
-          const interval = c.srs?.interval || 0;
-
-          const div = document.createElement("div");
-          div.className = "card";
-
-          div.innerHTML = `
-            <div class="row mb-2">
-              <span class="badge ${isDue ? "warn" : "ok"}">${isDue ? "DUE" : "OK"}</span>
-              <div class="flex gap-2">
-                <button class="btn btn-ghost btn-icon" style="padding:6px" aria-label="Telaffuz"
-                        onclick="event.stopPropagation(); TTS.speak('${escapeQuotes(c.term)}','${escapeQuotes(c.lang)}')">
-                  <svg class="icon-sm" viewBox="0 0 24 24" aria-hidden="true">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                  </svg>
-                </button>
-                <button class="btn btn-ghost btn-icon" style="padding:6px" aria-label="Düzenle"
-                        onclick="event.stopPropagation(); Cards.editById('${c.id}')">
-                  ✎
-                </button>
-                <button class="btn btn-ghost btn-icon" style="padding:6px" aria-label="Sil"
-                        onclick="event.stopPropagation(); Cards.deleteById('${c.id}')">
-                  ✕
-                </button>
-              </div>
-            </div>
-
-            <div class="fc-front">${escapeHtml(c.term)}</div>
-            <div class="fc-back">${escapeHtml(c.meaning)}</div>
-
-            <div class="fc-meta">
-              <span class="chip">${escapeHtml(c.lang || "EN")}</span>
-              <span class="chip">Due: ${escapeHtml(Utils.formatDue(c.due||0))}</span>
-              <span class="chip">Reps: ${reps}</span>
-              <span class="chip">Int: ${interval}d</span>
-            </div>
-
-            ${c.example ? `<div class="text-xs mt-3 mono" style="opacity:.95">${escapeHtml(c.example)}</div>` : ""}
-          `;
-
-          // tap card to open sheet
-          div.onclick = () => {
-            Cards.currentCardId = c.id;
-            Cards.currentSheetMode = "edit";
-            Utils.el("ws-term").textContent = c.term || "";
-            Utils.el("ws-lang").textContent = c.lang || "EN";
-            Utils.el("ws-meaning").value = c.meaning || "";
-            Utils.el("ws-context").value = c.example || "";
-            Utils.el("ws-sub").textContent = "Düzenleme modu";
-            Utils.el("ws-gtranslate").href =
-              `https://translate.google.com/?sl=${encodeURIComponent(c.lang||"EN")}&tl=tr&text=${encodeURIComponent(c.term||"")}&op=translate`;
-            Sheets.open("word");
-          };
-
-          cont.appendChild(div);
-        });
-      },
-
-      editById(id){
-        const c = Store.data.cards.find(x => x.id === id);
-        if(!c) return;
-        this.currentCardId = id;
-        this.currentSheetMode = "edit";
-        Utils.el("ws-term").textContent = c.term || "";
-        Utils.el("ws-lang").textContent = c.lang || "EN";
-        Utils.el("ws-meaning").value = c.meaning || "";
-        Utils.el("ws-context").value = c.example || "";
-        Utils.el("ws-sub").textContent = "Düzenleme modu";
-        Utils.el("ws-gtranslate").href =
-          `https://translate.google.com/?sl=${encodeURIComponent(c.lang||"EN")}&tl=tr&text=${encodeURIComponent(c.term||"")}&op=translate`;
-        Sheets.open("word");
-      },
-
-      deleteById(id){
-        if(!confirm("Kartı sil?")) return;
-        Store.data.cards = Store.data.cards.filter(c => c.id !== id);
-        Store.save();
-        Utils.toast("Silindi.");
-        this.render(Utils.el("search-input").value);
-        Reader.render();
-        App.renderDash();
-      }
-    };
-
-    // ---- REVIEW (Due session) ----
-    const Review = {
-      queue: [],
-      idx: 0,
-      current: null,
-      showingMeaning: false,
-
-      start(){
-        const now = Date.now();
-        // due first
-        this.queue = Store.data.cards.filter(c => (c.due||0) <= now);
-        // fallback: if no due, random practice
-        if(this.queue.length === 0){
-          const all = Store.data.cards.slice();
-          if(all.length === 0) return Utils.toast("Hiç kart yok!");
-          this.queue = all.sort(() => Math.random() - 0.5).slice(0, 15);
-          Utils.toast("Due yok, rastgele pratik!");
-        }
-
-        // stable shuffle
-        this.queue.sort(() => Math.random() - 0.5);
-        this.idx = 0;
-        Utils.el("review-view").classList.add("open");
-        Utils.el("review-view").setAttribute("aria-hidden","false");
-        this.next();
-      },
-
-      stop(){
-        Utils.el("review-view").classList.remove("open");
-        Utils.el("review-view").setAttribute("aria-hidden","true");
-        App.renderDash();
-      },
-
-      next(){
-        if(this.idx >= this.queue.length){
-          Utils.toast("Tekrar bitti 🎉");
-          this.stop();
-          return;
-        }
-        this.current = this.queue[this.idx];
-        this.showingMeaning = false;
-
-        Utils.el("review-progress").textContent = `${this.idx+1}/${this.queue.length}`;
-        Utils.el("review-lang").textContent = this.current.lang || "EN";
-        Utils.el("review-term").textContent = this.current.term || "";
-        Utils.el("review-example").textContent = this.current.example ? `Örnek: ${this.current.example}` : "";
-        Utils.el("review-meaning").style.display = "none";
-        Utils.el("review-meaning").textContent = this.current.meaning || "";
-      },
-
-      flip(){
-        this.showingMeaning = !this.showingMeaning;
-        Utils.el("review-meaning").style.display = this.showingMeaning ? "block" : "none";
-      },
-
-      grade(g){
-        if(!this.current) return;
-
-        // if meaning hidden, nudge user
-        if(!this.showingMeaning){
-          this.flip();
-          // still allow grade
-        }
-
-        const update = SRS.calc(this.current, g);
-        Object.assign(this.current, update);
-
-        // activity counts only on pass-ish grades
-        if(g !== "again") Store.logActivity(1);
-
-        Store.save();
-        this.idx++;
-        setTimeout(() => this.next(), 220);
-      }
-    };
-
-    // ---- DASHBOARD ----
-    const App = {
-      init(){
-        Store.load();
-        Store.seedDemoIfEmpty();
-
-        // apply theme + settings to CSS
-        document.body.setAttribute("data-theme", Store.data.settings.theme || "dark");
-        this.applySettingsToCSS();
-
-        // listeners
-        Utils.el("btn-theme").onclick = () => App.toggleTheme();
-        Utils.el("btn-settings").onclick = () => Settings.open();
-        Utils.el("backdrop").onclick = () => Sheets.closeAll();
-
-        Utils.el("search-input").addEventListener("input", (e) => Cards.render(e.target.value));
-
-        // settings sliders
-        Utils.el("set-font").addEventListener("input", (e) => Settings.setFont(parseInt(e.target.value, 10)));
-        Utils.el("set-page").addEventListener("input", (e) => Settings.setPage(parseInt(e.target.value, 10)));
-
-        // import file
-        Utils.el("import-file").addEventListener("change", Backup.handleImportFile);
-
-        // initial renders
-        this.renderDash();
-        Library.render();
-        Cards.render("");
-
-        // register SW
-        this.registerServiceWorker();
-
-        // PWA badge
-        if (window.matchMedia("(display-mode: standalone)").matches) {
-          Utils.el("pwa-badge").style.display = "inline-flex";
-        }
-      },
-
-      applySettingsToCSS(){
-        const fs = Store.data.settings.fontSize || 19;
-        const ps = Store.data.settings.pageSize || 780;
-        document.documentElement.style.setProperty("--reader-font-size", fs + "px");
-        document.documentElement.style.setProperty("--reader-page-size", ps);
-      },
-
-      toggleTheme(){
-        const next = (Store.data.settings.theme === "dark") ? "light" : "dark";
-        Store.data.settings.theme = next;
-        Store.save();
-        document.body.setAttribute("data-theme", next);
-        Utils.toast(next === "dark" ? "Koyu tema" : "Açık tema");
-      },
-
-      renderDash(){
-        const total = Store.data.cards.length;
-        const dueCount = Store.data.cards.filter(c => (c.due||0) <= Date.now()).length;
-        Utils.el("dash-total").textContent = total;
-        Utils.el("dash-due").textContent = dueCount;
-
-        // heatmap 7 days
-        const hm = Utils.el("heatmap");
-        hm.innerHTML = "";
-        const today = new Date();
-        let streak = 0;
-        let broken = false;
-        let sum = 0;
-
-        for(let i=6; i>=0; i--){
-          const d = new Date(today);
-          d.setDate(d.getDate() - i);
-          const k = d.toISOString().slice(0,10);
-          const count = Store.data.activity[k] || 0;
-          sum += count;
-
-          // streak: count>0 from today backwards until first 0
-          if(!broken){
-            if(count > 0) streak++;
-            else if(i !== 0) broken = true;
-          }
-
-          const lvl = count > 10 ? 3 : (count > 3 ? 2 : (count > 0 ? 1 : 0));
-          const div = document.createElement("div");
-          div.className = "hm-cell";
-          div.setAttribute("data-level", lvl);
-          div.title = `${k} : ${count}`;
-          div.textContent = ["Pz","Pt","Sa","Ça","Pe","Cu","Ct"][d.getDay()];
-          hm.appendChild(div);
-        }
-
-        Utils.el("dash-streak").textContent = `${streak} Gün`;
-        Utils.el("dash-7sum").textContent = sum;
-      },
-
-      async registerServiceWorker(){
-        try{
-          if("serviceWorker" in navigator){
-            await navigator.serviceWorker.register("./sw.js");
-            // optional: update toast
-          }
-        }catch(e){
-          console.warn("SW register failed:", e);
-        }
-      }
-    };
-
-    // ---- SETTINGS ----
-    const Settings = {
-      open(){
-        // set slider values
-        const fs = Store.data.settings.fontSize || 19;
-        const ps = Store.data.settings.pageSize || 780;
-        Utils.el("set-font").value = fs;
-        Utils.el("set-font-val").textContent = fs;
-        Utils.el("set-page").value = ps;
-        Utils.el("set-page-val").textContent = ps;
-
-        Sheets.open("settings");
-      },
-
-      setFont(v){
-        Store.data.settings.fontSize = Utils.clamp(v, 16, 28);
-        Utils.el("set-font-val").textContent = Store.data.settings.fontSize;
-        Store.save();
-        App.applySettingsToCSS();
-        if(Router && Utils.el("view-reader").classList.contains("active")) Reader.render();
-      },
-
-      setPage(v){
-        Store.data.settings.pageSize = Utils.clamp(v, 500, 1100);
-        Utils.el("set-page-val").textContent = Store.data.settings.pageSize;
-        Store.save();
-        if(Router && Utils.el("view-reader").classList.contains("active")) Reader.render();
-      }
-    };
-
-    // ---- BACKUP ----
-    const Backup = {
-      export(){
-        const payload = {
-          version: 2,
-          exportedAt: new Date().toISOString(),
-          data: Store.data
-        };
-        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `lingomaster-backup-${Utils.todayKey()}.json`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-        Store.data.settings.lastBackupAt = Date.now();
-        Store.save();
-        Utils.toast("Export hazır.");
-      },
-
-      pickImport(){
-        Utils.el("import-file").value = "";
-        Utils.el("import-file").click();
-      },
-
-      async handleImportFile(e){
-        const file = e.target.files?.[0];
-        if(!file) return;
-
-        try{
-          const text = await file.text();
-          const json = JSON.parse(text);
-
-          if(!json?.data) throw new Error("Geçersiz yedek dosyası");
-
-          // merge/replace fully (safer)
-          const ok = confirm("Import tüm mevcut verinin üzerine yazacak. Devam edilsin mi?");
-          if(!ok) return;
-
-          Store.data = json.data;
-
-          // minimal normalization
-          Store.data.cards ??= [];
-          Store.data.books ??= [];
-          Store.data.activity ??= {};
-          Store.data.settings ??= { theme:"dark", fontSize:19, pageSize:780 };
-
-          Store.save();
-          document.body.setAttribute("data-theme", Store.data.settings.theme || "dark");
-          App.applySettingsToCSS();
-
-          Sheets.closeAll();
-          App.renderDash();
-          Library.render();
-          Cards.render(Utils.el("search-input").value);
-          if(Utils.el("view-reader").classList.contains("active")) Reader.render();
-
-          Utils.toast("Import tamamlandı.");
-        }catch(err){
-          console.warn(err);
-          Utils.toast("Import başarısız: dosyayı kontrol et.");
-        }
-      },
-
-      resetAll(){
-        if(!confirm("Tüm verileri kalıcı olarak silmek istiyor musun?")) return;
-        localStorage.removeItem(Store.key.cards);
-        localStorage.removeItem(Store.key.books);
-        localStorage.removeItem(Store.key.activity);
-        localStorage.removeItem(Store.key.settings);
-        Store.data = {
-          cards: [],
-          books: [],
-          activity: {},
-          settings: { theme:"dark", fontSize:19, pageSize:780, lastBackupAt:null }
-        };
-        Store.save();
-        document.body.setAttribute("data-theme", "dark");
-        App.applySettingsToCSS();
-        Sheets.closeAll();
-        App.renderDash();
-        Library.render();
-        Cards.render("");
-        Utils.toast("Sıfırlandı.");
-      }
-    };
-
-    // ---- Helpers for safe HTML in template strings ----
-    function escapeHtml(s){
-      return Utils.safeText(s)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+(İpucu: Kelimeye dokun → Kart paneli açılır → Otomatik Çevir ile TR doldur.)`
+      });
+      DB.set("lm_books", state.books);
     }
-    function escapeQuotes(s){
-      return Utils.safeText(s).replaceAll("\\","\\\\").replaceAll("'","\\'").replaceAll("\n"," ");
+  }
+
+  // Dashboard
+  function renderDash(){
+    document.getElementById("dashTotal").textContent = state.cards.length;
+    document.getElementById("dashDue").textContent = state.cards.filter(c => c.due <= Date.now()).length;
+
+    // streak/7day sum (basit)
+    const today = new Date();
+    let week = 0;
+    for(let i=0;i<7;i++){
+      const d = new Date(today);
+      d.setDate(d.getDate()-i);
+      const k = d.toISOString().slice(0,10);
+      week += (state.activity[k] || 0);
+    }
+    document.getElementById("dashWeek").textContent = week;
+
+    // streak (ardışık gün)
+    let streak = 0;
+    for(let i=0;i<365;i++){
+      const d = new Date(today);
+      d.setDate(d.getDate()-i);
+      const k = d.toISOString().slice(0,10);
+      if((state.activity[k] || 0) > 0) streak++;
+      else break;
+    }
+    document.getElementById("dashStreak").textContent = streak + " Gün";
+  }
+
+  // Library
+  function renderLibrary(){
+    const wrap = document.getElementById("libraryList");
+    wrap.innerHTML = "";
+    state.books.forEach(b=>{
+      const total = getPages(b.content).length;
+      const el = document.createElement("div");
+      el.className = "card";
+      el.style.marginTop = "12px";
+      el.innerHTML = `
+        <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
+          <div style="min-width:0;">
+            <div style="font-weight:950; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${b.title}</div>
+            <div class="smallInfo">${b.lang} • Sayfa ${b.page+1} / ${total}</div>
+          </div>
+          <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" data-open="${b.id}">Oku</button>
+        </div>
+      `;
+      el.querySelector("[data-open]").onclick = ()=>openBook(b.id);
+      wrap.appendChild(el);
+    });
+  }
+
+  // Reader paging (1 sayfa sorunu burada çözülüyor)
+  let activeBook = null;
+
+  function getPages(text){
+    const t = (text || "").replace(/\r\n/g,"\n");
+    const size = 1500; // küçük tut -> gerçek sayfalama
+    const pages = [];
+    let i=0;
+    while(i < t.length){
+      let end = Math.min(i + size, t.length);
+      if(end < t.length){
+        let cut = Math.max(
+          t.lastIndexOf(". ", end),
+          t.lastIndexOf("! ", end),
+          t.lastIndexOf("? ", end),
+          t.lastIndexOf("\n", end)
+        );
+        if(cut < i + Math.floor(size*0.4)){
+          const sp = t.lastIndexOf(" ", end);
+          if(sp > i) cut = sp;
+        }
+        if(cut > i) end = cut + 1;
+      }
+      pages.push(t.slice(i,end).trim());
+      i=end;
+    }
+    return pages.length ? pages : ["(Boş)"];
+  }
+
+  function openBook(id){
+    activeBook = state.books.find(b=>b.id===id);
+    go("reader");
+    renderReader();
+  }
+
+  function renderReader(){
+    if(!activeBook) return;
+    const pages = getPages(activeBook.content);
+    if(activeBook.page >= pages.length) activeBook.page = pages.length-1;
+    if(activeBook.page < 0) activeBook.page = 0;
+
+    document.getElementById("rTitle").textContent = activeBook.title;
+    document.getElementById("rPage").textContent = `Sayfa ${activeBook.page+1} / ${pages.length}`;
+
+    const box = document.getElementById("readerText");
+    box.style.fontSize = state.settings.fontSize + "px";
+    box.innerHTML = "";
+
+    const text = pages[activeBook.page];
+    const parts = text.split(/(\s+)/);
+    parts.forEach(ch=>{
+      if(ch.trim().length===0){
+        box.appendChild(document.createTextNode(ch));
+        return;
+      }
+      // noktalama ayıklama
+      const clean = ch.replace(/[.,!?;:"()«»—–\[\]{}<>]+/g,"").trim();
+      if(clean){
+        const s = document.createElement("span");
+        s.className = "token";
+        s.textContent = ch;
+        s.onclick = ()=>openWord(clean, activeBook.lang, text);
+        box.appendChild(s);
+      }else{
+        box.appendChild(document.createTextNode(ch));
+      }
+    });
+
+    DB.set("lm_books", state.books);
+  }
+
+  function nextPage(){ if(!activeBook) return; activeBook.page++; renderReader(); }
+  function prevPage(){ if(!activeBook) return; activeBook.page--; renderReader(); }
+  function toggleFont(){
+    state.settings.fontSize = state.settings.fontSize >= 27 ? 17 : state.settings.fontSize + 2;
+    DB.set("lm_settings", state.settings);
+    renderReader();
+  }
+
+  // Sheets
+  const backdrop = document.getElementById("backdrop");
+  function openSheet(id){
+    backdrop.classList.add("open");
+    document.getElementById(id).classList.add("open");
+  }
+  function closeSheets(){
+    backdrop.classList.remove("open");
+    document.querySelectorAll(".sheet").forEach(s=>s.classList.remove("open"));
+  }
+
+  // Word Sheet
+  let currentCardId = null;
+
+  function openWord(word, lang, ctx){
+    currentCardId = null;
+    document.getElementById("wsLang").textContent = lang;
+    document.getElementById("wsWord").textContent = word;
+    document.getElementById("wsMeaning").value = "";
+    document.getElementById("wsContext").value = ctx.slice(0,220) + (ctx.length>220 ? "..." : "");
+    document.getElementById("wsStatus").textContent = "Yeni kart";
+    openSheet("wordSheet");
+  }
+
+  function speakWord(){
+    const txt = document.getElementById("wsWord").textContent;
+    const lang = document.getElementById("wsLang").textContent;
+    const u = new SpeechSynthesisUtterance(txt);
+    const map = {EN:"en-US", RU:"ru-RU", DE:"de-DE", FR:"fr-FR", TR:"tr-TR"};
+    u.lang = map[lang] || "en-US";
+    u.rate = 0.9;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }
+
+  // Auto translate (NO redirect)
+  async function autoTranslate(){
+    const word = document.getElementById("wsWord").textContent;
+    const lang = document.getElementById("wsLang").textContent;
+    const source = ({EN:"en", RU:"ru", DE:"de", FR:"fr"})[lang] || "auto";
+
+    try{
+      const r = await fetch("https://libretranslate.de/translate",{
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ q: word, source, target:"tr", format:"text" })
+      });
+      if(!r.ok) throw new Error("translate_failed");
+      const data = await r.json();
+      document.getElementById("wsMeaning").value = (data.translatedText || "").trim();
+      toast("Çeviri alındı ✅");
+    }catch(e){
+      toast("Çeviri servisi erişemedi (internet/yoğunluk).");
+    }
+  }
+
+  function saveCard(){
+    const term = document.getElementById("wsWord").textContent.trim();
+    const lang = document.getElementById("wsLang").textContent.trim();
+    const meaning = document.getElementById("wsMeaning").value.trim();
+    const context = document.getElementById("wsContext").value.trim();
+
+    if(!term) return toast("Kelime boş olamaz.");
+    if(!meaning) return toast("Anlamı (TR) doldur.");
+
+    const now = Date.now();
+    const card = {
+      id: currentCardId || ("c_" + Math.random().toString(36).slice(2)),
+      term, lang, meaning, context,
+      due: now,
+      srs: { interval:0, reps:0, ef:2.5 }
+    };
+
+    const idx = state.cards.findIndex(c=>c.id===card.id);
+    if(idx >= 0) state.cards[idx] = card;
+    else state.cards.push(card);
+
+    DB.set("lm_cards", state.cards);
+    toast("Kaydedildi ✅");
+    closeSheets();
+    renderDash();
+  }
+
+  function editCard(){
+    const term = document.getElementById("wsWord").textContent.trim();
+    const found = state.cards.find(c => c.term.toLowerCase() === term.toLowerCase());
+    if(!found) return toast("Bu kelime kartlarda yok.");
+    currentCardId = found.id;
+    document.getElementById("wsMeaning").value = found.meaning || "";
+    document.getElementById("wsContext").value = found.context || "";
+    document.getElementById("wsStatus").textContent = "Düzenleme modu";
+    toast("Düzenleme açıldı");
+  }
+
+  function deleteCard(){
+    const term = document.getElementById("wsWord").textContent.trim();
+    const idx = state.cards.findIndex(c => c.term.toLowerCase() === term.toLowerCase());
+    if(idx < 0) return toast("Silinecek kart yok.");
+    state.cards.splice(idx,1);
+    DB.set("lm_cards", state.cards);
+    toast("Silindi");
+    closeSheets();
+    renderDash();
+    renderCards();
+  }
+
+  // Cards view
+  document.getElementById("search").addEventListener("input", renderCards);
+
+  function renderCards(){
+    const q = (document.getElementById("search").value || "").toLowerCase().trim();
+    const list = document.getElementById("cardsList");
+    list.innerHTML = "";
+
+    const items = state.cards
+      .filter(c => !q || c.term.toLowerCase().includes(q) || c.meaning.toLowerCase().includes(q))
+      .sort((a,b)=>a.term.localeCompare(b.term));
+
+    if(items.length===0){
+      const e = document.createElement("div");
+      e.className = "card";
+      e.innerHTML = `<div style="font-weight:950;">Henüz kart yok</div><div class="smallInfo">Kitapta kelimeye dokun → Kaydet</div>`;
+      list.appendChild(e);
+      return;
     }
 
-    // ---- INIT ----
-    App.init();
-  </script>
+    items.forEach(c=>{
+      const e = document.createElement("div");
+      e.className = "card";
+      e.style.marginTop = "12px";
+      e.innerHTML = `
+        <div style="font-weight:950; color:var(--primary); font-size:20px;">${c.term}</div>
+        <div class="smallInfo">${c.lang} • ${c.meaning}</div>
+        <div class="smallInfo" style="margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${c.context || ""}</div>
+      `;
+      list.appendChild(e);
+    });
+  }
+
+  // Quiz (basit başlangıç)
+  document.getElementById("btnQuiz").onclick = () => {
+    toast("Quiz ekranını bir sonraki adımda ekleyeceğim. Şimdilik kart biriktirelim 🙂");
+  };
+
+  // Add Book
+  function openAddBook(){
+    document.getElementById("bTitle").value = "";
+    document.getElementById("bUrl").value = "";
+    document.getElementById("bText").value = "";
+    openSheet("addBookSheet");
+  }
+
+  async function saveBook(){
+    const title = document.getElementById("bTitle").value.trim() || "Adsız Metin";
+    const lang = document.getElementById("bLang").value;
+    const url = document.getElementById("bUrl").value.trim();
+    let content = document.getElementById("bText").value.trim();
+
+    if(url){
+      try{
+        const r = await fetch(url);
+        if(!r.ok) throw new Error("fetch_failed");
+        content = await r.text();
+      }catch(e){
+        return toast("URL’den çekemedim. Link doğru mu / CORS engeli olabilir.");
+      }
+    }
+
+    if(!content) return toast("İçerik boş olamaz.");
+
+    state.books.push({ id:"b_"+Math.random().toString(36).slice(2), title, lang, page:0, content });
+    DB.set("lm_books", state.books);
+    toast("Kütüphaneye eklendi ✅");
+    closeSheets();
+    renderLibrary();
+  }
+
+  // Free Books (Gutenberg TXT)
+  const FREE = [
+    { title:"Alice’s Adventures in Wonderland", lang:"EN", url:"https://www.gutenberg.org/cache/epub/11/pg11.txt" },
+    { title:"The Adventures of Sherlock Holmes", lang:"EN", url:"https://www.gutenberg.org/cache/epub/1661/pg1661.txt" },
+    { title:"Pride and Prejudice", lang:"EN", url:"https://www.gutenberg.org/cache/epub/1342/pg1342.txt" }
+  ];
+
+  function openFreeBooks(){
+    const box = document.getElementById("freeBooks");
+    box.innerHTML = "";
+    FREE.forEach(b=>{
+      const e = document.createElement("div");
+      e.className = "card";
+      e.style.marginTop = "12px";
+      e.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <div style="min-width:0;">
+            <div style="font-weight:950; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${b.title}</div>
+            <div class="smallInfo">${b.lang} • Project Gutenberg</div>
+          </div>
+          <button class="btn btnPrimary" style="padding:10px 12px; border-radius:14px;" data-dl>İndir</button>
+        </div>
+      `;
+      e.querySelector("[data-dl]").onclick = ()=>downloadBook(b);
+      box.appendChild(e);
+    });
+    openSheet("freeBookSheet");
+  }
+
+  async function downloadBook(b){
+    toast("İndiriliyor...");
+    try{
+      const r = await fetch(b.url);
+      if(!r.ok) throw new Error("dl_failed");
+      const content = await r.text();
+      state.books.push({ id:"g_"+Math.random().toString(36).slice(2), title:b.title, lang:b.lang, page:0, content });
+      DB.set("lm_books", state.books);
+      toast("Eklendi ✅");
+      closeSheets();
+      renderLibrary();
+    }catch(e){
+      toast("İndirme başarısız (internet/CORS). Başka kitap deneyelim.");
+    }
+  }
+
+  // Init
+  seed();
+  setTheme(state.settings.theme);
+  renderDash();
+  renderLibrary();
+  renderCards();
+</script>
 </body>
 </html>
