@@ -230,6 +230,56 @@
     }
     .qChoice.correct{border-color: color-mix(in srgb, var(--ok) 70%, var(--border)); background:color-mix(in srgb, var(--ok) 12%, var(--card));}
     .qChoice.wrong{border-color: color-mix(in srgb, var(--danger) 70%, var(--border)); background:color-mix(in srgb, var(--danger) 10%, var(--card));}
+    /* --- QUIZ TYPING MODE --- */
+.qInputWrap{
+  width:100%;
+  max-width:420px;
+  margin:10px auto 0;
+  display:flex;
+  gap:10px;
+}
+.qInput{
+  flex:1;
+  padding:14px;
+  border-radius:14px;
+  border:2px solid var(--border);
+  background:var(--card);
+  color:var(--text);
+  font-size:16px;
+  font-weight:900;
+  outline:none;
+}
+.qInput.correct{
+  border-color:#22c55e;
+  background:rgba(34,197,94,.12);
+}
+.qInput.wrong{
+  border-color:#ef4444;
+  background:rgba(239,68,68,.12);
+}
+.qCheckBtn{
+  padding:14px 18px;
+  border-radius:14px;
+  border:none;
+  background:var(--primary);
+  color:#fff;
+  font-weight:950;
+}
+.qAnswerReveal{
+  margin-top:10px;
+  font-size:14px;
+  font-weight:900;
+  color:var(--muted);
+}
+/* --- QUIZ SUMMARY --- */
+#quizSummary{
+  max-width:420px;
+  margin:0 auto;
+}
+#quizSummary h2{
+  font-weight:1000;
+}
+
   </style>
 </head>
 
@@ -596,29 +646,79 @@
 
 <!-- QUIZ OVERLAY -->
 <div class="overlay" id="quizOverlay">
+
+  <!-- ÜST BAR -->
   <div class="overlayTop">
     <div style="font-weight:980;">Quiz</div>
-    <button class="iconBtn" onclick="stopQuiz()">✕</button>
+    <button class="iconBtn" onclick="stopQuiz()">×</button>
   </div>
 
-  <div class="qwrap">
-    <div class="qMeta" id="qMeta">—</div>
-    <div class="qWord" id="qWord">—</div>
-    <div class="qChoices" id="qChoices"></div>
+  <!-- QUIZ BODY (SORULARIN OLDUĞU YER) -->
+  <div id="quizBody" style="padding:18px 18px 24px 18px;">
 
-    <div class="two" style="margin-top:14px; max-width:520px; width:100%; margin-left:auto; margin-right:auto;">
-      <button class="btn btnSoft btnHalf" onclick="gradeCurrent(5)">Kolay</button>
-      <button class="btn btnSoft btnHalf" onclick="gradeCurrent(3)">Orta</button>
-      <button class="btn btnSoft btnHalf" onclick="gradeCurrent(1)">Zor</button>
+    <!-- ÜST İSTATİSTİK + PROGRESS -->
+    <div class="qTopStats" style="margin-top:6px;">
+      <div class="qPill">Kalan: <span id="qRemain">0</span>/<span id="qTotal">0</span></div>
+      <div class="qPill">✅ <span id="qCorrect">0</span>  ❌ <span id="qWrong">0</span></div>
+    </div>
+    <div class="qProgOuter">
+      <div class="qProgInner" id="qProg"></div>
     </div>
 
-    <div class="smallInfo" style="text-align:center; margin-top:10px;">
-      Seçeneklere dokun → sonra Kolay/Orta/Zor ile not ver (SRS günceller).
+    <!-- META -->
+    <div id="qMeta" style="margin-top:12px; opacity:.8; font-weight:900; font-size:12px;">
+      —
     </div>
+
+    <!-- WORD -->
+    <div id="qWord" style="margin-top:14px; font-size:40px; font-weight:1000; text-align:center;">
+      —
+    </div>
+
+    <!-- CHOICES (ÇOKTAN SEÇMELİ) -->
+    <div id="qChoices" style="margin-top:18px; display:flex; flex-direction:column; gap:10px;">
+      <!-- JS buraya butonları basacak -->
+    </div>
+
+    <!-- TYPING MODE -->
+    <div class="qInputWrap" id="qTyping" style="display:none">
+      <input id="qInput" class="qInput" placeholder="Anlamını yaz..." />
+      <button class="qCheckBtn" onclick="checkTypingAnswer()">Kontrol</button>
+    </div>
+
+    <!-- DOĞRU CEVAP GÖSTER -->
+    <div class="qAnswerReveal" id="qReveal"></div>
+
+    <!-- KOLAY / ORTA / ZOR -->
+    <div id="qGrade" style="display:none; margin-top:14px">
+      <button class="btn ghost" onclick="gradeAnswer('hard')">Zor</button>
+      <button class="btn secondary" onclick="gradeAnswer('medium')">Orta</button>
+      <button class="btn primary" onclick="gradeAnswer('easy')">Kolay</button>
+    </div>
+
+  </div><!-- /quizBody -->
+
+  <!-- QUIZ SUMMARY (BİTTİ EKRANI) -->
+  <div id="quizSummary" style="display:none; padding:24px; text-align:center">
+    <h2 style="margin-bottom:10px">Quiz Bitti</h2>
+
+    <div style="font-size:14px; font-weight:900; margin-bottom:16px">
+      Doğru: <span id="sumCorrect">0</span> |
+      Yanlış: <span id="sumWrong">0</span> |
+      Başarı: <span id="sumRate">0%</span>
+    </div>
+
+    <button class="btn primary" onclick="repeatWrongQuiz()" style="width:100%; margin-bottom:10px">
+      Yanlışları Tekrar Sor
+    </button>
+
+    <button class="btn ghost" onclick="closeQuiz()" style="width:100%">
+      Çık
+    </button>
   </div>
-</div>
 
-<div class="toast" id="toast">—</div>
+</div><!-- /quizOverlay -->
+
 
 <script>
   // ---------------- Storage ----------------
@@ -1227,6 +1327,8 @@ However little known the feelings or views of such a man may be on his first ent
   // ---------------- Quiz Engine ----------------
   let quizCurrent = null; // { card, choices[], correctIndex }
   let quizSelectedChoiceIndex = null;
+  let quizMode = "choice"; // "choice" | "typing"
+
 
   function startReviewQuiz(){
     if(state.cards.length === 0){
@@ -1252,7 +1354,11 @@ However little known the feelings or views of such a man may be on his first ent
   }
 
   function nextQuizQuestion(){
-    if(!state.reviewQueue || state.reviewQueue.length === 0){
+    if(state.reviewQueue.length === 0){
+  showQuizSummary();
+  return;
+}
+
       toast("Bitti ✅");
       stopQuiz();
       return;
@@ -1484,6 +1590,14 @@ However little known the feelings or views of such a man may be on his first ent
 
   // If review queue empty but due exists, keep ok
   if(!state.reviewQueue) state.reviewQueue = [];
+  function closeQuiz(){
+  const ov = document.getElementById("quizOverlay");
+  if(ov) ov.classList.remove("open");
+}
+function stopQuiz(){
+  closeQuiz();
+}
+
 </script>
 </body>
 </html>
