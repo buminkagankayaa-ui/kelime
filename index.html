@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-  <title>Vocab Pocket Pro</title>
+  <title>Vocab Pocket Ultimate</title>
 
   <meta name="theme-color" content="#0b0b10" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -52,7 +52,7 @@
       -webkit-tap-highlight-color: transparent; overflow-x: hidden;
     }
 
-    /* HEADER & NAV */
+    /* --- HEADER & NAV --- */
     header{
       position:sticky; top:0; z-index:40;
       background: linear-gradient(to bottom, var(--headerTop), var(--headerBottom));
@@ -63,9 +63,9 @@
     .topbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
     .brand h1{ margin:0; font-size:18px; letter-spacing:-0.5px; }
     .brand .sub{ font-size:11px; color:var(--muted); }
-    .row{ display:flex; gap:8px; align-items:center; }
+    .row{ display:flex; gap:8px; align-items:center; flex-wrap: wrap; justify-content: flex-end; }
 
-    /* BUTTONS */
+    /* --- BUTTONS --- */
     .btn{
       border:1px solid var(--line); background: rgba(255,255,255,.06); color:var(--text);
       padding:10px 12px; border-radius:12px; font-weight:700; font-size:13px;
@@ -79,19 +79,19 @@
     .btn.danger{ border-color: color-mix(in srgb, var(--danger) 35%, transparent); background: color-mix(in srgb, var(--danger) 15%, transparent); color:var(--danger); }
     .btn.ghost{ background:transparent; border:none; color:var(--muted); padding: 8px; }
     
-    /* INPUTS & FILTERS */
+    /* --- INPUTS & FILTERS --- */
     .input, select, textarea{
       width:100%; border:1px solid var(--line); background: var(--inputBg); color:var(--text);
       padding:12px; border-radius:12px; outline:none; font-size:15px;
     }
-    .filters{ display:flex; gap:8px; overflow-x:auto; padding-bottom:5px; -webkit-overflow-scrolling:touch; }
+    .filters{ display:flex; gap:8px; overflow-x:auto; padding-bottom:5px; -webkit-overflow-scrolling:touch; margin-top: 8px;}
     .filters::-webkit-scrollbar { display:none; }
     .filters select { min-width: 120px; flex:0 0 auto; }
 
-    /* DASHBOARD & HEATMAP */
+    /* --- HEATMAP (YENİ) --- */
     .dash-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
     .heatmap-panel {
-        background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius2);
+        background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: var(--radius2);
         padding: 10px; display: flex; flex-direction: column; gap: 8px;
     }
     .heatmap-title { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; }
@@ -104,7 +104,7 @@
     .day-box.active { background: var(--accent2); color: #000; box-shadow: 0 0 10px color-mix(in srgb, var(--accent2) 40%, transparent); }
     .day-box .d-label { font-size: 9px; opacity: 0.7; }
 
-    /* CARDS */
+    /* --- CARDS & GRID --- */
     .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:16px; margin-top:16px; }
     .card{
       position:relative; background:transparent; perspective:1000px;
@@ -127,19 +127,21 @@
     }
     .face.back{ transform: rotateY(180deg); background: linear-gradient(145deg, var(--card2), var(--panel)); }
 
-    /* Card Content */
+    /* --- CARD CONTENT (IMG, SOUND, ETC) --- */
     .card-img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background: rgba(0,0,0,0.2); display: none; }
     .card-img.show { display: block; }
     
     .meta{ display:flex; justify-content:space-between; align-items:center; }
     .badge{ font-size:11px; font-weight:700; color:var(--muted); background:rgba(255,255,255,0.05); padding:4px 8px; border-radius:6px; }
-    .controls-row { display: flex; gap: 8px; }
+    .controls-row { display: flex; gap: 8px; align-items: center;}
     
-    .sound-btn { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .sound-btn { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--accent); }
     .sound-btn:active { background: var(--accent); color: white; }
 
     .term{ font-size:24px; font-weight:800; margin:8px 0; word-break:break-word; line-height:1.1; }
-    .example{ font-size:13px; color:var(--muted); font-style:italic; line-height:1.4; flex:1; }
+    .example{ font-size:13px; color:var(--muted); font-style:italic; line-height:1.4; flex:1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;}
+    .star{ font-size: 20px; color: var(--muted); cursor: pointer; padding: 4px; }
+    .star.on{ color: var(--warn); }
 
     .check-overlay {
         position: absolute; top: 10px; right: 10px; z-index: 10;
@@ -153,7 +155,7 @@
     .actions{ margin-top:auto; display:flex; gap:8px; padding-top:10px; border-top:1px solid var(--line); }
     .actions .btn{ flex:1; padding:8px; font-size:12px; }
 
-    /* BULK BAR */
+    /* --- BULK ACTION BAR --- */
     .bulk-bar {
         position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(150%);
         background: var(--panel); border: 1px solid var(--line); padding: 10px 14px;
@@ -163,7 +165,7 @@
     }
     .bulk-bar.active { transform: translateX(-50%) translateY(0); }
 
-    /* MODALS */
+    /* --- MODALS --- */
     dialog{
       width:min(90vw, 500px); border:none; border-radius:20px; background:var(--panel);
       color:var(--text); box-shadow:0 25px 50px rgba(0,0,0,0.5); padding:0; margin:auto;
@@ -174,11 +176,12 @@
     .modalBody{ padding:16px; display:flex; flex-direction:column; gap:12px; }
     .modalFoot{ padding:16px; border-top:1px solid var(--line); display:flex; gap:10px; justify-content:flex-end; background:var(--panel); }
     .two{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .help{ font-size:12px; color:var(--muted); background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px dashed var(--line); }
 
-    /* QUIZ OVERLAY */
+    /* --- QUIZ UI --- */
     .quizOverlay{
       position:fixed; inset:0; z-index:100; background:var(--bg); display:none; flex-direction:column;
-      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px;
+      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px; overflow-y: auto;
     }
     .quizOverlay.on{ display:flex; }
     .timer-bar { height: 4px; background: var(--line); margin-top: 10px; border-radius: 2px; overflow: hidden; }
@@ -202,12 +205,12 @@
   <header>
     <div class="topbar">
       <div class="brand">
-        <h1>Vocab Pocket Pro</h1>
-        <div class="sub">Language Mastery</div>
+        <h1>Vocab Pocket Ultimate</h1>
+        <div class="sub">Yedekle • Seslendir • Yarış</div>
       </div>
       <div class="row">
-        <button class="btn ghost" id="selectModeBtn">Seç</button>
-        <button class="btn" id="settingsBtn">Ayarlar ⚙️</button>
+        <button class="btn ghost" id="selectModeBtn" title="Toplu Seçim">Seç</button>
+        <button class="btn" id="settingsBtn" title="Ayarlar ve Yedekleme">⚙️</button>
         <button class="btn good" id="quizBtn">Quiz 🧠</button>
         <button class="btn primary" id="addBtn">＋</button>
       </div>
@@ -215,22 +218,22 @@
 
     <div class="filters">
       <div class="row" style="width:100%">
-        <input class="input" id="search" placeholder="Ara: #tag, lang:EN..." style="flex:1">
-        <button class="btn" id="quickAddBtn">⚡</button>
+        <input class="input" id="search" placeholder="Ara: #tag, lang:EN, level:B1..." style="flex:1">
+        <button class="btn" id="quickAddBtn" title="Excel Import">⚡</button>
       </div>
     </div>
     
-    <div class="filters" style="margin-top:8px">
-      <select id="statusFilter"><option value="ALL">Durum: Tümü</option><option value="NEW">Yeni</option><option value="DUE">Bugün (Due)</option></select>
-      <select id="levelFilter"><option value="ALL">Seviye: Tümü</option><option value="A1">A1</option><option value="B1">B1</option><option value="C1">C1</option></select>
-      <select id="sort"><option value="due">Sıra: Önce Due</option><option value="date">Sıra: Son Eklenen</option></select>
+    <div class="filters">
+      <select id="statusFilter"><option value="ALL">Durum: Tümü</option><option value="NEW">Yeni</option><option value="LEARNING">Öğreniliyor</option><option value="MASTERED">Öğrenildi</option><option value="DUE">Tekrar (Due)</option></select>
+      <select id="levelFilter"><option value="ALL">Seviye: Tümü</option><option value="A1">A1</option><option value="A2">A2</option><option value="B1">B1</option><option value="B2">B2</option><option value="C1">C1</option></select>
+      <select id="sort"><option value="due">Sıra: Önce Due</option><option value="date">Sıra: Son Eklenen</option><option value="az">A-Z</option></select>
     </div>
 
     <div class="dash-grid">
         <div class="heatmap-panel">
             <div style="display:flex; justify-content:space-between">
-                <span class="heatmap-title">Son 7 Gün Aktivitesi</span>
-                <span class="heatmap-title" id="streakCount">Zincir: 0 Gün</span>
+                <span class="heatmap-title">Çalışma Zinciri</span>
+                <span class="heatmap-title" id="streakCount">0 Gün</span>
             </div>
             <div class="heatmap-grid" id="heatmapGrid"></div>
         </div>
@@ -239,6 +242,7 @@
 
   <main>
     <div class="grid" id="grid"></div>
+    
     <div class="bulk-bar" id="bulkBar">
         <span id="selCount" style="font-weight:bold; font-size:12px; color:var(--muted)">0 Seçildi</span>
         <div style="flex:1"></div>
@@ -265,7 +269,7 @@
       
       <div class="two">
           <input class="input" id="level" placeholder="Seviye (B1)">
-          <input class="input" id="tags" placeholder="Etiketler (virgül)">
+          <input class="input" id="tags" placeholder="Etiketler (tag1, tag2)">
       </div>
       
       <input class="input" id="imgUrl" placeholder="🖼️ Resim URL (Opsiyonel)">
@@ -282,7 +286,7 @@
         <button class="btn ghost" onclick="quickModal.close()">✕</button>
     </div>
     <div class="modalBody">
-        <div class="sub" style="color:var(--muted); font-size:12px">Excel'den kopyalayıp yapıştırabilirsin. (Kelime [TAB] Anlam)</div>
+        <div class="help">Excel'den kopyalayıp yapıştırabilirsin. (Kelime [TAB] Anlam) veya (Kelime - Anlam)</div>
         <textarea class="input" id="quickText" rows="10" placeholder="apple	elma&#10;run	koşmak&#10;book - kitap - A1"></textarea>
     </div>
     <div class="modalFoot">
@@ -307,11 +311,11 @@
         
         <div style="font-weight:bold; margin-bottom:5px">Veri Yönetimi (Yedekleme)</div>
         <div class="two">
-            <button class="btn" onclick="exportData()">💾 Yedek İndir (JSON)</button>
+            <button class="btn" onclick="exportData()">💾 Yedek İndir</button>
             <button class="btn" onclick="document.getElementById('fileInput').click()">📂 Yedek Yükle</button>
             <input type="file" id="fileInput" style="display:none" accept=".json" onchange="importData(this)">
         </div>
-        <div class="help">Verilerin tarayıcıda saklanır. Silinmemesi için düzenli yedek al.</div>
+        <div class="help">Verilerin tarayıcıda saklanır. Silinmemesi için haftalık yedek al.</div>
     </div>
   </dialog>
 
@@ -319,10 +323,10 @@
     <div class="modalHead"><h3>Quiz Ayarları</h3><button class="btn ghost" onclick="quizSetupModal.close()">✕</button></div>
     <div class="modalBody">
         <div class="two">
-            <button class="btn primary" onclick="startQuiz(false)" style="height:80px; font-size:16px">Normal Mod<br><span style="font-size:12px; font-weight:400">Sakin sakin çöz</span></button>
-            <button class="btn danger" onclick="startQuiz(true)" style="height:80px; font-size:16px">Zaman Yarışı ⏱️<br><span style="font-size:12px; font-weight:400">60 saniye</span></button>
+            <button class="btn primary" onclick="startQuiz(false)" style="height:80px; font-size:16px">Normal Mod<br><span style="font-size:12px; font-weight:400">Sakin çöz</span></button>
+            <button class="btn danger" onclick="startQuiz(true)" style="height:80px; font-size:16px">Zaman Yarışı ⏱️<br><span style="font-size:12px; font-weight:400">60 Saniye</span></button>
         </div>
-        <select id="quizScope" class="input"><option value="DUE">Sadece Tekrar Zamanı Gelenler (Due)</option><option value="ALL">Tüm Kelimeler</option></select>
+        <select id="quizScope" class="input"><option value="DUE">Sadece Tekrar Zamanı Gelenler</option><option value="ALL">Tüm Kelimeler</option></select>
     </div>
   </dialog>
 
@@ -330,7 +334,7 @@
     <div class="topbar">
       <div class="brand"><h1>Quiz</h1></div>
       <div class="row">
-          <span class="pill" id="timerBadge" style="display:none; color:var(--danger)">⏱️ <b id="timeLeft">60</b></span>
+          <span class="pill" id="timerBadge" style="display:none; color:var(--danger); font-weight:bold; font-size:18px;">⏱️ <b id="timeLeft">60</b></span>
           <button class="btn" onclick="closeQuiz()">Çıkış</button>
       </div>
     </div>
@@ -339,7 +343,7 @@
     <div class="quizCard" id="quizCardArea">
       <div style="display:flex; gap:10px; margin-bottom:10px">
         <span class="badge" id="qLang">EN</span>
-        <button class="sound-btn" onclick="speakCurrentQuiz()">🔊</button>
+        <button class="sound-btn" onclick="speakCurrentQuiz()" title="Seslendir">🔊</button>
       </div>
       <div class="qText" id="qText">...</div>
       
@@ -347,7 +351,7 @@
     </div>
     
     <div class="quizCard" id="quizResult" style="display:none">
-        <h1>Bitti! 🎉</h1>
+        <h1 style="font-size:40px">Bitti! 🎉</h1>
         <p id="quizFinalScore" style="font-size:18px; color:var(--muted)">Skorun: 0</p>
         <button class="btn primary" onclick="closeQuiz()">Tamam</button>
     </div>
@@ -356,36 +360,89 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    /* --- UTILS --- */
+    /* --- UTILITIES --- */
     const $ = (s) => document.querySelector(s);
     const $$ = (s) => document.querySelectorAll(s);
     const now = () => Date.now();
-    const makeId = () => 'id_' + Math.random().toString(36).substr(2, 9);
+    const makeId = () => 'id_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36).substr(4,4);
+    const clean = (s) => (s ?? "").toString().trim();
+    const escapeHtml = (str) => (str ?? "").toString().replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
     const DAY = 24*60*60*1000;
 
-    /* --- STATE --- */
-    let items = JSON.parse(localStorage.getItem('vp_items_v7') || "[]");
-    let activity = JSON.parse(localStorage.getItem('vp_activity') || "{}");
-    let langs = [{code:"EN",name:"English"}, {code:"TR",name:"Türkçe"}, {code:"DE",name:"Deutsch"}, {code:"FR",name:"Français"}, {code:"ES",name:"Español"}];
+    /* --- DATA & STATE --- */
+    const KEY_ITEMS = 'vp_items_ultimate';
+    const KEY_THEME = 'vp_theme_ultimate';
+    const KEY_ACTIVITY = 'vp_activity_log';
+    
+    // Legacy support (eski versiyonlardan veri çekme)
+    let items = JSON.parse(localStorage.getItem(KEY_ITEMS) || localStorage.getItem('vocab_pocket_pro_v5_items') || "[]");
+    let activity = JSON.parse(localStorage.getItem(KEY_ACTIVITY) || "{}");
+    
+    let langs = [
+        {code:"EN", name:"English"}, {code:"TR", name:"Türkçe"}, 
+        {code:"DE", name:"Deutsch"}, {code:"FR", name:"Français"}, 
+        {code:"ES", name:"Español"}, {code:"IT", name:"Italiano"}, 
+        {code:"RU", name:"Русский"}
+    ];
+    
     let editingId = null;
     let selectionMode = false;
     let selectedIds = new Set();
     
     /* --- INIT --- */
     function init(){
+        // Veri yapısını güncelle (eski verilerde imgUrl yoksa ekle)
+        items = items.map(patchItem);
+        save();
+        
         renderLangSelects();
+        applyTheme(localStorage.getItem(KEY_THEME) || 'dark');
         renderHeatmap();
-        applyTheme(localStorage.getItem('vp_theme') || 'dark');
         render();
-        setupEvents();
+        
+        // Event Listeners
+        $('#search').addEventListener('input', render);
+        $('#statusFilter').addEventListener('change', render);
+        $('#levelFilter').addEventListener('change', render);
+        $('#sort').addEventListener('change', render);
+        $('#themeSelect').addEventListener('change', (e) => applyTheme(e.target.value));
+        
+        // Service Worker (Fake PWA Install trigger support)
+        if('serviceWorker' in navigator) {
+             // Basic dummy SW to satisfy install criteria
+             const blob = new Blob(['self.addEventListener("install",e=>self.skipWaiting());self.addEventListener("fetch",e=>{})'], {type: 'application/javascript'});
+             navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+        }
+    }
+
+    function patchItem(it){
+        return {
+            id: it.id || makeId(),
+            term: clean(it.term),
+            meaning: clean(it.meaning),
+            example: clean(it.example),
+            level: clean(it.level) || "B1",
+            tags: Array.isArray(it.tags) ? it.tags : [],
+            sourceLang: clean(it.sourceLang) || "EN",
+            meaningLang: clean(it.meaningLang) || "TR",
+            imgUrl: clean(it.imgUrl), // Yeni alan
+            status: it.status || "NEW",
+            fav: !!it.fav,
+            createdAt: it.createdAt || now(),
+            updatedAt: it.updatedAt || now(),
+            srs: {
+                due: it.srs?.due || it.srs?.dueAt || now(),
+                interval: it.srs?.interval || 0,
+                ease: it.srs?.ease || 2.5
+            }
+        };
     }
 
     function save(){
-        localStorage.setItem('vp_items_v7', JSON.stringify(items));
-        localStorage.setItem('vp_activity', JSON.stringify(activity));
-        render();
+        localStorage.setItem(KEY_ITEMS, JSON.stringify(items));
+        localStorage.setItem(KEY_ACTIVITY, JSON.stringify(activity));
     }
-    
+
     function logActivity(){
         const today = new Date().toISOString().split('T')[0];
         activity[today] = (activity[today] || 0) + 1;
@@ -393,37 +450,64 @@
         renderHeatmap();
     }
 
-    /* --- RENDER --- */
+    /* --- RENDERING --- */
     function render(){
         const grid = $('#grid');
         grid.innerHTML = "";
         
-        // Filtering
-        const sFilter = $('#search').value.toLowerCase();
+        // Advanced Search Parsing
+        const qRaw = $('#search').value.toLowerCase();
+        let qTag = null, qLang = null, qText = qRaw;
+        
+        // Parse "lang:EN" or "#tag"
+        if(qRaw.includes('lang:')){ const p = qRaw.split('lang:'); qText = p[0].trim(); qLang = p[1].split(' ')[0].toUpperCase(); }
+        if(qRaw.includes('#')){ const p = qRaw.split('#'); qText = p[0].trim(); qTag = p[1].split(' ')[0]; }
+
         const stFilter = $('#statusFilter').value;
         const lFilter = $('#levelFilter').value;
         const sType = $('#sort').value;
 
         let filtered = items.filter(it => {
-            const matchesSearch = !sFilter || (it.term+" "+it.meaning+" "+it.tags.join(" ")).toLowerCase().includes(sFilter);
-            const matchesStatus = stFilter === "ALL" ? true : (stFilter === "DUE" ? it.srs.due <= now() : it.status === stFilter);
-            const matchesLevel = lFilter === "ALL" ? true : it.level === lFilter;
-            return matchesSearch && matchesStatus && matchesLevel;
+            // Text Search
+            const hay = (it.term+" "+it.meaning+" "+it.example+" "+it.tags.join(" ")).toLowerCase();
+            if(!hay.includes(qText)) return false;
+            
+            // Advanced Filters
+            if(qLang && it.sourceLang !== qLang) return false;
+            if(qTag && !it.tags.some(t=>t.toLowerCase().includes(qTag))) return false;
+            
+            // Dropdown Filters
+            if(stFilter === "DUE" && it.srs.due > now()) return false;
+            if(stFilter !== "ALL" && stFilter !== "DUE" && it.status !== stFilter) return false;
+            if(lFilter !== "ALL" && it.level !== lFilter) return false;
+            
+            return true;
         });
 
         // Sorting
         if(sType === 'due') filtered.sort((a,b) => a.srs.due - b.srs.due);
-        else filtered.sort((a,b) => b.createdAt - a.createdAt);
+        else if(sType === 'date') filtered.sort((a,b) => b.createdAt - a.createdAt);
+        else if(sType === 'az') filtered.sort((a,b) => a.term.localeCompare(b.term));
 
-        // Render Cards
+        // Empty State
+        if(filtered.length === 0) {
+            grid.innerHTML = `<div style="text-align:center; padding:40px; color:var(--muted); grid-column:1/-1;">Kayıt bulunamadı. <br>Hemen <b>+</b> butonuna bas.</div>`;
+            return;
+        }
+
         filtered.forEach(it => {
             const isDue = it.srs.due <= now();
             const el = document.createElement('div');
             el.className = `card ${selectedIds.has(it.id) ? 'selected' : ''}`;
             el.dataset.id = it.id;
             
-            // Image handling
-            const imgHtml = it.imgUrl ? `<img src="${it.imgUrl}" class="card-img show" alt="img">` : '';
+            // Resim Alanı
+            const imgHtml = it.imgUrl ? `<img src="${it.imgUrl}" class="card-img show" alt="img" onerror="this.style.display='none'">` : '';
+
+            // Status Badge Logic
+            let statusBadge = '';
+            if(isDue) statusBadge = `<span class="badge" style="color:var(--warn)">Due</span>`;
+            else if(it.status === 'MASTERED') statusBadge = `<span class="badge" style="color:var(--accent2)">Mastered</span>`;
 
             el.innerHTML = `
                 <div class="check-overlay"></div>
@@ -431,51 +515,59 @@
                     <div class="cardFlip">
                         <div class="face front">
                             <div class="meta">
-                                <span class="badge">${it.level||'B1'}</span>
+                                <span class="badge">${escapeHtml(it.level)} • ${escapeHtml(it.sourceLang)}</span>
                                 <div class="controls-row">
-                                    <button class="sound-btn" data-act="speak" data-txt="${it.term}" data-lang="${it.sourceLang}">🔊</button>
+                                    <button class="sound-btn" data-act="speak" data-txt="${escapeHtml(it.term)}" data-lang="${it.sourceLang}">🔊</button>
                                     <div class="star ${it.fav?'on':''}">★</div>
                                 </div>
                             </div>
                             ${imgHtml}
                             <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
-                                <div class="term">${it.term}</div>
-                                <div class="example">${it.example||''}</div>
+                                <div class="term">${escapeHtml(it.term)}</div>
+                                <div class="example">${escapeHtml(it.example)}</div>
                             </div>
-                            <div class="tags">
-                                ${isDue ? '<span class="badge" style="color:var(--warn)">Due</span>' : ''}
-                                ${it.status === 'MASTERED' ? '<span class="badge" style="color:var(--accent2)">Mastered</span>' : ''}
+                            <div class="tags" style="display:flex; gap:5px; flex-wrap:wrap">
+                                ${statusBadge}
+                                ${(it.tags||[]).map(t=>`<span class="badge" style="font-weight:400">#${t}</span>`).join('')}
                             </div>
                         </div>
                         <div class="face back">
                             <div class="meta">
                                 <span class="badge">Anlam</span>
-                                <button class="sound-btn" data-act="speak" data-txt="${it.meaning}" data-lang="${it.meaningLang}">🔊</button>
+                                <button class="sound-btn" data-act="speak" data-txt="${escapeHtml(it.meaning)}" data-lang="${it.meaningLang}">🔊</button>
                             </div>
-                            <div class="term" style="flex:1">${it.meaning}</div>
+                            <div class="term" style="flex:1">${escapeHtml(it.meaning)}</div>
                             <div class="actions">
-                                <button class="btn" data-act="flip">↺</button>
-                                <button class="btn" data-act="edit">✎</button>
+                                <button class="btn" data-act="flip">↺ Çevir</button>
+                                <button class="btn" data-act="edit">✎ Düzenle</button>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
             
-            // Event Listeners for Card
             el.addEventListener('click', (e) => handleCardClick(e, el, it));
-            
+            initSwipe(el, it.id);
             grid.appendChild(el);
         });
         
-        // Update Bulk Bar UI
+        // Update Count
         $('#selCount').textContent = `${selectedIds.size} Seçildi`;
         $('#bulkBar').classList.toggle('active', selectionMode);
         document.body.classList.toggle('selection-mode', selectionMode);
+        $('#selectModeBtn').classList.toggle('primary', selectionMode);
+        
+        requestAnimationFrame(() => {
+            $$('.cardFlipWrap').forEach(w => {
+                 const f = w.querySelector('.front').scrollHeight;
+                 const b = w.querySelector('.back').scrollHeight;
+                 w.style.height = Math.max(f,b,240) + 'px';
+            });
+        });
     }
 
     function handleCardClick(e, el, it){
-        // Special actions
+        // Special button clicks
         if(e.target.dataset.act === 'speak'){
             e.stopPropagation();
             speak(e.target.dataset.txt, e.target.dataset.lang);
@@ -484,30 +576,53 @@
         if(e.target.classList.contains('star')){
             e.stopPropagation();
             it.fav = !it.fav; save();
+            e.target.classList.toggle('on');
             return;
         }
 
-        // Selection Mode Logic
+        // Selection Logic
         if(selectionMode){
             if(selectedIds.has(it.id)) selectedIds.delete(it.id);
             else selectedIds.add(it.id);
-            render();
+            el.classList.toggle('selected');
+            $('#selCount').textContent = `${selectedIds.size} Seçildi`;
             return;
         }
 
-        // Normal Mode Logic
+        // Flip / Edit Logic
         const act = e.target.dataset.act;
-        if(act === 'flip'){
-            el.querySelector('.cardFlip').classList.toggle('flipped');
-        } else if(act === 'edit'){
+        if(act === 'edit'){
+            e.stopPropagation();
             openEdit(it.id);
         } else {
-            // Flip on card body click
+            // Default: Flip
             el.querySelector('.cardFlip').classList.toggle('flipped');
         }
     }
 
-    /* --- FEATURES: HEATMAP --- */
+    /* --- SWIPE --- */
+    function initSwipe(el, id){
+        let sx=0, sy=0, st=0;
+        el.addEventListener('touchstart', e => { sx=e.touches[0].clientX; sy=e.touches[0].clientY; st=now(); }, {passive:true});
+        el.addEventListener('touchend', e => {
+            if(selectionMode) return; // Disable swipe in selection mode
+            const dx = e.changedTouches[0].clientX - sx;
+            const dy = e.changedTouches[0].clientY - sy;
+            if(now()-st > 500 || Math.abs(dy) > 50) return; // Scroll protection
+            
+            if(dx > 80) { // Right Swipe (Fav)
+                const it = items.find(i=>i.id===id);
+                if(it) { it.fav = !it.fav; save(); render(); toast(it.fav ? "Favorilendi" : "Favori kalktı"); }
+            }
+            else if(dx < -80) { // Left Swipe (Delete confirm)
+                if(confirm("Silmek istiyor musun?")) {
+                    items = items.filter(i=>i.id!==id); save(); render(); toast("Silindi");
+                }
+            }
+        }, {passive:true});
+    }
+
+    /* --- HEATMAP --- */
     function renderHeatmap(){
         const grid = $('#heatmapGrid');
         grid.innerHTML = "";
@@ -515,16 +630,15 @@
         let streak = 0;
         let streakBroken = false;
 
-        // Last 7 days reversed for display
+        // Last 7 days
         for(let i=6; i>=0; i--){
             const d = new Date(today);
             d.setDate(d.getDate() - i);
             const k = d.toISOString().split('T')[0];
             const count = activity[k] || 0;
             
-            // Streak Calc
             if(count > 0 && !streakBroken) streak++;
-            else if(i !== 0) streakBroken = true; // Don't break on today if not done yet
+            else if(i !== 0) streakBroken = true;
 
             const box = document.createElement('div');
             box.className = `day-box ${count > 0 ? 'active' : ''}`;
@@ -535,42 +649,21 @@
         $('#streakCount').textContent = `Zincir: ${streak} Gün`;
     }
 
-    /* --- FEATURES: TTS --- */
+    /* --- FEATURES: TTS (Seslendirme) --- */
     function speak(text, langCode){
         if(!window.speechSynthesis) return toast("Cihaz desteklemiyor");
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = langCode === 'EN' ? 'en-US' : (langCode === 'TR' ? 'tr-TR' : langCode.toLowerCase());
+        // Dil kodu eşleştirme
+        const map = { 'EN':'en-US', 'TR':'tr-TR', 'DE':'de-DE', 'FR':'fr-FR', 'ES':'es-ES', 'IT':'it-IT', 'RU':'ru-RU' };
+        u.lang = map[langCode] || langCode;
         u.rate = 0.9;
         window.speechSynthesis.speak(u);
     }
 
-    /* --- FEATURES: BULK ACTIONS --- */
-    function toggleSelectMode(){
-        selectionMode = !selectionMode;
-        selectedIds.clear();
-        $('#selectModeBtn').classList.toggle('primary');
-        render();
-    }
-    
-    function bulkDelete(){
-        if(!confirm(`${selectedIds.size} kart silinecek?`)) return;
-        items = items.filter(i => !selectedIds.has(i.id));
-        toggleSelectMode();
-        save();
-        toast("Silindi");
-    }
-    
-    function bulkStatus(st){
-        items.forEach(i => { if(selectedIds.has(i.id)) i.status = st; });
-        toggleSelectMode();
-        save();
-        toast("Güncellendi");
-    }
-
-    /* --- FEATURES: EXPORT/IMPORT --- */
+    /* --- FEATURES: BACKUP & EXCEL --- */
     function exportData(){
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({items, activity}));
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({items, activity, v:1}));
         const el = document.createElement('a');
         el.setAttribute("href", dataStr);
         el.setAttribute("download", "vocab_backup_" + new Date().toISOString().slice(0,10) + ".json");
@@ -586,43 +679,79 @@
         reader.onload = (e) => {
             try {
                 const data = JSON.parse(e.target.result);
-                if(data.items) items = data.items;
+                if(data.items) items = data.items.map(patchItem);
                 if(data.activity) activity = data.activity;
                 save();
-                toast("Yedek Yüklendi ✅");
+                toast("Yedek başarıyla yüklendi! 🎉");
                 $('#settingsModal').close();
-            } catch(err){ toast("Hatalı Dosya!"); }
+                render();
+            } catch(err){ toast("Hatalı dosya formatı!"); }
         };
         reader.readAsText(file);
     }
 
-    /* --- CRUD --- */
+    /* --- FEATURES: BULK ACTIONS --- */
+    function toggleSelectMode(){
+        selectionMode = !selectionMode;
+        selectedIds.clear();
+        render();
+    }
+    
+    function bulkDelete(){
+        if(!confirm(`${selectedIds.size} kartı silmek istiyor musun?`)) return;
+        items = items.filter(i => !selectedIds.has(i.id));
+        toggleSelectMode();
+        save();
+        toast("Seçilenler silindi");
+    }
+    
+    function bulkStatus(st){
+        let count = 0;
+        items.forEach(i => { 
+            if(selectedIds.has(i.id)) { i.status = st; if(st==='NEW') i.srs = {due:now(), interval:0, ease:2.5}; count++; } 
+        });
+        toggleSelectMode();
+        save();
+        toast(`${count} kart güncellendi`);
+    }
+
+    /* --- CRUD OPERATIONS --- */
     $('#addBtn').onclick = () => { editingId=null; openModal(); };
     $('#quickAddBtn').onclick = () => $('#quickModal').showModal();
     $('#quickSaveBtn').onclick = () => {
         const lines = $('#quickText').value.split('\n');
         let added=0;
         lines.forEach(l => {
-            // Split by tab (excel) or dash
+            // Excel (Tab) or Dash separator
             let p = l.split(/\t| - /); 
-            if(p.length < 2) p = l.split(','); // Fallback csv
+            if(p.length < 2) p = l.split(','); // CSV fallback
+            
             if(p.length >= 2){
-                items.push(createItem(p[0].trim(), p[1].trim(), p[2]?.trim()));
+                // Format: term, meaning, level, tags
+                items.push(createItem(p[0], p[1], p[2], {tags: p[3]?p[3].split(','):[]}));
                 added++;
             }
         });
-        save(); $('#quickModal').close(); toast(`${added} Eklendi`);
+        save(); render(); $('#quickModal').close(); toast(`${added} Kelime Eklendi`);
     };
 
     function openModal(id){
+        // Reset inputs
         $('#term').value = ""; $('#meaning').value = ""; $('#example').value = ""; $('#imgUrl').value = ""; $('#level').value = "B1"; $('#tags').value = "";
-        if(editingId = id){
+        
+        if(id){
+            editingId = id;
             const it = items.find(i=>i.id===id);
             $('#term').value = it.term; $('#meaning').value = it.meaning; $('#example').value = it.example;
             $('#imgUrl').value = it.imgUrl||""; $('#level').value = it.level; $('#tags').value = it.tags.join(",");
             $('#sourceLang').value = it.sourceLang; $('#meaningLang').value = it.meaningLang;
+            $('#modalTitle').textContent = "Düzenle";
             $('#deleteBtn').style.display='block';
-        } else { $('#deleteBtn').style.display='none'; }
+        } else { 
+            editingId = null; 
+            $('#modalTitle').textContent = "Yeni Ekle";
+            $('#deleteBtn').style.display='none'; 
+        }
         $('#modal').showModal();
     }
     
@@ -631,36 +760,38 @@
     $('#saveBtn').onclick = () => {
         const data = {
             term: $('#term').value, meaning: $('#meaning').value, example: $('#example').value,
-            imgUrl: $('#imgUrl').value, level: $('#level').value, tags: $('#tags').value.split(',').filter(Boolean),
+            imgUrl: $('#imgUrl').value, level: $('#level').value, tags: $('#tags').value.split(',').filter(Boolean).map(t=>t.trim()),
             sourceLang: $('#sourceLang').value, meaningLang: $('#meaningLang').value
         };
-        if(!data.term) return toast("Kelime gerekli");
+        if(!data.term) return toast("Kelime boş olamaz!");
         
         if(editingId){
             const idx = items.findIndex(i=>i.id===editingId);
-            items[idx] = { ...items[idx], ...data };
+            items[idx] = { ...items[idx], ...data, updatedAt: now() };
         } else {
             items.push(createItem(data.term, data.meaning, data.level, data));
         }
-        save(); $('#modal').close();
+        save(); render(); $('#modal').close();
     };
     
     $('#deleteBtn').onclick = () => {
-        items = items.filter(i=>i.id!==editingId);
-        save(); $('#modal').close();
+        if(confirm("Emin misin?")) {
+            items = items.filter(i=>i.id!==editingId);
+            save(); render(); $('#modal').close();
+        }
     };
 
     function createItem(term, meaning, level, extras={}){
         return {
-            id: makeId(), term, meaning, level: level||"B1", example: extras.example||"",
-            tags: extras.tags||[], imgUrl: extras.imgUrl||"", sourceLang: extras.sourceLang||"EN", meaningLang: extras.meaningLang||"TR",
-            status: "NEW", fav: false, createdAt: now(),
+            id: makeId(), term: clean(term), meaning: clean(meaning), level: clean(level)||"B1", example: clean(extras.example),
+            tags: extras.tags||[], imgUrl: clean(extras.imgUrl), sourceLang: extras.sourceLang||"EN", meaningLang: extras.meaningLang||"TR",
+            status: "NEW", fav: false, createdAt: now(), updatedAt: now(),
             srs: { due: now(), interval: 0, ease: 2.5 }
         };
     }
 
-    /* --- QUIZ --- */
-    let quizPool = [], quizIdx = 0, quizScore = 0, quizTimer = null, isTimeAttack = false;
+    /* --- QUIZ LOGIC --- */
+    let quizPool=[], quizIdx=0, quizScore=0, quizTimer=null, isTimeAttack=false;
 
     $('#quizBtn').onclick = () => $('#quizSetupModal').showModal();
     
@@ -668,9 +799,9 @@
         isTimeAttack = timeAttack;
         const scope = $('#quizScope').value;
         quizPool = items.filter(i => scope === "DUE" ? i.srs.due <= now() : true)
-                        .sort(()=>Math.random()-0.5).slice(0, 20); // Max 20 questions
+                        .sort(()=>Math.random()-0.5).slice(0, 20);
         
-        if(!quizPool.length) return toast("Kart bulunamadı");
+        if(!quizPool.length) return toast("Bu filtrede kelime yok!");
         
         $('#quizSetupModal').close();
         $('#quizOverlay').classList.add('on');
@@ -708,7 +839,7 @@
         $('#qText').textContent = q.term;
         $('#qLang').textContent = q.sourceLang;
         
-        // MCQ Logic
+        // Generate MCQ options
         let others = items.filter(i => i.id !== q.id).sort(()=>Math.random()-0.5).slice(0,3);
         let choices = [...others, q].sort(()=>Math.random()-0.5);
         
@@ -725,14 +856,18 @@
                 if(correct) {
                     quizScore++;
                     if(!isTimeAttack) speak(q.term, q.sourceLang);
-                    // SRS logic: If correct, push due date
-                    q.srs.interval = q.srs.interval === 0 ? 1 : q.srs.interval * 2;
+                    // SRS: Increase interval
+                    q.srs.interval = q.srs.interval === 0 ? 1 : Math.round(q.srs.interval * q.srs.ease);
                     q.srs.due = now() + (q.srs.interval * DAY);
+                    q.status = q.srs.interval > 20 ? 'MASTERED' : 'LEARNING';
                     logActivity();
                 } else {
                     q.srs.interval = 0;
                     q.srs.due = now();
+                    q.status = 'LEARNING';
                 }
+                save();
+                // Delay for next q
                 setTimeout(() => { quizIdx++; nextQuestion(); }, 800);
             };
             optsDiv.appendChild(btn);
@@ -743,40 +878,41 @@
         if(quizTimer) clearInterval(quizTimer);
         $('#quizCardArea').style.display = 'none';
         $('#quizResult').style.display = 'flex';
-        $('#quizFinalScore').textContent = `Toplam: ${quizPool.length} | Doğru: ${quizScore}`;
-        save();
+        $('#quizFinalScore').textContent = `Toplam Soru: ${quizPool.length} | Doğru: ${quizScore}`;
+        if(isTimeAttack) $('#quizFinalScore').textContent += " (Zaman Doldu!)";
     }
     
     function closeQuiz(){
         $('#quizOverlay').classList.remove('on');
         if(quizTimer) clearInterval(quizTimer);
-        render();
+        render(); // Refresh grid due to SRS changes
     }
     
-    function speakCurrentQuiz(){
-        if(quizPool[quizIdx]) speak(quizPool[quizIdx].term, quizPool[quizIdx].sourceLang);
-    }
+    function speakCurrentQuiz(){ if(quizPool[quizIdx]) speak(quizPool[quizIdx].term, quizPool[quizIdx].sourceLang); }
 
-    /* --- HELPERS --- */
+    /* --- THEME & SETUP --- */
     $('#settingsBtn').onclick = () => $('#settingsModal').showModal();
-    $('#themeSelect').onchange = (e) => applyTheme(e.target.value);
     
     function applyTheme(t){
         document.body.setAttribute('data-theme', t);
-        localStorage.setItem('vp_theme', t);
+        localStorage.setItem(KEY_THEME, t);
         $('#themeSelect').value = t;
+        // Meta theme color update
+        const cols = {'dark':'#0b0b10', 'emerald':'#07110c', 'light':'#f6f7fb'};
+        $('meta[name="theme-color"]').setAttribute('content', cols[t]);
     }
+    
     function renderLangSelects(){
         const h = langs.map(l=>`<option value="${l.code}">${l.name}</option>`).join('');
         $('#sourceLang').innerHTML = h; $('#meaningLang').innerHTML = h; $('#meaningLang').value="TR";
     }
-    function setupEvents(){
-        $('#search').addEventListener('input', render);
-        $('#statusFilter').addEventListener('change', render);
-        $('#levelFilter').addEventListener('change', render);
-        $('#sort').addEventListener('change', render);
+    
+    function toast(msg){
+        const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+        setTimeout(()=>t.classList.remove('show'), 2000);
     }
     
+    // Start
     init();
   </script>
 </body>
