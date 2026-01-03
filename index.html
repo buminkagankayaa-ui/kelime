@@ -27,7 +27,23 @@
       --shadow: 0 16px 60px rgba(0,0,0,.55);
       --radius:18px;
       --radius2:14px;
-    }
+      /* THEMES (body[data-theme="..."]) */
+body[data-theme="dark"]{
+  --bg:#0b0b10; --panel:#12121a; --card:#151523; --card2:#17172a;
+  --line:#23233a; --text:#f2f2f7; --muted:#a6a6bb;
+  --accent:#7c3aed; --accent2:#22c55e;
+}
+body[data-theme="emerald"]{
+  --bg:#07110c; --panel:#0b1711; --card:#0f1f17; --card2:#11251b;
+  --line:#1f3a2d; --text:#eafff3; --muted:#a2c8b3;
+  --accent:#22c55e; --accent2:#7c3aed;
+}
+body[data-theme="light"]{
+  --bg:#f6f7fb; --panel:#ffffff; --card:#ffffff; --card2:#f4f6ff;
+  --line:#d7d9e6; --text:#0b0b10; --muted:#4b5563;
+  --accent:#7c3aed; --accent2:#16a34a;
+  --shadow: 0 16px 60px rgba(0,0,0,.12);
+}
 
     *{box-sizing:border-box}
     body{
@@ -323,6 +339,115 @@
       display:none;
       z-index:999;
     }
+    /* FULLSCREEN QUIZ */
+.quizScreen{
+  position:fixed; inset:0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(10px);
+  display:none;
+  z-index:9999;
+  padding: env(safe-area-inset-top) 14px env(safe-area-inset-bottom) 14px;
+}
+.quizScreen.on{ display:block; }
+
+.quizShell{
+  width:min(860px, 96vw);
+  margin: 0 auto;
+  border:1px solid var(--line);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  background: linear-gradient(180deg, rgba(18,18,26,.98), rgba(12,12,18,.98));
+  overflow:hidden;
+}
+
+.quizHead{
+  padding:14px;
+  border-bottom:1px solid var(--line);
+  display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
+}
+.quizTitle{ font-weight:950; font-size:18px; }
+.quizSub{ color:var(--muted); font-size:12px; margin-top:6px; }
+
+.quizPanel{ padding:14px; display:grid; gap:12px; }
+
+.quizTopRow, .quizBottomRow{
+  display:flex; gap:10px; justify-content:space-between; align-items:center; flex-wrap:wrap;
+}
+
+.quizQuestion{
+  font-size:22px;
+  font-weight:950;
+  line-height:1.15;
+  padding:12px 12px;
+  border:1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255,255,255,.03);
+}
+
+.quizChoices{
+  display:grid;
+  gap:10px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 680px){
+  .quizChoices{ grid-template-columns: 1fr 1fr; }
+}
+
+.choiceBtn{
+  text-align:left;
+  border:1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  color:var(--text);
+  padding:12px 12px;
+  border-radius: 16px;
+  font-weight:900;
+  font-size:14px;
+}
+.choiceBtn:active{ transform: scale(.995); }
+.choiceBtn.correct{
+  border-color: rgba(34,197,94,.45);
+  background: rgba(34,197,94,.14);
+}
+.choiceBtn.wrong{
+  border-color: rgba(251,113,133,.45);
+  background: rgba(251,113,133,.12);
+}
+
+.quizFeedback{
+  color: var(--muted);
+  font-size:13px;
+  padding:10px 12px;
+  border:1px dashed rgba(255,255,255,.18);
+  border-radius: 16px;
+  background: rgba(255,255,255,.02);
+}
+
+.resultBox{
+  border:1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255,255,255,.03);
+  padding:12px;
+}
+.resultTitle{ font-weight:950; margin-bottom:8px; }
+.resultList{
+  display:grid; gap:8px;
+  max-height: 260px;
+  overflow:auto;
+  padding-right: 4px;
+}
+.resultItem{
+  border:1px solid var(--line);
+  background: rgba(0,0,0,.14);
+  border-radius: 14px;
+  padding:10px;
+}
+.resultItem .t{ font-weight:950; }
+.resultItem .m{ color:var(--muted); font-size:12px; margin-top:4px; }
+
+.quizBig{
+  font-size:22px;
+  font-weight:950;
+}
   </style>
 </head>
 
@@ -358,7 +483,11 @@
         </div>
 
         <div class="row">
-          <select id="sort">
+          <select id="<select id="themeSelect" title="Tema">
+  <option value="dark" selected>Tema: Dark</option>
+  <option value="emerald">Tema: Emerald</option>
+  <option value="light">Tema: Light</option>
+</select> 
             <option value="updated">Sırala: Son güncellenen</option>
             <option value="created">Sırala: Son eklenen</option>
             <option value="az">Sırala: A → Z</option>
@@ -389,6 +518,103 @@
   <main>
     <div class="grid" id="grid"></div>
   </main>
+    <!-- FULLSCREEN QUIZ SCREEN -->
+  <section class="quizScreen" id="quizScreen" aria-hidden="true">
+    <div class="quizShell">
+      <div class="quizHead">
+        <div>
+          <div class="quizTitle">🧠 Quiz</div>
+          <div class="quizSub" id="quizSub">Hazır mısın?</div>
+        </div>
+        <div class="row">
+          <button class="btn ghost" id="quizCloseBtn" type="button">✕ Kapat</button>
+        </div>
+      </div>
+
+      <!-- Setup -->
+      <div class="quizPanel" id="quizSetup">
+        <div class="two">
+          <div>
+            <label class="small">Soru modu</label>
+            <select id="quizModeSelect">
+              <option value="TR2TERM" selected>TR → Kelime</option>
+              <option value="TERM2TR">Kelime → TR</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="small">Soru sayısı</label>
+            <select id="quizCountSelect">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="9999">Hepsi</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="two">
+          <div>
+            <label class="small">Kaynak</label>
+            <div class="help">
+              Quiz, **o an seçili filtreye** göre çalışır (Tümü / EN / RU / Favoriler + arama).
+            </div>
+          </div>
+          <div>
+            <label class="small">Başlat</label>
+            <button class="btn primary" id="quizStartBtn" type="button" style="width:100%; justify-content:center;">
+              ▶️ Quiz’i Başlat
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Play -->
+      <div class="quizPanel" id="quizPlay" style="display:none;">
+        <div class="quizTopRow">
+          <span class="pill">Soru <strong id="quizIdx">1</strong>/<strong id="quizTotal">10</strong></span>
+          <span class="pill">Puan <strong id="quizScore">0</strong></span>
+        </div>
+
+        <div class="quizQuestion" id="quizQuestion">—</div>
+
+        <div class="quizChoices" id="quizChoices"></div>
+
+        <div class="quizBottomRow">
+          <button class="btn" id="quizSkipBtn" type="button">⏭️ Pas</button>
+          <button class="btn primary" id="quizNextBtn2" type="button" disabled>➡️ Sonraki</button>
+        </div>
+
+        <div class="quizFeedback" id="quizFeedback"></div>
+      </div>
+
+      <!-- Result -->
+      <div class="quizPanel" id="quizResult" style="display:none;">
+        <div class="quizResultTop">
+          <div class="quizBig" id="quizFinalScore">Skor: 0/0</div>
+          <div class="quizSub" id="quizFinalSub">—</div>
+        </div>
+
+        <div class="two">
+          <div class="resultBox">
+            <div class="resultTitle">✅ Bildiklerin</div>
+            <div class="resultList" id="quizKnownList"></div>
+          </div>
+          <div class="resultBox">
+            <div class="resultTitle">❌ Bilemediklerin</div>
+            <div class="resultList" id="quizUnknownList"></div>
+          </div>
+        </div>
+
+        <div class="quizBottomRow" style="margin-top:12px;">
+          <button class="btn" id="quizBackToSetupBtn" type="button">↩️ Ayarlara dön</button>
+          <button class="btn primary" id="quizRetryWrongBtn" type="button">🔁 Yanlışları tekrar çöz</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
 
   <!-- Modal -->
   <dialog id="modal">
@@ -466,6 +692,45 @@
     const KEY = "vocab_pocket_pro_v2";
     const now = () => Date.now();
     const clean = (s) => (s ?? "").toString().trim();
+        // Theme
+    const themeSelect = document.getElementById("themeSelect");
+    // THEME
+    const THEME_KEY = "vocab_theme_v1";
+    function applyTheme(t){
+      const theme = (t === "emerald" || t === "light") ? t : "dark";
+      document.body.setAttribute("data-theme", theme);
+      localStorage.setItem(THEME_KEY, theme);
+      if(themeSelect) themeSelect.value = theme;
+    }
+
+    // Fullscreen Quiz Screen
+    const quizScreen = document.getElementById("quizScreen");
+    const quizCloseBtn = document.getElementById("quizCloseBtn");
+
+    const quizSetup = document.getElementById("quizSetup");
+    const quizPlay = document.getElementById("quizPlay");
+    const quizResult = document.getElementById("quizResult");
+
+    const quizModeSelect = document.getElementById("quizModeSelect");
+    const quizCountSelect = document.getElementById("quizCountSelect");
+    const quizStartBtn = document.getElementById("quizStartBtn");
+
+    const quizIdxEl = document.getElementById("quizIdx");
+    const quizTotalEl = document.getElementById("quizTotal");
+    const quizScoreEl = document.getElementById("quizScore");
+    const quizQuestionEl2 = document.getElementById("quizQuestion");
+    const quizChoicesEl = document.getElementById("quizChoices");
+    const quizFeedbackEl = document.getElementById("quizFeedback");
+    const quizSkipBtn = document.getElementById("quizSkipBtn");
+    const quizNextBtn2 = document.getElementById("quizNextBtn2");
+
+    const quizFinalScore = document.getElementById("quizFinalScore");
+    const quizFinalSub = document.getElementById("quizFinalSub");
+    const quizKnownList = document.getElementById("quizKnownList");
+    const quizUnknownList = document.getElementById("quizUnknownList");
+    const quizBackToSetupBtn = document.getElementById("quizBackToSetupBtn");
+    const quizRetryWrongBtn = document.getElementById("quizRetryWrongBtn");
+
 
     function loadItems(){
       try{ return JSON.parse(localStorage.getItem(KEY)) ?? []; }
@@ -967,7 +1232,9 @@
 
     // Init
     quizModeEl.textContent = (quizMode === "TR2TERM") ? "TR → Kelime" : "Kelime → TR";
-    render();
+        applyTheme(localStorage.getItem(THEME_KEY) || "dark");
+    themeSelect?.addEventListener("change", (e)=> applyTheme(e.target.value));
+render();
   </script>
 </body>
 </html>
