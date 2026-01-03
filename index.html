@@ -109,6 +109,7 @@
       display:inline-flex; gap:8px; align-items:center;
       user-select:none;
       white-space:nowrap;
+      cursor:pointer;
     }
     .btn:active{transform:scale(.99)}
     .btn.primary{
@@ -152,13 +153,13 @@
       min-width: 110px;
       text-align:center;
       user-select:none;
+      cursor:pointer;
     }
     .chip.active{
       border-color: color-mix(in srgb, var(--accent2) 35%, transparent);
       background: color-mix(in srgb, var(--accent2) 14%, transparent);
     }
 
-    /* Filters on one row (wrap) */
     .filters{
       display:flex;
       gap:10px;
@@ -186,7 +187,6 @@
     }
     .pill strong{color:var(--text); font-weight:900}
 
-    /* Mini dashboard */
     .dash{
       display:flex; gap:10px; flex-wrap:wrap;
       margin-top:8px;
@@ -216,7 +216,7 @@
     .cardFlipWrap{
       position: relative;
       perspective: 1000px;
-      height: 260px; /* JS will auto-fit to content */
+      height: 260px;
     }
     .cardFlip{
       position:absolute; inset:0;
@@ -263,7 +263,6 @@
       background: rgba(255,255,255,.03);
       display:grid; place-items:center;
       font-size:20px;
-      cursor:pointer;
       user-select:none;
       color: var(--muted);
     }
@@ -298,7 +297,6 @@
       font-size:12px;
       margin-top: 2px;
     }
-    .miniStats b{ color:var(--text); }
     .statusPill{
       border:1px solid var(--line);
       border-radius:999px;
@@ -469,6 +467,7 @@
       border-radius: 14px;
       font-weight:900;
       font-size:14px;
+      cursor:pointer;
     }
     .opt:active{ transform:scale(.995); }
     .opt.good{ border-color: color-mix(in srgb, var(--accent2) 35%, transparent); background: color-mix(in srgb, var(--accent2) 12%, transparent); }
@@ -532,7 +531,6 @@
 
     <div class="controls">
       <input class="input" id="search" placeholder="Ara: kelime / anlam / örnek / etiket... (örn: #story  level:B1  lang:EN)" />
-
       <div class="chips" id="chips"></div>
 
       <div class="filters">
@@ -593,6 +591,74 @@
     <div class="grid" id="grid"></div>
   </main>
 
+  <!-- Modal: Add/Edit -->
+  <dialog id="modal">
+    <div class="modalHead">
+      <div>
+        <h2 id="modalTitle">Kelime Ekle</h2>
+        <div class="small">Kelime + anlam zorunlu. Etiketleri virgülle ayır.</div>
+      </div>
+      <button class="btn" id="closeBtn" type="button">✕</button>
+    </div>
+
+    <div class="modalBody">
+      <div class="two">
+        <div>
+          <label class="small">Kelime dili</label>
+          <select id="sourceLang"></select>
+        </div>
+        <div>
+          <label class="small">Anlam dili</label>
+          <select id="meaningLang"></select>
+        </div>
+      </div>
+
+      <div class="two">
+        <div>
+          <label class="small">Seviye</label>
+          <select id="level">
+            <option>A1</option><option>A2</option><option selected>B1</option><option>B2</option><option>C1</option><option>C2</option>
+          </select>
+        </div>
+        <div>
+          <label class="small">Durum</label>
+          <select id="status">
+            <option value="NEW" selected>NEW</option>
+            <option value="LEARNING">LEARNING</option>
+            <option value="MASTERED">MASTERED</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="two">
+        <div>
+          <label class="small">Kelime</label>
+          <input class="input" id="term" placeholder="notice" />
+        </div>
+        <div>
+          <label class="small">Anlam</label>
+          <input class="input" id="meaning" placeholder="fark etmek" />
+        </div>
+      </div>
+
+      <div>
+        <label class="small">Örnek</label>
+        <textarea id="example" placeholder="Would the others notice that there was something the matter?"></textarea>
+      </div>
+
+      <div>
+        <label class="small">Etiketler</label>
+        <input class="input" id="tags" list="tagDatalist" placeholder="story, daily" />
+      </div>
+    </div>
+
+    <div class="modalFoot">
+      <button class="btn danger" id="deleteBtn" type="button" style="display:none;">🗑️ Sil</button>
+      <button class="btn" id="cancelBtn" type="button">İptal</button>
+      <button class="btn primary" id="saveBtn" type="button">Kaydet</button>
+    </div>
+  </dialog>
+
   <!-- Modal: Quick Add -->
   <dialog id="quickModal">
     <div class="modalHead">
@@ -616,7 +682,6 @@
       </div>
 
       <textarea id="quickText" placeholder="Her satır 1 kayıt…"></textarea>
-
       <div class="help">Ayraç olarak <b>-</b> veya <b>|</b> kullanabilirsin. Örnek: <i>beneath | altında | B1 | story</i></div>
     </div>
 
@@ -752,49 +817,24 @@
     const clean = (s) => (s ?? "").toString().trim();
 
     function escapeHtml(str){
-      return (str ?? "").replace(/[&<>"']/g, m => ({
+      return (str ?? "").toString().replace(/[&<>"']/g, m => ({
         "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
       }[m]));
     }
+
     function parseTags(input){
-      function parseTags(input){
-  return clean(input).split(",").map(t=>t.trim()).filter(Boolean).slice(0,10);
-        function quickParseLine(line){
-  const raw = line.trim();
-  if(!raw) return null;
+      return clean(input)
+        .split(",")
+        .map(t=>t.trim())
+        .filter(Boolean)
+        .slice(0,10);
+    }
 
-  const sep = raw.includes("|") ? "|" : "-";
-  const parts = raw.split(sep).map(x=>x.trim());
-
-  const term = parts[0];
-  const meaning = parts[1];
-
-  if(!term || !meaning) return null;
-
-  let level = "B1";
-  let tags = [];
-
-  if(parts[2] && /^[ABC][12]$/i.test(parts[2])) {
-    level = parts[2].toUpperCase();
-  }
-
-  if(parts[3]) {
-    tags = parseTags(parts.slice(3).join(","));
-  }
-
-  return { term, meaning, level, tags };
-}
-
-}
-
-function makeId(){
-  try{
-    if (crypto && crypto.randomUUID) return crypto.randomUUID();
-  }catch{}
-  return "id_" + Date.now().toString(36) + "_" + Math.random().toString(16).slice(2);
-}
-
-      return clean(input).split(",").map(t=>t.trim()).filter(Boolean).slice(0,10);
+    function makeId(){
+      try{
+        if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+      }catch(e){}
+      return "id_" + Date.now().toString(36) + "_" + Math.random().toString(16).slice(2);
     }
 
     /* =======================
@@ -809,7 +849,7 @@ function makeId(){
     }
 
     /* =======================
-       Languages (multi language)
+       Languages
     ======================= */
     const DEFAULT_LANGS = [
       { code:"EN", name:"English" },
@@ -843,14 +883,65 @@ function makeId(){
     /* =======================
        Items + Migration
     ======================= */
+    function defaultSRS(){
+      return {
+        ease: 2.0,
+        interval: 0,
+        dueAt: now(),
+        streak: 0,
+        correct: 0,
+        wrong: 0,
+        lastReviewed: 0
+      };
+    }
+    function clamp(n, a, b){ return Math.min(b, Math.max(a, n)); }
+    function isDue(it){ return (it.srs?.dueAt || 0) <= now(); }
+
+    function patchItem(it){
+      const x = {...it};
+      x.id = clean(x.id) || makeId(); // ✅ id artık her patchte değişmez
+
+      x.sourceLang = clean(x.sourceLang || x.lang || "EN").toUpperCase();
+      x.meaningLang = clean(x.meaningLang || "TR").toUpperCase();
+
+      x.level = clean(x.level) || "B1";
+      x.term = clean(x.term);
+      x.meaning = clean(x.meaning || x.meaningTR);
+      x.example = clean(x.example);
+
+      x.tags = Array.isArray(x.tags)
+        ? x.tags.map(clean).filter(Boolean).slice(0,10)
+        : parseTags(x.tags||"");
+
+      x.fav = !!x.fav;
+
+      const st = clean(x.status).toUpperCase();
+      x.status = (st === "LEARNING" || st === "MASTERED") ? st : "NEW";
+
+      x.srs = x.srs && typeof x.srs === "object"
+        ? {...defaultSRS(), ...x.srs}
+        : defaultSRS();
+
+      x.srs.ease = clamp(Number(x.srs.ease || 2.0), 1.3, 2.6);
+      x.srs.interval = Math.max(0, Number(x.srs.interval || 0));
+      x.srs.dueAt = Number(x.srs.dueAt || now());
+      x.srs.streak = Math.max(0, Number(x.srs.streak || 0));
+      x.srs.correct = Math.max(0, Number(x.srs.correct || 0));
+      x.srs.wrong = Math.max(0, Number(x.srs.wrong || 0));
+      x.srs.lastReviewed = Number(x.srs.lastReviewed || 0);
+
+      x.createdAt = Number(x.createdAt || now());
+      x.updatedAt = Number(x.updatedAt || now());
+      return x;
+    }
+
     function loadItems(){
-      // v5
       try{
         const v = JSON.parse(localStorage.getItem(KEY_ITEMS));
         if(Array.isArray(v)) return v.map(patchItem);
       }catch{}
 
-      // fallback: v4 (your previous)
+      // fallback: v4
       try{
         const v4 = JSON.parse(localStorage.getItem("vocab_pocket_pro_v4"));
         if(Array.isArray(v4)){
@@ -873,7 +964,7 @@ function makeId(){
         }
       }catch{}
 
-      // fallback: v2 original
+      // fallback: v2
       try{
         const v2 = JSON.parse(localStorage.getItem("vocab_pocket_pro_v2"));
         if(Array.isArray(v2)){
@@ -900,60 +991,8 @@ function makeId(){
     }
     function saveItems(items){ localStorage.setItem(KEY_ITEMS, JSON.stringify(items)); }
 
-    function defaultSRS(){
-      return {
-        ease: 2.0,
-        interval: 0,       // days
-        dueAt: now(),      // ms
-        streak: 0,
-        correct: 0,
-        wrong: 0,
-        lastReviewed: 0
-      };
-    }
-function makeId(){
-  try{
-    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
-  }catch(e){}
-  return "id_" + Date.now().toString(36) + "_" + Math.random().toString(16).slice(2);
-}
-
-    function patchItem(it){
-      const x = {...it};
-      const id = makeId();
-      x.sourceLang = clean(x.sourceLang || x.lang || "EN").toUpperCase();
-      x.meaningLang = clean(x.meaningLang || "TR").toUpperCase();
-      x.level = clean(x.level) || "B1";
-      x.term = clean(x.term);
-      x.meaning = clean(x.meaning || x.meaningTR);
-      x.example = clean(x.example);
-      x.tags = Array.isArray(x.tags) ? x.tags.map(clean).filter(Boolean).slice(0,10) : parseTags(x.tags||"");
-      x.fav = !!x.fav;
-
-      const st = clean(x.status).toUpperCase();
-      x.status = (st === "LEARNING" || st === "MASTERED") ? st : "NEW";
-
-      x.srs = x.srs && typeof x.srs === "object" ? {...defaultSRS(), ...x.srs} : defaultSRS();
-      x.srs.ease = clamp(Number(x.srs.ease || 2.0), 1.3, 2.6);
-      x.srs.interval = Math.max(0, Number(x.srs.interval || 0));
-      x.srs.dueAt = Number(x.srs.dueAt || now());
-      x.srs.streak = Math.max(0, Number(x.srs.streak || 0));
-      x.srs.correct = Math.max(0, Number(x.srs.correct || 0));
-      x.srs.wrong = Math.max(0, Number(x.srs.wrong || 0));
-      x.srs.lastReviewed = Number(x.srs.lastReviewed || 0);
-
-      x.createdAt = Number(x.createdAt || now());
-      x.updatedAt = Number(x.updatedAt || now());
-      return x;
-    }
-
-    function clamp(n, a, b){ return Math.min(b, Math.max(a, n)); }
-
     /* =======================
        SRS update rules
-       - correct => interval grows, ease slightly up, status progresses
-       - wrong   => interval reset to 1, ease down, streak reset
-       - pass    => small postpone (6h)
     ======================= */
     function srsCorrect(it){
       const s = it.srs;
@@ -992,8 +1031,6 @@ function makeId(){
       it.updatedAt = now();
     }
 
-    function isDue(it){ return (it.srs?.dueAt || 0) <= now(); }
-
     /* =======================
        Search: supports #tag, lang:EN, level:B1
     ======================= */
@@ -1025,13 +1062,12 @@ function makeId(){
     /* =======================
        Theme
     ======================= */
+    const themeSelect = document.getElementById("themeSelect");
     function applyTheme(t){
       const theme = (t === "emerald" || t === "light") ? t : "dark";
       document.body.setAttribute("data-theme", theme);
       localStorage.setItem(KEY_THEME, theme);
       themeSelect.value = theme;
-
-      // update meta theme-color roughly
       const meta = document.querySelector('meta[name="theme-color"]');
       if(meta){
         meta.setAttribute("content", theme === "light" ? "#f6f7fb" : "#0b0b10");
@@ -1041,12 +1077,13 @@ function makeId(){
     /* =======================
        Stats history (simple)
     ======================= */
+    const KEY_STATS = "vocab_stats_v1";
     function loadStats(){
       try{
         const s = JSON.parse(localStorage.getItem(KEY_STATS));
         if(s && typeof s === "object") return s;
       }catch{}
-      return { daily: {} }; // daily["YYYY-MM-DD"] = {correct, wrong}
+      return { daily: {} };
     }
     function saveStats(s){ localStorage.setItem(KEY_STATS, JSON.stringify(s)); }
     function dayKey(ts=now()){
@@ -1092,7 +1129,6 @@ function makeId(){
     const levelFilterEl = document.getElementById("levelFilter");
     const tagFilterEl = document.getElementById("tagFilter");
     const statusFilterEl = document.getElementById("statusFilter");
-    const themeSelect = document.getElementById("themeSelect");
 
     const countAll = document.getElementById("countAll");
     const countVisible = document.getElementById("countVisible");
@@ -1161,7 +1197,6 @@ function makeId(){
     let tagFilter = "ALL";
     let statusFilter = "ALL";
 
-    // quiz state
     let quiz = {
       on:false,
       pool:[],
@@ -1186,8 +1221,8 @@ function makeId(){
       quickSourceLang.innerHTML = opts;
       quickMeaningLang.innerHTML = opts;
 
-      if(langs.some(x=>x.code==="EN")) sourceLangEl.value="EN"; else sourceLangEl.value=langs[0]?.code||"EN";
-      if(langs.some(x=>x.code==="TR")) meaningLangEl.value="TR"; else meaningLangEl.value=langs[0]?.code||"TR";
+      sourceLangEl.value = langs.some(x=>x.code==="EN") ? "EN" : (langs[0]?.code||"EN");
+      meaningLangEl.value = langs.some(x=>x.code==="TR") ? "TR" : (langs[0]?.code||"TR");
 
       quickSourceLang.value = sourceLangEl.value;
       quickMeaningLang.value = meaningLangEl.value;
@@ -1207,9 +1242,7 @@ function makeId(){
         chipsEl.appendChild(b);
       }
       chip("Tümü", "ALL");
-      for(const l of langs){
-        chip(l.name, l.code);
-      }
+      for(const l of langs) chip(l.name, l.code);
     }
 
     function renderLangListBox(){
@@ -1233,8 +1266,7 @@ function makeId(){
       const list = Array.from(set).sort((a,b)=>a.localeCompare(b, undefined, {sensitivity:"base"}));
       const prev = tagFilterEl.value || "ALL";
       tagFilterEl.innerHTML = `<option value="ALL">Etiket: Tümü</option>` + list.map(t=>`<option value="${escapeHtml(t)}">${escapeHtml("#"+t)}</option>`).join("");
-      if(list.includes(prev)) tagFilterEl.value = prev;
-      else tagFilterEl.value = "ALL";
+      tagFilterEl.value = list.includes(prev) ? prev : "ALL";
       tagFilter = tagFilterEl.value;
     }
 
@@ -1244,24 +1276,20 @@ function makeId(){
     function applyFilters(arr){
       let out = [...arr];
 
-      // chip lang filter (sourceLang)
       if(filterLang !== "ALL") out = out.filter(x=>x.sourceLang === filterLang);
-
-      // dropdown filters
       if(levelFilter !== "ALL") out = out.filter(x=>(x.level||"B1") === levelFilter);
       if(tagFilter !== "ALL") out = out.filter(x=>(x.tags||[]).includes(tagFilter));
+
       if(statusFilter === "NEW") out = out.filter(x=>x.status==="NEW");
       else if(statusFilter === "LEARNING") out = out.filter(x=>x.status==="LEARNING");
       else if(statusFilter === "MASTERED") out = out.filter(x=>x.status==="MASTERED");
       else if(statusFilter === "DUE") out = out.filter(x=>isDue(x));
 
-      // search (advanced)
       const q = searchEl.value.trim();
       const qObj = parseAdvancedQuery(q);
       if(q || qObj.tag || qObj.lang || qObj.level){
         out = out.filter(it=>matchesQuery(it, qObj));
       }
-
       return out;
     }
 
@@ -1296,7 +1324,6 @@ function makeId(){
        Dashboard + stats
     ======================= */
     function renderDash(){
-      const total = items.length;
       const due = items.filter(isDue).length;
       const mastered = items.filter(x=>x.status==="MASTERED").length;
       const learning = items.filter(x=>x.status==="LEARNING").length;
@@ -1310,9 +1337,6 @@ function makeId(){
       `;
     }
 
-    /* =======================
-       Render cards + auto-fit flip height + swipe
-    ======================= */
     function statusLabel(st){
       if(st==="NEW") return ["Yeni","new"];
       if(st==="MASTERED") return ["Öğrenildi","mastered"];
@@ -1430,10 +1454,7 @@ function makeId(){
         gridEl.appendChild(card);
       }
 
-      // auto-fit flip heights after render
       requestAnimationFrame(autoFitFlipHeights);
-
-      // init swipe on cards
       initSwipeHandlers();
     }
 
@@ -1445,7 +1466,6 @@ function makeId(){
         const back  = c.querySelector(".face.back");
         if(!wrap || !front || !back) continue;
 
-        // Temporarily ensure both visible for measurement
         const flip = c.querySelector(".cardFlip");
         const wasFlipped = flip.classList.contains("flipped");
 
@@ -1462,10 +1482,6 @@ function makeId(){
       }
     }
 
-    /* =======================
-       Swipe gestures
-       right: fav, left: delete, up: flip
-    ======================= */
     function initSwipeHandlers(){
       const cards = document.querySelectorAll(".card");
       for(const card of cards){
@@ -1480,9 +1496,7 @@ function makeId(){
           moved = false;
         }, {passive:true});
 
-        card.addEventListener("touchmove", (e)=>{
-          moved = true;
-        }, {passive:true});
+        card.addEventListener("touchmove", ()=>{ moved = true; }, {passive:true});
 
         card.addEventListener("touchend", (e)=>{
           const t = e.changedTouches[0];
@@ -1490,7 +1504,7 @@ function makeId(){
           const dy = t.clientY - sy;
           const dt = now() - st;
 
-          if(!moved || dt > 650) return; // ignore long presses
+          if(!moved || dt > 650) return;
 
           const absX = Math.abs(dx);
           const absY = Math.abs(dy);
@@ -1498,20 +1512,15 @@ function makeId(){
           const id = card.dataset.id;
           if(!id) return;
 
-          // swipe up
           if(absY > absX && dy < -55){
-            const flipEl = document.querySelector(`.cardFlip[data-id="${id}"]`);
+            const flipEl = document.querySelector(\`.cardFlip[data-id="\${id}"]\`);
             if(flipEl) flipEl.classList.toggle("flipped");
             return;
           }
 
-          // horizontal swipes
           if(absX > absY && absX > 70){
-            if(dx > 0){
-              toggleFav(id, true);
-            } else {
-              deleteById(id);
-            }
+            if(dx > 0) toggleFav(id, true);
+            else deleteById(id);
           }
         }, {passive:true});
       }
@@ -1527,7 +1536,6 @@ function makeId(){
 
       renderLangSelects();
 
-      // defaults
       sourceLangEl.value = langs.some(x=>x.code==="EN") ? "EN" : (langs[0]?.code||"EN");
       meaningLangEl.value = langs.some(x=>x.code==="TR") ? "TR" : (langs[0]?.code||"TR");
       levelEl.value = "B1";
@@ -1565,48 +1573,6 @@ function makeId(){
     }
 
     function upsert(){
-      function saveQuick(){
-  const text = document.getElementById("quickText").value;
-  if(!text.trim()){
-    toast("En az 1 satır yaz");
-    return;
-  }
-
-  const lines = text.split("\n").map(x=>x.trim()).filter(Boolean);
-  let added = 0;
-  const t = now();
-
-  for(const line of lines){
-    const p = quickParseLine(line);
-    if(!p) continue;
-
-    items.push({
-      id: makeId(),
-      lang: "EN",
-      level: p.level,
-      term: p.term,
-      meaningTR: p.meaning,
-      example: "",
-      tags: p.tags,
-      fav:false,
-      createdAt: t,
-      updatedAt: t
-    });
-
-    added++;
-  }
-
-  if(added === 0){
-    toast("Format yanlış. Örn: notice - fark etmek - A2 - story");
-    return;
-  }
-
-  saveItems(items);
-  toast(`Eklendi (${added})`);
-  render();
-  document.getElementById("quickText").value = "";
-}
-
       const sourceLang = (sourceLangEl.value || "EN").toUpperCase();
       const meaningLang = (meaningLangEl.value || "TR").toUpperCase();
       const level = levelEl.value || "B1";
@@ -1640,14 +1606,12 @@ function makeId(){
 
         toast("Güncellendi ✅");
       } else {
-        const id = (crypto.randomUUID ? crypto.randomUUID() : String(t) + Math.random().toString(16).slice(2));
         const it = patchItem({
-          id, sourceLang, meaningLang, level, status,
+          sourceLang, meaningLang, level, status,
           term, meaning, example, tags,
           fav:false,
           createdAt:t, updatedAt:t
         });
-        // new items should be due now for initial learning
         it.srs.dueAt = now();
         items.push(it);
         toast("Eklendi ✅");
@@ -1661,7 +1625,7 @@ function makeId(){
     function deleteById(id){
       const it = items.find(x=>x.id===id);
       if(!it) return;
-      if(confirm(`Silinsin mi?\n\n${it.term} (${it.sourceLang})`)){
+      if(confirm(\`Silinsin mi?\n\n\${it.term} (\${it.sourceLang})\`)){
         items = items.filter(x=>x.id!==id);
         saveItems(items);
         toast("Silindi 🗑️");
@@ -1669,15 +1633,14 @@ function makeId(){
       }
     }
 
-    function toggleFav(id, fromSwipe=false){
+    function toggleFav(id){
       const it = items.find(x=>x.id===id);
       if(!it) return;
       it.fav = !it.fav;
       it.updatedAt = now();
       saveItems(items);
       toast(it.fav ? "Favori ★" : "Favori kaldırıldı ☆");
-      if(fromSwipe) render();
-      else render();
+      render();
     }
 
     /* =======================
@@ -1693,7 +1656,6 @@ function makeId(){
     }
 
     function quickParseLine(line){
-      // supports "-" or "|" as separators
       const raw = line.trim();
       if(!raw) return null;
       const sep = raw.includes("|") ? "|" : "-";
@@ -1739,8 +1701,13 @@ function makeId(){
         added++;
       }
 
+      if(added === 0){
+        toast("Format yanlış. Örn: notice - fark etmek - A2 - story");
+        return;
+      }
+
       saveItems(items);
-      toast(`Eklendi ✅ (${added})`);
+      toast(\`Eklendi ✅ (\${added})\`);
       quickModal.close();
       render();
     }
@@ -1789,14 +1756,84 @@ function makeId(){
     function buildQuizPool(scope){
       if(scope === "ALL") return [...items];
       if(scope === "VISIBLE") return getVisibleItems();
-      // DUE
       const due = items.filter(isDue);
-      return due.length ? due : items; // if no due, fall back to all
+      return due.length ? due : items;
+    }
+
+    function shuffle(a){
+      const arr = [...a];
+      for(let i=arr.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]] = [arr[j],arr[i]];
+      }
+      return arr;
+    }
+
+    function formatLangName(code){
+      return (langs.find(x=>x.code===code)?.name) || code;
+    }
+
+    function makeOptions(correctText, poolTexts){
+      const uniq = Array.from(new Set(poolTexts.filter(Boolean).filter(t=>t!==correctText)));
+      const picks = shuffle(uniq).slice(0,3);
+      return shuffle([correctText, ...picks]);
+    }
+
+    function quizUpdateTop(){
+      quizProgressEl.textContent = `${Math.min(quiz.idx+1, quiz.pool.length)}/${quiz.pool.length}`;
+      quizScoreEl.textContent = String(quiz.score);
+      quizCorrectEl.textContent = String(quiz.correct);
+      quizWrongEl.textContent = String(quiz.wrong);
+    }
+
+    function nextQuestion(){
+      if(quiz.idx >= quiz.pool.length) return quizFinish();
+
+      quiz.current = quiz.pool[quiz.idx];
+      quizRevealEl.classList.remove("on");
+      quizOptionsEl.style.display = "none";
+      quizOptionsEl.innerHTML = "";
+
+      const it = quiz.current;
+      const t = quizTypeEl.value;
+
+      quizMetaEl.textContent =
+        `${it.sourceLang} (${formatLangName(it.sourceLang)})  •  Anlam: ${it.meaningLang} (${formatLangName(it.meaningLang)})  •  Seviye: ${it.level}  •  Durum: ${it.status}`;
+
+      let questionText = "";
+      let answerText = "";
+      let options = null;
+
+      if(t === "TR2TERM"){
+        questionText = it.meaning;
+        answerText = it.term;
+      } else if(t === "TERM2TR"){
+        questionText = it.term;
+        answerText = it.meaning;
+      } else if(t === "MCQ_TR2TERM"){
+        questionText = it.meaning;
+        answerText = it.term;
+        options = makeOptions(answerText, quiz.pool.map(x=>x.term));
+      } else if(t === "MCQ_TERM2TR"){
+        questionText = it.term;
+        answerText = it.meaning;
+        options = makeOptions(answerText, quiz.pool.map(x=>x.meaning));
+      }
+
+      quizQEl.textContent = questionText || "—";
+      quizAnswerEl.textContent = answerText || "—";
+      quizExampleEl.textContent = it.example ? `Örnek: ${it.example}` : "Örnek yok.";
+
+      if(options){
+        quizOptionsEl.style.display = "grid";
+        quizOptionsEl.innerHTML = options.map(o=>`<button class="opt" type="button">${escapeHtml(o)}</button>`).join("");
+      }
+
+      quizUpdateTop();
     }
 
     function quizOpen(){
       quiz.on = true;
-      quiz.onlyWrongMode = false;
       quiz.knownIds = new Set();
       quiz.unknownIds = new Set();
       quiz.idx = 0;
@@ -1805,7 +1842,7 @@ function makeId(){
       quiz.wrong = 0;
       quiz.current = null;
 
-      quiz.pool = shuffle(buildQuizPool(quizScopeEl.value)).slice(0, 50); // max 50 per session
+      quiz.pool = shuffle(buildQuizPool(quizScopeEl.value)).slice(0, 50);
       if(quiz.pool.length === 0){
         toast("Quiz için kayıt lazım.");
         return;
@@ -1829,123 +1866,32 @@ function makeId(){
       quizRevealEl.classList.remove("on");
       quizOptionsEl.style.display = "none";
       quizOptionsEl.innerHTML = "";
-      render(); // update due, status etc.
+      render();
     }
 
-    function shuffle(a){
-      const arr = [...a];
-      for(let i=arr.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [arr[i],arr[j]] = [arr[j],arr[i]];
-      }
-      return arr;
-    }
-
-    function quizUpdateTop(){
-      quizProgressEl.textContent = `${Math.min(quiz.idx+1, quiz.pool.length)}/${quiz.pool.length}`;
-      quizScoreEl.textContent = String(quiz.score);
-      quizCorrectEl.textContent = String(quiz.correct);
-      quizWrongEl.textContent = String(quiz.wrong);
-    }
-
-    function formatLangName(code){
-      return (langs.find(x=>x.code===code)?.name) || code;
-    }
-
-    function makeOptions(correctText, poolTexts){
-      // pick 3 unique distractors
-      const uniq = Array.from(new Set(poolTexts.filter(Boolean).filter(t=>t!==correctText)));
-      const picks = shuffle(uniq).slice(0,3);
-      const opts = shuffle([correctText, ...picks]);
-      return opts;
-    }
-
-    function nextQuestion(){
-      if(quiz.idx >= quiz.pool.length){
-        return quizFinish();
-      }
-
-      quiz.current = quiz.pool[quiz.idx];
-      quizRevealEl.classList.remove("on");
-      quizOptionsEl.style.display = "none";
-      quizOptionsEl.innerHTML = "";
-
-      const it = quiz.current;
-      const t = quizTypeEl.value;
-
-      const meta = `${it.sourceLang} (${formatLangName(it.sourceLang)})  •  Anlam: ${it.meaningLang} (${formatLangName(it.meaningLang)})  •  Seviye: ${it.level}  •  Durum: ${it.status}`;
-      quizMetaEl.textContent = meta;
-
-      // set question + answer by mode
-      let questionText = "";
-      let answerText = "";
-      let options = null;
-
-      if(t === "TR2TERM"){
-        questionText = it.meaning;
-        answerText = it.term;
-      } else if(t === "TERM2TR"){
-        questionText = it.term;
-        answerText = it.meaning;
-      } else if(t === "MCQ_TR2TERM"){
-        questionText = it.meaning;
-        answerText = it.term;
-        const poolTerms = quiz.pool.map(x=>x.term);
-        options = makeOptions(answerText, poolTerms);
-      } else if(t === "MCQ_TERM2TR"){
-        questionText = it.term;
-        answerText = it.meaning;
-        const poolMeanings = quiz.pool.map(x=>x.meaning);
-        options = makeOptions(answerText, poolMeanings);
-      }
-
-      quizQEl.textContent = questionText || "—";
-      quizAnswerEl.textContent = answerText || "—";
-      quizExampleEl.textContent = it.example ? `Örnek: ${it.example}` : "Örnek yok.";
-
-      if(options){
-        quizOptionsEl.style.display = "grid";
-        quizOptionsEl.innerHTML = options.map(o=>`<button class="opt" data-opt="${escapeHtml(o)}" type="button">${escapeHtml(o)}</button>`).join("");
-      }
-
-      quizUpdateTop();
-    }
-
-    function quizShowAnswer(){
-      quizRevealEl.classList.add("on");
-    }
+    function quizShowAnswer(){ quizRevealEl.classList.add("on"); }
 
     function quizMarkCorrect(){
       const it = quiz.current;
       if(!it) return;
-
       quiz.correct += 1;
       quiz.score += 1;
       quiz.knownIds.add(it.id);
-
-      // SRS update
       srsCorrect(it);
       bumpDaily(1,0);
-
       saveItems(items);
-
       quizUpdateTop();
     }
 
     function quizMarkWrong(){
       const it = quiz.current;
       if(!it) return;
-
       quiz.wrong += 1;
       quiz.score = Math.max(0, quiz.score - 1);
       quiz.unknownIds.add(it.id);
-
-      // SRS update
       srsWrong(it);
       bumpDaily(0,1);
-
       saveItems(items);
-
       quizUpdateTop();
     }
 
@@ -1957,10 +1903,7 @@ function makeId(){
       toast("Pas ⏭️");
     }
 
-    function quizNext(){
-      quiz.idx += 1;
-      nextQuestion();
-    }
+    function quizNext(){ quiz.idx += 1; nextQuestion(); }
 
     function quizFinish(){
       quizCardEl.style.display = "none";
@@ -1997,7 +1940,6 @@ function makeId(){
         toast("Yanlış yok ✅");
         return;
       }
-      quiz.onlyWrongMode = true;
       quiz.pool = shuffle(quiz.wrongPoolIds.map(id => items.find(x=>x.id===id)).filter(Boolean));
       quiz.idx = 0;
       quiz.score = 0;
@@ -2021,17 +1963,14 @@ function makeId(){
       const picked = btn.textContent;
       const correct = quizAnswerEl.textContent;
 
-      // lock answers: paint options
       for(const b of quizOptionsEl.querySelectorAll(".opt")){
         if(b.textContent === correct) b.classList.add("good");
         else if(b.textContent === picked) b.classList.add("bad");
         b.disabled = true;
       }
 
-      // auto reveal
       quizRevealEl.classList.add("on");
 
-      // auto mark
       if(picked === correct) quizMarkCorrect();
       else quizMarkWrong();
     });
@@ -2039,46 +1978,11 @@ function makeId(){
     /* =======================
        Events
     ======================= */
-    // top buttons
     document.getElementById("addBtn").addEventListener("click", openAdd);
     document.getElementById("quickBtn").addEventListener("click", openQuick);
     document.getElementById("langManageBtn").addEventListener("click", openLangModal);
     document.getElementById("quizBtn").addEventListener("click", quizOpen);
-    // Quick Add events (FIX)
-const quickModalEl = document.getElementById("quickModal");
-const quickOpenBtn = document.getElementById("quickOpenBtn");
-const quickCloseBtn = document.getElementById("quickCloseBtn");
-const quickCancelBtn = document.getElementById("quickCancelBtn");
-const quickSaveBtn = document.getElementById("quickSaveBtn");
 
-if(quickOpenBtn){
-  quickOpenBtn.addEventListener("click", ()=>{
-    if(quickModalEl) quickModalEl.showModal();
-    const qt = document.getElementById("quickText");
-    setTimeout(()=>qt && qt.focus(), 50);
-  });
-}
-
-function closeQuickModal(){
-  if(quickModalEl) quickModalEl.close();
-}
-
-if(quickCloseBtn) quickCloseBtn.addEventListener("click", closeQuickModal);
-if(quickCancelBtn) quickCancelBtn.addEventListener("click", closeQuickModal);
-
-if(quickSaveBtn){
-  quickSaveBtn.addEventListener("click", ()=>{
-    try{
-      saveQuick();         // <- senin saveQuick fonksiyonun çalışır
-      closeQuickModal();   // <- başarılıysa kapanır
-    }catch(err){
-      console.error(err);
-      toast("Hızlı ekle hata verdi. Console'a bak.");
-    }
-  });
-}
-
-    // modal add/edit
     document.getElementById("cancelBtn").addEventListener("click", ()=>modal.close());
     document.getElementById("closeBtn").addEventListener("click", ()=>modal.close());
     document.getElementById("saveBtn").addEventListener("click", upsert);
@@ -2088,18 +1992,15 @@ if(quickSaveBtn){
       modal.close();
     });
 
-    // quick modal
     document.getElementById("quickCloseBtn").addEventListener("click", ()=>quickModal.close());
     document.getElementById("quickCancelBtn").addEventListener("click", ()=>quickModal.close());
     document.getElementById("quickSaveBtn").addEventListener("click", saveQuick);
 
-    // language modal
     document.getElementById("langCloseBtn").addEventListener("click", ()=>langModal.close());
     document.getElementById("langDoneBtn").addEventListener("click", ()=>langModal.close());
     document.getElementById("addLangBtn").addEventListener("click", addLanguage);
     document.getElementById("resetLangBtn").addEventListener("click", resetLanguages);
 
-    // filters
     searchEl.addEventListener("input", render);
     sortEl.addEventListener("change", render);
     levelFilterEl.addEventListener("change", ()=>{ levelFilter = levelFilterEl.value; render(); });
@@ -2108,7 +2009,6 @@ if(quickSaveBtn){
 
     themeSelect.addEventListener("change", (e)=> applyTheme(e.target.value));
 
-    // card click actions + flip on tap
     gridEl.addEventListener("click", (e)=>{
       const actionBtn = e.target.closest("[data-action]");
       if(actionBtn){
@@ -2132,7 +2032,6 @@ if(quickSaveBtn){
       }
     });
 
-    // wipe
     document.getElementById("wipeBtn").addEventListener("click", ()=>{
       if(items.length === 0) return toast("Zaten boş.");
       if(confirm("Tüm kelimeler silinecek. Emin misin?")){
@@ -2143,33 +2042,20 @@ if(quickSaveBtn){
       }
     });
 
-    // quiz buttons
     document.getElementById("quizExitBtn").addEventListener("click", quizClose);
     document.getElementById("quizShowBtn").addEventListener("click", quizShowAnswer);
     document.getElementById("quizPassBtn").addEventListener("click", ()=>{ quizPass(); quizNext(); });
-
-    document.getElementById("quizRightBtn").addEventListener("click", ()=>{
-      // if MCQ, allow manual too (after reveal)
-      quizRevealEl.classList.add("on");
-      quizMarkCorrect();
-    });
-    document.getElementById("quizWrongBtn").addEventListener("click", ()=>{
-      quizRevealEl.classList.add("on");
-      quizMarkWrong();
-    });
+    document.getElementById("quizRightBtn").addEventListener("click", ()=>{ quizRevealEl.classList.add("on"); quizMarkCorrect(); });
+    document.getElementById("quizWrongBtn").addEventListener("click", ()=>{ quizRevealEl.classList.add("on"); quizMarkWrong(); });
     document.getElementById("quizNextBtn").addEventListener("click", quizNext);
-
     document.getElementById("quizDoneBtn").addEventListener("click", quizClose);
     document.getElementById("quizAgainWrongBtn").addEventListener("click", quizAgainWrong);
 
-    // when quiz type/scope changes mid-session, restart clean
     quizTypeEl.addEventListener("change", ()=>{ if(quiz.on) { quiz.idx = 0; quiz.pool = shuffle(buildQuizPool(quizScopeEl.value)).slice(0,50); nextQuestion(); } });
     quizScopeEl.addEventListener("change", ()=>{ if(quiz.on) { quiz.idx = 0; quiz.pool = shuffle(buildQuizPool(quizScopeEl.value)).slice(0,50); nextQuestion(); } });
 
     /* =======================
        PWA improvements (simple)
-       - runtime manifest
-       - offline cache (service worker via blob)
     ======================= */
     function setupManifest(){
       const manifest = {
@@ -2193,14 +2079,10 @@ if(quickSaveBtn){
       const swCode = `
         const CACHE = "vocab-pocket-pro-cache-v1";
         self.addEventListener("install", (e)=>{
-          e.waitUntil(
-            caches.open(CACHE).then(cache => cache.addAll(["./"]))
-          );
+          e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(["./"])));
           self.skipWaiting();
         });
-        self.addEventListener("activate", (e)=>{
-          e.waitUntil(self.clients.claim());
-        });
+        self.addEventListener("activate", (e)=>{ e.waitUntil(self.clients.claim()); });
         self.addEventListener("fetch", (e)=>{
           const req = e.request;
           e.respondWith(
@@ -2219,9 +2101,6 @@ if(quickSaveBtn){
       }catch{}
     }
 
-    /* =======================
-       Init
-    ======================= */
     function init(){
       langs = loadLangs();
       saveLangs(langs);
@@ -2246,23 +2125,5 @@ if(quickSaveBtn){
     }
     init();
   </script>
-  <div class="modalHead">
-    <div>
-      <h2>Hızlı Ekle</h2>
-      <div class="small">Format: kelime - anlam - seviye - etiket</div>
-    </div>
-    <button class="btn" id="quickCloseBtn" type="button">✕</button>
-  </div>
-
-  <div class="modalBody">
-    <textarea id="quickText" placeholder="notice - fark etmek - A2 - story
-beneath - altında - B1 - story"></textarea>
-  </div>
-
-  <div class="modalFoot">
-    <button class="btn" id="quickCancelBtn" type="button">İptal</button>
-    <button class="btn primary" id="quickSaveBtn" type="button">Kaydet</button>
-  </div>
-</dialog>
 </body>
 </html>
