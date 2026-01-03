@@ -4,18 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>LingoMaster</title>
-
-  <meta name="theme-color" content="#0f172a" id="meta-theme" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="manifest" href="./manifest.webmanifest" />
+  <meta name="theme-color" content="#0f172a" id="meta-theme">
 
   <style>
     :root{
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --safe-top: env(safe-area-inset-top, 0px);
-      --nav-h: 70px;
+
       --header-h: 60px;
+      --nav-h: 72px;
       --radius: 18px;
 
       --bg:#0b1220;
@@ -27,6 +24,7 @@
       --primary:#6366f1;
       --danger:#ef4444;
       --warn:#f59e0b;
+      --ok:#10b981;
     }
 
     [data-theme="light"]{
@@ -38,7 +36,6 @@
       --muted:#64748b;
       --primary:#4f46e5;
     }
-
     [data-theme="ocean"]{
       --bg:#06131f;
       --card:#0b2236;
@@ -48,7 +45,6 @@
       --muted:#9bb7d3;
       --primary:#38bdf8;
     }
-
     [data-theme="emerald"]{
       --bg:#071a14;
       --card:#0b2a21;
@@ -58,7 +54,6 @@
       --muted:#9fe3c7;
       --primary:#10b981;
     }
-
     [data-theme="sunset"]{
       --bg:#1b1020;
       --card:#2a1731;
@@ -68,7 +63,6 @@
       --muted:#fbcfe8;
       --primary:#fb7185;
     }
-
     [data-theme="rose"]{
       --bg:#120a10;
       --card:#1f0f1b;
@@ -79,7 +73,7 @@
       --primary:#f43f5e;
     }
 
-    *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
     body{
       margin:0;
       font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,system-ui,sans-serif;
@@ -99,7 +93,7 @@
       backdrop-filter: blur(12px);
       border-bottom:1px solid var(--border);
     }
-    .brand{display:flex; align-items:center; gap:10px; font-weight:800;}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:900;}
     .logo{
       width:18px; height:18px; border:2px solid var(--primary);
       border-radius:6px; transform:rotate(15deg);
@@ -110,10 +104,14 @@
       color:var(--muted);
       display:grid; place-items:center;
       cursor:pointer;
+      user-select:none;
     }
     .iconBtn:active{transform:scale(.98); opacity:.9;}
 
-    #viewport{position:relative; height:calc(100vh - (var(--header-h) + var(--safe-top)));}
+    #viewport{
+      position:relative;
+      height:calc(100vh - (var(--header-h) + var(--safe-top)));
+    }
 
     .view{
       position:absolute; inset:0;
@@ -134,25 +132,26 @@
       padding:16px;
     }
     .muted{color:var(--muted);}
-    .big{font-size:34px; font-weight:900;}
-    .h2{font-size:20px; font-weight:800; margin:0 0 12px 0;}
-    .secTitle{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:800; margin:4px 0 10px;}
+    .big{font-size:34px; font-weight:950;}
+    .h2{font-size:20px; font-weight:950; margin:0 0 12px 0;}
+    .secTitle{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:950; margin:4px 0 10px;}
 
     .btn{
       border:0; cursor:pointer;
       border-radius:16px;
       padding:14px 16px;
-      font-weight:800;
+      font-weight:950;
       display:flex; align-items:center; justify-content:center;
       gap:10px;
+      user-select:none;
     }
     .btn:active{transform:scale(.98); opacity:.92;}
     .btnPrimary{background:var(--primary); color:white;}
-    .btnSoft{background:color-mix(in srgb, var(--card2) 100%, transparent); color:var(--text); border:1px solid var(--border);}
+    .btnSoft{background:var(--card2); color:var(--text); border:1px solid var(--border);}
     .btnDanger{background:var(--danger); color:white;}
     .btnHalf{flex:1;}
 
-    /* Bottom Nav — FIXED (yamuk durma bitti) */
+    /* ✅ Bottom Nav FIX (yamuk durma bitti) */
     nav{
       position:fixed; left:0; right:0; bottom:0; z-index:30;
       height:calc(var(--nav-h) + var(--safe-bottom));
@@ -160,6 +159,7 @@
       background:var(--card2);
       border-top:1px solid var(--border);
       display:flex;
+      align-items:stretch;
     }
     .navBtn{
       flex:1;
@@ -171,14 +171,20 @@
       align-items:center;
       justify-content:center;
       gap:6px;
-      font-weight:900;
+      font-weight:950;
       font-size:12px;
       padding:10px 0;
       line-height:1;
       cursor:pointer;
+      user-select:none;
     }
-    .navBtn span{display:block;}
+    .navBtn .ico{font-size:18px; line-height:1;}
     .navBtn.active{color:var(--primary);}
+    .navBtn.active .ico{
+      background:color-mix(in srgb, var(--primary) 15%, transparent);
+      padding:8px 12px;
+      border-radius:14px;
+    }
 
     /* Reader */
     .readerTop{
@@ -190,8 +196,8 @@
       display:flex; align-items:center; justify-content:space-between; gap:10px;
     }
     .readerTop .titleWrap{min-width:0; text-align:center;}
-    .readerTop .title{font-weight:900; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-    .readerTop .sub{font-size:12px; color:var(--muted); font-weight:800;}
+    .readerTop .title{font-weight:950; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+    .readerTop .sub{font-size:12px; color:var(--muted); font-weight:900;}
     .reader{
       max-width:720px; margin:0 auto;
       font-family: ui-serif, Georgia, "Times New Roman", serif;
@@ -225,10 +231,10 @@
     .sheet.open{transform:none;}
     .handle{width:48px; height:5px; border-radius:99px; background:var(--border); margin:6px auto 14px;}
     .sheetHeader{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:10px;}
-    .sheetHeader .word{font-size:34px; font-weight:950; margin:2px 0;}
-    .sheetHeader .lang{font-size:12px; font-weight:900; color:var(--primary); letter-spacing:.08em;}
+    .sheetHeader .word{font-size:34px; font-weight:980; margin:2px 0;}
+    .sheetHeader .lang{font-size:12px; font-weight:950; color:var(--primary); letter-spacing:.08em;}
     .field{margin:10px 0;}
-    label{display:block; font-size:12px; font-weight:900; color:var(--muted); margin-bottom:6px;}
+    label{display:block; font-size:12px; font-weight:950; color:var(--muted); margin-bottom:6px;}
     input, textarea, select{
       width:100%;
       background:var(--card2);
@@ -241,7 +247,7 @@
     }
     textarea{min-height:92px; resize:none;}
     .two{display:flex; gap:10px;}
-    .smallInfo{font-size:12px; color:var(--muted); font-weight:800; margin-top:6px;}
+    .smallInfo{font-size:12px; color:var(--muted); font-weight:900; margin-top:6px;}
 
     .toast{
       position:fixed; left:50%; top:calc(14px + var(--safe-top));
@@ -250,7 +256,7 @@
       color:var(--bg);
       padding:10px 14px;
       border-radius:99px;
-      font-weight:900;
+      font-weight:950;
       opacity:0; pointer-events:none;
       transition:.25s ease;
       z-index:200;
@@ -258,6 +264,14 @@
       text-align:center;
     }
     .toast.show{opacity:1; transform:translate(-50%,0);}
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background:color-mix(in srgb, var(--card2) 90%, transparent);
+      font-weight:950; font-size:12px; color:var(--muted);
+    }
   </style>
 </head>
 
@@ -267,8 +281,8 @@
     <div class="logo"></div>
     <div>LingoMaster</div>
   </div>
-  <div style="display:flex; gap:10px;">
-    <button class="iconBtn" id="btnTheme" title="Tema">☀️</button>
+  <div style="display:flex; gap:10px; align-items:center;">
+    <button class="iconBtn" id="btnTheme" title="Tema">🎨</button>
     <button class="iconBtn" id="btnInfo" title="Bilgi">⚙️</button>
   </div>
 </header>
@@ -280,21 +294,23 @@
 
     <div class="row">
       <div class="card" style="flex:1;">
-        <div class="muted" style="font-weight:900;">Toplam Kart</div>
+        <div class="muted" style="font-weight:950;">Toplam Kart</div>
         <div class="big" id="dashTotal">0</div>
       </div>
       <div class="card" style="flex:1; border-color:color-mix(in srgb, var(--warn) 45%, var(--border));">
-        <div style="font-weight:900; color:var(--warn);">Tekrar (Due)</div>
+        <div style="font-weight:950; color:var(--warn);">Tekrar (Due)</div>
         <div class="big" style="color:var(--warn);" id="dashDue">0</div>
       </div>
     </div>
 
     <div class="card" style="margin-top:14px;">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div style="font-size:18px; font-weight:950;">Çalışma Zinciri</div>
-        <div style="font-weight:950; color:var(--primary);" id="dashStreak">0 Gün</div>
+        <div style="font-size:18px; font-weight:980;">Çalışma Zinciri</div>
+        <div style="font-weight:980; color:var(--primary);" id="dashStreak">0 Gün</div>
       </div>
-      <div class="muted" style="margin-top:10px; font-weight:850;">Son 7 gün toplam: <span id="dashWeek">0</span></div>
+      <div class="muted" style="margin-top:10px; font-weight:900;">
+        Son 7 gün toplam: <span id="dashWeek">0</span>
+      </div>
     </div>
 
     <div class="secTitle" style="margin-top:16px;">Hızlı İşlemler</div>
@@ -307,6 +323,12 @@
       <button class="btn btnSoft btnHalf" onclick="go('library')">📚 Kitap Okumaya Devam Et</button>
       <button class="btn btnSoft btnHalf" onclick="go('cards')">🗂️ Kartlar</button>
     </div>
+
+    <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+      <span class="pill">✅ Tek dosya</span>
+      <span class="pill">✅ Offline kitap</span>
+      <span class="pill">✅ Otomatik çeviri</span>
+    </div>
   </section>
 
   <!-- LIBRARY -->
@@ -314,7 +336,6 @@
     <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
       <h2 class="h2">Kütüphane</h2>
       <div style="display:flex; gap:10px;">
-        <button class="iconBtn" onclick="openFreeBooks()" title="Ücretsiz Kitap">⬇️</button>
         <button class="iconBtn" onclick="openAddBook()" title="Metin ekle">➕</button>
       </div>
     </div>
@@ -349,9 +370,15 @@
 </div>
 
 <nav>
-  <button class="navBtn active" id="navHome" onclick="go('home')"><span>🏠</span><span>Ana Sayfa</span></button>
-  <button class="navBtn" id="navLibrary" onclick="go('library')"><span>📚</span><span>Kütüphane</span></button>
-  <button class="navBtn" id="navCards" onclick="go('cards')"><span>🗂️</span><span>Kartlar</span></button>
+  <button class="navBtn active" id="navHome" onclick="go('home')">
+    <div class="ico">🏠</div><span>Ana Sayfa</span>
+  </button>
+  <button class="navBtn" id="navLibrary" onclick="go('library')">
+    <div class="ico">📚</div><span>Kütüphane</span>
+  </button>
+  <button class="navBtn" id="navCards" onclick="go('cards')">
+    <div class="ico">🗂️</div><span>Kartlar</span>
+  </button>
 </nav>
 
 <div class="backdrop" id="backdrop" onclick="closeSheets()"></div>
@@ -411,12 +438,6 @@
   </div>
 
   <div class="field">
-    <label>URL’den çek (opsiyonel)</label>
-    <input id="bUrl" placeholder="Örn: Project Gutenberg .txt linki" />
-    <div class="smallInfo">URL girersen otomatik indirir. Girmezsen aşağıdaki metni kaydeder.</div>
-  </div>
-
-  <div class="field">
     <label>İçerik</label>
     <textarea id="bText" placeholder="Metni buraya yapıştır..."></textarea>
   </div>
@@ -424,33 +445,13 @@
   <button class="btn btnPrimary" style="width:100%;" onclick="saveBook()">Kütüphaneye Ekle</button>
 </div>
 
-<!-- FREE BOOK SHEET -->
-<div class="sheet" id="freeBookSheet" style="max-height:75vh;">
-  <div class="handle"></div>
-  <h2 class="h2">Ücretsiz Kitaplar</h2>
-  <div class="smallInfo" style="margin-bottom:10px;">Tek tıkla indirip kütüphaneye ekler (internet gerekli).</div>
-  <div id="freeBooks"></div>
-</div>
-
 <div class="toast" id="toast">—</div>
 
 <script>
-  // PWA
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(()=>{}));
-  }
-
-  // Store
+  // ---------- Small helpers ----------
   const DB = {
     get(key, fallback){ try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } },
     set(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
-  };
-
-  const state = {
-    settings: DB.get("lm_settings", { theme:"dark", fontSize:19, themeIndex:0 }),
-    cards: DB.get("lm_cards", []),
-    books: DB.get("lm_books", []),
-    activity: DB.get("lm_activity", {})
   };
 
   const themes = ["dark","light","ocean","emerald","sunset","rose"];
@@ -470,15 +471,21 @@
     meta.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#0f172a");
   }
 
+  // ---------- State ----------
+  const state = {
+    settings: DB.get("lm_settings", { theme:"dark", fontSize:19 }),
+    cards: DB.get("lm_cards", []),
+    books: DB.get("lm_books", [])
+  };
+
   document.getElementById("btnTheme").onclick = () => {
     const idx = (themes.indexOf(state.settings.theme) + 1) % themes.length;
     setTheme(themes[idx]);
     toast("Tema: " + themes[idx]);
   };
+  document.getElementById("btnInfo").onclick = () => toast("Tek dosya sürüm (index.html)");
 
-  document.getElementById("btnInfo").onclick = () => toast("Ayarlar yakında.");
-
-  // Router
+  // ---------- Router ----------
   function go(id){
     document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
     document.getElementById(id).classList.add("active");
@@ -493,52 +500,92 @@
     if(id==="cards") renderCards();
   }
 
-  // Seed demo (kısa demo + 1 ücretsiz kitap listesi)
-  function seed(){
-    if(state.books.length===0){
-      state.books.push({
-        id:"demo",
-        title:"Sherlock Holmes (Demo)",
-        lang:"EN",
-        page:0,
-        content:`To Sherlock Holmes she is always the woman. I have seldom heard him mention her under any other name.
-In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler.
+  // ---------- Offline Free Books (embedded) ----------
+  const BOOKS_SEED = [
+    {
+      id:"b_holmes",
+      title:"The Adventures of Sherlock Holmes (Free)",
+      lang:"EN",
+      page:0,
+      content:
+`CHAPTER I. A SCANDAL IN BOHEMIA
 
-(İpucu: Kelimeye dokun → Kart paneli açılır → Otomatik Çevir ile TR doldur.)`
-      });
+To Sherlock Holmes she is always THE woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex.
+
+It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind.
+
+Holmes, who loathed every form of society with his whole Bohemian soul, remained in our lodgings in Baker Street... (shortened for demo)
+
+CHAPTER II. THE RED-HEADED LEAGUE
+
+I had called upon my friend, Mr. Sherlock Holmes, one day in the autumn of last year and found him in deep conversation... (shortened)
+
+CHAPTER III. A CASE OF IDENTITY
+
+"My dear fellow," said Sherlock Holmes as we sat on either side of the fire... (shortened)
+
+(İpucu: Kelimeye dokun → Otomatik Çevir → Kaydet)`
+    },
+    {
+      id:"b_alice",
+      title:"Alice in Wonderland (Free)",
+      lang:"EN",
+      page:0,
+      content:
+`CHAPTER I. Down the Rabbit-Hole
+
+Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do.
+
+Once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, "and what is the use of a book," thought Alice "without pictures or conversations?"
+
+So she was considering in her own mind (as well as she could, for the hot day made her feel very sleepy and stupid)...`
+    },
+    {
+      id:"b_chekhov",
+      title:"Толстый и тонкий (Chekhov) (Free)",
+      lang:"RU",
+      page:0,
+      content:
+`На вокзале Николаевской железной дороги встретились два приятеля: один толстый, другой тонкий.
+
+Толстый только что пообедал на вокзале, и губы его, подернутые маслом, лоснились, как спелые вишни...`
+    }
+  ];
+
+  function seedBooks(){
+    if(state.books.length === 0){
+      state.books = [...BOOKS_SEED];
       DB.set("lm_books", state.books);
     }
   }
 
-  // Dashboard
+  // ---------- Dashboard ----------
   function renderDash(){
     document.getElementById("dashTotal").textContent = state.cards.length;
     document.getElementById("dashDue").textContent = state.cards.filter(c => c.due <= Date.now()).length;
 
-    // streak/7day sum (basit)
+    // Basit streak: son günlerde kart kaydettiyse
+    const activity = DB.get("lm_activity", {});
     const today = new Date();
-    let week = 0;
-    for(let i=0;i<7;i++){
-      const d = new Date(today);
-      d.setDate(d.getDate()-i);
-      const k = d.toISOString().slice(0,10);
-      week += (state.activity[k] || 0);
-    }
-    document.getElementById("dashWeek").textContent = week;
-
-    // streak (ardışık gün)
     let streak = 0;
     for(let i=0;i<365;i++){
-      const d = new Date(today);
-      d.setDate(d.getDate()-i);
+      const d = new Date(today); d.setDate(d.getDate()-i);
       const k = d.toISOString().slice(0,10);
-      if((state.activity[k] || 0) > 0) streak++;
+      if((activity[k]||0)>0) streak++;
       else break;
     }
     document.getElementById("dashStreak").textContent = streak + " Gün";
+
+    let week = 0;
+    for(let i=0;i<7;i++){
+      const d = new Date(today); d.setDate(d.getDate()-i);
+      const k = d.toISOString().slice(0,10);
+      week += (activity[k]||0);
+    }
+    document.getElementById("dashWeek").textContent = week;
   }
 
-  // Library
+  // ---------- Library ----------
   function renderLibrary(){
     const wrap = document.getElementById("libraryList");
     wrap.innerHTML = "";
@@ -550,7 +597,7 @@ In his eyes she eclipses and predominates the whole of her sex. It was not that 
       el.innerHTML = `
         <div style="display:flex; justify-content:space-between; gap:10px; align-items:center;">
           <div style="min-width:0;">
-            <div style="font-weight:950; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${b.title}</div>
+            <div style="font-weight:980; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${b.title}</div>
             <div class="smallInfo">${b.lang} • Sayfa ${b.page+1} / ${total}</div>
           </div>
           <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" data-open="${b.id}">Oku</button>
@@ -561,12 +608,12 @@ In his eyes she eclipses and predominates the whole of her sex. It was not that 
     });
   }
 
-  // Reader paging (1 sayfa sorunu burada çözülüyor)
+  // ---------- Reader paging (✅ 1 sayfa sorunu çözülür) ----------
   let activeBook = null;
 
   function getPages(text){
     const t = (text || "").replace(/\r\n/g,"\n");
-    const size = 1500; // küçük tut -> gerçek sayfalama
+    const size = 1500; // gerçek sayfalama
     const pages = [];
     let i=0;
     while(i < t.length){
@@ -616,7 +663,6 @@ In his eyes she eclipses and predominates the whole of her sex. It was not that 
         box.appendChild(document.createTextNode(ch));
         return;
       }
-      // noktalama ayıklama
       const clean = ch.replace(/[.,!?;:"()«»—–\[\]{}<>]+/g,"").trim();
       if(clean){
         const s = document.createElement("span");
@@ -640,7 +686,7 @@ In his eyes she eclipses and predominates the whole of her sex. It was not that 
     renderReader();
   }
 
-  // Sheets
+  // ---------- Sheets ----------
   const backdrop = document.getElementById("backdrop");
   function openSheet(id){
     backdrop.classList.add("open");
@@ -651,7 +697,7 @@ In his eyes she eclipses and predominates the whole of her sex. It was not that 
     document.querySelectorAll(".sheet").forEach(s=>s.classList.remove("open"));
   }
 
-  // Word Sheet
+  // ---------- Word Sheet ----------
   let currentCardId = null;
 
   function openWord(word, lang, ctx){
@@ -659,7 +705,7 @@ In his eyes she eclipses and predominates the whole of her sex. It was not that 
     document.getElementById("wsLang").textContent = lang;
     document.getElementById("wsWord").textContent = word;
     document.getElementById("wsMeaning").value = "";
-    document.getElementById("wsContext").value = ctx.slice(0,220) + (ctx.length>220 ? "..." : "");
+    document.getElementById("wsContext").value = ctx.slice(0,240) + (ctx.length>240 ? "..." : "");
     document.getElementById("wsStatus").textContent = "Yeni kart";
     openSheet("wordSheet");
   }
@@ -675,12 +721,41 @@ In his eyes she eclipses and predominates the whole of her sex. It was not that 
     speechSynthesis.speak(u);
   }
 
-  // Auto translate (NO redirect)
+  // ---------- Offline fallback dictionary (mini) ----------
+  const MINI_TR = {
+    "that":"şu / o / -diği şey",
+    "woman":"kadın",
+    "love":"aşk, sevgi",
+    "emotion":"duygu",
+    "cold":"soğuk",
+    "mind":"zihin",
+    "always":"her zaman",
+    "heard":"duydum/duydu",
+    "mention":"bahsetmek",
+    "eyes":"gözler",
+    "whole":"bütün",
+    "sex":"cinsiyet",
+    "book":"kitap",
+    "pictures":"resimler",
+    "without":"olmadan",
+    "thought":"düşündü",
+    "tired":"yorgun",
+    "sister":"kız kardeş",
+    "bank":"kıyı",
+    "nothing":"hiçbir şey",
+    "do":"yapmak",
+    "considering":"düşünmekte",
+    "hot":"sıcak",
+    "day":"gün"
+  };
+
+  // ✅ Auto Translate: API -> olmazsa MINI sözlük
   async function autoTranslate(){
-    const word = document.getElementById("wsWord").textContent;
-    const lang = document.getElementById("wsLang").textContent;
+    const word = document.getElementById("wsWord").textContent.trim();
+    const lang = document.getElementById("wsLang").textContent.trim();
     const source = ({EN:"en", RU:"ru", DE:"de", FR:"fr"})[lang] || "auto";
 
+    // 1) Try LibreTranslate
     try{
       const r = await fetch("https://libretranslate.de/translate",{
         method:"POST",
@@ -689,10 +764,22 @@ In his eyes she eclipses and predominates the whole of her sex. It was not that 
       });
       if(!r.ok) throw new Error("translate_failed");
       const data = await r.json();
-      document.getElementById("wsMeaning").value = (data.translatedText || "").trim();
-      toast("Çeviri alındı ✅");
+      const out = (data.translatedText || "").trim();
+      if(out){
+        document.getElementById("wsMeaning").value = out;
+        toast("Çeviri alındı ✅");
+        return;
+      }
+      throw new Error("empty");
     }catch(e){
-      toast("Çeviri servisi erişemedi (internet/yoğunluk).");
+      // 2) Offline fallback
+      const key = word.toLowerCase();
+      if(MINI_TR[key]){
+        document.getElementById("wsMeaning").value = MINI_TR[key];
+        toast("Offline sözlük kullanıldı ✅");
+      }else{
+        toast("Çeviri servisi erişemedi. Manuel yazabilirsin.");
+      }
     }
   }
 
@@ -709,8 +796,7 @@ In his eyes she eclipses and predominates the whole of her sex. It was not that 
     const card = {
       id: currentCardId || ("c_" + Math.random().toString(36).slice(2)),
       term, lang, meaning, context,
-      due: now,
-      srs: { interval:0, reps:0, ef:2.5 }
+      due: now
     };
 
     const idx = state.cards.findIndex(c=>c.id===card.id);
@@ -718,6 +804,13 @@ In his eyes she eclipses and predominates the whole of her sex. It was not that 
     else state.cards.push(card);
 
     DB.set("lm_cards", state.cards);
+
+    // activity log
+    const activity = DB.get("lm_activity", {});
+    const k = new Date().toISOString().slice(0,10);
+    activity[k] = (activity[k] || 0) + 1;
+    DB.set("lm_activity", activity);
+
     toast("Kaydedildi ✅");
     closeSheets();
     renderDash();
@@ -746,7 +839,7 @@ In his eyes she eclipses and predominates the whole of her sex. It was not that 
     renderCards();
   }
 
-  // Cards view
+  // ---------- Cards view ----------
   document.getElementById("search").addEventListener("input", renderCards);
 
   function renderCards(){
@@ -761,7 +854,7 @@ In his eyes she eclipses and predominates the whole of her sex. It was not that 
     if(items.length===0){
       const e = document.createElement("div");
       e.className = "card";
-      e.innerHTML = `<div style="font-weight:950;">Henüz kart yok</div><div class="smallInfo">Kitapta kelimeye dokun → Kaydet</div>`;
+      e.innerHTML = `<div style="font-weight:980;">Henüz kart yok</div><div class="smallInfo">Kitapta kelimeye dokun → Kaydet</div>`;
       list.appendChild(e);
       return;
     }
@@ -771,7 +864,7 @@ In his eyes she eclipses and predominates the whole of her sex. It was not that 
       e.className = "card";
       e.style.marginTop = "12px";
       e.innerHTML = `
-        <div style="font-weight:950; color:var(--primary); font-size:20px;">${c.term}</div>
+        <div style="font-weight:980; color:var(--primary); font-size:20px;">${c.term}</div>
         <div class="smallInfo">${c.lang} • ${c.meaning}</div>
         <div class="smallInfo" style="margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${c.context || ""}</div>
       `;
@@ -779,35 +872,17 @@ In his eyes she eclipses and predominates the whole of her sex. It was not that 
     });
   }
 
-  // Quiz (basit başlangıç)
-  document.getElementById("btnQuiz").onclick = () => {
-    toast("Quiz ekranını bir sonraki adımda ekleyeceğim. Şimdilik kart biriktirelim 🙂");
-  };
-
-  // Add Book
+  // ---------- Add book ----------
   function openAddBook(){
     document.getElementById("bTitle").value = "";
-    document.getElementById("bUrl").value = "";
     document.getElementById("bText").value = "";
     openSheet("addBookSheet");
   }
 
-  async function saveBook(){
+  function saveBook(){
     const title = document.getElementById("bTitle").value.trim() || "Adsız Metin";
     const lang = document.getElementById("bLang").value;
-    const url = document.getElementById("bUrl").value.trim();
-    let content = document.getElementById("bText").value.trim();
-
-    if(url){
-      try{
-        const r = await fetch(url);
-        if(!r.ok) throw new Error("fetch_failed");
-        content = await r.text();
-      }catch(e){
-        return toast("URL’den çekemedim. Link doğru mu / CORS engeli olabilir.");
-      }
-    }
-
+    const content = document.getElementById("bText").value.trim();
     if(!content) return toast("İçerik boş olamaz.");
 
     state.books.push({ id:"b_"+Math.random().toString(36).slice(2), title, lang, page:0, content });
@@ -817,53 +892,13 @@ In his eyes she eclipses and predominates the whole of her sex. It was not that 
     renderLibrary();
   }
 
-  // Free Books (Gutenberg TXT)
-  const FREE = [
-    { title:"Alice’s Adventures in Wonderland", lang:"EN", url:"https://www.gutenberg.org/cache/epub/11/pg11.txt" },
-    { title:"The Adventures of Sherlock Holmes", lang:"EN", url:"https://www.gutenberg.org/cache/epub/1661/pg1661.txt" },
-    { title:"Pride and Prejudice", lang:"EN", url:"https://www.gutenberg.org/cache/epub/1342/pg1342.txt" }
-  ];
+  // ---------- Quiz (placeholder) ----------
+  document.getElementById("btnQuiz").onclick = () => {
+    toast("Quiz’i bir sonraki adımda ekleyeceğiz 🙂");
+  };
 
-  function openFreeBooks(){
-    const box = document.getElementById("freeBooks");
-    box.innerHTML = "";
-    FREE.forEach(b=>{
-      const e = document.createElement("div");
-      e.className = "card";
-      e.style.marginTop = "12px";
-      e.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-          <div style="min-width:0;">
-            <div style="font-weight:950; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${b.title}</div>
-            <div class="smallInfo">${b.lang} • Project Gutenberg</div>
-          </div>
-          <button class="btn btnPrimary" style="padding:10px 12px; border-radius:14px;" data-dl>İndir</button>
-        </div>
-      `;
-      e.querySelector("[data-dl]").onclick = ()=>downloadBook(b);
-      box.appendChild(e);
-    });
-    openSheet("freeBookSheet");
-  }
-
-  async function downloadBook(b){
-    toast("İndiriliyor...");
-    try{
-      const r = await fetch(b.url);
-      if(!r.ok) throw new Error("dl_failed");
-      const content = await r.text();
-      state.books.push({ id:"g_"+Math.random().toString(36).slice(2), title:b.title, lang:b.lang, page:0, content });
-      DB.set("lm_books", state.books);
-      toast("Eklendi ✅");
-      closeSheets();
-      renderLibrary();
-    }catch(e){
-      toast("İndirme başarısız (internet/CORS). Başka kitap deneyelim.");
-    }
-  }
-
-  // Init
-  seed();
+  // ---------- Init ----------
+  seedBooks();
   setTheme(state.settings.theme);
   renderDash();
   renderLibrary();
