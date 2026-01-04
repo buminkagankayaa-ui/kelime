@@ -874,6 +874,15 @@ function openQuizOverlay(){
   };
 }
 function stopQuiz(){
+  // --- DÜZELTME BAŞLANGICI ---
+  // Eğer ekranda aktif bir soru varken çıkış yapılıyorsa,
+  // o soruyu kuyruğun EN BAŞINA geri ekle (böylece sayı düşmez)
+  if(quizCurrent && quizCurrent.id){
+     state.reviewQueue.unshift(quizCurrent.id);
+     DB.set("lm_review_queue", state.reviewQueue);
+  }
+  // --- DÜZELTME BİTİŞİ ---
+
   document.getElementById("quizOverlay").classList.remove("open");
   quizCurrent=null;
   renderDash(); renderReview();
