@@ -271,18 +271,24 @@
       <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" onclick="openManualAdd()">➕ Ekle</button>
     </div>
 <div class="row" style="margin-bottom:12px; gap:8px;">
-      <div class="card" style="flex:1; padding:10px; border:1px solid var(--border); text-align:center; background:var(--card2);">
-        <div style="font-size:11px; font-weight:bold; color:var(--muted);">⚪ Yeni</div>
-        <div style="font-size:18px; font-weight:900; color:var(--text);" id="statNew">0</div>
-      </div>
-      <div class="card" style="flex:1; padding:10px; border:1px solid var(--warn); text-align:center; background:color-mix(in srgb, var(--warn) 5%, var(--card2));">
-        <div style="font-size:11px; font-weight:bold; color:var(--warn);">🟡 Öğreniyorum</div>
-        <div style="font-size:18px; font-weight:900; color:var(--warn);" id="statLearn">0</div>
-      </div>
-      <div class="card" style="flex:1; padding:10px; border:1px solid var(--ok); text-align:center; background:color-mix(in srgb, var(--ok) 5%, var(--card2));">
-        <div style="font-size:11px; font-weight:bold; color:var(--ok);">🟢 Öğrendim</div>
-        <div style="font-size:18px; font-weight:900; color:var(--ok);" id="statMaster">0</div>
-      </div>
+  <div id="filterBtnNew" class="card" onclick="toggleFilter('new')" 
+       style="flex:1; padding:10px; border:1px solid var(--border); text-align:center; background:var(--card2); cursor:pointer; transition:0.2s;">
+    <div style="font-size:11px; font-weight:bold; color:var(--muted);">⚪ Yeni</div>
+    <div style="font-size:18px; font-weight:900; color:var(--text);" id="statNew">0</div>
+  </div>
+  
+  <div id="filterBtnLearn" class="card" onclick="toggleFilter('learning')" 
+       style="flex:1; padding:10px; border:1px solid var(--warn); text-align:center; background:color-mix(in srgb, var(--warn) 5%, var(--card2)); cursor:pointer; transition:0.2s;">
+    <div style="font-size:11px; font-weight:bold; color:var(--warn);">🟡 Öğreniyorum</div>
+    <div style="font-size:18px; font-weight:900; color:var(--warn);" id="statLearn">0</div>
+  </div>
+  
+  <div id="filterBtnMaster" class="card" onclick="toggleFilter('mastered')" 
+       style="flex:1; padding:10px; border:1px solid var(--ok); text-align:center; background:color-mix(in srgb, var(--ok) 5%, var(--card2)); cursor:pointer; transition:0.2s;">
+    <div style="font-size:11px; font-weight:bold; color:var(--ok);">🟢 Öğrendim</div>
+    <div style="font-size:18px; font-weight:900; color:var(--ok);" id="statMaster">0</div>
+  </div>
+</div>
     </div>
     <div class="card" style="margin-bottom:12px;">
       <input id="search" placeholder="Kart ara (kelime/anlam/tür)..." />
@@ -990,42 +996,126 @@ function clearProgress(){
 }
 
 /* ===========================
-   Cards list
+   AKILLI KART LİSTELEME & FİLTRELEME
+   - İstatistik kutularına tıklayınca listeyi süzer.
+   - Sayıları anlık günceller.
 =========================== */
-document.getElementById("search").addEventListener("input", renderCards);
+let activeFilter = "all"; // Hangi filtre seçili? (all, new, learning, mastered)
+
+// Arama kutusuna yazınca çalışır (Eğer hata verirse bu satırı silip en alta ekleyebilirsin)
+const searchInput = document.getElementById("search");
+if(searchInput) searchInput.addEventListener("input", renderCards);
+
+// Kutulara tıklayınca çalışır (Filtreyi aç/kapa)
+function toggleFilter(type){
+  if(activeFilter === type){
+     activeFilter = "all"; // Zaten seçiliyse filtreyi kaldır (Hepsini göster)
+     toast("Tüm kartlar gösteriliyor");
+  } else {
+     activeFilter = type; // Yeni filtreyi seç
+     if(type === 'new') toast("Sadece YENİ kartlar");
+     if(type === 'learning') toast("Sadece ÖĞRENİLEN kartlar");
+     if(type === 'mastered') toast("Sadece ÖĞRENİLMİŞ kartlar");
+  }
+  renderCards(); // Listeyi yenile
+}
+
 function renderCards(){
-  const q = norm(document.getElementById("search").value);
+  // Hata önleyici: Eğer search kutusu yoksa boş string al
+  const searchEl = document.getElementById("search");
+  const q = searchEl ? norm(searchEl.value) : "";
+  
   const list = document.getElementById("cardsList");
+  if(!list) return; // Liste yoksa dur
+  
   list.innerHTML="";
 
+  // --- 1. İSTATİSTİKLERİ SAY (Her zaman tüm kartlar üzerinden) ---
+  let countNew = 0;       
+  let countLearning = 0;  
+  let countMastered = 0;  
+
+  if(state.cards){
+      state.cards.forEach(c => {
+          const r = c.srs ? c.srs.reps : 0;
+          if(r === 0) countNew++;
+          else if(r < 5) countLearning++;
+          else countMastered++;
+      });
+  }
+
+  // Sayıları kutulara yaz (Eğer kutular ekranda varsa)
+  if(document.getElementById("statNew")) document.getElementById("statNew").textContent = countNew;
+  if(document.getElementById("statLearn")) document.getElementById("statLearn").textContent = countLearning;
+  if(document.getElementById("statMaster")) document.getElementById("statMaster").textContent = countMastered;
+
+  // --- 2. KUTULARIN GÖRÜNÜMÜNÜ GÜNCELLE (Seçili olan parlasın) ---
+  const btnNew = document.getElementById("filterBtnNew");
+  const btnLearn = document.getElementById("filterBtnLearn");
+  const btnMaster = document.getElementById("filterBtnMaster");
+
+  // Seçili olmayanı silikleştir (Opacity ayarı)
+  if(btnNew) btnNew.style.opacity = (activeFilter === 'all' || activeFilter === 'new') ? "1" : "0.4";
+  if(btnLearn) btnLearn.style.opacity = (activeFilter === 'all' || activeFilter === 'learning') ? "1" : "0.4";
+  if(btnMaster) btnMaster.style.opacity = (activeFilter === 'all' || activeFilter === 'mastered') ? "1" : "0.4";
+  
+  // Seçili olana kalın kenarlık ver
+  if(btnNew) btnNew.style.borderWidth = (activeFilter === 'new') ? "2px" : "1px";
+  if(btnLearn) btnLearn.style.borderWidth = (activeFilter === 'learning') ? "2px" : "1px";
+  if(btnMaster) btnMaster.style.borderWidth = (activeFilter === 'mastered') ? "2px" : "1px";
+
+  // --- 3. LİSTEYİ FİLTRELE ---
   const items = state.cards
-    .filter(c=>{
-      if(!q) return true;
-      return norm(c.term).includes(q) || norm(c.meaning).includes(q) || norm(c.type).includes(q);
+    .filter(c => {
+      // A) Arama Filtresi
+      const matchesSearch = !q || (norm(c.term).includes(q) || norm(c.meaning).includes(q) || norm(c.type).includes(q));
+      
+      // B) Durum Filtresi (Kutulara tıklama)
+      const r = c.srs ? c.srs.reps : 0;
+      let matchesStatus = true;
+      
+      if(activeFilter === 'new') matchesStatus = (r === 0);
+      else if(activeFilter === 'learning') matchesStatus = (r > 0 && r < 5);
+      else if(activeFilter === 'mastered') matchesStatus = (r >= 5);
+      
+      return matchesSearch && matchesStatus;
     })
     .sort((a,b)=> (a.term||"").localeCompare((b.term||""), "en"));
 
+  // --- 4. SONUCU BAS ---
   if(!items.length){
-    const e=document.createElement("div");
-    e.className="card";
-    e.innerHTML=`<div style="font-weight:980;">Henüz kart yok</div><div class="smallInfo">➕ Elle Kelime Ekle ile başla.</div>`;
-    list.appendChild(e);
+    let msg = "Kart bulunamadı.";
+    if(activeFilter === 'new') msg = "Henüz YENİ kart yok.";
+    if(activeFilter === 'learning') msg = "Şu an ÖĞRENİLEN kart yok.";
+    if(activeFilter === 'mastered') msg = "Henüz tamamlanan kart yok.";
+    
+    list.innerHTML=`<div class="card" style="text-align:center; padding:20px; color:var(--muted);">${msg}</div>`;
     return;
   }
 
   items.forEach(c=>{
-    const isDue=(c.due||0) <= now();
+    const isDue = (c.due||0) <= Date.now();
+    const reps = c.srs ? c.srs.reps : 0;
+    
+    // Rozet Rengi (Listede durumunu görmek için)
+    let statusBadge = "";
+    if(reps === 0) statusBadge = `<span class="badge" style="border:1px solid var(--border);">Yeni</span>`;
+    else if(reps < 5) statusBadge = `<span class="badge" style="color:var(--warn); border-color:var(--warn);">Öğreniliyor</span>`;
+    else statusBadge = `<span class="badge" style="color:var(--ok); border-color:var(--ok); background:color-mix(in srgb, var(--ok) 10%, transparent);">Öğrenildi</span>`;
+
+    const dueBadge = isDue ? `<span class="badge due" style="margin-left:4px;">Tekrar</span>` : ``;
+
     const el=document.createElement("div");
     el.className="card";
     el.style.marginTop="12px";
     el.innerHTML=`
       <div class="cardLine">
         <div class="termBig">${safeText(c.term)}</div>
-        <div class="badge ${isDue?'due':''}">${isDue?'Tekrar':'Tamam'}</div>
+        <div style="display:flex;">${statusBadge} ${dueBadge}</div>
       </div>
       <div class="smallInfo">${safeText(c.lang)} • ${safeText(c.meaning)}</div>
       <div class="smallInfo" style="margin-top:6px;">Tür: ${safeText(c.type||'-')}</div>
-      <div class="smallInfo" style="margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+      <div class="smallInfo" style="margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:0.7;">
         ${safeText(c.example||'')}
       </div>
       <div class="two" style="margin-top:10px;">
