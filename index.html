@@ -3,48 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>LingoMaster • Vocab</title>
+  <title>LingoMaster</title>
   <meta name="theme-color" content="#0b1220" id="meta-theme">
-  <style>
-    /* =========================================================
-      LingoMaster • Vocab-only Single File App
-      Focus: Cards + Depot + Quiz + SRS + Import/Export
-      No books/reader.
-    ========================================================= */
+  <link rel="icon" href="data:,">
 
+  <style>
     :root{
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --safe-top: env(safe-area-inset-top, 0px);
-      --header-h: 62px;
-      --nav-h: 80px;
-
+      --header-h: 60px;
+      --nav-h: 78px;
       --radius: 18px;
-      --radius2: 14px;
 
-      --bg: #0b1220;
-      --card: #111b2d;
-      --card2: #0f172a;
-      --border: #25324a;
-
-      --text: #e5e7eb;
-      --muted: #94a3b8;
-
-      --primary: #6366f1;
-      --ok: #10b981;
-      --warn: #f59e0b;
-      --danger: #ef4444;
-
-      --shadow: 0 12px 30px rgba(0,0,0,.25);
+      --bg:#0b1220;
+      --card:#111b2d;
+      --card2:#0f172a;
+      --border:#25324a;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --primary:#6366f1;
+      --danger:#ef4444;
+      --warn:#f59e0b;
+      --ok:#10b981;
     }
     [data-theme="light"]{
-      --bg:#f8fafc;
-      --card:#ffffff;
-      --card2:#f1f5f9;
-      --border:#cbd5e1;
-      --text:#0f172a;
-      --muted:#64748b;
-      --primary:#4f46e5;
-      --shadow: 0 12px 30px rgba(15,23,42,.08);
+      --bg:#f8fafc; --card:#ffffff; --card2:#f1f5f9; --border:#cbd5e1;
+      --text:#0f172a; --muted:#64748b; --primary:#4f46e5;
+      --danger:#dc2626; --warn:#d97706; --ok:#059669;
     }
     [data-theme="ocean"]{
       --bg:#06131f; --card:#0b2236; --card2:#0a1b2a; --border:#245070;
@@ -63,582 +48,340 @@
       --text:#fff1f2; --muted:#fda4af; --primary:#f43f5e;
     }
 
-    *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
     body{
-      margin:0; height:100vh; overflow:hidden;
-      font-family: -apple-system, BlinkMacSystemFont, "Inter", Roboto, system-ui, sans-serif;
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,system-ui,sans-serif;
       background:var(--bg); color:var(--text);
+      height:100vh; overflow:hidden;
     }
 
     header{
-      position: sticky; top:0; z-index:20;
-      height: calc(var(--header-h) + var(--safe-top));
-      padding-top: var(--safe-top);
+      position:sticky; top:0; z-index:20;
+      height:calc(var(--header-h) + var(--safe-top));
+      padding-top:var(--safe-top);
       display:flex; align-items:center; justify-content:space-between;
       padding-left:16px; padding-right:16px;
-      background: color-mix(in srgb, var(--bg) 80%, transparent);
+      background:color-mix(in srgb, var(--bg) 78%, transparent);
       backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
+      border-bottom:1px solid var(--border);
     }
-
-    .brand{ display:flex; align-items:center; gap:10px; font-weight:1000; }
-    .logo{
-      width:18px; height:18px;
-      border:2px solid var(--primary);
-      border-radius:6px;
-      transform: rotate(15deg);
-    }
-
+    .brand{display:flex; align-items:center; gap:10px; font-weight:950;}
+    .logo{width:18px; height:18px; border:2px solid var(--primary); border-radius:6px; transform:rotate(15deg);}
     .iconBtn{
-      width:44px; height:44px;
-      display:grid; place-items:center;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: transparent;
-      color: var(--muted);
-      cursor:pointer;
-      user-select:none;
+      width:44px; height:44px; border-radius:14px;
+      background:transparent; border:1px solid var(--border);
+      color:var(--muted); display:grid; place-items:center;
+      cursor:pointer; user-select:none;
     }
-    .iconBtn:active{ transform: scale(.985); opacity:.92; }
+    .iconBtn:active{transform:scale(.98); opacity:.9;}
 
-    #viewport{
-      position:relative;
-      height: calc(100vh - (var(--header-h) + var(--safe-top)));
-    }
-
+    #viewport{position:relative; height:calc(100vh - (var(--header-h) + var(--safe-top)));}
     .view{
       position:absolute; inset:0;
       padding:18px;
-      padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 18px);
+      padding-bottom:calc(var(--nav-h) + var(--safe-bottom) + 18px);
       overflow:auto;
       opacity:0; pointer-events:none;
-      transform: translateY(8px);
-      transition: .22s ease;
+      transform:translateY(8px);
+      transition:.25s ease;
     }
-    .view.active{
-      opacity:1; pointer-events:auto; transform:none;
+    .view.active{opacity:1; pointer-events:auto; transform:none;}
+
+    .row{display:flex; gap:12px;}
+    .card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px;}
+    .muted{color:var(--muted);}
+    .big{font-size:34px; font-weight:980;}
+    .h2{font-size:20px; font-weight:980; margin:0 0 12px 0;}
+    .secTitle{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:950; margin:4px 0 10px;}
+
+    .btn{
+      border:0; cursor:pointer; border-radius:16px;
+      padding:14px 16px; font-weight:980;
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      user-select:none;
     }
+    .btn:active{transform:scale(.985); opacity:.92;}
+    .btnPrimary{background:var(--primary); color:white;}
+    .btnSoft{background:var(--card2); color:var(--text); border:1px solid var(--border);}
+    .btnDanger{background:var(--danger); color:white;}
+    .btnOk{background:var(--ok); color:white;}
+    .btnWarn{background:var(--warn); color:#111827;}
+    .btnHalf{flex:1;}
 
     nav{
-      position: fixed;
-      left:0; right:0; bottom:0;
-      z-index:30;
-      height: calc(var(--nav-h) + var(--safe-bottom));
-      padding-bottom: var(--safe-bottom);
-      background: var(--card2);
-      border-top: 1px solid var(--border);
+      position:fixed; left:0; right:0; bottom:0; z-index:30;
+      height:calc(var(--nav-h) + var(--safe-bottom));
+      padding-bottom:var(--safe-bottom);
+      background:var(--card2);
+      border-top:1px solid var(--border);
       display:flex;
     }
     .navBtn{
-      flex:1;
-      border:0;
-      background:transparent;
-      color: var(--muted);
-      display:grid;
-      grid-template-rows: 36px 18px;
-      align-items:center;
-      justify-items:center;
-      padding:6px 0;
-      user-select:none;
-      cursor:pointer;
+      flex:1; background:transparent; border:0; color:var(--muted);
+      cursor:pointer; user-select:none;
+      display:grid; grid-template-rows: 36px 18px;
+      align-items:center; justify-items:center;
+      padding:6px 0; line-height:1;
       min-width:0;
     }
     .navBtn .ico{
       width:46px; height:36px;
       display:grid; place-items:center;
-      font-size:20px;
+      font-size:20px; line-height:1;
     }
     .navBtn span{
-      font-size:11.5px;
-      font-weight:1000;
+      font-size:11.5px; font-weight:980; line-height:1;
+      transform:translateY(-1px);
       white-space:nowrap;
-      transform: translateY(-1px);
     }
-    .navBtn.active{ color: var(--primary); }
-    .navBtn.active .ico{
-      background: color-mix(in srgb, var(--primary) 16%, transparent);
-      border-radius:14px;
-    }
+    .navBtn.active{color:var(--primary);}
+    .navBtn.active .ico{background:color-mix(in srgb, var(--primary) 15%, transparent); border-radius:14px;}
 
-    .row{ display:flex; gap:12px; }
-    .two{ display:flex; gap:10px; }
-    .card{
-      background: var(--card);
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      padding:16px;
-      box-shadow: none;
-    }
-    .card.compact{ padding:12px; border-radius: var(--radius2); }
-    .secTitle{
-      font-size:12px;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      font-weight:1000;
-      color: var(--muted);
-      margin: 4px 0 10px;
-    }
-    .h2{
-      margin:0 0 12px 0;
-      font-size:20px;
-      font-weight:1000;
-    }
-    .muted{ color: var(--muted); }
-    .big{ font-size:34px; font-weight:1100; }
-    .smallInfo{ font-size:13px; color: var(--muted); font-weight:800; line-height:1.35; }
-
-    .btn{
-      border:0;
-      cursor:pointer;
-      border-radius: 16px;
-      padding: 14px 16px;
-      font-weight:1000;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      user-select:none;
-    }
-    .btn:active{ transform: scale(.985); opacity:.92; }
-
-    .btnPrimary{ background: var(--primary); color:#fff; }
-    .btnSoft{
-      background: var(--card2);
-      color: var(--text);
-      border:1px solid var(--border);
-    }
-    .btnDanger{ background: var(--danger); color:#fff; }
-    .btnOk{ background: var(--ok); color:#fff; }
-    .btnWarn{ background: var(--warn); color:#111827; }
-
-    input, select, textarea{
-      width:100%;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: var(--card2);
-      color: var(--text);
-      padding: 12px 12px;
-      outline: none;
-      font-weight:900;
-      font-size: 15px;
-    }
-    textarea{ min-height: 110px; resize: vertical; }
-    label{
-      display:block;
-      margin: 10px 0 6px;
-      font-weight:1000;
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing:.08em;
-      text-transform: uppercase;
-    }
-
-    .chipRow{ display:flex; gap:8px; flex-wrap:wrap; }
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:6px 10px;
-      border-radius: 999px;
-      border:1px solid var(--border);
-      background: var(--card2);
-      font-weight:1000;
-      font-size:12px;
-      color: var(--muted);
-      user-select:none;
-    }
-    .chip b{ color: var(--text); }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      padding:4px 9px;
-      font-weight:1000;
-      font-size:12px;
-      background: var(--card2);
-      color: var(--muted);
-    }
-
-    /* Sheets */
     .backdrop{
-      position: fixed; inset:0; z-index:40;
-      background: rgba(0,0,0,.45);
-      opacity:0; pointer-events:none;
-      transition:.2s ease;
+      position:fixed; inset:0; z-index:40;
+      background:rgba(0,0,0,.55);
+      opacity:0; pointer-events:none; transition:.2s ease;
     }
-    .backdrop.open{ opacity:1; pointer-events:auto; }
+    .backdrop.open{opacity:1; pointer-events:auto;}
     .sheet{
-      position: fixed; left:0; right:0; bottom:-110%;
-      z-index:45;
-      background: var(--bg);
-      border-top: 1px solid var(--border);
-      border-radius: 18px 18px 0 0;
-      padding: 12px 16px 18px;
-      transition: .25s ease;
-      max-height: 86vh;
-      overflow:auto;
-      box-shadow: var(--shadow);
+      position:fixed; left:0; right:0; bottom:0; z-index:50;
+      background:var(--card);
+      border-radius:26px 26px 0 0;
+      border:1px solid var(--border);
+      transform:translateY(110%);
+      transition:.25s ease;
+      max-height:85vh; overflow:auto;
+      padding:14px 16px calc(16px + var(--safe-bottom));
     }
-    .sheet.open{ bottom:0; }
-    .handle{
-      width: 44px; height: 4px; border-radius: 4px;
-      background: color-mix(in srgb, var(--muted) 40%, transparent);
-      margin: 8px auto 12px;
+    .sheet.open{transform:none;}
+    .handle{width:48px; height:5px; border-radius:99px; background:var(--border); margin:6px auto 14px;}
+    .field{margin:10px 0;}
+    label{display:block; font-size:12px; font-weight:980; color:var(--muted); margin-bottom:6px;}
+    input, textarea, select{
+      width:100%;
+      background:var(--card2);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px; color:var(--text);
+      font-size:16px; outline:none;
     }
+    textarea{min-height:92px; resize:none;}
+    .two{display:flex; gap:10px;}
+    .smallInfo{font-size:12px; color:var(--muted); font-weight:950; margin-top:6px;}
 
-    /* Toast */
-    #toast{
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: calc(var(--nav-h) + var(--safe-bottom) + 18px);
-      background: color-mix(in srgb, var(--card) 92%, black);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-weight: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transition: .2s ease;
-      z-index: 60;
-      max-width: 92vw;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .toast{
+      position:fixed; left:50%; top:calc(14px + var(--safe-top));
+      transform:translate(-50%,-20px);
+      background:var(--text); color:var(--bg);
+      padding:10px 14px; border-radius:99px;
+      font-weight:980; opacity:0; pointer-events:none;
+      transition:.25s ease; z-index:200;
+      max-width:calc(100vw - 20px); text-align:center;
     }
-    #toast.show{ opacity: 1; transform: translateX(-50%) translateY(-2px); }
-
-    /* List cards */
-    .listItem{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:flex-start;
-    }
-    .term{
-      font-size:18px;
-      font-weight:1100;
-      color: var(--primary);
-      line-height:1.15;
-    }
-    .meaning{
-      font-size:13.5px;
-      font-weight:900;
-      color: var(--text);
-      margin-top:6px;
-      opacity:.92;
-      line-height:1.3;
-    }
-    .metaLine{
-      margin-top:8px;
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-    }
+    .toast.show{opacity:1; transform:translate(-50%,0);}
 
     /* Quiz Overlay */
     .overlay{
-      position: fixed; inset: 0; z-index: 80;
-      display:none;
-      background: color-mix(in srgb, var(--bg) 85%, black);
-      backdrop-filter: blur(10px);
+      position:fixed; inset:0; z-index:120;
+      background:var(--bg);
+      transform:translateX(110%);
+      transition:.25s ease;
+      display:flex; flex-direction:column;
     }
-    .overlay.open{ display:block; }
-
+    .overlay.open{transform:none;}
     .overlayTop{
-      height: calc(60px + var(--safe-top));
-      padding-top: var(--safe-top);
-      padding-left: 16px;
-      padding-right: 16px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      border-bottom: 1px solid var(--border);
-      background: color-mix(in srgb, var(--bg) 80%, transparent);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 16px calc(14px + var(--safe-top));
+      padding-top:calc(14px + var(--safe-top));
+      border-bottom:1px solid var(--border);
+      background:color-mix(in srgb, var(--bg) 85%, transparent);
       backdrop-filter: blur(12px);
     }
-    .overlayTop .title{
-      font-weight:1100;
-      font-size:16px;
-    }
-
-    .qWrap{
-      height: calc(100vh - (60px + var(--safe-top)));
-      overflow:auto;
-      padding: 18px;
-      padding-bottom: 24px;
-    }
-
-    .qWord{
-      margin-top:12px;
-      font-size: 40px;
-      font-weight: 1200;
-      text-align:center;
-      line-height: 1.05;
-    }
-    .qMeta{ margin-top:12px; text-align:center; font-weight:1000; font-size:12px; color: var(--muted); }
-    .qChoices{ margin-top: 16px; display:flex; flex-direction:column; gap:10px; }
-    .qChoice{
+    .qTopStats{display:flex; gap:10px; justify-content:space-between; align-items:center;}
+    .qPill{
       border:1px solid var(--border);
-      background: var(--card);
-      border-radius: 14px;
-      padding: 12px;
-      font-weight: 1000;
-      cursor:pointer;
-      user-select:none;
-      text-align:center;
+      background:var(--card);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:950;
+      color:var(--muted);
+      white-space:nowrap;
     }
-    .qChoice.correct{ border-color: var(--ok); background: rgba(16,185,129,0.16); }
-    .qChoice.wrong{ border-color: var(--danger); background: rgba(239,68,68,0.16); }
-    .qChoice:active{ transform: scale(.99); opacity:.95; }
-
-    .qInputWrap{
-      margin-top: 16px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-    .qInput{
-      flex: 1;
-      font-size: 18px;
-      font-weight: 1000;
-      padding: 14px 14px;
-      border-radius: 14px;
-      background: var(--card);
-      border: 1px solid var(--border);
-    }
-    .qInput.correct{ border-color: var(--ok); background: rgba(16,185,129,.12); }
-    .qInput.wrong{ border-color: var(--danger); background: rgba(239,68,68,.12); }
-
-    .qBarOuter{
-      margin-top: 12px;
-      height: 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--card2);
+    .qProgOuter{
+      margin-top:10px;
+      width:100%;
+      height:10px;
+      background:color-mix(in srgb, var(--border) 70%, transparent);
+      border-radius:999px;
       overflow:hidden;
     }
-    .qBarInner{
-      height: 100%;
-      width: 0%;
-      background: var(--primary);
-      border-radius: 999px;
-      transition: width .25s ease;
+    .qProgInner{
+      height:100%;
+      width:0%;
+      background:var(--primary);
+      border-radius:999px;
+      transition:width .25s ease;
     }
+    .qChoice{
+      text-align:left; background:var(--card);
+      border:1px solid var(--border);
+      padding:14px 14px; border-radius:16px; cursor:pointer; font-weight:950;
+    }
+    .qChoice.correct{border-color: color-mix(in srgb, var(--ok) 70%, var(--border)); background:color-mix(in srgb, var(--ok) 12%, var(--card));}
+    .qChoice.wrong{border-color: color-mix(in srgb, var(--danger) 70%, var(--border)); background:color-mix(in srgb, var(--danger) 10%, var(--card));}
 
-    .qStatsRow{
-      margin-top: 12px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-      font-weight: 1000;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .gradeRow{
-      margin-top: 14px;
+    /* typing */
+    .qInputWrap{
+      width:100%;
+      max-width:420px;
+      margin:10px auto 0;
       display:flex;
       gap:10px;
     }
-    .gradeRow button{
+    .qInput{
       flex:1;
-      padding: 12px 10px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      font-weight: 1100;
-      cursor:pointer;
-      user-select:none;
+      padding:14px;
+      border-radius:14px;
+      border:2px solid var(--border);
+      background:var(--card);
+      color:var(--text);
+      font-size:16px;
+      font-weight:900;
+      outline:none;
     }
-    .gradeRow button:active{ transform: scale(.985); opacity:.92; }
-    .gradeRow .hard{ border-color: color-mix(in srgb, var(--danger) 55%, var(--border)); }
-    .gradeRow .med{ border-color: color-mix(in srgb, var(--warn) 55%, var(--border)); }
-    .gradeRow .easy{ border-color: color-mix(in srgb, var(--ok) 55%, var(--border)); }
-
-    .summary{
-      margin-top: 18px;
+    .qInput.correct{border-color:#22c55e; background:rgba(34,197,94,.12);}
+    .qInput.wrong{border-color:#ef4444; background:rgba(239,68,68,.12);}
+    .qCheckBtn{
+      padding:14px 18px;
+      border-radius:14px;
+      border:none;
+      background:var(--primary);
+      color:#fff;
+      font-weight:950;
+    }
+    .qAnswerReveal{
+      margin-top:10px;
+      font-size:14px;
+      font-weight:900;
+      color:var(--muted);
       text-align:center;
     }
 
-    .kbd{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
+    /* summary */
+    #quizSummary{
+      max-width:420px;
+      margin:0 auto;
+    }
+
+    /* small utilities */
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
       border:1px solid var(--border);
-      border-radius: 10px;
-      padding: 4px 8px;
-      font-weight: 1100;
-      font-size: 12px;
-      color: var(--muted);
-      background: var(--card2);
-      user-select:none;
-      white-space:nowrap;
-    }
-
-    .divider{
-      height:1px;
-      background: var(--border);
-      margin: 14px 0;
-      opacity:.9;
-    }
-
-    .dangerHint{
-      border:1px solid color-mix(in srgb, var(--danger) 45%, var(--border));
-      background: rgba(239,68,68,.10);
-    }
-    .warnHint{
-      border:1px solid color-mix(in srgb, var(--warn) 45%, var(--border));
-      background: rgba(245,158,11,.10);
-    }
-    .okHint{
-      border:1px solid color-mix(in srgb, var(--ok) 45%, var(--border));
-      background: rgba(16,185,129,.10);
-    }
-
-    .miniBtn{
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: var(--card2);
-      color: var(--text);
-      font-weight: 1100;
-      cursor:pointer;
-      user-select:none;
-      white-space:nowrap;
-    }
-    .miniBtn:active{ transform: scale(.985); opacity:.92; }
-
-    .rightTools{ display:flex; gap:10px; align-items:center; }
-
-    /* Accessibility improvements */
-    button:focus, input:focus, select:focus, textarea:focus{
-      outline: 2px solid color-mix(in srgb, var(--primary) 40%, transparent);
-      outline-offset: 2px;
+      background:var(--card2);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:950;
+      color:var(--muted);
     }
   </style>
 </head>
+
 <body>
 <header>
   <div class="brand">
     <div class="logo"></div>
     <div>LingoMaster</div>
   </div>
-  <div class="rightTools">
+  <div style="display:flex; gap:10px; align-items:center;">
     <button class="iconBtn" id="btnTheme" title="Tema">🎨</button>
     <button class="iconBtn" id="btnSettings" title="Ayarlar">⚙️</button>
   </div>
 </header>
 
 <div id="viewport">
+
   <!-- HOME -->
   <section class="view active" id="home">
     <div class="secTitle">Genel Bakış</div>
 
     <div class="row">
       <div class="card" style="flex:1;">
-        <div class="muted" style="font-weight:1000;">Toplam Kart</div>
+        <div class="muted" style="font-weight:980;">Toplam Kart</div>
         <div class="big" id="dashTotal">0</div>
       </div>
-      <div class="card" style="flex:1; border-color:color-mix(in srgb, var(--warn) 50%, var(--border));">
-        <div style="font-weight:1000; color:var(--warn);">Tekrar (Due)</div>
+      <div class="card" style="flex:1; border-color:color-mix(in srgb, var(--warn) 45%, var(--border));">
+        <div style="font-weight:980; color:var(--warn);">Tekrar (Due)</div>
         <div class="big" style="color:var(--warn);" id="dashDue">0</div>
       </div>
     </div>
 
     <div class="card" style="margin-top:14px;">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div style="font-size:18px; font-weight:1100;">Çalışma Zinciri</div>
-        <div style="font-weight:1100; color:var(--primary);" id="dashStreak">0 Gün</div>
+        <div style="font-size:18px; font-weight:980;">Çalışma Zinciri</div>
+        <div style="font-weight:980; color:var(--primary);" id="dashStreak">0 Gün</div>
       </div>
-      <div class="smallInfo" style="margin-top:10px;">
-        Son 7 gün toplam: <span id="dashWeek" style="color:var(--text); font-weight:1100;">0</span> •
-        Bugün: <span id="dashToday" style="color:var(--text); font-weight:1100;">0</span>
+      <div class="muted" style="margin-top:10px; font-weight:950;">
+        Son 7 gün toplam: <span id="dashWeek">0</span>
       </div>
     </div>
 
     <div class="secTitle" style="margin-top:16px;">Hızlı İşlemler</div>
+
     <button class="btn btnPrimary" style="width:100%; font-size:16px;" onclick="go('review')">🧠 Bugünkü Tekrarlar</button>
 
     <div class="two" style="margin-top:10px;">
-      <button class="btn btnSoft" style="flex:1;" onclick="openAddSheet()">➕ Elle Kelime Ekle</button>
-      <button class="btn btnSoft" style="flex:1;" onclick="go('depot')">🧾 Kelime Deposu</button>
+      <button class="btn btnSoft btnHalf" onclick="go('cards')">🗂️ Kartlar</button>
+      <button class="btn btnSoft btnHalf" onclick="openManualAdd()">➕ Elle Kelime Ekle</button>
     </div>
 
-    <div class="two" style="margin-top:10px;">
-      <button class="btn btnSoft" style="flex:1;" onclick="go('cards')">🗂️ Kartlar</button>
-      <button class="btn btnSoft" style="flex:1;" onclick="go('tools')">🛠️ Toplu İşlemler</button>
-    </div>
-
-    <div class="card warnHint" style="margin-top:12px;">
-      <div style="font-weight:1100;">İpucu</div>
-      <div class="smallInfo">
-        Quiz’te kısayollar: <span class="kbd">1-4</span> şık seç, <span class="kbd">Enter</span> kontrol/ilerle,
-        <span class="kbd">S</span> ses, <span class="kbd">Esc</span> çıkış.
+    <div class="card" style="margin-top:12px;">
+      <div style="font-weight:980;">İpucu</div>
+      <div class="smallInfo">Elle kelime eklediğinde: anlam + seviye otomatik doldurulur (boşsa). İstersen elle de düzenleyebilirsin.</div>
+      <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+        <span class="pill">✅ Online çeviri</span>
+        <span class="pill">✅ Offline sözlük</span>
+        <span class="pill">✅ SRS tekrar</span>
+        <span class="pill">✅ Quiz</span>
       </div>
     </div>
   </section>
 
-  <!-- REVIEW -->
+  <!-- REVIEW / TEKRAR -->
   <section class="view" id="review">
     <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-      <h2 class="h2">Tekrar & Quiz</h2>
-      <button class="miniBtn" onclick="openQuizConfig()">Ayar</button>
+      <h2 class="h2">Tekrar</h2>
+      <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" onclick="startReviewQuiz()">Başlat</button>
     </div>
 
     <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-        <div>
-          <div style="font-weight:1100; font-size:16px;">Bugün tekrar edilecek kartlar</div>
-          <div class="smallInfo">Due olanlar öncelikli. İstersen “Pratik” modunda rastgele sorar.</div>
-        </div>
-        <div class="pill">SRS: <b style="color:var(--text)">Aktif</b></div>
-      </div>
-
-      <div class="row" style="margin-top:12px;">
-        <div class="card compact" style="flex:1;">
+      <div style="font-weight:980; font-size:16px;">Bugün tekrar edilecek kartlar</div>
+      <div class="smallInfo">Due olan kartlar öncelikli gelir. Kart yoksa rastgele pratik açılır.</div>
+      <div style="display:flex; gap:10px; margin-top:12px;">
+        <div class="card" style="flex:1; padding:12px;">
           <div class="smallInfo">Due</div>
           <div class="big" id="rvDue">0</div>
         </div>
-        <div class="card compact" style="flex:1;">
+        <div class="card" style="flex:1; padding:12px;">
           <div class="smallInfo">Toplam</div>
           <div class="big" id="rvTotal">0</div>
         </div>
       </div>
 
       <div class="two" style="margin-top:12px;">
-        <button class="btn btnOk" style="flex:1;" onclick="startQuiz('due')">🎯 Due Quiz</button>
-        <button class="btn btnSoft" style="flex:1;" onclick="startQuiz('practice')">⚡ Pratik</button>
-      </div>
-
-      <div class="two" style="margin-top:10px;">
-        <button class="btn btnSoft" style="flex:1;" onclick="rebuildTodayQueue()">🔁 Kuyruğu Yenile</button>
-        <button class="btn btnDanger" style="flex:1;" onclick="resetSrsProgress()">♻️ SRS Sıfırla</button>
+        <button class="btn btnOk btnHalf" onclick="startReviewQuiz()">🎯 Quiz Başlat</button>
+        <button class="btn btnSoft btnHalf" onclick="resetTodaysQueue()">🔁 Kuyruğu Yenile</button>
       </div>
     </div>
 
     <div class="card" style="margin-top:12px;">
-      <div style="font-weight:1100;">Quiz Modları</div>
-      <div class="smallInfo">İstediğin modu seç: çoktan seçmeli, yazma veya karışık.</div>
-      <div class="chipRow" style="margin-top:10px;">
-        <span class="chip"><b>MCQ</b> 4 şık</span>
-        <span class="chip"><b>Typing</b> yazma</span>
-        <span class="chip"><b>Mixed</b> karışık</span>
-        <span class="chip"><b>Wrong-only</b> yanlışlar</span>
-        <span class="chip"><b>Adaptive</b> zor şıklar</span>
-      </div>
-    </div>
-
-    <div class="card okHint" style="margin-top:12px;">
-      <div style="font-weight:1100;">Leech / Zor Kart Takibi</div>
-      <div class="smallInfo">
-        Aynı kartı çok yanlış yaparsan “leech” sayılır. Quiz, bu kartları daha sık sorar.
+      <div style="font-weight:980;">Tekrar Ayarları</div>
+      <div class="smallInfo">SRS (aralıklı tekrar) aktif. Yanıtına göre kartın tekrar tarihi otomatik güncellenir.</div>
+      <div class="two" style="margin-top:10px;">
+        <button class="btn btnSoft btnHalf" onclick="toast('SRS aktif ✅')">SRS Durumu</button>
+        <button class="btn btnSoft btnHalf" onclick="clearProgress()">İlerlemeyi Sıfırla</button>
       </div>
     </div>
   </section>
@@ -647,205 +390,43 @@
   <section class="view" id="cards">
     <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
       <h2 class="h2">Kartlar</h2>
-      <button class="miniBtn" onclick="openAddSheet()">➕ Ekle</button>
+      <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" onclick="openManualAdd()">➕ Ekle</button>
     </div>
 
-    <div class="card">
-      <div class="two">
-        <input id="cardSearch" placeholder="Ara: term / meaning / tag / kategori" />
-        <select id="cardFilterLevel" title="Seviye" style="max-width:160px;">
-          <option value="">Seviye (Hepsi)</option>
-          <option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option><option>UNK</option>
-        </select>
-      </div>
-      <div class="two" style="margin-top:10px;">
-        <select id="cardFilterLang" title="Dil">
-          <option value="">Dil (Hepsi)</option>
-          <option>EN</option><option>RU</option><option>DE</option><option>FR</option><option>TR</option>
-        </select>
-        <select id="cardFilterDue" title="Durum">
-          <option value="">Durum (Hepsi)</option>
-          <option value="due">Sadece Due</option>
-          <option value="ok">Due Değil</option>
-          <option value="leech">Sadece Leech</option>
-        </select>
-      </div>
-      <div class="two" style="margin-top:10px;">
-        <button class="btn btnSoft" style="flex:1; padding:12px 12px;" onclick="renderCards()">Filtrele</button>
-        <button class="btn btnSoft" style="flex:1; padding:12px 12px;" onclick="clearCardFilters()">Sıfırla</button>
-      </div>
+    <input id="search" placeholder="Kart ara (term / meaning / category)..." />
+    <div class="smallInfo" style="margin-top:10px;">
+      Kartın üstüne tıklayınca düzenleme sheet’i açılır.
     </div>
 
     <div id="cardsList" style="margin-top:12px;"></div>
   </section>
 
-  <!-- DEPOT -->
-  <section class="view" id="depot">
-    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-      <h2 class="h2">Kelime Deposu</h2>
-      <button class="miniBtn" onclick="openDepotActions()">İşlemler</button>
-    </div>
-
-    <div class="card">
-      <div style="font-weight:1100;">Cache + Kaynaklı Kayıt</div>
-      <div class="smallInfo">
-        “Otomatik çeviri” ile gelen kelimeler buraya düşer. Buradan kartlara aktarabilir, kopyalayabilir, dışa aktarabilirsin.
-      </div>
-
-      <div class="two" style="margin-top:10px;">
-        <input id="depotSearch" placeholder="Ara: word / meaning / tag" />
-        <button class="btn btnSoft" style="padding:12px 12px;" onclick="renderDepot()">Ara</button>
-      </div>
-
-      <div class="two" style="margin-top:10px;">
-        <select id="depotFilterSource">
-          <option value="">Kaynak (Hepsi)</option>
-          <option value="online">online</option>
-          <option value="offline">offline</option>
-          <option value="cache">cache</option>
-          <option value="manual">manual</option>
-        </select>
-        <select id="depotFilterLang">
-          <option value="">Dil (Hepsi)</option>
-          <option>EN</option><option>RU</option><option>DE</option><option>FR</option><option>TR</option>
-        </select>
-      </div>
-
-      <div class="two" style="margin-top:10px;">
-        <button class="btn btnOk" style="flex:1;" onclick="depotToCardsSelected()">✅ Seçilileri Kart Yap</button>
-        <button class="btn btnSoft" style="flex:1;" onclick="toggleDepotSelectAll()">☑️ Tümünü Seç</button>
-      </div>
-    </div>
-
-    <div id="depotStats" style="margin-top:12px;"></div>
-    <div id="depotList" style="margin-top:12px;"></div>
-  </section>
-
-  <!-- TOOLS -->
-  <section class="view" id="tools">
-    <h2 class="h2">Toplu İşlemler</h2>
-
-    <div class="card">
-      <div style="font-weight:1100;">Toplu Kelime Ekle (CSV)</div>
-      <div class="smallInfo">
-        CSV formatı: <b style="color:var(--text)">lang,term,meaning,level,category,tags,example,note</b><br>
-        Örnek: EN,notice,fark etmek,A2,Daily,"verb;common","I noticed a light.",-
-      </div>
-      <label>CSV Yapıştır</label>
-      <textarea id="bulkCsv" placeholder="Buraya CSV yapıştır..."></textarea>
-      <div class="two" style="margin-top:10px;">
-        <button class="btn btnPrimary" style="flex:1;" onclick="importCsvToCards()">Kartlara Ekle</button>
-        <button class="btn btnSoft" style="flex:1;" onclick="importCsvToDepot()">Depoya Ekle</button>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:12px;">
-      <div style="font-weight:1100;">Hazır Kelime Listeleri</div>
-      <div class="smallInfo">A1–C1 veya İnşaat/Engineering listesi eklemek için burada “paket” mantığı var. (Örnek setler.)</div>
-      <div class="two" style="margin-top:10px;">
-        <select id="packSelect">
-          <option value="A1">A1 (örnek paket)</option>
-          <option value="A2">A2 (örnek paket)</option>
-          <option value="B1">B1 (örnek paket)</option>
-          <option value="B2">B2 (örnek paket)</option>
-          <option value="C1">C1 (örnek paket)</option>
-          <option value="ENG">Engineering (örnek paket)</option>
-        </select>
-        <button class="btn btnSoft" style="padding:12px 12px;" onclick="previewPack()">Önizle</button>
-      </div>
-      <div class="two" style="margin-top:10px;">
-        <button class="btn btnOk" style="flex:1;" onclick="addPackToDepot()">Depoya Ekle</button>
-        <button class="btn btnPrimary" style="flex:1;" onclick="addPackToCards()">Kartlara Ekle</button>
-      </div>
-      <div id="packPreview" class="smallInfo" style="margin-top:10px;"></div>
-    </div>
-
-    <div class="card dangerHint" style="margin-top:12px;">
-      <div style="font-weight:1100;">Tam Yedek / Geri Yükle</div>
-      <div class="smallInfo">Kartlar + Depot + Ayarlar + Aktivite</div>
-      <div class="two" style="margin-top:10px;">
-        <button class="btn btnSoft" style="flex:1;" onclick="exportAll()">Export</button>
-        <button class="btn btnSoft" style="flex:1;" onclick="importAllPrompt()">Import</button>
-      </div>
-    </div>
-  </section>
 </div>
 
+<!-- ALT MENÜ (SADECE 3) -->
 <nav>
-  <button class="navBtn active" id="navHome" onclick="go('home')"><div class="ico">🏠</div><span>Ana Sayfa</span></button>
-  <button class="navBtn" id="navReview" onclick="go('review')"><div class="ico">🧠</div><span>Tekrar</span></button>
-  <button class="navBtn" id="navCards" onclick="go('cards')"><div class="ico">🗂️</div><span>Kartlar</span></button>
-  <button class="navBtn" id="navDepot" onclick="go('depot')"><div class="ico">🧾</div><span>Depo</span></button>
-  <button class="navBtn" id="navTools" onclick="go('tools')"><div class="ico">🛠️</div><span>Araçlar</span></button>
+  <button class="navBtn active" id="navHome" onclick="go('home')">
+    <div class="ico">🏠</div><span>Ana Sayfa</span>
+  </button>
+  <button class="navBtn" id="navReview" onclick="go('review')">
+    <div class="ico">🧠</div><span>Tekrar</span>
+  </button>
+  <button class="navBtn" id="navCards" onclick="go('cards')">
+    <div class="ico">🗂️</div><span>Kartlar</span>
+  </button>
 </nav>
 
-<div id="toast"></div>
+<div class="toast" id="toast">—</div>
 <div class="backdrop" id="backdrop" onclick="closeSheets()"></div>
-
-<!-- ADD / EDIT CARD SHEET -->
-<div class="sheet" id="cardSheet">
-  <div class="handle"></div>
-  <h2 class="h2" id="csTitle">Yeni Kart</h2>
-
-  <div class="two">
-    <div style="flex:1;">
-      <label>Dil</label>
-      <select id="csLang">
-        <option>EN</option><option>RU</option><option>DE</option><option>FR</option><option>TR</option>
-      </select>
-    </div>
-    <div style="flex:1;">
-      <label>Seviye</label>
-      <select id="csLevel">
-        <option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option><option>UNK</option>
-      </select>
-    </div>
-  </div>
-
-  <label>Kelime / Terim</label>
-  <input id="csTerm" placeholder="Örn: notice" />
-
-  <label>Anlamı (TR)</label>
-  <input id="csMeaning" placeholder="Örn: fark etmek" />
-
-  <div class="two" style="margin-top:10px;">
-    <button class="btn btnSoft" style="flex:1;" onclick="autoTranslateForSheet()">🌐 Otomatik Çevir</button>
-    <button class="btn btnSoft" style="flex:1;" onclick="speakFromSheet()">🔊 Oku</button>
-  </div>
-
-  <label>Kategori</label>
-  <input id="csCategory" placeholder="Örn: Daily / Business / Construction" />
-
-  <label>Etiketler (virgül veya ; ile)</label>
-  <input id="csTags" placeholder="Örn: verb;common;phrasal" />
-
-  <label>Örnek Cümle</label>
-  <textarea id="csExample" placeholder="Örn: I noticed a strange noise."></textarea>
-
-  <label>Not</label>
-  <input id="csNote" placeholder="Opsiyonel" />
-
-  <div class="two" style="margin-top:12px;">
-    <button class="btn btnSoft" style="flex:1;" onclick="closeSheets()">Vazgeç</button>
-    <button class="btn btnPrimary" style="flex:1;" onclick="saveCardFromSheet()">Kaydet</button>
-  </div>
-
-  <div class="two" style="margin-top:10px;">
-    <button class="btn btnDanger" style="flex:1;" onclick="deleteCardFromSheet()">Sil</button>
-    <button class="btn btnSoft" style="flex:1;" onclick="duplicateCardFromSheet()">Kopyala</button>
-  </div>
-
-  <div class="divider"></div>
-  <div class="smallInfo" id="csMeta">—</div>
-</div>
 
 <!-- SETTINGS SHEET -->
 <div class="sheet" id="settingsSheet">
   <div class="handle"></div>
   <h2 class="h2">Ayarlar</h2>
 
-  <div class="card">
-    <div style="font-weight:1100;">Tema</div>
+  <div class="card" style="margin-top:10px;">
+    <div style="font-weight:980;">Tema</div>
+    <div class="smallInfo">🎨 butonu temayı döndürür.</div>
     <div class="two" style="margin-top:10px;">
       <select id="themeSelect" onchange="applyThemeFromSelect()">
         <option value="dark">dark</option>
@@ -855,1776 +436,1062 @@
         <option value="sunset">sunset</option>
         <option value="rose">rose</option>
       </select>
-      <button class="btn btnSoft" style="padding:12px 12px;" onclick="cycleTheme()">Döndür</button>
+      <button class="btn btnSoft" style="padding:12px 12px;" onclick="document.getElementById('btnTheme').click()">Döndür</button>
     </div>
   </div>
 
   <div class="card" style="margin-top:12px;">
-    <div style="font-weight:1100;">Quiz Varsayılanları</div>
+    <div style="font-weight:980;">Veri Yönetimi</div>
+    <div class="smallInfo">Kartlarını dışa aktar / içe aktar</div>
     <div class="two" style="margin-top:10px;">
-      <select id="setQuizMode">
-        <option value="mixed">Mixed (önerilen)</option>
-        <option value="mcq">MCQ</option>
-        <option value="typing">Typing</option>
-      </select>
-      <select id="setQuizCount">
-        <option value="10">10 soru</option>
-        <option value="20">20 soru</option>
-        <option value="30">30 soru</option>
-        <option value="50">50 soru</option>
-        <option value="9999">Hepsi</option>
-      </select>
+      <button class="btn btnSoft btnHalf" onclick="exportAll()">Export</button>
+      <button class="btn btnSoft btnHalf" onclick="importAllPrompt()">Import</button>
     </div>
     <div class="two" style="margin-top:10px;">
-      <select id="setQuizDirection">
-        <option value="term_to_meaning">Term → Meaning</option>
-        <option value="meaning_to_term">Meaning → Term</option>
-      </select>
-      <select id="setQuizAdaptive">
-        <option value="on">Adaptive: Açık</option>
-        <option value="off">Adaptive: Kapalı</option>
-      </select>
-    </div>
-    <div class="two" style="margin-top:10px;">
-      <button class="btn btnSoft" style="flex:1;" onclick="saveSettings()">Kaydet</button>
-      <button class="btn btnSoft" style="flex:1;" onclick="restoreDefaults()">Varsayılan</button>
-    </div>
-    <div class="smallInfo" style="margin-top:10px;">
-      Adaptive açıksa şıklar “benzer/yanıltıcı” seçilir ve leech kartlar daha sık gelir.
+      <button class="btn btnDanger btnHalf" onclick="hardReset()">Her Şeyi Sıfırla</button>
+      <button class="btn btnSoft btnHalf" onclick="toast('İpucu: Import ile geri yükleyebilirsin')">İpucu</button>
     </div>
   </div>
 
-  <div class="card dangerHint" style="margin-top:12px;">
-    <div style="font-weight:1100;">Sıfırlama</div>
-    <div class="two" style="margin-top:10px;">
-      <button class="btn btnSoft" style="flex:1;" onclick="clearCache()">Çeviri Cache</button>
-      <button class="btn btnDanger" style="flex:1;" onclick="hardReset()">Her Şeyi Sil</button>
-    </div>
-  </div>
-
-  <div class="smallInfo" style="margin-top:12px;">Sürüm: vocab-only v2</div>
+  <div class="smallInfo" style="margin-top:12px;">Sürüm: 3-tab (home/review/cards) + auto-manual-fill + quiz</div>
 </div>
 
-<!-- DEPOT ACTIONS SHEET -->
-<div class="sheet" id="depotActionsSheet">
+<!-- CARD SHEET (MANUAL ADD + EDIT) -->
+<div class="sheet" id="cardSheet">
   <div class="handle"></div>
-  <h2 class="h2">Depo İşlemleri</h2>
+  <h2 class="h2" id="csTitle">Kelime Ekle</h2>
 
-  <div class="card">
-    <div style="font-weight:1100;">Dışa Aktar</div>
-    <div class="two" style="margin-top:10px;">
-      <button class="btn btnSoft" style="flex:1;" onclick="exportDepot()">Depo Export</button>
-      <button class="btn btnSoft" style="flex:1;" onclick="exportDepotCSV()">Depo CSV</button>
+  <div class="field">
+    <label>Dil</label>
+    <select id="csLang">
+      <option value="EN">İngilizce</option>
+      <option value="RU">Rusça</option>
+      <option value="DE">Almanca</option>
+      <option value="FR">Fransızca</option>
+      <option value="TR">Türkçe</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>Kelime / Terim</label>
+    <input id="csTerm" placeholder="Örn: reinforcement" />
+    <div class="smallInfo">Yazınca anlam + seviye otomatik doldurulur (boşsa).</div>
+  </div>
+
+  <div class="field">
+    <label>Anlamı (TR)</label>
+    <input id="csMeaning" placeholder="Otomatik çeviri..." />
+  </div>
+
+  <div class="two">
+    <div style="flex:1;">
+      <label>Tür</label>
+      <select id="csType">
+        <option value="word">Kelime</option>
+        <option value="phrase">Kalıp</option>
+        <option value="idiom">Deyim</option>
+        <option value="phrasal">Phrasal Verb</option>
+        <option value="noun">İsim</option>
+        <option value="verb">Fiil</option>
+        <option value="adj">Sıfat</option>
+        <option value="adv">Zarf</option>
+      </select>
+    </div>
+    <div style="flex:1;">
+      <label>Seviye</label>
+      <select id="csLevel">
+        <option value="A1">A1</option><option value="A2">A2</option>
+        <option value="B1">B1</option><option value="B2">B2</option>
+        <option value="C1">C1</option><option value="C2">C2</option>
+        <option value="UNK" selected>Bilinmiyor</option>
+      </select>
     </div>
   </div>
 
-  <div class="card" style="margin-top:12px;">
-    <div style="font-weight:1100;">Temizleme</div>
-    <div class="two" style="margin-top:10px;">
-      <button class="btn btnSoft" style="flex:1;" onclick="dedupeDepot()">Depo Dedupe</button>
-      <button class="btn btnSoft" style="flex:1;" onclick="trimDepot()">Eski Kayıtları Kırp</button>
-    </div>
-    <div class="two" style="margin-top:10px;">
-      <button class="btn btnDanger" style="flex:1;" onclick="clearDepotAll()">Depoyu Sıfırla</button>
-      <button class="btn btnSoft" style="flex:1;" onclick="closeSheets()">Kapat</button>
-    </div>
-    <div class="smallInfo" style="margin-top:10px;">
-      Kırpma: 1000 kayıt üstünü siler (en eskiden başlayarak).
-    </div>
-  </div>
-</div>
-
-<!-- QUIZ CONFIG SHEET -->
-<div class="sheet" id="quizConfigSheet">
-  <div class="handle"></div>
-  <h2 class="h2">Quiz Ayarı</h2>
-
-  <div class="card">
-    <div style="font-weight:1100;">Mod</div>
-    <div class="two" style="margin-top:10px;">
-      <select id="qcMode">
-        <option value="mixed">Mixed</option>
-        <option value="mcq">MCQ</option>
-        <option value="typing">Typing</option>
-      </select>
-      <select id="qcCount">
-        <option value="10">10</option>
-        <option value="20">20</option>
-        <option value="30">30</option>
-        <option value="50">50</option>
-        <option value="9999">Hepsi</option>
-      </select>
-    </div>
-
-    <div class="two" style="margin-top:10px;">
-      <select id="qcDirection">
-        <option value="term_to_meaning">Term → Meaning</option>
-        <option value="meaning_to_term">Meaning → Term</option>
-      </select>
-      <select id="qcAdaptive">
-        <option value="on">Adaptive Açık</option>
-        <option value="off">Adaptive Kapalı</option>
-      </select>
-    </div>
-
-    <div class="two" style="margin-top:10px;">
-      <select id="qcOnlyLeech">
-        <option value="off">Leech filtresi: Kapalı</option>
-        <option value="on">Leech filtresi: Açık</option>
-      </select>
-      <select id="qcOnlyLevel">
-        <option value="">Seviye: Hepsi</option>
-        <option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option><option>UNK</option>
-      </select>
-    </div>
-
-    <div class="two" style="margin-top:10px;">
-      <button class="btn btnSoft" style="flex:1;" onclick="applyQuizConfig()">Uygula</button>
-      <button class="btn btnSoft" style="flex:1;" onclick="closeSheets()">Kapat</button>
-    </div>
+  <div class="field">
+    <label>Kategori</label>
+    <input id="csCategory" placeholder="Örn: Civil / Site / Concrete / Steel" />
   </div>
 
-  <div class="card okHint" style="margin-top:12px;">
-    <div style="font-weight:1100;">Klavye</div>
-    <div class="smallInfo">
-      <span class="kbd">1-4</span> şık • <span class="kbd">Enter</span> kontrol/ilerle •
-      <span class="kbd">S</span> ses • <span class="kbd">Esc</span> çıkış
-    </div>
+  <div class="field">
+    <label>Örnek Cümle</label>
+    <textarea id="csExample" placeholder="Örn: The reinforcement bars were placed according to the drawing."></textarea>
+  </div>
+
+  <div class="field">
+    <label>Not</label>
+    <input id="csNote" placeholder="İpucu/Not (opsiyonel)" />
+  </div>
+
+  <div class="two" style="margin-top:10px;">
+    <button class="btn btnSoft btnHalf" onclick="autoTranslateForSheet()">Otomatik Çevir</button>
+    <button class="btn btnPrimary btnHalf" onclick="saveCardFromSheet()">Kaydet</button>
+  </div>
+
+  <div class="two" style="margin-top:10px;">
+    <button class="btn btnSoft btnHalf" onclick="closeSheets()">Kapat</button>
+    <button class="btn btnDanger btnHalf" id="csDeleteBtn" onclick="deleteCardFromSheet()" style="display:none;">Sil</button>
   </div>
 </div>
 
 <!-- QUIZ OVERLAY -->
 <div class="overlay" id="quizOverlay">
+
   <div class="overlayTop">
-    <div class="title">Quiz</div>
+    <div style="font-weight:980;">Quiz</div>
     <button class="iconBtn" onclick="stopQuiz()">×</button>
   </div>
-  <div class="qWrap" id="quizWrap">
-    <div class="qStatsRow">
-      <span class="pill">Kalan: <b id="qRemain">0</b>/<b id="qTotal">0</b></span>
-      <span class="pill">✅ <b id="qCorrect">0</b> ❌ <b id="qWrong">0</b></span>
-      <span class="pill">Mod: <b id="qMode">mixed</b></span>
-    </div>
-    <div class="qBarOuter"><div class="qBarInner" id="qProg"></div></div>
 
-    <div class="qMeta" id="qMeta">—</div>
-    <div class="qWord" id="qWord">—</div>
-
-    <div class="qChoices" id="qChoices"></div>
-
-    <div class="qInputWrap" id="qTyping" style="display:none;">
-      <input id="qInput" class="qInput" placeholder="Cevabı yaz..." />
-      <button class="btn btnPrimary" style="padding:12px 14px;" onclick="checkTyping()">Kontrol</button>
+  <div id="quizBody" style="padding:18px 18px 24px 18px;">
+    <div class="qTopStats" style="margin-top:6px;">
+      <div class="qPill">Kalan: <span id="qRemain">0</span>/<span id="qTotal">0</span></div>
+      <div class="qPill">✅ <span id="qCorrect">0</span>  ❌ <span id="qWrong">0</span></div>
     </div>
 
-    <div class="smallInfo" id="qReveal" style="margin-top:12px; text-align:center;"></div>
-
-    <div class="gradeRow" id="qGrade" style="display:none;">
-      <button class="hard" onclick="gradeAndNext('hard')">Zor</button>
-      <button class="med" onclick="gradeAndNext('medium')">Orta</button>
-      <button class="easy" onclick="gradeAndNext('easy')">Kolay</button>
+    <div class="qProgOuter">
+      <div class="qProgInner" id="qProg"></div>
     </div>
 
-    <div class="two" style="margin-top:12px;">
-      <button class="btn btnSoft" style="flex:1;" onclick="speakQuiz()">🔊 Ses</button>
-      <button class="btn btnSoft" style="flex:1;" onclick="flagCard()">🚩 İşaretle</button>
+    <div id="qMeta" style="margin-top:12px; opacity:.85; font-weight:900; font-size:12px; text-align:center;">
+      —
     </div>
 
-    <div class="summary" id="quizSummary" style="display:none;">
-      <h2 class="h2">Quiz Bitti</h2>
-      <div class="smallInfo" style="margin-top:10px;">
-        Doğru: <b id="sumCorrect" style="color:var(--text);">0</b> •
-        Yanlış: <b id="sumWrong" style="color:var(--text);">0</b> •
-        Başarı: <b id="sumRate" style="color:var(--text);">0%</b>
-      </div>
-      <div class="two" style="margin-top:14px;">
-        <button class="btn btnOk" style="flex:1;" onclick="repeatWrong()">Yanlışları Tekrar Sor</button>
-        <button class="btn btnSoft" style="flex:1;" onclick="stopQuiz()">Çık</button>
-      </div>
+    <div id="qWord" style="margin-top:14px; font-size:40px; font-weight:1000; text-align:center;">
+      —
+    </div>
+
+    <div id="qChoices" style="margin-top:18px; display:flex; flex-direction:column; gap:10px;">
+    </div>
+
+    <div class="qInputWrap" id="qTyping" style="display:none">
+      <input id="qInput" class="qInput" placeholder="Anlamını yaz..." />
+      <button class="qCheckBtn" onclick="checkTypingAnswer()">Kontrol</button>
+    </div>
+
+    <div class="qAnswerReveal" id="qReveal"></div>
+
+    <div class="two" style="margin-top:14px;">
+      <button class="btn btnSoft btnHalf" onclick="toggleQuizMode()">Mod: <span id="qModeLabel">Çoktan Seçmeli</span></button>
+      <button class="btn btnSoft btnHalf" onclick="speakQuizWord()">🔊 Oku</button>
     </div>
   </div>
+
+  <div id="quizSummary" style="display:none; padding:24px; text-align:center">
+    <h2 style="margin-bottom:10px">Quiz Bitti</h2>
+
+    <div style="font-size:14px; font-weight:900; margin-bottom:16px">
+      Doğru: <span id="sumCorrect">0</span> |
+      Yanlış: <span id="sumWrong">0</span> |
+      Başarı: <span id="sumRate">0%</span>
+    </div>
+
+    <button class="btn btnPrimary" onclick="repeatWrongQuiz()" style="width:100%; margin-bottom:10px">
+      Yanlışları Tekrar Sor
+    </button>
+
+    <button class="btn btnSoft" onclick="stopQuiz()" style="width:100%">
+      Çık
+    </button>
+  </div>
+
 </div>
 
 <script>
-/* =========================================================
-  STORAGE
-========================================================= */
-const DB = {
-  get(key, fallback){
-    try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
-    catch { return fallback; }
-  },
-  set(key, val){
-    localStorage.setItem(key, JSON.stringify(val));
-  },
-  del(key){
-    localStorage.removeItem(key);
-  }
-};
-
-/* =========================================================
-  TOAST
-========================================================= */
-function toast(msg){
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"), 2200);
-}
-
-/* =========================================================
-  STATE
-========================================================= */
-const THEMES = ["dark","light","ocean","emerald","sunset","rose"];
-const state = {
-  settings: DB.get("lm_settings_v2", {
-    theme:"dark",
-    quizMode:"mixed",
-    quizCount:20,
-    quizDirection:"term_to_meaning",
-    quizAdaptive:"on"
-  }),
-  cards: DB.get("lm_cards_v2", []),
-  depot: DB.get("lm_depot_v2", []),
-  txCache: DB.get("lm_tx_cache_v2", {}),
-  activity: DB.get("lm_activity_v2", {}),
-  flags: DB.get("lm_flags_v2", {}) // flagged card ids
-};
-
-function saveState(){
-  DB.set("lm_settings_v2", state.settings);
-  DB.set("lm_cards_v2", state.cards);
-  DB.set("lm_depot_v2", state.depot);
-  DB.set("lm_tx_cache_v2", state.txCache);
-  DB.set("lm_activity_v2", state.activity);
-  DB.set("lm_flags_v2", state.flags);
-}
-
-/* =========================================================
-  THEME
-========================================================= */
-function setTheme(name){
-  document.documentElement.setAttribute("data-theme", name);
-  state.settings.theme = name;
-  DB.set("lm_settings_v2", state.settings);
-  const meta = document.getElementById("meta-theme");
-  meta.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#0b1220");
-  const sel = document.getElementById("themeSelect");
-  if(sel) sel.value = name;
-}
-function cycleTheme(){
-  const idx = (THEMES.indexOf(state.settings.theme) + 1) % THEMES.length;
-  setTheme(THEMES[idx]);
-  toast("Tema: " + THEMES[idx]);
-}
-document.getElementById("btnTheme").onclick = cycleTheme;
-document.getElementById("btnSettings").onclick = ()=> openSheet("settingsSheet");
-function applyThemeFromSelect(){
-  const v = document.getElementById("themeSelect").value;
-  setTheme(v);
-  toast("Tema: " + v);
-}
-
-/* =========================================================
-  ROUTER
-========================================================= */
-function go(id){
-  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-
-  document.querySelectorAll(".navBtn").forEach(b=>b.classList.remove("active"));
-  if(id==="home") document.getElementById("navHome").classList.add("active");
-  if(id==="review") document.getElementById("navReview").classList.add("active");
-  if(id==="cards") document.getElementById("navCards").classList.add("active");
-  if(id==="depot") document.getElementById("navDepot").classList.add("active");
-  if(id==="tools") document.getElementById("navTools").classList.add("active");
-
-  if(id==="home") renderDash();
-  if(id==="review") renderReview();
-  if(id==="cards") renderCards();
-  if(id==="depot") renderDepot();
-  if(id==="tools") { /* no-op */ }
-}
-
-/* =========================================================
-  SHEETS
-========================================================= */
-const backdrop = document.getElementById("backdrop");
-function openSheet(id){
-  backdrop.classList.add("open");
-  document.getElementById(id).classList.add("open");
-}
-function closeSheets(){
-  backdrop.classList.remove("open");
-  document.querySelectorAll(".sheet").forEach(s=>s.classList.remove("open"));
-}
-function openAddSheet(){
-  editingCardId = null;
-  document.getElementById("csTitle").textContent = "Yeni Kart";
-  fillCardSheet({
-    lang:"EN", level:"UNK", term:"", meaning:"",
-    category:"", tags:"", example:"", note:""
-  });
-  document.getElementById("csMeta").textContent = "Yeni kart";
-  openSheet("cardSheet");
-}
-function openDepotActions(){ openSheet("depotActionsSheet"); }
-function openQuizConfig(){
-  // prefill
-  document.getElementById("qcMode").value = state.settings.quizMode || "mixed";
-  document.getElementById("qcCount").value = String(state.settings.quizCount || 20);
-  document.getElementById("qcDirection").value = state.settings.quizDirection || "term_to_meaning";
-  document.getElementById("qcAdaptive").value = state.settings.quizAdaptive || "on";
-  document.getElementById("qcOnlyLeech").value = "off";
-  document.getElementById("qcOnlyLevel").value = "";
-  openSheet("quizConfigSheet");
-}
-
-/* =========================================================
-  UTIL
-========================================================= */
-function now(){ return Date.now(); }
-function dayKey(d = new Date()){
-  return d.toISOString().slice(0,10);
-}
-function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
-function norm(s){ return (s||"").trim(); }
-function normKey(s){ return (s||"").toLowerCase().trim(); }
-function splitTags(str){
-  return (str||"")
-    .split(/[;,]/g)
-    .map(x=>x.trim())
-    .filter(Boolean);
-}
-function uniq(arr){
-  return [...new Set(arr)];
-}
-function isDue(card){
-  return (card.due || 0) <= now();
-}
-function safeText(s){
-  return (s||"").replace(/[<>]/g, "");
-}
-
-/* =========================================================
-  DATA MODEL
-  card = {
-    id, lang, term, meaning, level,
-    category, tags[], example, note,
-    createdAt, updatedAt,
-    due, srs:{interval,reps,ef},
-    stats:{seen,correct,wrong,streakWrong,leech},
-  }
-========================================================= */
-function newCard(obj){
-  const t = now();
-  return {
-    id: "c_" + Math.random().toString(36).slice(2),
-    lang: obj.lang || "EN",
-    term: norm(obj.term),
-    meaning: norm(obj.meaning),
-    level: obj.level || "UNK",
-    category: norm(obj.category),
-    tags: uniq(splitTags(obj.tags)).slice(0, 20),
-    example: norm(obj.example),
-    note: norm(obj.note),
-    createdAt: t,
-    updatedAt: t,
-    due: t,
-    srs: { interval:0, reps:0, ef:2.5 },
-    stats: { seen:0, correct:0, wrong:0, streakWrong:0, leech:false }
-  };
-}
-function updateCard(card, patch){
-  Object.assign(card, patch);
-  card.updatedAt = now();
-}
-function findCardById(id){
-  return state.cards.find(c=>c.id===id);
-}
-function findCardByTerm(lang, term){
-  const k = `${lang}|${normKey(term)}`;
-  return state.cards.find(c => `${c.lang}|${normKey(c.term)}` === k);
-}
-
-/* =========================================================
-  DASHBOARD & ACTIVITY
-========================================================= */
-function incActivity(){
-  const k = dayKey();
-  state.activity[k] = (state.activity[k] || 0) + 1;
-  DB.set("lm_activity_v2", state.activity);
-}
-function getStreak(){
-  const today = new Date();
-  let streak = 0;
-  for(let i=0;i<500;i++){
-    const d = new Date(today);
-    d.setDate(d.getDate()-i);
-    const k = dayKey(d);
-    if((state.activity[k]||0) > 0) streak++;
-    else break;
-  }
-  return streak;
-}
-function sumLastDays(n){
-  const today = new Date();
-  let s = 0;
-  for(let i=0;i<n;i++){
-    const d = new Date(today);
-    d.setDate(d.getDate()-i);
-    const k = dayKey(d);
-    s += (state.activity[k] || 0);
-  }
-  return s;
-}
-function renderDash(){
-  const total = state.cards.length;
-  const due = state.cards.filter(isDue).length;
-  document.getElementById("dashTotal").textContent = total;
-  document.getElementById("dashDue").textContent = due;
-  document.getElementById("dashStreak").textContent = getStreak() + " Gün";
-  document.getElementById("dashWeek").textContent = sumLastDays(7);
-  document.getElementById("dashToday").textContent = (state.activity[dayKey()]||0);
-}
-
-/* =========================================================
-  REVIEW PAGE
-========================================================= */
-function renderReview(){
-  document.getElementById("rvTotal").textContent = state.cards.length;
-  document.getElementById("rvDue").textContent = state.cards.filter(isDue).length;
-}
-function rebuildTodayQueue(){
-  // kept for UX; quiz pulls fresh each start
-  toast("Kuyruk: quiz başlatınca otomatik oluşturuluyor ✅");
-}
-function resetSrsProgress(){
-  if(!confirm("Tüm kartların SRS ilerlemesi sıfırlansın mı?")) return;
-  state.cards.forEach(c=>{
-    c.due = now();
-    c.srs = { interval:0, reps:0, ef:2.5 };
-    c.stats = c.stats || { seen:0, correct:0, wrong:0, streakWrong:0, leech:false };
-    c.stats.streakWrong = 0;
-    c.stats.leech = false;
-  });
-  saveState();
-  toast("SRS sıfırlandı ✅");
-  renderDash(); renderReview(); renderCards();
-}
-
-/* =========================================================
-  CARDS VIEW
-========================================================= */
-const elCardSearch = document.getElementById("cardSearch");
-const elCardFilterLevel = document.getElementById("cardFilterLevel");
-const elCardFilterLang = document.getElementById("cardFilterLang");
-const elCardFilterDue = document.getElementById("cardFilterDue");
-elCardSearch.addEventListener("input", ()=>renderCards());
-
-function clearCardFilters(){
-  elCardSearch.value = "";
-  elCardFilterLevel.value = "";
-  elCardFilterLang.value = "";
-  elCardFilterDue.value = "";
-  renderCards();
-}
-
-function renderCards(){
-  const q = normKey(elCardSearch.value);
-  const lvl = elCardFilterLevel.value;
-  const lang = elCardFilterLang.value;
-  const dueFilter = elCardFilterDue.value;
-
-  const list = document.getElementById("cardsList");
-  list.innerHTML = "";
-
-  let items = [...state.cards];
-
-  if(lang) items = items.filter(c=>c.lang===lang);
-  if(lvl) items = items.filter(c=>c.level===lvl);
-  if(dueFilter==="due") items = items.filter(isDue);
-  if(dueFilter==="ok") items = items.filter(c=>!isDue(c));
-  if(dueFilter==="leech") items = items.filter(c=>c.stats?.leech);
-
-  if(q){
-    items = items.filter(c=>{
-      const tags = (c.tags||[]).join(" ");
-      return (
-        normKey(c.term).includes(q) ||
-        normKey(c.meaning).includes(q) ||
-        normKey(c.category).includes(q) ||
-        normKey(tags).includes(q)
-      );
-    });
-  }
-
-  items.sort((a,b)=>a.term.localeCompare(b.term));
-
-  if(items.length===0){
-    const e = document.createElement("div");
-    e.className = "card";
-    e.innerHTML = `<div style="font-weight:1100;">Kart bulunamadı</div>
-                   <div class="smallInfo">Arama/filtreyi değiştir veya yeni kelime ekle.</div>`;
-    list.appendChild(e);
-    return;
-  }
-
-  items.forEach(c=>{
-    const due = isDue(c);
-    const e = document.createElement("div");
-    e.className = "card";
-    e.style.marginTop = "12px";
-
-    const tags = (c.tags||[]).slice(0,6);
-    const pillDue = due ? `<span class="pill" style="color:var(--warn)">DUE</span>` : `<span class="pill">OK</span>`;
-    const pillLvl = `<span class="pill">Lvl: <b style="color:var(--text)">${safeText(c.level||"UNK")}</b></span>`;
-    const pillLang = `<span class="pill">${safeText(c.lang||"EN")}</span>`;
-    const pillLeech = c.stats?.leech ? `<span class="pill" style="color:var(--danger)">LEECH</span>` : "";
-    const pillFlag = state.flags[c.id] ? `<span class="pill" style="color:var(--warn)">🚩</span>` : "";
-
-    e.innerHTML = `
-      <div class="listItem">
-        <div style="min-width:0;">
-          <div class="term">${safeText(c.term)}</div>
-          <div class="meaning">${safeText(c.meaning)}</div>
-          <div class="metaLine">
-            ${pillLang}${pillLvl}${pillDue}${pillLeech}${pillFlag}
-            ${c.category ? `<span class="pill">Cat: <b style="color:var(--text)">${safeText(c.category)}</b></span>` : ``}
-            ${tags.map(t=>`<span class="pill">#${safeText(t)}</span>`).join("")}
-          </div>
-          ${c.example ? `<div class="smallInfo" style="margin-top:8px;">${safeText(c.example)}</div>` : ``}
-        </div>
-        <div style="display:flex; flex-direction:column; gap:8px;">
-          <button class="miniBtn" data-edit="${c.id}">Düzenle</button>
-          <button class="miniBtn" data-tts="${c.id}">🔊</button>
-        </div>
-      </div>
-      <div class="smallInfo" style="margin-top:10px;">
-        Seen: <b style="color:var(--text)">${c.stats?.seen||0}</b> • ✅ ${c.stats?.correct||0} • ❌ ${c.stats?.wrong||0}
-      </div>
-    `;
-
-    e.querySelector(`[data-edit="${c.id}"]`).onclick = ()=>openEditCard(c.id);
-    e.querySelector(`[data-tts="${c.id}"]`).onclick = ()=>speakText(c.term, c.lang);
-
-    list.appendChild(e);
-  });
-}
-
-/* =========================================================
-  CARD SHEET (ADD/EDIT)
-========================================================= */
-let editingCardId = null;
-
-function fillCardSheet(data){
-  document.getElementById("csLang").value = data.lang || "EN";
-  document.getElementById("csLevel").value = data.level || "UNK";
-  document.getElementById("csTerm").value = data.term || "";
-  document.getElementById("csMeaning").value = data.meaning || "";
-  document.getElementById("csCategory").value = data.category || "";
-  document.getElementById("csTags").value = (data.tags && Array.isArray(data.tags)) ? data.tags.join(";") : (data.tags || "");
-  document.getElementById("csExample").value = data.example || "";
-  document.getElementById("csNote").value = data.note || "";
-}
-
-function openEditCard(id){
-  const c = findCardById(id);
-  if(!c) return toast("Kart bulunamadı");
-  editingCardId = id;
-  document.getElementById("csTitle").textContent = "Kartı Düzenle";
-  fillCardSheet(c);
-
-  const dueStr = new Date(c.due || now()).toLocaleString();
-  document.getElementById("csMeta").textContent =
-    `ID: ${c.id} • Due: ${dueStr} • EF: ${(c.srs?.ef||2.5).toFixed(2)} • Interval: ${c.srs?.interval||0} gün`;
-
-  openSheet("cardSheet");
-}
-
-function saveCardFromSheet(){
-  const data = {
-    lang: document.getElementById("csLang").value,
-    level: document.getElementById("csLevel").value,
-    term: document.getElementById("csTerm").value,
-    meaning: document.getElementById("csMeaning").value,
-    category: document.getElementById("csCategory").value,
-    tags: document.getElementById("csTags").value,
-    example: document.getElementById("csExample").value,
-    note: document.getElementById("csNote").value
+  // ---------------- Storage ----------------
+  const DB = {
+    get(key, fallback){ try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } },
+    set(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
   };
 
-  if(!norm(data.term)) return toast("Kelime boş olamaz.");
-  if(!norm(data.meaning)) return toast("Anlam boş olamaz.");
-
-  if(editingCardId){
-    const c = findCardById(editingCardId);
-    if(!c) return toast("Kart bulunamadı");
-
-    // collision check
-    const coll = findCardByTerm(data.lang, data.term);
-    if(coll && coll.id !== c.id){
-      if(!confirm("Aynı dilde aynı term zaten var. Yine de kaydedilsin mi?")) return;
-    }
-
-    updateCard(c, {
-      lang:data.lang,
-      level:data.level,
-      term:norm(data.term),
-      meaning:norm(data.meaning),
-      category:norm(data.category),
-      tags: uniq(splitTags(data.tags)).slice(0, 20),
-      example:norm(data.example),
-      note:norm(data.note)
-    });
-    saveState();
-    toast("Güncellendi ✅");
-  } else {
-    const coll = findCardByTerm(data.lang, data.term);
-    if(coll){
-      if(!confirm("Aynı dilde aynı term zaten var. Yine de yeni kart açılsın mı?")) return;
-    }
-    const c = newCard(data);
-    state.cards.push(c);
-    saveState();
-    toast("Eklendi ✅");
+  // ---------------- Toast ----------------
+  function toast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 2200);
   }
 
-  incActivity();
-  closeSheets();
-  renderDash(); renderReview(); renderCards();
-}
-
-function deleteCardFromSheet(){
-  if(!editingCardId) return toast("Silinecek kart yok.");
-  if(!confirm("Kart silinsin mi?")) return;
-
-  state.cards = state.cards.filter(c=>c.id!==editingCardId);
-  delete state.flags[editingCardId];
-  editingCardId = null;
-  saveState();
-  toast("Silindi");
-  closeSheets();
-  renderDash(); renderReview(); renderCards();
-}
-function duplicateCardFromSheet(){
-  const data = {
-    lang: document.getElementById("csLang").value,
-    level: document.getElementById("csLevel").value,
-    term: document.getElementById("csTerm").value + " (copy)",
-    meaning: document.getElementById("csMeaning").value,
-    category: document.getElementById("csCategory").value,
-    tags: document.getElementById("csTags").value,
-    example: document.getElementById("csExample").value,
-    note: document.getElementById("csNote").value
+  // ---------------- State ----------------
+  const themes = ["dark","light","ocean","emerald","sunset","rose"];
+  const state = {
+    settings: DB.get("lm_settings", { theme:"dark" }),
+    cards: DB.get("lm_cards", []),
+    txCache: DB.get("lm_tx_cache", {}),        // çeviri cache
+    reviewQueue: DB.get("lm_review_queue", []) // bugünkü quiz kuyruğu
   };
-  const c = newCard(data);
-  state.cards.push(c);
-  saveState();
-  toast("Kopyalandı ✅");
-  closeSheets();
-  renderDash(); renderReview(); renderCards();
-}
 
-/* =========================================================
-  TTS
-========================================================= */
-function speakText(text, lang){
-  const u = new SpeechSynthesisUtterance(text);
-  const map = { EN:"en-US", RU:"ru-RU", DE:"de-DE", FR:"fr-FR", TR:"tr-TR" };
-  u.lang = map[lang] || "en-US";
-  u.rate = 0.92;
-  try{ speechSynthesis.cancel(); speechSynthesis.speak(u); }catch{}
-}
-function speakFromSheet(){
-  const term = document.getElementById("csTerm").value.trim();
-  const lang = document.getElementById("csLang").value;
-  if(!term) return;
-  speakText(term, lang);
-}
-
-/* =========================================================
-  OFFLINE MINI DICT + ONLINE TRANSLATE
-========================================================= */
-const OFFLINE_EN_TR = {
-  "matter":"mesele / önemsemek", "notice":"fark etmek", "would":"-erdi / -ardı",
-  "wonder":"merak etmek", "even":"bile", "into":"içine", "past":"geçmiş / geçmişten",
-  "met":"tanıştı / buluştu", "above":"üstünde", "from":"-den/-dan", "seem":"gibi görünmek",
-  "still":"hala", "rose":"gül / yükseldi", "across":"karşıdan karşıya / boyunca",
-  "passage":"geçit / koridor", "bend":"viraj / kıvrım", "through":"içinden / boyunca",
-  "shone":"parladı (shine geçmiş)"
-};
-
-async function translateOnline(word, lang){
-  const sl = ({ EN:"en", RU:"ru", DE:"de", FR:"fr", TR:"tr" })[lang] || "auto";
-  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=tr&dt=t&q=${encodeURIComponent(word)}`;
-  const r = await fetch(url);
-  if(!r.ok) throw new Error("translate_fail");
-  const data = await r.json();
-  const out = (data?.[0]?.[0]?.[0] || "").trim();
-  if(!out) throw new Error("translate_empty");
-  return out;
-}
-
-function cacheKey(lang, term){ return `${lang}|${normKey(term)}`; }
-
-async function autoTranslateForSheet(){
-  const term = document.getElementById("csTerm").value.trim();
-  const lang = document.getElementById("csLang").value;
-  if(!term) return toast("Önce kelime yaz.");
-  const key = cacheKey(lang, term);
-
-  // cache
-  if(state.txCache[key]){
-    document.getElementById("csMeaning").value = state.txCache[key];
-    toast("Cache çeviri ✅");
-    depotUpsert({ lang, word:term, meaning:state.txCache[key], source:"cache" });
-    return;
+  function saveAllState(){
+    DB.set("lm_settings", state.settings);
+    DB.set("lm_cards", state.cards);
+    DB.set("lm_tx_cache", state.txCache);
+    DB.set("lm_review_queue", state.reviewQueue);
   }
 
-  // offline
-  if(lang==="EN"){
-    const off = OFFLINE_EN_TR[normKey(term)];
-    if(off){
-      state.txCache[key] = off;
-      saveState();
-      document.getElementById("csMeaning").value = off;
-      toast("Offline sözlük ✅");
-      depotUpsert({ lang, word:term, meaning:off, source:"offline" });
-      return;
-    }
+  function setTheme(name){
+    document.documentElement.setAttribute("data-theme", name);
+    state.settings.theme = name;
+    DB.set("lm_settings", state.settings);
+    const meta = document.getElementById("meta-theme");
+    meta.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#0b1220");
+    const sel = document.getElementById("themeSelect");
+    if(sel) sel.value = name;
   }
 
-  // online
-  try{
-    const out = await translateOnline(term, lang);
-    state.txCache[key] = out;
-    saveState();
-    document.getElementById("csMeaning").value = out;
-    toast("Online çeviri ✅");
-    depotUpsert({ lang, word:term, meaning:out, source:"online" });
-  } catch(e){
-    toast("Çeviri bulunamadı (manuel gir).");
+  function applyThemeFromSelect(){
+    const v = document.getElementById("themeSelect").value;
+    setTheme(v);
+    toast("Tema: " + v);
   }
-}
 
-/* =========================================================
-  DEPOT
-  depot item = { id, lang, word, meaning, source, tags[], ts, selected }
-========================================================= */
-function depotKey(lang, word){ return `${lang}|${normKey(word)}`; }
-
-function depotUpsert(entry){
-  const k = depotKey(entry.lang, entry.word);
-  const idx = state.depot.findIndex(x => depotKey(x.lang, x.word) === k);
-  const item = {
-    id: entry.id || ("d_" + Math.random().toString(36).slice(2)),
-    lang: entry.lang || "EN",
-    word: norm(entry.word),
-    meaning: norm(entry.meaning),
-    source: entry.source || "manual",
-    tags: uniq(splitTags(entry.tags)).slice(0, 20),
-    ts: entry.ts || now(),
-    selected: entry.selected || false
+  document.getElementById("btnTheme").onclick = () => {
+    const idx = (themes.indexOf(state.settings.theme) + 1) % themes.length;
+    setTheme(themes[idx]);
+    toast("Tema: " + themes[idx]);
   };
-  if(idx >= 0){
-    // keep newest meaning if provided
-    const prev = state.depot[idx];
-    state.depot[idx] = {
-      ...prev,
-      ...item,
-      ts: now()
+
+  document.getElementById("btnSettings").onclick = () => {
+    document.getElementById("themeSelect").value = state.settings.theme;
+    openSheet("settingsSheet");
+  };
+
+  // ---------------- Router (go) ----------------
+  function go(id){
+    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+
+    document.querySelectorAll(".navBtn").forEach(b=>b.classList.remove("active"));
+    if(id==="home") document.getElementById("navHome").classList.add("active");
+    if(id==="review") document.getElementById("navReview").classList.add("active");
+    if(id==="cards") document.getElementById("navCards").classList.add("active");
+
+    if(id === "home") renderDash();
+    if(id === "cards") renderCards();
+    if(id === "review") renderReview();
+  }
+
+  // ---------------- Sheets ----------------
+  const backdrop = document.getElementById("backdrop");
+  function openSheet(id){
+    backdrop.classList.add("open");
+    document.getElementById(id).classList.add("open");
+  }
+  function closeSheets(){
+    backdrop.classList.remove("open");
+    document.querySelectorAll(".sheet").forEach(s=>s.classList.remove("open"));
+  }
+
+  // ---------------- Utils ----------------
+  function normKey(w){ return (w||"").toLowerCase().trim(); }
+
+  function debounce(fn, wait=450){
+    let t;
+    return (...args)=>{
+      clearTimeout(t);
+      t = setTimeout(()=>fn(...args), wait);
     };
-  } else {
-    state.depot.push(item);
-  }
-  DB.set("lm_depot_v2", state.depot);
-}
-
-function renderDepot(){
-  const q = normKey(document.getElementById("depotSearch").value);
-  const src = document.getElementById("depotFilterSource").value;
-  const lang = document.getElementById("depotFilterLang").value;
-
-  let items = [...state.depot];
-
-  if(src) items = items.filter(x=>x.source===src);
-  if(lang) items = items.filter(x=>x.lang===lang);
-  if(q){
-    items = items.filter(x=>{
-      const tags = (x.tags||[]).join(" ");
-      return (
-        normKey(x.word).includes(q) ||
-        normKey(x.meaning).includes(q) ||
-        normKey(tags).includes(q)
-      );
-    });
   }
 
-  items.sort((a,b)=>(b.ts||0)-(a.ts||0));
+  // ---------------- Offline dictionary (EN->TR) ----------------
+  // Not: Bu listeyi istersen 10.000+ yapabiliriz. Şu an "çekirdek + civil" karışık.
+  const OFFLINE_EN_TR = {
+    "that":"şu / o / -diği şey","this":"bu","into":"içine","past":"geçmiş / geçmişten","met":"tanıştı / buluştu",
+    "above":"üstünde","from":"-den/-dan","seem":"gibi görünmek","still":"hala","rose":"gül / yükseldi",
+    "would":"-erdi","wonder":"merak etmek","even":"bile","notice":"fark etmek","matter":"mesele / önemsemek",
+    "anyone":"kimse / herhangi biri","at once":"hemen / aynı anda","badly":"kötü bir şekilde",
+    "across":"karşıdan karşıya / boyunca","round":"etrafında / yuvarlak","passage":"geçit / koridor","bend":"viraj / kıvrım",
+    "dark":"karanlık","went":"gitti","down":"aşağı","and":"ve","the":"(belirli artikel)","a":"bir","in":"içinde","on":"üzerinde","to":"-e/-a",
+    "always":"her zaman","woman":"kadın","seldom":"nadiren","mention":"bahsetmek","under":"altında","other":"diğer","name":"isim",
+    "beginning":"başlangıç","tired":"yorgun","nothing":"hiçbir şey",
+    "truth":"gerçek","universally":"evrensel olarak","acknowledged":"kabul edilmiş",
+    "single":"bekar / tek","possession":"sahiplik","fortune":"servet","want":"istemek / ihtiyaç duymak","wife":"eş",
 
-  // stats
-  const total = state.depot.length;
-  const shown = items.length;
-  const selected = state.depot.filter(x=>x.selected).length;
-  const bySource = state.depot.reduce((acc,x)=>{
-    acc[x.source] = (acc[x.source]||0)+1;
-    return acc;
-  }, {});
-  const byLang = state.depot.reduce((acc,x)=>{
-    acc[x.lang] = (acc[x.lang]||0)+1;
-    return acc;
-  }, {});
+    /* Civil / Construction core */
+    "concrete":"beton",
+    "cement":"çimento",
+    "aggregate":"agrega",
+    "sand":"kum",
+    "gravel":"çakıl",
+    "water-cement ratio":"su/çimento oranı",
+    "slump":"çökme (slump)",
+    "curing":"kür (bakım)",
+    "reinforcement":"donatı",
+    "rebar":"inşaat demiri (donatı çeliği)",
+    "stirrup":"etriye",
+    "formwork":"kalıp",
+    "scaffolding":"iskele",
+    "foundation":"temel",
+    "footing":"temel pabucu / radye altı",
+    "pile":"kazık",
+    "bored pile":"fore kazık",
+    "driven pile":"çakma kazık",
+    "retaining wall":"istinat duvarı",
+    "shear wall":"perde duvar",
+    "beam":"kiriş",
+    "column":"kolon",
+    "slab":"döşeme",
+    "lintel":"lentö",
+    "masonry":"yığma",
+    "brick":"tuğla",
+    "block":"blok",
+    "mortar":"harç",
+    "plaster":"sıva",
+    "screed":"şap",
+    "waterproofing":"su yalıtımı",
+    "insulation":"yalıtım",
+    "thermal insulation":"ısı yalıtımı",
+    "sound insulation":"ses yalıtımı",
+    "expansion joint":"dilatasyon derzi",
+    "construction joint":"soğuk derz",
+    "crack":"çatlak",
+    "deflection":"sehim",
+    "settlement":"oturma",
+    "bearing capacity":"taşıma gücü",
+    "soil":"zemin",
+    "clay":"kil",
+    "silt":"silt",
+    "compaction":"sıkıştırma",
+    "density":"yoğunluk",
+    "excavation":"kazı",
+    "backfill":"geri dolgu",
+    "survey":"ölçüm / harita çalışması",
+    "level":"kot / nivo",
+    "plumb":"düşey (şakül)",
+    "tolerance":"tolerans",
+    "specification":"şartname",
+    "drawing":"çizim / proje",
+    "blueprint":"proje kopyası",
+    "quantity":"miktar",
+    "bill of quantities":"metraj",
+    "estimate":"keşif / tahmin",
+    "tender":"ihale",
+    "contract":"sözleşme",
+    "site":"şantiye",
+    "supervisor":"şantiye şefi / kontrol",
+    "inspection":"kontrol / muayene",
+    "nonconformance":"uygunsuzluk",
+    "workmanship":"işçilik kalitesi",
+    "schedule":"takvim / iş programı",
+    "delay":"gecikme",
+    "critical path":"kritik yol",
+    "safety":"iş güvenliği",
+    "ppe":"kişisel koruyucu donanım",
+    "risk assessment":"risk değerlendirmesi",
+    "load":"yük",
+    "dead load":"sabit yük",
+    "live load":"hareketli yük",
+    "wind load":"rüzgar yükü",
+    "seismic load":"deprem yükü",
+    "stress":"gerilme",
+    "strain":"birim şekil değiştirme",
+    "yield strength":"akma dayanımı",
+    "ultimate strength":"nihai dayanım",
+    "steel":"çelik",
+    "weld":"kaynak",
+    "bolt":"cıvata",
+    "anchor bolt":"ankraj cıvatası",
+    "base plate":"taban plakası",
+    "girder":"ana kiriş",
+    "truss":"kafes kiriş",
+    "connection":"bağlantı",
+    "moment":"moment",
+    "shear":"kesme",
+    "torsion":"burulma",
+    "buckling":"burkulma"
+  };
 
-  document.getElementById("depotStats").innerHTML = `
-    <div class="card">
-      <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
-        <div>
-          <div style="font-weight:1100;">Kayıt: <b style="color:var(--text)">${total}</b> • Gösterilen: <b style="color:var(--text)">${shown}</b></div>
-          <div class="smallInfo">Seçili: <b style="color:var(--text)">${selected}</b></div>
-        </div>
-        <button class="miniBtn" onclick="clearDepotSelection()">Seçimi Sıfırla</button>
-      </div>
-      <div class="divider"></div>
-      <div class="smallInfo">Kaynak: ${Object.entries(bySource).map(([k,v])=>`${k}:${v}`).join(" • ") || "-"}</div>
-      <div class="smallInfo" style="margin-top:6px;">Dil: ${Object.entries(byLang).map(([k,v])=>`${k}:${v}`).join(" • ") || "-"}</div>
-    </div>
-  `;
+  // ---------------- CEFR Guess (EN) ----------------
+  // Not: Bunu büyütürsek (binlerce kelime) seviye tahmini daha “gerçek” olur.
+  const CEFR_HINTS_EN = {
+    A1: new Set(["this","that","in","on","to","from","into","across","still","even"]),
+    A2: new Set(["notice","matter","wonder","past","met","above","round"]),
+    B1: new Set(["estimate","schedule","delay","contract","inspection","settlement","deflection"]),
+    B2: new Set(["nevertheless","subsequently","nonconformance","workmanship","specification","bearing capacity"]),
+    C1: new Set(["scrutinize","substantiate","torsion","buckling"])
+  };
 
-  const list = document.getElementById("depotList");
-  list.innerHTML = "";
-
-  if(items.length === 0){
-    const e = document.createElement("div");
-    e.className = "card";
-    e.innerHTML = `<div style="font-weight:1100;">Depoda kayıt yok</div>
-                   <div class="smallInfo">Otomatik çeviri veya toplu import ile depot dolacak.</div>`;
-    list.appendChild(e);
-    return;
-  }
-
-  items.slice(0, 400).forEach(x=>{
-    const e = document.createElement("div");
-    e.className = "card";
-    e.style.marginTop = "12px";
-
-    const checked = x.selected ? "checked" : "";
-    e.innerHTML = `
-      <div class="listItem">
-        <div style="min-width:0;">
-          <div style="display:flex; gap:10px; align-items:center;">
-            <input type="checkbox" ${checked} style="width:18px; height:18px;" data-check="${x.id}">
-            <div class="term">${safeText(x.word)}</div>
-          </div>
-          <div class="meaning">${safeText(x.meaning)}</div>
-          <div class="metaLine">
-            <span class="pill">${safeText(x.lang)}</span>
-            <span class="pill">src: <b style="color:var(--text)">${safeText(x.source)}</b></span>
-            ${x.tags?.slice(0,6).map(t=>`<span class="pill">#${safeText(t)}</span>`).join("") || ""}
-          </div>
-          <div class="smallInfo" style="margin-top:8px;">${new Date(x.ts||now()).toLocaleString()}</div>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:8px;">
-          <button class="miniBtn" data-copy="${x.id}">Kopyala</button>
-          <button class="miniBtn" data-add="${x.id}">Kart Yap</button>
-          <button class="miniBtn" data-del="${x.id}" style="border-color:color-mix(in srgb, var(--danger) 45%, var(--border));">Sil</button>
-        </div>
-      </div>
-    `;
-
-    e.querySelector(`[data-check="${x.id}"]`).onchange = (ev)=>{
-      const it = state.depot.find(d=>d.id===x.id);
-      if(it){ it.selected = ev.target.checked; DB.set("lm_depot_v2", state.depot); }
-    };
-    e.querySelector(`[data-copy="${x.id}"]`).onclick = ()=>copyText(`${x.word} — ${x.meaning}`);
-    e.querySelector(`[data-add="${x.id}"]`).onclick = ()=>depotItemToCard(x.id);
-    e.querySelector(`[data-del="${x.id}"]`).onclick = ()=>deleteDepotItem(x.id);
-
-    list.appendChild(e);
-  });
-}
-
-function clearDepotSelection(){
-  state.depot.forEach(x=>x.selected=false);
-  DB.set("lm_depot_v2", state.depot);
-  toast("Seçim temizlendi");
-  renderDepot();
-}
-function toggleDepotSelectAll(){
-  const anyUnchecked = state.depot.some(x=>!x.selected);
-  state.depot.forEach(x=>x.selected = anyUnchecked);
-  DB.set("lm_depot_v2", state.depot);
-  toast(anyUnchecked ? "Tümü seçildi" : "Seçim kaldırıldı");
-  renderDepot();
-}
-function deleteDepotItem(id){
-  state.depot = state.depot.filter(x=>x.id!==id);
-  DB.set("lm_depot_v2", state.depot);
-  toast("Silindi");
-  renderDepot();
-}
-function clearDepotAll(){
-  if(!confirm("Depodaki her şey silinsin mi?")) return;
-  state.depot = [];
-  DB.set("lm_depot_v2", state.depot);
-  toast("Depo sıfırlandı");
-  renderDepot();
-}
-function dedupeDepot(){
-  const map = new Map();
-  for(const x of state.depot){
-    const k = depotKey(x.lang, x.word);
-    // keep latest ts
-    if(!map.has(k) || (map.get(k).ts||0) < (x.ts||0)){
-      map.set(k, x);
+  function inferLevel(lang, term){
+    const t = normKey(term);
+    if(!t) return "UNK";
+    if(lang !== "EN") return "UNK";
+    for(const lvl of ["A1","A2","B1","B2","C1"]){
+      if(CEFR_HINTS_EN[lvl]?.has(t)) return lvl;
     }
+    // küçük heuristik
+    if(t.includes("non") || t.includes("tion") || t.length >= 12) return "B2";
+    if(t.length >= 9) return "B1";
+    return "UNK";
   }
-  state.depot = [...map.values()];
-  DB.set("lm_depot_v2", state.depot);
-  toast("Dedupe tamam ✅");
-  renderDepot();
-}
-function trimDepot(){
-  const limit = 1000;
-  if(state.depot.length <= limit){
-    toast("Depo zaten küçük.");
-    return;
-  }
-  state.depot.sort((a,b)=>(a.ts||0)-(b.ts||0)); // oldest first
-  state.depot = state.depot.slice(state.depot.length - limit);
-  DB.set("lm_depot_v2", state.depot);
-  toast("Kırpıldı ✅");
-  renderDepot();
-}
 
-function depotItemToCard(id){
-  const it = state.depot.find(x=>x.id===id);
-  if(!it) return toast("Kayıt yok");
-  const coll = findCardByTerm(it.lang, it.word);
-  if(coll){
-    // update meaning if different?
-    if(coll.meaning !== it.meaning){
-      if(confirm("Kart zaten var. Anlamı güncellensin mi?")){
-        coll.meaning = it.meaning;
-        coll.updatedAt = now();
-        saveState();
+  // ---------------- Auto Translate (sheet) ----------------
+  async function autoTranslateForSheet(){
+    const term = document.getElementById("csTerm").value.trim();
+    const lang = document.getElementById("csLang").value.trim();
+    if(!term) return toast("Kelime boş olamaz.");
+
+    const key = `${lang}|${normKey(term)}`;
+
+    // cache
+    if(state.txCache[key]){
+      if(!document.getElementById("csMeaning").value.trim()){
+        document.getElementById("csMeaning").value = state.txCache[key];
+      }
+      toast("Cache çeviri ✅");
+      return state.txCache[key];
+    }
+
+    // offline (EN)
+    if(lang === "EN"){
+      const k = normKey(term);
+      if(OFFLINE_EN_TR[k]){
+        const out = OFFLINE_EN_TR[k];
+        state.txCache[key] = out;
+        DB.set("lm_tx_cache", state.txCache);
+        if(!document.getElementById("csMeaning").value.trim()){
+          document.getElementById("csMeaning").value = out;
+        }
+        toast("Offline sözlük ✅");
+        return out;
       }
     }
-    toast("Kart zaten vardı.");
-    return;
-  }
-  const c = newCard({
-    lang: it.lang,
-    term: it.word,
-    meaning: it.meaning,
-    level: "UNK",
-    category: "",
-    tags: (it.tags||[]).join(";"),
-    example: "",
-    note: ""
-  });
-  state.cards.push(c);
-  saveState();
-  incActivity();
-  toast("Kart oluşturuldu ✅");
-  renderDash(); renderReview(); renderCards();
-}
-function depotToCardsSelected(){
-  const sel = state.depot.filter(x=>x.selected);
-  if(sel.length===0) return toast("Seçili yok.");
-  let added = 0;
-  for(const it of sel){
-    const coll = findCardByTerm(it.lang, it.word);
-    if(!coll){
-      state.cards.push(newCard({
-        lang: it.lang,
-        term: it.word,
-        meaning: it.meaning,
-        level:"UNK",
-        category:"",
-        tags:(it.tags||[]).join(";"),
-        example:"",
-        note:""
-      }));
-      added++;
+
+    // online
+    try{
+      const sl = ({EN:"en", RU:"ru", DE:"de", FR:"fr", TR:"tr"})[lang] || "auto";
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=tr&dt=t&q=${encodeURIComponent(term)}`;
+      const r = await fetch(url);
+      if(!r.ok) throw new Error("gtx_fail");
+      const data = await r.json();
+      const out = (data?.[0]?.[0]?.[0] || "").trim();
+      if(out){
+        state.txCache[key] = out;
+        DB.set("lm_tx_cache", state.txCache);
+        if(!document.getElementById("csMeaning").value.trim()){
+          document.getElementById("csMeaning").value = out;
+        }
+        toast("Online çeviri ✅");
+        return out;
+      }
+      throw new Error("gtx_empty");
+    }catch(e){
+      toast("Çeviri bulunamadı (manuel gir).");
+      return "";
     }
   }
-  saveState();
-  incActivity();
-  toast(`${added} kart eklendi ✅`);
-  clearDepotSelection();
-  renderDash(); renderReview(); renderCards();
-}
 
-/* =========================================================
-  COPY
-========================================================= */
-async function copyText(t){
-  try{
-    await navigator.clipboard.writeText(t);
-    toast("Kopyalandı ✅");
-  } catch {
-    toast("Kopyalama başarısız");
+  // ---------------- Auto Fill for manual entry ----------------
+  async function autoFillManualEntry(){
+    const termEl = document.getElementById("csTerm");
+    const langEl = document.getElementById("csLang");
+    const meaningEl = document.getElementById("csMeaning");
+    const levelEl = document.getElementById("csLevel");
+    const typeEl = document.getElementById("csType");
+
+    const term = termEl.value.trim();
+    const lang = langEl.value;
+
+    if(!term) return;
+
+    // type hint
+    if(typeEl.value === "word"){
+      if(term.includes(" ") && term.length >= 4){
+        // phrase
+        typeEl.value = "phrase";
+      }
+    }
+
+    // level auto only if UNK
+    if(levelEl.value === "UNK"){
+      const guessed = inferLevel(lang, term);
+      if(guessed !== "UNK") levelEl.value = guessed;
+    }
+
+    // meaning auto only if empty
+    if(!meaningEl.value.trim()){
+      await autoTranslateForSheet();
+    }
   }
-}
+  const autoFillManualEntryDebounced = debounce(autoFillManualEntry, 500);
 
-/* =========================================================
-  EXPORT / IMPORT
-========================================================= */
-function exportAll(){
-  const data = JSON.stringify({
-    settings: state.settings,
-    cards: state.cards,
-    depot: state.depot,
-    txCache: state.txCache,
-    activity: state.activity,
-    flags: state.flags
-  }, null, 2);
-  prompt("Export JSON (kopyala):", data);
-}
-function importAllPrompt(){
-  const txt = prompt("Import JSON yapıştır:");
-  if(!txt) return;
-  try{
-    const obj = JSON.parse(txt);
-    if(obj.settings) state.settings = obj.settings;
-    if(obj.cards) state.cards = obj.cards;
-    if(obj.depot) state.depot = obj.depot;
-    if(obj.txCache) state.txCache = obj.txCache;
-    if(obj.activity) state.activity = obj.activity;
-    if(obj.flags) state.flags = obj.flags;
-    saveState();
-    setTheme(state.settings.theme || "dark");
-    toast("Import tamam ✅");
+  // ---------------- SRS (SM-2 like) ----------------
+  // Card: {id, term, meaning, lang, type, level, category, example, note, due, srs:{interval,reps,ef}}
+  function srsCalc(card, quality){
+    let s = card.srs || { interval:0, reps:0, ef:2.5 };
+    let { interval, reps, ef } = s;
+
+    if(quality >= 3){
+      if(reps === 0) interval = 1;
+      else if(reps === 1) interval = 6;
+      else interval = Math.round(interval * ef);
+
+      reps++;
+      ef = ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+      if(ef < 1.3) ef = 1.3;
+    }else{
+      reps = 0;
+      interval = 1;
+    }
+
+    const nextDue = Date.now() + interval * 24*60*60*1000;
+    return { due: nextDue, srs:{ interval, reps, ef } };
+  }
+
+  // ---------------- Cards CRUD ----------------
+  let editingCardId = null;
+
+  function openManualAdd(){
+    editingCardId = null;
+    document.getElementById("csTitle").textContent = "Kelime Ekle";
+    document.getElementById("csDeleteBtn").style.display = "none";
+
+    document.getElementById("csLang").value = "EN";
+    document.getElementById("csTerm").value = "";
+    document.getElementById("csMeaning").value = "";
+    document.getElementById("csType").value = "word";
+    document.getElementById("csLevel").value = "UNK";
+    document.getElementById("csCategory").value = "";
+    document.getElementById("csExample").value = "";
+    document.getElementById("csNote").value = "";
+    openSheet("cardSheet");
+  }
+
+  function openEditCard(cardId){
+    const c = state.cards.find(x=>x.id===cardId);
+    if(!c) return;
+    editingCardId = c.id;
+
+    document.getElementById("csTitle").textContent = "Kartı Düzenle";
+    document.getElementById("csDeleteBtn").style.display = "flex";
+
+    document.getElementById("csLang").value = c.lang || "EN";
+    document.getElementById("csTerm").value = c.term || "";
+    document.getElementById("csMeaning").value = c.meaning || "";
+    document.getElementById("csType").value = c.type || "word";
+    document.getElementById("csLevel").value = c.level || "UNK";
+    document.getElementById("csCategory").value = c.category || "";
+    document.getElementById("csExample").value = c.example || "";
+    document.getElementById("csNote").value = c.note || "";
+    openSheet("cardSheet");
+  }
+
+  async function saveCardFromSheet(){
+    // auto-fill once more before save (only if fields empty)
+    await autoFillManualEntry();
+
+    const lang = document.getElementById("csLang").value;
+    const term = document.getElementById("csTerm").value.trim();
+    const meaning = document.getElementById("csMeaning").value.trim();
+    const type = document.getElementById("csType").value;
+    const level = document.getElementById("csLevel").value;
+    const category = document.getElementById("csCategory").value.trim();
+    const example = document.getElementById("csExample").value.trim();
+    const note = document.getElementById("csNote").value.trim();
+
+    if(!term) return toast("Kelime/terim boş olamaz.");
+    if(!meaning) return toast("Anlam boş olamaz.");
+
+    // term uniqueness per lang (optional)
+    const dup = state.cards.find(x=>x.id!==editingCardId && x.lang===lang && normKey(x.term)===normKey(term));
+    if(dup){
+      return toast("Bu kelime zaten var (aynı dil).");
+    }
+
+    const now = Date.now();
+
+    if(!editingCardId){
+      const card = {
+        id: "c_" + Math.random().toString(36).slice(2),
+        term, meaning, lang,
+        type, level, category, example, note,
+        due: now,
+        srs: { interval:0, reps:0, ef:2.5 }
+      };
+      state.cards.push(card);
+    }else{
+      const idx = state.cards.findIndex(x=>x.id===editingCardId);
+      if(idx>=0){
+        state.cards[idx] = {
+          ...state.cards[idx],
+          term, meaning, lang, type, level, category, example, note
+        };
+      }
+    }
+
+    DB.set("lm_cards", state.cards);
+
+    // activity
+    const activity = DB.get("lm_activity", {});
+    const k = new Date().toISOString().slice(0,10);
+    activity[k] = (activity[k] || 0) + 1;
+    DB.set("lm_activity", activity);
+
+    toast("Kaydedildi ✅");
     closeSheets();
-    renderDash(); renderReview(); renderCards(); renderDepot();
-  } catch {
-    toast("Import hata");
+    renderDash();
+    renderReview();
+    renderCards();
   }
-}
-function exportDepot(){
-  const data = JSON.stringify({ depot: state.depot }, null, 2);
-  prompt("Depo Export JSON:", data);
-}
-function exportDepotCSV(){
-  const header = "lang,word,meaning,source,tags,ts\n";
-  const rows = state.depot.map(x=>{
-    const tags = (x.tags||[]).join(";");
-    return [
-      x.lang, csvEscape(x.word), csvEscape(x.meaning), x.source, csvEscape(tags), x.ts
-    ].join(",");
-  }).join("\n");
-  prompt("Depo CSV (kopyala):", header + rows);
-}
-function csvEscape(s){
-  const t = (s||"").replace(/\r?\n/g, " ").trim();
-  if(/[",]/.test(t)) return `"${t.replace(/"/g,'""')}"`;
-  return t;
-}
 
-/* =========================================================
-  SETTINGS
-========================================================= */
-function saveSettings(){
-  state.settings.quizMode = document.getElementById("setQuizMode").value;
-  state.settings.quizCount = parseInt(document.getElementById("setQuizCount").value, 10) || 20;
-  state.settings.quizDirection = document.getElementById("setQuizDirection").value;
-  state.settings.quizAdaptive = document.getElementById("setQuizAdaptive").value;
-  saveState();
-  toast("Ayarlar kaydedildi ✅");
-}
-function restoreDefaults(){
-  state.settings.quizMode = "mixed";
-  state.settings.quizCount = 20;
-  state.settings.quizDirection = "term_to_meaning";
-  state.settings.quizAdaptive = "on";
-  saveState();
-  document.getElementById("setQuizMode").value = "mixed";
-  document.getElementById("setQuizCount").value = "20";
-  document.getElementById("setQuizDirection").value = "term_to_meaning";
-  document.getElementById("setQuizAdaptive").value = "on";
-  toast("Varsayılanlar yüklendi");
-}
-function clearCache(){
-  state.txCache = {};
-  DB.set("lm_tx_cache_v2", state.txCache);
-  toast("Cache temizlendi ✅");
-}
-function hardReset(){
-  if(!confirm("Her şey silinsin mi? (geri alınamaz)")) return;
-  DB.del("lm_settings_v2");
-  DB.del("lm_cards_v2");
-  DB.del("lm_depot_v2");
-  DB.del("lm_tx_cache_v2");
-  DB.del("lm_activity_v2");
-  DB.del("lm_flags_v2");
-  location.reload();
-}
+  function deleteCardFromSheet(){
+    if(!editingCardId) return closeSheets();
+    const idx = state.cards.findIndex(x=>x.id===editingCardId);
+    if(idx<0) return toast("Kart bulunamadı.");
+    state.cards.splice(idx,1);
+    DB.set("lm_cards", state.cards);
+    toast("Silindi");
+    editingCardId = null;
+    closeSheets();
+    renderDash();
+    renderReview();
+    renderCards();
+  }
 
-/* =========================================================
-  BULK IMPORT CSV
-========================================================= */
-function parseCSV(text){
-  // Minimal CSV parser (handles quotes)
-  const rows = [];
-  let row = [];
-  let cur = "";
-  let inQ = false;
+  // ---------------- Cards view ----------------
+  document.getElementById("search").addEventListener("input", renderCards);
 
-  for(let i=0;i<text.length;i++){
-    const ch = text[i];
-    const next = text[i+1];
+  function renderCards(){
+    const q = (document.getElementById("search").value || "").toLowerCase().trim();
+    const list = document.getElementById("cardsList");
+    list.innerHTML = "";
 
-    if(inQ){
-      if(ch === '"' && next === '"'){ cur += '"'; i++; continue; }
-      if(ch === '"'){ inQ = false; continue; }
-      cur += ch; continue;
-    } else {
-      if(ch === '"'){ inQ = true; continue; }
-      if(ch === ','){ row.push(cur.trim()); cur=""; continue; }
-      if(ch === '\n'){
-        row.push(cur.trim()); cur="";
-        if(row.some(x=>x.length>0)) rows.push(row);
-        row=[]; continue;
-      }
-      if(ch === '\r'){ continue; }
-      cur += ch;
+    const items = state.cards
+      .filter(c => !q
+        || (c.term||"").toLowerCase().includes(q)
+        || (c.meaning||"").toLowerCase().includes(q)
+        || (c.category||"").toLowerCase().includes(q)
+        || (c.level||"").toLowerCase().includes(q)
+      )
+      .sort((a,b)=> (a.term||"").localeCompare((b.term||""), "tr", {sensitivity:"base"}));
+
+    if(items.length===0){
+      const e = document.createElement("div");
+      e.className = "card";
+      e.innerHTML = `<div style="font-weight:980;">Henüz kart yok</div><div class="smallInfo">➕ Elle Kelime Ekle ile eklemeye başla.</div>`;
+      list.appendChild(e);
+      return;
     }
+
+    items.forEach(c=>{
+      const isDue = (c.due||0) <= Date.now();
+      const e = document.createElement("div");
+      e.className = "card";
+      e.style.marginTop = "12px";
+      e.style.cursor = "pointer";
+      e.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <div style="font-weight:980; color:var(--primary); font-size:20px;">${escapeHtml(c.term)}</div>
+          <div class="smallInfo" style="font-weight:980; color:${isDue?'var(--warn)':'var(--muted)'}">${isDue?'DUE':'OK'}</div>
+        </div>
+        <div class="smallInfo">${escapeHtml(c.lang||'')} • ${escapeHtml(c.meaning||'')}</div>
+        <div class="smallInfo" style="margin-top:6px;">Tür: ${escapeHtml(c.type||'-')} • Seviye: ${escapeHtml(c.level||'-')} • Kategori: ${escapeHtml((c.category||'-') || '-')}</div>
+        <div class="smallInfo" style="margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(c.example || c.note || "")}</div>
+      `;
+      e.onclick = ()=>openEditCard(c.id);
+      list.appendChild(e);
+    });
   }
-  row.push(cur.trim());
-  if(row.some(x=>x.length>0)) rows.push(row);
-  return rows;
-}
-function importCsvToCards(){
-  const txt = document.getElementById("bulkCsv").value;
-  if(!txt.trim()) return toast("CSV boş.");
-  const rows = parseCSV(txt);
-  if(rows.length===0) return toast("CSV okunamadı.");
 
-  // allow header
-  let start = 0;
-  if(rows[0][0]?.toLowerCase() === "lang") start = 1;
-
-  let added = 0, skipped = 0;
-  for(let i=start;i<rows.length;i++){
-    const r = rows[i];
-    const obj = {
-      lang: r[0] || "EN",
-      term: r[1] || "",
-      meaning: r[2] || "",
-      level: r[3] || "UNK",
-      category: r[4] || "",
-      tags: r[5] || "",
-      example: r[6] || "",
-      note: r[7] || ""
-    };
-    if(!norm(obj.term) || !norm(obj.meaning)) { skipped++; continue; }
-    const coll = findCardByTerm(obj.lang, obj.term);
-    if(coll){ skipped++; continue; }
-    state.cards.push(newCard(obj));
-    added++;
+  function escapeHtml(s){
+    return (s||"")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
   }
-  saveState();
-  incActivity();
-  toast(`${added} kart eklendi ✅ (skip: ${skipped})`);
-  renderDash(); renderReview(); renderCards();
-}
-function importCsvToDepot(){
-  const txt = document.getElementById("bulkCsv").value;
-  if(!txt.trim()) return toast("CSV boş.");
-  const rows = parseCSV(txt);
-  if(rows.length===0) return toast("CSV okunamadı.");
 
-  let start = 0;
-  if(rows[0][0]?.toLowerCase() === "lang") start = 1;
+  // ---------------- Dashboard ----------------
+  function renderDash(){
+    document.getElementById("dashTotal").textContent = state.cards.length;
+    document.getElementById("dashDue").textContent = state.cards.filter(c => (c.due||0) <= Date.now()).length;
 
-  let added = 0, skipped = 0;
-  for(let i=start;i<rows.length;i++){
-    const r = rows[i];
-    const lang = r[0] || "EN";
-    const word = r[1] || "";
-    const meaning = r[2] || "";
-    const tags = r[5] || "";
-    if(!norm(word) || !norm(meaning)) { skipped++; continue; }
-    depotUpsert({ lang, word, meaning, source:"manual", tags });
-    added++;
+    const activity = DB.get("lm_activity", {});
+    const today = new Date();
+    let streak = 0;
+    for(let i=0;i<365;i++){
+      const d = new Date(today); d.setDate(d.getDate()-i);
+      const k = d.toISOString().slice(0,10);
+      if((activity[k]||0)>0) streak++;
+      else break;
+    }
+    document.getElementById("dashStreak").textContent = streak + " Gün";
+
+    let week = 0;
+    for(let i=0;i<7;i++){
+      const d = new Date(today); d.setDate(d.getDate()-i);
+      const k = d.toISOString().slice(0,10);
+      week += (activity[k]||0);
+    }
+    document.getElementById("dashWeek").textContent = week;
   }
-  toast(`${added} depo kaydı ✅ (skip: ${skipped})`);
-  renderDepot();
-}
 
-/* =========================================================
-  PACKS (sample packs - replace with your big lists later)
-========================================================= */
-const PACKS = {
-  A1: [
-    {lang:"EN", term:"notice", meaning:"fark etmek", level:"A2", tags:"verb;common", category:"Daily", example:"I noticed a light."},
-    {lang:"EN", term:"across", meaning:"karşıdan karşıya / boyunca", level:"A1", tags:"prep", category:"Daily", example:"We walked across the street."},
-    {lang:"EN", term:"still", meaning:"hala", level:"A1", tags:"adv", category:"Daily", example:"It is still raining."},
-  ],
-  A2: [
-    {lang:"EN", term:"matter", meaning:"mesele / önemsemek", level:"A2", tags:"verb;noun", category:"Daily", example:"It doesn't matter."},
-    {lang:"EN", term:"wonder", meaning:"merak etmek", level:"A2", tags:"verb", category:"Daily", example:"I wonder what happened."},
-  ],
-  B1: [
-    {lang:"EN", term:"assume", meaning:"varsaymak", level:"B1", tags:"verb", category:"Academic"},
-    {lang:"EN", term:"estimate", meaning:"tahmin etmek", level:"B1", tags:"verb", category:"Business"},
-  ],
-  B2: [
-    {lang:"EN", term:"nevertheless", meaning:"yine de", level:"B2", tags:"linker", category:"Academic"},
-    {lang:"EN", term:"subsequently", meaning:"sonrasında", level:"B2", tags:"adv", category:"Academic"},
-  ],
-  C1: [
-    {lang:"EN", term:"scrutinize", meaning:"didik didik incelemek", level:"C1", tags:"verb", category:"Academic"},
-    {lang:"EN", term:"substantiate", meaning:"kanıtlamak / desteklemek", level:"C1", tags:"verb", category:"Academic"},
-  ],
-  ENG: [
-    {lang:"EN", term:"rebar", meaning:"donatı demiri", level:"B1", tags:"construction", category:"Construction"},
-    {lang:"EN", term:"formwork", meaning:"kalıp (sistem)", level:"B1", tags:"construction", category:"Construction"},
-    {lang:"EN", term:"bearing capacity", meaning:"taşıma gücü", level:"B2", tags:"geotechnical", category:"Construction"},
-    {lang:"EN", term:"settlement", meaning:"oturma / çökmenin oturması", level:"B2", tags:"geotechnical", category:"Construction"},
-  ]
-};
-
-function previewPack(){
-  const k = document.getElementById("packSelect").value;
-  const arr = PACKS[k] || [];
-  document.getElementById("packPreview").textContent =
-    `Paket: ${k} • Kayıt: ${arr.length} • Örnek: ` + (arr[0] ? `${arr[0].term} — ${arr[0].meaning}` : "-");
-}
-function addPackToDepot(){
-  const k = document.getElementById("packSelect").value;
-  const arr = PACKS[k] || [];
-  let added = 0;
-  for(const it of arr){
-    depotUpsert({ lang: it.lang, word: it.term, meaning: it.meaning, source:"manual", tags: it.tags });
-    added++;
+  // ---------------- Review Page ----------------
+  function getDueCards(){
+    const now = Date.now();
+    return state.cards.filter(c => (c.due||0) <= now);
   }
-  toast(`${added} kayıt depoya eklendi ✅`);
-  renderDepot();
-}
-function addPackToCards(){
-  const k = document.getElementById("packSelect").value;
-  const arr = PACKS[k] || [];
-  let added = 0, skipped = 0;
-  for(const it of arr){
-    const coll = findCardByTerm(it.lang, it.term);
-    if(coll){ skipped++; continue; }
-    state.cards.push(newCard({
-      lang: it.lang,
-      term: it.term,
-      meaning: it.meaning,
-      level: it.level || "UNK",
-      category: it.category || "",
-      tags: it.tags || "",
-      example: it.example || "",
-      note: it.note || ""
+
+  function renderReview(){
+    document.getElementById("rvTotal").textContent = state.cards.length;
+    document.getElementById("rvDue").textContent = getDueCards().length;
+  }
+
+  function resetTodaysQueue(){
+    const due = getDueCards();
+    let q = [];
+    if(due.length > 0){
+      q = due.map(c=>c.id);
+    }else{
+      q = [...state.cards].sort(()=>Math.random()-0.5).slice(0, Math.min(30, state.cards.length)).map(c=>c.id);
+    }
+    state.reviewQueue = q;
+    DB.set("lm_review_queue", state.reviewQueue);
+    toast("Kuyruk yenilendi ✅");
+    renderReview();
+  }
+
+  function clearProgress(){
+    state.cards = state.cards.map(c=>({
+      ...c,
+      due: Date.now(),
+      srs:{ interval:0, reps:0, ef:2.5 }
     }));
-    added++;
-  }
-  saveState();
-  incActivity();
-  toast(`${added} kart eklendi ✅ (skip: ${skipped})`);
-  renderDash(); renderReview(); renderCards();
-}
-
-/* =========================================================
-  QUIZ ENGINE
-========================================================= */
-let quiz = {
-  mode: "mixed",
-  direction: "term_to_meaning",
-  adaptive: "on",
-  count: 20,
-  onlyLeech: false,
-  onlyLevel: "",
-  pool: [],
-  index: 0,
-  current: null,
-  correct: 0,
-  wrong: 0,
-  wrongIds: [],
-  revealed: false,
-  locked: false
-};
-
-function applyQuizConfig(){
-  state.settings.quizMode = document.getElementById("qcMode").value;
-  state.settings.quizCount = parseInt(document.getElementById("qcCount").value,10) || 20;
-  state.settings.quizDirection = document.getElementById("qcDirection").value;
-  state.settings.quizAdaptive = document.getElementById("qcAdaptive").value;
-  saveState();
-  toast("Quiz ayarı uygulandı ✅");
-  closeSheets();
-}
-
-function startQuiz(kind){
-  if(state.cards.length === 0) return toast("Kart yok. Önce kelime ekle.");
-
-  // Build pool
-  let pool = [...state.cards];
-
-  if(kind === "due"){
-    pool = pool.filter(isDue);
-    if(pool.length === 0) pool = [...state.cards]; // fallback
-  }
-  if(kind === "practice"){
-    // random but include leech weight
-    // no filter
+    DB.set("lm_cards", state.cards);
+    toast("SRS sıfırlandı ✅");
+    renderDash(); renderReview(); renderCards();
   }
 
-  // apply config
-  const mode = state.settings.quizMode || "mixed";
-  const count = state.settings.quizCount || 20;
-  const dir = state.settings.quizDirection || "term_to_meaning";
-  const adaptive = state.settings.quizAdaptive || "on";
+  // ---------------- Quiz Engine ----------------
+  let quizCurrent = null; // { card, choices[], correctIndex }
+  let quizSelectedChoiceIndex = null;
+  let quizMode = "choice"; // "choice" | "typing"
+  let wrongCardsThisQuiz = [];
 
-  quiz.mode = mode;
-  quiz.count = count;
-  quiz.direction = dir;
-  quiz.adaptive = adaptive;
-  quiz.onlyLeech = false;
-  quiz.onlyLevel = "";
-
-  // shuffle with leech weight if practice
-  pool = weightShuffle(pool, kind);
-
-  // limit
-  if(quiz.count !== 9999) pool = pool.slice(0, Math.min(pool.length, quiz.count));
-
-  // init
-  quiz.pool = pool;
-  quiz.index = 0;
-  quiz.correct = 0;
-  quiz.wrong = 0;
-  quiz.wrongIds = [];
-  quiz.current = null;
-  quiz.revealed = false;
-  quiz.locked = false;
-
-  openQuizOverlay();
-  renderQuizHeader();
-  nextQuestion();
-}
-
-function weightShuffle(arr, kind){
-  // due: prioritize most overdue and leech
-  // practice: mix leech + weaker stats
-  const a = [...arr];
-  if(kind === "due"){
-    a.sort((x,y)=>{
-      const dx = (now() - (x.due||0));
-      const dy = (now() - (y.due||0));
-      const lx = x.stats?.leech ? 1 : 0;
-      const ly = y.stats?.leech ? 1 : 0;
-      // leech first, then most overdue
-      if(ly !== lx) return ly - lx;
-      return dy - dx;
-    });
-    return a;
-  }
-  // practice
-  a.sort(()=>Math.random()-0.5);
-  // bring leech forward slightly
-  const leeches = a.filter(c=>c.stats?.leech);
-  const rest = a.filter(c=>!c.stats?.leech);
-  return [...leeches, ...rest].sort(()=>Math.random()-0.5);
-}
-
-function openQuizOverlay(){
-  document.getElementById("quizOverlay").classList.add("open");
-  document.getElementById("quizSummary").style.display = "none";
-  document.getElementById("qReveal").textContent = "";
-  document.getElementById("qGrade").style.display = "none";
-}
-function stopQuiz(){
-  document.getElementById("quizOverlay").classList.remove("open");
-  quiz.current = null;
-  renderDash(); renderReview(); renderCards();
-}
-
-function renderQuizHeader(){
-  document.getElementById("qTotal").textContent = quiz.pool.length;
-  document.getElementById("qRemain").textContent = (quiz.pool.length - quiz.index);
-  document.getElementById("qCorrect").textContent = quiz.correct;
-  document.getElementById("qWrong").textContent = quiz.wrong;
-  document.getElementById("qMode").textContent = quiz.mode;
-  const prog = quiz.pool.length ? (quiz.index / quiz.pool.length) * 100 : 0;
-  document.getElementById("qProg").style.width = prog + "%";
-}
-
-function nextQuestion(){
-  quiz.revealed = false;
-  quiz.locked = false;
-  document.getElementById("qReveal").textContent = "";
-  document.getElementById("qGrade").style.display = "none";
-  document.getElementById("qInput").value = "";
-  document.getElementById("qInput").classList.remove("correct","wrong");
-
-  if(quiz.index >= quiz.pool.length){
-    showSummary();
-    return;
+  function updateQuizProgressUI(){
+    const total = parseInt(document.getElementById("qTotal").textContent) || 0;
+    const remain = parseInt(document.getElementById("qRemain").textContent) || 0;
+    const done = total - remain;
+    const pct = total ? Math.round((done/total)*100) : 0;
+    document.getElementById("qProg").style.width = pct + "%";
   }
 
-  const card = quiz.pool[quiz.index];
-  quiz.current = card;
-
-  // direction
-  const prompt = (quiz.direction==="term_to_meaning") ? card.term : card.meaning;
-  const answer = (quiz.direction==="term_to_meaning") ? card.meaning : card.term;
-
-  document.getElementById("qWord").textContent = prompt;
-  document.getElementById("qMeta").textContent =
-    `${card.lang} • ${card.level || "UNK"} • Due: ${isDue(card) ? "YES" : "NO"} • EF:${(card.srs?.ef||2.5).toFixed(2)} • Seen:${card.stats?.seen||0}`;
-
-  // mode
-  const mode = quiz.mode === "mixed" ? (Math.random()<0.55 ? "mcq" : "typing") : quiz.mode;
-  currentRenderedMode = mode;
-
-  if(mode === "typing"){
-    document.getElementById("qChoices").innerHTML = "";
-    document.getElementById("qTyping").style.display = "flex";
-    document.getElementById("qInput").placeholder = (quiz.direction==="term_to_meaning")
-      ? "Türkçesini yaz..."
-      : "İngilizce/terimi yaz...";
-    setTimeout(()=>document.getElementById("qInput").focus(), 30);
-  } else {
-    document.getElementById("qTyping").style.display = "none";
-    renderChoices(card, answer);
-  }
-
-  renderQuizHeader();
-}
-
-let currentRenderedMode = "mcq";
-
-function renderChoices(card, answer){
-  const box = document.getElementById("qChoices");
-  box.innerHTML = "";
-
-  const choices = buildChoices(card, answer, 4);
-
-  choices.forEach((ch, idx)=>{
-    const btn = document.createElement("div");
-    btn.className = "qChoice";
-    btn.textContent = ch;
-    btn.onclick = ()=>selectChoice(idx, ch, answer, btn);
-    box.appendChild(btn);
-  });
-}
-
-function buildChoices(card, answer, n){
-  // Adaptive distractors: similar length, same level/lang preferred, or frequent wrong
-  let pool = state.cards.filter(c=>c.id!==card.id);
-
-  // same lang bias
-  const sameLang = pool.filter(c=>c.lang===card.lang);
-  if(sameLang.length >= 10) pool = sameLang;
-
-  const dir = quiz.direction;
-  const candidateText = (c) => (dir==="term_to_meaning") ? c.meaning : c.term;
-
-  let distractors = [];
-
-  if(quiz.adaptive === "on"){
-    // prefer similar length (string length)
-    const targetLen = (answer||"").length;
-    pool.sort((a,b)=>{
-      const da = Math.abs(candidateText(a).length - targetLen);
-      const db = Math.abs(candidateText(b).length - targetLen);
-      // leech distractors are strong confusers
-      const la = a.stats?.leech ? -1 : 0;
-      const lb = b.stats?.leech ? -1 : 0;
-      return (da - db) + (la - lb);
-    });
-    distractors = pool.slice(0, 20).map(candidateText).filter(Boolean);
-  } else {
-    pool.sort(()=>Math.random()-0.5);
-    distractors = pool.slice(0, 30).map(candidateText).filter(Boolean);
-  }
-
-  distractors = uniq(distractors).filter(x=>normKey(x) !== normKey(answer));
-  distractors = distractors.slice(0, n-1);
-
-  const all = [...distractors, answer];
-  // shuffle
-  all.sort(()=>Math.random()-0.5);
-  return all;
-}
-
-function lockChoices(){
-  document.querySelectorAll(".qChoice").forEach(b=>b.style.pointerEvents="none");
-}
-function unlockChoices(){
-  document.querySelectorAll(".qChoice").forEach(b=>b.style.pointerEvents="auto");
-}
-
-function selectChoice(idx, chosen, answer, btn){
-  if(quiz.locked) return;
-  quiz.locked = true;
-  lockChoices();
-
-  const correct = normKey(chosen) === normKey(answer);
-  revealAnswer(correct, answer);
-
-  // mark styles
-  document.querySelectorAll(".qChoice").forEach(el=>{
-    if(normKey(el.textContent) === normKey(answer)) el.classList.add("correct");
-  });
-  if(!correct) btn.classList.add("wrong");
-
-  // show grading buttons
-  document.getElementById("qGrade").style.display = "flex";
-}
-
-function checkTyping(){
-  if(quiz.locked) return;
-  const card = quiz.current;
-  if(!card) return;
-
-  const answer = (quiz.direction==="term_to_meaning") ? card.meaning : card.term;
-  const user = document.getElementById("qInput").value.trim();
-
-  if(!user) return toast("Cevap yaz.");
-
-  quiz.locked = true;
-
-  const ok = fuzzyMatch(user, answer);
-  document.getElementById("qInput").classList.add(ok ? "correct" : "wrong");
-  revealAnswer(ok, answer);
-
-  document.getElementById("qGrade").style.display = "flex";
-}
-
-function fuzzyMatch(user, answer){
-  const a = normKey(answer);
-  const u = normKey(user);
-  if(u === a) return true;
-  // allow contains for Turkish meanings
-  if(quiz.direction==="term_to_meaning"){
-    // accept if user contains one of the meaning segments split by / or ;
-    const parts = a.split(/[\/;]|,/g).map(x=>x.trim()).filter(Boolean);
-    if(parts.some(p => p.length>=3 && u.includes(p))) return true;
-  }
-  // small typo tolerance (Levenshtein <= 1 for short words)
-  if(a.length <= 8){
-    return levenshtein(u, a) <= 1;
-  }
-  return false;
-}
-
-function levenshtein(a,b){
-  const m = a.length, n = b.length;
-  const dp = Array.from({length:m+1}, ()=>Array(n+1).fill(0));
-  for(let i=0;i<=m;i++) dp[i][0]=i;
-  for(let j=0;j<=n;j++) dp[0][j]=j;
-  for(let i=1;i<=m;i++){
-    for(let j=1;j<=n;j++){
-      const cost = a[i-1]===b[j-1] ? 0 : 1;
-      dp[i][j]=Math.min(
-        dp[i-1][j]+1,
-        dp[i][j-1]+1,
-        dp[i-1][j-1]+cost
-      );
-    }
-  }
-  return dp[m][n];
-}
-
-function revealAnswer(correct, answer){
-  const card = quiz.current;
-  if(!card) return;
-
-  // update stats
-  card.stats = card.stats || { seen:0, correct:0, wrong:0, streakWrong:0, leech:false };
-  card.stats.seen++;
-  if(correct){
-    quiz.correct++;
-    card.stats.correct++;
-    card.stats.streakWrong = 0;
-  } else {
-    quiz.wrong++;
-    card.stats.wrong++;
-    card.stats.streakWrong = (card.stats.streakWrong||0) + 1;
-    quiz.wrongIds.push(card.id);
-  }
-
-  // leech detection: wrong >= 8 OR streakWrong >= 3
-  const wrongCount = card.stats.wrong || 0;
-  card.stats.leech = (wrongCount >= 8) || ((card.stats.streakWrong||0) >= 3);
-
-  // show reveal line
-  document.getElementById("qReveal").textContent =
-    correct ? `✅ Doğru: ${answer}` : `❌ Doğru cevap: ${answer}`;
-
-  // mark activity (one action)
-  incActivity();
-  saveState();
-  renderQuizHeader();
-}
-
-/* SRS (SM-2 inspired) */
-function srsUpdate(card, quality){
-  // quality: 0..5
-  let s = card.srs || { interval:0, reps:0, ef:2.5 };
-  let { interval, reps, ef } = s;
-
-  if(quality >= 3){
-    if(reps === 0) interval = 1;
-    else if(reps === 1) interval = 6;
-    else interval = Math.round(interval * ef);
-
-    reps++;
-    ef = ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
-    if(ef < 1.3) ef = 1.3;
-  } else {
-    reps = 0;
-    interval = 1;
-  }
-
-  card.srs = { interval, reps, ef };
-  card.due = now() + interval * 24*60*60*1000;
-}
-
-function gradeAndNext(level){
-  const card = quiz.current;
-  if(!card) return;
-
-  // map grades
-  const q = (level==="easy") ? 5 : (level==="medium") ? 4 : 3;
-
-  srsUpdate(card, q);
-  card.updatedAt = now();
-
-  saveState();
-
-  // next
-  quiz.index++;
-  quiz.locked = false;
-  unlockChoices();
-  nextQuestion();
-}
-
-function showSummary(){
-  document.getElementById("qChoices").innerHTML = "";
-  document.getElementById("qTyping").style.display = "none";
-  document.getElementById("qGrade").style.display = "none";
-  document.getElementById("qReveal").textContent = "";
-
-  const total = quiz.correct + quiz.wrong;
-  const rate = total ? Math.round((quiz.correct/total)*100) : 0;
-  document.getElementById("sumCorrect").textContent = quiz.correct;
-  document.getElementById("sumWrong").textContent = quiz.wrong;
-  document.getElementById("sumRate").textContent = rate + "%";
-
-  document.getElementById("quizSummary").style.display = "block";
-  document.getElementById("qWord").textContent = "Bitti ✅";
-  document.getElementById("qMeta").textContent = "İstersen yanlışları tekrar sorabilirsin.";
-  document.getElementById("qProg").style.width = "100%";
-  document.getElementById("qRemain").textContent = "0";
-  saveState();
-
-  renderDash(); renderReview(); renderCards();
-}
-
-function repeatWrong(){
-  if(quiz.wrongIds.length === 0){
-    toast("Yanlış yok.");
-    stopQuiz();
-    return;
-  }
-  const wrongCards = quiz.wrongIds
-    .map(id=>findCardById(id))
-    .filter(Boolean);
-
-  quiz.pool = wrongCards;
-  quiz.index = 0;
-  quiz.correct = 0;
-  quiz.wrong = 0;
-  quiz.wrongIds = [];
-  document.getElementById("quizSummary").style.display = "none";
-  nextQuestion();
-}
-
-/* Extra quiz actions */
-function speakQuiz(){
-  const card = quiz.current;
-  if(!card) return;
-  const text = (quiz.direction==="term_to_meaning") ? card.term : card.meaning;
-  // meaning-to-term direction: speak the term if exists
-  const lang = card.lang || "EN";
-  speakText(text, lang);
-}
-function flagCard(){
-  const card = quiz.current;
-  if(!card) return;
-  state.flags[card.id] = !state.flags[card.id];
-  saveState();
-  toast(state.flags[card.id] ? "İşaretlendi 🚩" : "İşaret kaldırıldı");
-}
-
-/* Keyboard shortcuts for quiz */
-document.addEventListener("keydown", (e)=>{
-  if(!document.getElementById("quizOverlay").classList.contains("open")) return;
-
-  if(e.key === "Escape"){
-    e.preventDefault();
-    stopQuiz();
-    return;
-  }
-  if(e.key.toLowerCase() === "s"){
-    e.preventDefault();
-    speakQuiz();
-    return;
-  }
-  if(["1","2","3","4"].includes(e.key)){
-    // choose option
-    const idx = parseInt(e.key,10) - 1;
-    const choices = Array.from(document.querySelectorAll(".qChoice"));
-    if(choices[idx] && !quiz.locked){
-      choices[idx].click();
-    }
-    return;
-  }
-  if(e.key === "Enter"){
-    // typing check or if already locked, grade medium as quick continue
-    if(currentRenderedMode === "typing" && !quiz.locked){
-      e.preventDefault();
-      checkTyping();
+  function startReviewQuiz(){
+    if(state.cards.length === 0){
+      toast("Kart yok. Önce kart ekle.");
       return;
     }
-    // if locked and grade shown, continue with medium
-    const gradeVisible = document.getElementById("qGrade").style.display !== "none";
-    if(gradeVisible){
-      e.preventDefault();
-      gradeAndNext("medium");
-      return;
+    if(!state.reviewQueue || state.reviewQueue.length === 0){
+      resetTodaysQueue();
+    }
+
+    const total = state.reviewQueue.length;
+    document.getElementById("qTotal").textContent = total;
+    document.getElementById("qRemain").textContent = total;
+    document.getElementById("qCorrect").textContent = 0;
+    document.getElementById("qWrong").textContent = 0;
+    document.getElementById("qReveal").textContent = "";
+    wrongCardsThisQuiz = [];
+
+    document.getElementById("quizBody").style.display = "block";
+    document.getElementById("quizSummary").style.display = "none";
+
+    syncQuizModeUI();
+    openQuizOverlay();
+    nextQuizQuestion();
+  }
+
+  function openQuizOverlay(){
+    document.getElementById("quizOverlay").classList.add("open");
+  }
+  function stopQuiz(){
+    document.getElementById("quizOverlay").classList.remove("open");
+    quizCurrent = null;
+    quizSelectedChoiceIndex = null;
+    renderDash();
+    renderReview();
+  }
+
+  function syncQuizModeUI(){
+    document.getElementById("qModeLabel").textContent = (quizMode === "choice") ? "Çoktan Seçmeli" : "Yazma";
+    document.getElementById("qChoices").style.display = (quizMode === "choice") ? "flex" : "none";
+    document.getElementById("qTyping").style.display = (quizMode === "typing") ? "flex" : "none";
+    document.getElementById("qReveal").textContent = "";
+    const input = document.getElementById("qInput");
+    input.value = "";
+    input.classList.remove("correct","wrong");
+  }
+
+  function toggleQuizMode(){
+    quizMode = (quizMode === "choice") ? "typing" : "choice";
+    toast("Quiz modu: " + (quizMode === "choice" ? "Çoktan Seçmeli" : "Yazma"));
+    syncQuizModeUI();
+    // mevcut soru varsa yeniden bas
+    if(quizCurrent){
+      if(quizMode === "choice"){
+        renderChoices(quizCurrent);
+      }else{
+        document.getElementById("qChoices").innerHTML = "";
+      }
     }
   }
-});
 
-/* =========================================================
-  QUIZ config in settings sheet
-========================================================= */
-function loadSettingsIntoUI(){
-  document.getElementById("themeSelect").value = state.settings.theme || "dark";
-  document.getElementById("setQuizMode").value = state.settings.quizMode || "mixed";
-  document.getElementById("setQuizCount").value = String(state.settings.quizCount || 20);
-  document.getElementById("setQuizDirection").value = state.settings.quizDirection || "term_to_meaning";
-  document.getElementById("setQuizAdaptive").value = state.settings.quizAdaptive || "on";
-}
+  function nextQuizQuestion(){
+    if(state.reviewQueue.length === 0){
+      showQuizSummary();
+      return;
+    }
 
-/* =========================================================
-  INIT
-========================================================= */
-setTheme(state.settings.theme || "dark");
-loadSettingsIntoUI();
-renderDash();
-renderReview();
-renderCards();
-renderDepot();
-previewPack(); // initial preview
+    const total = parseInt(document.getElementById("qTotal").textContent) || 0;
+    document.getElementById("qRemain").textContent = state.reviewQueue.length;
+    updateQuizProgressUI();
 
+    const id = state.reviewQueue.shift();
+    DB.set("lm_review_queue", state.reviewQueue);
+
+    const card = state.cards.find(c=>c.id===id);
+    if(!card){
+      nextQuizQuestion();
+      return;
+    }
+
+    // generate choices
+    const pool = state.cards.filter(c=>c.id!==card.id).sort(()=>Math.random()-0.5);
+    const distractors = pool.slice(0,3).map(x=>x.meaning).filter(Boolean);
+    const baseChoices = [...new Set([...distractors, card.meaning])];
+    while(baseChoices.length < 4 && pool.length){
+      const extra = pool.pop()?.meaning;
+      if(extra && !baseChoices.includes(extra)) baseChoices.push(extra);
+    }
+    const choices = baseChoices.sort(()=>Math.random()-0.5);
+    const correctIndex = choices.indexOf(card.meaning);
+
+    quizCurrent = { card, choices, correctIndex };
+    quizSelectedChoiceIndex = null;
+
+    document.getElementById("qMeta").textContent =
+      `${card.lang} • ${card.type||'word'} • ${card.level||'UNK'} • Due: ${((card.due||0) <= Date.now()) ? 'YES' : 'NO'}`;
+    document.getElementById("qWord").textContent = card.term;
+
+    document.getElementById("qReveal").textContent = "";
+    const input = document.getElementById("qInput");
+    input.value = "";
+    input.classList.remove("correct","wrong");
+
+    if(quizMode === "choice"){
+      renderChoices(quizCurrent);
+    }else{
+      document.getElementById("qChoices").innerHTML = "";
+      document.getElementById("qTyping").style.display = "flex";
+      document.getElementById("qChoices").style.display = "none";
+      setTimeout(()=>document.getElementById("qInput").focus(), 80);
+    }
+  }
+
+  function renderChoices(qc){
+    const box = document.getElementById("qChoices");
+    box.innerHTML = "";
+    qc.choices.forEach((ch, idx)=>{
+      const b = document.createElement("button");
+      b.className = "qChoice";
+      b.textContent = ch;
+      b.onclick = ()=>selectChoice(idx);
+      box.appendChild(b);
+    });
+  }
+
+  function bumpCounters(isCorrect){
+    const correct = parseInt(document.getElementById("qCorrect").textContent) || 0;
+    const wrong = parseInt(document.getElementById("qWrong").textContent) || 0;
+    if(isCorrect) document.getElementById("qCorrect").textContent = correct + 1;
+    else document.getElementById("qWrong").textContent = wrong + 1;
+  }
+
+  function selectChoice(idx){
+    quizSelectedChoiceIndex = idx;
+    const all = Array.from(document.querySelectorAll(".qChoice"));
+    all.forEach(b=>b.disabled = true);
+
+    const qc = quizCurrent;
+    if(!qc) return;
+
+    const isCorrect = idx === qc.correctIndex;
+
+    all.forEach((b,i)=>{
+      if(i === qc.correctIndex) b.classList.add("correct");
+    });
+    if(!isCorrect){
+      all[idx]?.classList.add("wrong");
+      wrongCardsThisQuiz.push(qc.card.id);
+      document.getElementById("qReveal").textContent = `Doğru: ${qc.card.meaning}`;
+    }
+
+    bumpCounters(isCorrect);
+
+    // grade: correct -> 4, wrong -> 2
+    gradeAndContinue(isCorrect ? 4 : 2);
+  }
+
+  function normalizeMeaningForCompare(s){
+    return (s||"")
+      .toLowerCase()
+      .trim()
+      .replaceAll("’","'")
+      .replaceAll("“","\"")
+      .replaceAll("”","\"")
+      .replace(/[^\p{L}\p{N}\s-]/gu, "")
+      .replace(/\s+/g, " ");
+  }
+
+  function checkTypingAnswer(){
+    if(!quizCurrent) return;
+    const input = document.getElementById("qInput");
+    const user = normalizeMeaningForCompare(input.value);
+    const ans = normalizeMeaningForCompare(quizCurrent.card.meaning);
+
+    const ok = user.length >= 2 && (ans.includes(user) || user.includes(ans));
+    input.classList.remove("correct","wrong");
+    input.classList.add(ok ? "correct" : "wrong");
+
+    if(!ok){
+      wrongCardsThisQuiz.push(quizCurrent.card.id);
+      document.getElementById("qReveal").textContent = `Doğru: ${quizCurrent.card.meaning}`;
+    }else{
+      document.getElementById("qReveal").textContent = "✅ Doğru";
+    }
+
+    bumpCounters(ok);
+
+    // typing grading: ok->4, wrong->1
+    setTimeout(()=>gradeAndContinue(ok ? 4 : 1), 650);
+  }
+
+  function gradeAndContinue(q){
+    if(!quizCurrent) return;
+    const card = quizCurrent.card;
+
+    // SRS update
+    const upd = srsCalc(card, q);
+    card.due = upd.due;
+    card.srs = upd.srs;
+
+    // activity
+    const activity = DB.get("lm_activity", {});
+    const k = new Date().toISOString().slice(0,10);
+    activity[k] = (activity[k] || 0) + 1;
+    DB.set("lm_activity", activity);
+
+    DB.set("lm_cards", state.cards);
+
+    // remaining UI
+    document.getElementById("qRemain").textContent = state.reviewQueue.length;
+    updateQuizProgressUI();
+
+    setTimeout(()=>nextQuizQuestion(), 650);
+  }
+
+  function showQuizSummary(){
+    const correctCount = parseInt(document.getElementById('qCorrect').textContent) || 0;
+    const wrongCount = parseInt(document.getElementById('qWrong').textContent) || 0;
+    document.getElementById('sumCorrect').textContent = correctCount;
+    document.getElementById('sumWrong').textContent = wrongCount;
+    const total = correctCount + wrongCount;
+    const rate = total ? Math.round((correctCount / total) * 100) : 0;
+    document.getElementById('sumRate').textContent = rate + '%';
+
+    document.getElementById('quizBody').style.display = 'none';
+    document.getElementById('quizSummary').style.display = 'block';
+  }
+
+  function repeatWrongQuiz(){
+    if(wrongCardsThisQuiz.length === 0){
+      toast('Yanlış yok.');
+      stopQuiz();
+      return;
+    }
+    state.reviewQueue = [...new Set(wrongCardsThisQuiz)];
+    DB.set('lm_review_queue', state.reviewQueue);
+    wrongCardsThisQuiz = [];
+
+    document.getElementById('quizSummary').style.display = 'none';
+    document.getElementById('quizBody').style.display = 'block';
+
+    const total = state.reviewQueue.length;
+    document.getElementById('qTotal').textContent = total;
+    document.getElementById('qRemain').textContent = total;
+    document.getElementById('qCorrect').textContent = 0;
+    document.getElementById('qWrong').textContent = 0;
+    updateQuizProgressUI();
+
+    nextQuizQuestion();
+  }
+
+  // ---------------- Speech ----------------
+  function speakQuizWord(){
+    const txt = document.getElementById("qWord").textContent || "";
+    const lang = (quizCurrent?.card?.lang) || "EN";
+    const u = new SpeechSynthesisUtterance(txt);
+    const map = {EN:"en-US", RU:"ru-RU", DE:"de-DE", FR:"fr-FR", TR:"tr-TR"};
+    u.lang = map[lang] || "en-US";
+    u.rate = 0.9;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }
+
+  // ---------------- Import/Export ----------------
+  function exportAll(){
+    const data = JSON.stringify({
+      settings: state.settings,
+      cards: state.cards,
+      cache: state.txCache
+    }, null, 2);
+    prompt("Kopyala (Export JSON):", data);
+  }
+
+  function importAllPrompt(){
+    const txt = prompt("Import JSON yapıştır:");
+    if(!txt) return;
+    try{
+      const obj = JSON.parse(txt);
+      if(obj.settings) state.settings = obj.settings;
+      if(obj.cards) state.cards = obj.cards;
+      if(obj.cache) state.txCache = obj.cache;
+
+      saveAllState();
+      setTheme(state.settings.theme || "dark");
+      toast("Import tamam ✅");
+      renderDash(); renderCards(); renderReview();
+    }catch(e){
+      toast("Import hata");
+    }
+  }
+
+  function hardReset(){
+    if(!confirm("Her şeyi sıfırlamak istiyor musun?")) return;
+    localStorage.removeItem("lm_settings");
+    localStorage.removeItem("lm_cards");
+    localStorage.removeItem("lm_tx_cache");
+    localStorage.removeItem("lm_review_queue");
+    localStorage.removeItem("lm_activity");
+    location.reload();
+  }
+
+  // ---------------- Wire auto-fill events ----------------
+  document.getElementById("csTerm").addEventListener("input", autoFillManualEntryDebounced);
+  document.getElementById("csLang").addEventListener("change", autoFillManualEntryDebounced);
+
+  // ---------------- Init ----------------
+  setTheme(state.settings.theme || "dark");
+  renderDash();
+  renderCards();
+  renderReview();
+
+  // make sure select sync
+  window.addEventListener("load", ()=>{
+    const sel = document.getElementById("themeSelect");
+    if(sel) sel.value = state.settings.theme || "dark";
+  });
+
+  // Ensure review queue exists
+  if(!state.reviewQueue) state.reviewQueue = [];
 </script>
 </body>
 </html>
