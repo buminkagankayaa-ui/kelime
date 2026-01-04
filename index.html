@@ -196,6 +196,9 @@
         <button class="btn btnSoft btnHalf" onclick="openManualAdd()">➕ Elle Kelime Ekle</button>
         <button class="btn btnSoft btnHalf" onclick="resetTodaysQueue()">🔁 Kuyruğu Yenile</button>
       </div>
+      <div class="two" style="margin-top:10px;">
+   <button class="btn btnPrimary" style="width:100%;" onclick="openSheet('grammarSheet')">📘 Hızlı Gramer Kitapçığı</button>
+</div>
     </div>
   </section>
 
@@ -362,6 +365,64 @@
 
   <button class="btn btnPrimary" style="width:100%; margin-top:16px;" onclick="copyToManualAdd()">➕ Bu Kelimeyi Karta Ekle</button>
   <button class="btn btnSoft" style="width:100%; margin-top:10px;" onclick="closeSheets()">Kapat</button>
+</div>
+  <div class="sheet" id="grammarSheet" style="height:85vh;">
+  <div class="handle"></div>
+  <h2 class="h2" style="color:var(--primary); text-align:center;">📘 Hızlı Gramer</h2>
+
+  <div class="card" style="margin-bottom:14px; padding:0; overflow:hidden; border:1px solid var(--border);">
+    <div style="background:var(--card2); padding:12px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">⏳ Zamanlar (Tenses)</div>
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+      <tr style="background:color-mix(in srgb, var(--primary) 15%, transparent); color:var(--primary);">
+        <th style="padding:8px; text-align:left;">Zaman</th>
+        <th style="padding:8px; text-align:left;">İpucu</th>
+        <th style="padding:8px; text-align:left;">Örnek</th>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:8px; font-weight:bold;">Present Simple</td>
+        <td style="padding:8px; color:var(--muted);">Genel / Her zaman</td>
+        <td style="padding:8px;">I <b style="color:var(--primary)">play</b>.</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:8px; font-weight:bold;">Present Cont.</td>
+        <td style="padding:8px; color:var(--muted);">Şu an</td>
+        <td style="padding:8px;">I am <b style="color:var(--primary)">playing</b>.</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:8px; font-weight:bold;">Past Simple</td>
+        <td style="padding:8px; color:var(--muted);">Geçmiş (Bitti)</td>
+        <td style="padding:8px;">I <b style="color:var(--primary)">played</b>.</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:8px; font-weight:bold;">Future (Will)</td>
+        <td style="padding:8px; color:var(--muted);">Gelecek</td>
+        <td style="padding:8px;">I <b style="color:var(--primary)">will play</b>.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card" style="margin-bottom:14px;">
+    <div style="font-weight:900; color:var(--warn); margin-bottom:10px; text-align:center;">📍 IN - ON - AT Kuralı</div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; text-align:center;">
+      <div style="background:var(--card2); padding:10px 4px; border-radius:12px; border:1px solid var(--border);">
+        <div style="font-weight:900; color:var(--text); font-size:20px;">AT</div>
+        <div style="font-size:11px; margin-top:4px; font-weight:bold;">SAAT</div>
+        <div style="font-size:10px; color:var(--muted); margin-top:4px;">at 5:00</div>
+      </div>
+      <div style="background:var(--card2); padding:10px 4px; border-radius:12px; border:1px solid var(--border);">
+        <div style="font-weight:900; color:var(--text); font-size:20px;">ON</div>
+        <div style="font-size:11px; margin-top:4px; font-weight:bold;">GÜN</div>
+        <div style="font-size:10px; color:var(--muted); margin-top:4px;">on Monday</div>
+      </div>
+      <div style="background:var(--card2); padding:10px 4px; border-radius:12px; border:1px solid var(--border);">
+        <div style="font-weight:900; color:var(--text); font-size:20px;">IN</div>
+        <div style="font-size:11px; margin-top:4px; font-weight:bold;">AY / YIL</div>
+        <div style="font-size:10px; color:var(--muted); margin-top:4px;">in 2024</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn btnSoft" style="width:100%; margin-top:20px;" onclick="closeSheets()">Kapat</button>
 </div>
 <div class="overlay" id="quizOverlay">
   <div class="overlayTop">
