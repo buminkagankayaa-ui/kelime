@@ -168,11 +168,22 @@
 <div id="viewport">
   <section class="view active" id="home">
     <div class="secTitle">Genel Bakış</div>
-    <div class="card" style="margin-bottom:14px; border:1px solid var(--primary);">
-  <div style="font-weight:980; color:var(--primary); margin-bottom:8px;">🚀 Hızlı Çeviri & Sözlük</div>
-  <div style="display:flex; gap:8px;">
-    <input id="quickTransInput" placeholder="Kelime yaz (Her dilde)..." style="background:var(--bg);" onkeydown="if(event.key==='Enter') doQuickTranslate()" />
-    <button class="iconBtn" style="background:var(--primary); color:white; border:none;" onclick="doQuickTranslate()">🔎</button>
+    <div class="row" style="gap:10px; margin-bottom:14px;">
+  
+  <div class="card" style="flex:1; border:1px solid var(--primary); padding:10px;">
+    <div style="font-weight:bold; color:var(--primary); font-size:12px; margin-bottom:6px;">🇬🇧 İngilizce ➡️ 🇹🇷 Türkçe</div>
+    <div style="display:flex; gap:6px;">
+      <input id="quickTransInput" placeholder="İngilizce yaz..." style="background:var(--bg); font-size:13px;" onkeydown="if(event.key==='Enter') doQuickTranslate()" />
+      <button class="iconBtn" style="background:var(--primary); color:white; border:none; width:36px; height:36px;" onclick="doQuickTranslate()">🔎</button>
+    </div>
+  </div>
+
+  <div class="card" style="flex:1; border:1px solid var(--warn); padding:10px;">
+    <div style="font-weight:bold; color:var(--warn); font-size:12px; margin-bottom:6px;">🇹🇷 Türkçe ➡️ 🇬🇧 İngilizce</div>
+    <div style="display:flex; gap:6px;">
+      <input id="quickTransInputTR" placeholder="Türkçe yaz..." style="background:var(--bg); font-size:13px;" onkeydown="if(event.key==='Enter') doQuickTranslateTR()" />
+      <button class="iconBtn" style="background:var(--warn); color:white; border:none; width:36px; height:36px;" onclick="doQuickTranslateTR()">🔎</button>
+    </div>
   </div>
 </div>
     <div class="row">
@@ -484,7 +495,6 @@
     <div class="smallInfo" id="qReveal" style="text-align:center; margin-top:10px; min-height:18px;"></div>
 
     <div class="two" style="margin-top:12px;">
-      <button class="btn btnSoft btnHalf" onclick="speakQuizWord()">🔊 Oku</button>
       <button class="btn btnSoft btnHalf" onclick="skipQuestion()">⏭️ Geç</button>
     </div>
 
@@ -1093,8 +1103,12 @@ function updateQuizRemain(){
    GÜNCELLENMİŞ QUIZ GÖRÜNÜMÜ
    (Soru işareti kalktı, şık boşluk geldi)
 =========================== */
+/* ===========================
+   GÜNCELLENMİŞ QUIZ (Sadece EN -> TR ve Context)
+   - Asla Türkçe kelime verip İngilizcesini sormaz.
+   - Ya cümle tamamlatır (En->En) ya da Kelime sorar (En->Tr).
+=========================== */
 function nextQuiz(){
-  // Kuyruk bitti mi?
   if(!state.reviewQueue.length){
     toast("Tebrikler! Hepsi bitti 🎉");
     stopQuiz();
@@ -1102,48 +1116,43 @@ function nextQuiz(){
   }
   updateQuizRemain();
   
-  // Sıradaki kartı al
   const id = state.reviewQueue.shift();
   DB.set("lm_review_queue", state.reviewQueue);
   
   const card = state.cards.find(c => c.id === id);
-  if(!card) return nextQuiz(); // Kart silinmişse atla
+  if(!card) return nextQuiz();
 
   quizCurrent = card;
 
-  // --- SORU HAZIRLAMA ---
-  let questionHtml = ""; // Artık HTML kullanacağız (renkler için)
+  // --- SORU TİPİNİ BELİRLE ---
+  let isContextMode = false;
+  let questionHtml = "";
   let hintText = "";
   
+  // 1. "Cümle Tamamlama" (Context) modu
   if(card.example && card.example.length > 5) {
-     // Kelimeyi cümle içinde bul (Büyük/küçük harf duyarsız)
      const termRegex = new RegExp(`\\b${card.term}\\b`, "gi"); 
-     
-     // YENİ GÖRÜNÜM: Şık bir alt çizgi (Soru işareti YOK)
-     // Rengi temanın rengiyle (var(--primary)) uyumlu
-     const blankStyle = `<span style='color:var(--primary); border-bottom:3px solid var(--primary); font-weight:bold; letter-spacing:2px;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
-     
-     // Kelimeyi gizle
+     const blankStyle = `<span style='color:var(--primary); border-bottom:3px solid var(--primary); font-weight:bold;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
      const hiddenExample = card.example.replace(termRegex, blankStyle);
      
      if(hiddenExample !== card.example){
+        isContextMode = true; 
         questionHtml = hiddenExample; 
-        hintText = "Bu boşluğa hangisi gelmeli?";
-     } else {
-        questionHtml = card.meaning;
-        hintText = "Bu anlam hangisine ait?";
+        hintText = "Boşluğa hangisi gelmeli?";
      }
-  } else {
-     questionHtml = card.meaning;
-     hintText = "Bu anlam hangisine ait?";
   }
 
-  // Ekrana Yazdır (innerHTML kullanıyoruz)
+  // 2. Eğer cümle yoksa: KLASİK MOD (İngilizce Kelime -> Türkçe Anlam)
+  if(!isContextMode) {
+     questionHtml = `<span style="font-size:36px; color:var(--primary);">${card.term}</span>`;
+     hintText = "Bu kelimenin anlamı nedir?";
+  }
+
+  // Ekrana Yazdır
   const qWordEl = document.getElementById("qWord");
   qWordEl.innerHTML = questionHtml; 
-  
-  // Font boyutu ayarı (Cümle çok uzunsa küçült)
-  if(qWordEl.innerText.length > 65) qWordEl.style.fontSize = "20px";
+  if(qWordEl.innerText.length > 60) qWordEl.style.fontSize = "20px";
+  else if(!isContextMode) qWordEl.style.fontSize = "36px";
   else qWordEl.style.fontSize = "28px";
 
   document.getElementById("qMeta").textContent = hintText;
@@ -1151,60 +1160,47 @@ function nextQuiz(){
   document.getElementById("qReveal").textContent="";
 
   // Şıkları Hazırla
-  const mode = getQuizMode();
   const choicesBox = document.getElementById("qChoices");
   const typingBox = document.getElementById("qTyping");
-  const input = document.getElementById("qInput");
   choicesBox.innerHTML = "";
+  typingBox.style.display = "none";
+  choicesBox.style.display = "flex";
 
-  if(mode === "typing"){
-    typingBox.style.display = "flex";
-    choicesBox.style.display = "none";
-    input.value = "";
-    input.placeholder = "Cevabı yazın...";
-    setTimeout(() => input.focus(), 50);
+  let options = [];
+  let correctVal = "";
+
+  if(isContextMode){
+      // Context Modunda şıklar: İNGİLİZCE KELİMELER
+      correctVal = card.term;
+      const distractors = state.cards.filter(c => c.id !== card.id).sort(() => Math.random() - 0.5).slice(0, 3).map(x => x.term);
+      options = [...distractors, correctVal].sort(() => Math.random() - 0.5);
   } else {
-    typingBox.style.display = "none";
-    choicesBox.style.display = "flex";
-    
-    // Şıklar (Kelime Term'leri)
-    const distractors = state.cards
-        .filter(c => c.id !== card.id)
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3)
-        .map(x => x.term); 
-        
-    const options = [...distractors, card.term].sort(() => Math.random() - 0.5);
-    const correctTerm = card.term;
+      // Klasik Modda şıklar: TÜRKÇE ANLAMLAR
+      correctVal = card.meaning;
+      const distractors = state.cards.filter(c => c.id !== card.id).sort(() => Math.random() - 0.5).slice(0, 3).map(x => x.meaning);
+      options = [...distractors, correctVal].sort(() => Math.random() - 0.5);
+  }
 
-    options.forEach((opt, idx) => {
+  options.forEach(opt => {
       const b = document.createElement("button");
       b.className = "qChoice";
       b.textContent = opt; 
       b.onclick = () => {
         document.querySelectorAll(".qChoice").forEach(x => x.disabled = true);
-        
-        if(opt === correctTerm){
+        if(opt === correctVal){
           b.classList.add("correct");
-          // Doğru bilinince cümleyi tamamla ve yeşil yap
-          const completedHtml = card.example.replace(new RegExp(`\\b${card.term}\\b`, "gi"), `<span style='color:var(--ok); font-weight:900;'>${card.term}</span>`);
-          
-          document.getElementById("qWord").innerHTML = completedHtml;
-          document.getElementById("qMeta").innerHTML = `<span style='color:var(--muted)'>${card.meaning}</span>`;
-          
+          if(isContextMode) document.getElementById("qWord").innerHTML = card.example.replace(new RegExp(`\\b${card.term}\\b`, "gi"), `<span style='color:var(--ok); font-weight:900;'>${card.term}</span>`);
+          document.getElementById("qMeta").innerHTML = `<span style='color:var(--ok)'>${card.term}</span> = ${card.meaning}`;
           grade(card, 5, true);
         } else {
           b.classList.add("wrong");
-          document.querySelectorAll(".qChoice").forEach(btn => {
-            if(btn.textContent === correctTerm) btn.classList.add("correct");
-          });
-          document.getElementById("qExample").textContent = `Doğrusu: ${card.example}`;
+          document.querySelectorAll(".qChoice").forEach(btn => { if(btn.textContent === correctVal) btn.classList.add("correct"); });
+          if(isContextMode) document.getElementById("qExample").textContent = `Doğrusu: ${card.example}`;
           grade(card, 2, false);
         }
       };
       choicesBox.appendChild(b);
-    });
-  }
+  });
 }
 function normalizeAnswer(a){
   return norm(a).replace(/[.,!?;:"(){}\[\]<>]/g,"").replace(/\s+/g," ").trim();
@@ -1669,6 +1665,64 @@ if(!state.reviewQueue) state.reviewQueue=[];
     toast(addedCount + " yeni kelime eklendi! 🚀");
   }
 })();
+/* ===========================
+   TÜRKÇE -> İNGİLİZCE ÇEVİRİ MOTORU
+=========================== */
+async function doQuickTranslateTR(){
+  const input = document.getElementById("quickTransInputTR");
+  // Eğer input yoksa hata vermesin
+  if(!input) return;
+
+  const term = input.value.trim();
+  if(!term) return toast("Lütfen Türkçe kelime yazın");
+
+  toast("Çevriliyor... ⏳");
+
+  // Google Translate API: Kaynak=TR, Hedef=EN
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=tr&tl=en&dt=t&dt=bd&q=${encodeURIComponent(term)}`;
+
+  try{
+    const r = await fetch(url);
+    if(!r.ok) throw new Error("Bağlantı hatası");
+    const data = await r.json();
+    
+    // Ana Çeviri (İngilizcesi)
+    let mainMean = (data?.[0]?.[0]?.[0] || "").trim();
+    
+    // Detaylı Anlamlar (Varsa)
+    let extraMeans = [];
+    if(data[1]){
+      data[1].forEach(group => {
+        const pos = group[0]; // noun, verb vs.
+        const words = group[1].slice(0, 4).join(", "); 
+        extraMeans.push(`[${pos}]: ${words}`);
+      });
+    }
+
+    // Sonuç Penceresi İçeriği
+    let content = `
+      <div style="font-size:24px; font-weight:900; color:var(--warn); text-align:center;">${term}</div>
+      <div style="font-size:32px; margin-top:10px; text-align:center; color:var(--text);">🇬🇧 ${mainMean}</div>
+    `;
+    
+    if(extraMeans.length > 0){
+        content += `<div style="margin-top:15px; padding:10px; background:var(--card2); border-radius:8px; font-size:14px; color:var(--muted);">${extraMeans.join("<br>")}</div>`;
+    }
+
+    document.getElementById("trResContent").innerHTML = content;
+    
+    // Karta Ekleme Hafızası:
+    // Kullanıcı Türkçe arattı ama karta eklerken İngilizcesini "Term" (Ön yüz) yapacağız.
+    quickTermCache = mainMean; 
+    
+    openSheet("transResultSheet"); // Pencereyi aç
+    input.value = ""; // Kutuyu temizle
+
+  } catch(e){ 
+    console.log(e);
+    toast("Çeviri yapılamadı"); 
+  }
+}
 </script>
 </body>
 </html>
