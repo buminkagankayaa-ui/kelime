@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>LingoMaster</title>
   <meta name="theme-color" content="#0b1220" id="meta-theme">
-  <link rel="icon" href="data:,">
-
   <style>
     :root{
       --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -14,7 +12,6 @@
       --header-h: 60px;
       --nav-h: 78px;
       --radius: 18px;
-
       --bg:#0b1220;
       --card:#111b2d;
       --card2:#0f172a;
@@ -31,31 +28,12 @@
       --text:#0f172a; --muted:#64748b; --primary:#4f46e5;
       --danger:#dc2626; --warn:#d97706; --ok:#059669;
     }
-    [data-theme="ocean"]{
-      --bg:#06131f; --card:#0b2236; --card2:#0a1b2a; --border:#245070;
-      --text:#e6f2ff; --muted:#9bb7d3; --primary:#38bdf8;
-    }
-    [data-theme="emerald"]{
-      --bg:#071a14; --card:#0b2a21; --card2:#082018; --border:#1f6b52;
-      --text:#ecfdf5; --muted:#9fe3c7; --primary:#10b981;
-    }
-    [data-theme="sunset"]{
-      --bg:#1b1020; --card:#2a1731; --card2:#1f1225; --border:#6b2a59;
-      --text:#fff7ed; --muted:#fbcfe8; --primary:#fb7185;
-    }
-    [data-theme="rose"]{
-      --bg:#120a10; --card:#1f0f1b; --card2:#160b13; --border:#7f1d1d;
-      --text:#fff1f2; --muted:#fda4af; --primary:#f43f5e;
-    }
-
+    [data-theme="ocean"]{ --bg:#06131f; --card:#0b2236; --card2:#0a1b2a; --border:#245070; --text:#e6f2ff; --muted:#9bb7d3; --primary:#38bdf8;}
+    [data-theme="emerald"]{ --bg:#071a14; --card:#0b2a21; --card2:#082018; --border:#1f6b52; --text:#ecfdf5; --muted:#9fe3c7; --primary:#10b981;}
+    [data-theme="sunset"]{ --bg:#1b1020; --card:#2a1731; --card2:#1f1225; --border:#6b2a59; --text:#fff7ed; --muted:#fbcfe8; --primary:#fb7185;}
+    [data-theme="rose"]{ --bg:#120a10; --card:#1f0f1b; --card2:#160b13; --border:#7f1d1d; --text:#fff1f2; --muted:#fda4af; --primary:#f43f5e;}
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-    body{
-      margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,system-ui,sans-serif;
-      background:var(--bg); color:var(--text);
-      height:100vh; overflow:hidden;
-    }
-
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,system-ui,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
     header{
       position:sticky; top:0; z-index:20;
       height:calc(var(--header-h) + var(--safe-top));
@@ -66,18 +44,14 @@
       backdrop-filter: blur(12px);
       border-bottom:1px solid var(--border);
     }
-    .brand{display:flex; align-items:center; gap:10px; font-weight:950;}
-    .logo{width:18px; height:18px; border:2px solid var(--primary); border-radius:6px; transform:rotate(15deg);}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:950;}
+    .logo{width:18px;height:18px;border:2px solid var(--primary);border-radius:6px;transform:rotate(15deg);}
     .iconBtn{
-      width:44px; height:44px; border-radius:14px;
-      background:transparent; border:1px solid var(--border);
-      color:var(--muted); display:grid; place-items:center;
-      cursor:pointer; user-select:none;
+      width:44px;height:44px;border-radius:14px;background:transparent;border:1px solid var(--border);
+      color:var(--muted);display:grid;place-items:center;cursor:pointer;user-select:none;
     }
-    .iconBtn:active{transform:scale(.98); opacity:.9;}
-
-    #viewport{position:relative; height:calc(100vh - (var(--header-h) + var(--safe-top)));}
-
+    .iconBtn:active{transform:scale(.98);opacity:.9;}
+    #viewport{position:relative;height:calc(100vh - (var(--header-h) + var(--safe-top)));}
     .view{
       position:absolute; inset:0;
       padding:18px;
@@ -88,30 +62,24 @@
       transition:.25s ease;
     }
     .view.active{opacity:1; pointer-events:auto; transform:none;}
-
-    .row{display:flex; gap:12px;}
-    .card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px;}
+    .row{display:flex;gap:12px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;}
     .muted{color:var(--muted);}
-    .big{font-size:34px; font-weight:980;}
-    .h2{font-size:20px; font-weight:980; margin:0 0 12px 0;}
-    .secTitle{font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:950; margin:4px 0 10px;}
-
+    .big{font-size:34px;font-weight:980;}
+    .h2{font-size:20px;font-weight:980;margin:0 0 12px 0;}
+    .secTitle{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:950;margin:4px 0 10px;}
     .btn{
-      border:0; cursor:pointer; border-radius:16px;
-      padding:14px 16px; font-weight:980;
-      display:flex; align-items:center; justify-content:center; gap:10px;
-      user-select:none;
+      border:0;cursor:pointer;border-radius:16px;padding:14px 16px;font-weight:980;
+      display:flex;align-items:center;justify-content:center;gap:10px;user-select:none;
     }
-    .btn:active{transform:scale(.985); opacity:.92;}
-    .btnPrimary{background:var(--primary); color:white;}
-    .btnSoft{background:var(--card2); color:var(--text); border:1px solid var(--border);}
-    .btnDanger{background:var(--danger); color:white;}
-    .btnOk{background:var(--ok); color:white;}
-    .btnWarn{background:var(--warn); color:#111827;}
+    .btn:active{transform:scale(.985);opacity:.92;}
+    .btnPrimary{background:var(--primary);color:white;}
+    .btnSoft{background:var(--card2);color:var(--text);border:1px solid var(--border);}
+    .btnDanger{background:var(--danger);color:white;}
+    .btnOk{background:var(--ok);color:white;}
     .btnHalf{flex:1;}
-
     nav{
-      position:fixed; left:0; right:0; bottom:0; z-index:30;
+      position:fixed;left:0;right:0;bottom:0;z-index:30;
       height:calc(var(--nav-h) + var(--safe-bottom));
       padding-bottom:var(--safe-bottom);
       background:var(--card2);
@@ -119,222 +87,87 @@
       display:flex;
     }
     .navBtn{
-      flex:1; background:transparent; border:0; color:var(--muted);
-      cursor:pointer; user-select:none;
-      display:grid; grid-template-rows: 36px 18px;
-      align-items:center; justify-items:center;
-      padding:6px 0; line-height:1;
-      min-width:0;
+      flex:1;background:transparent;border:0;color:var(--muted);
+      cursor:pointer;user-select:none;
+      display:grid;grid-template-rows:36px 18px;
+      align-items:center;justify-items:center;
+      padding:6px 0;line-height:1;min-width:0;
     }
-    .navBtn .ico{
-      width:46px; height:36px;
-      display:grid; place-items:center;
-      font-size:20px; line-height:1;
-    }
-    .navBtn span{
-      font-size:11.5px; font-weight:980; line-height:1;
-      transform:translateY(-1px);
-      white-space:nowrap;
-    }
+    .navBtn .ico{width:46px;height:36px;display:grid;place-items:center;font-size:20px;line-height:1;}
+    .navBtn span{font-size:11.5px;font-weight:980;line-height:1;transform:translateY(-1px);white-space:nowrap;}
     .navBtn.active{color:var(--primary);}
-    .navBtn.active .ico{background:color-mix(in srgb, var(--primary) 15%, transparent); border-radius:14px;}
-
-    .backdrop{
-      position:fixed; inset:0; z-index:40;
-      background:rgba(0,0,0,.55);
-      opacity:0; pointer-events:none; transition:.2s ease;
-    }
-    .backdrop.open{opacity:1; pointer-events:auto;}
+    .navBtn.active .ico{background:color-mix(in srgb, var(--primary) 15%, transparent);border-radius:14px;}
+    .backdrop{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:.2s ease;}
+    .backdrop.open{opacity:1;pointer-events:auto;}
     .sheet{
-      position:fixed; left:0; right:0; bottom:0; z-index:50;
+      position:fixed;left:0;right:0;bottom:0;z-index:50;
       background:var(--card);
       border-radius:26px 26px 0 0;
       border:1px solid var(--border);
       transform:translateY(110%);
       transition:.25s ease;
-      max-height:85vh; overflow:auto;
+      max-height:85vh;overflow:auto;
       padding:14px 16px calc(16px + var(--safe-bottom));
     }
     .sheet.open{transform:none;}
-    .handle{width:48px; height:5px; border-radius:99px; background:var(--border); margin:6px auto 14px;}
-    .sheetHeader{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:10px;}
-    .sheetHeader .word{font-size:34px; font-weight:980; margin:2px 0;}
-    .sheetHeader .lang{font-size:12px; font-weight:980; color:var(--primary); letter-spacing:.08em;}
+    .handle{width:48px;height:5px;border-radius:99px;background:var(--border);margin:6px auto 14px;}
     .field{margin:10px 0;}
-    label{display:block; font-size:12px; font-weight:980; color:var(--muted); margin-bottom:6px;}
+    label{display:block;font-size:12px;font-weight:980;color:var(--muted);margin-bottom:6px;}
     input, textarea, select{
-      width:100%;
-      background:var(--card2);
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:14px; color:var(--text);
-      font-size:16px; outline:none;
+      width:100%;background:var(--card2);border:1px solid var(--border);border-radius:16px;
+      padding:14px;color:var(--text);font-size:16px;outline:none;
     }
-    textarea{min-height:92px; resize:none;}
-    .two{display:flex; gap:10px;}
-    .smallInfo{font-size:12px; color:var(--muted); font-weight:950; margin-top:6px;}
-
-    .pillRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
-    .pill{
-      font-size:12px; font-weight:980; color:var(--muted);
-      background:color-mix(in srgb, var(--card2) 65%, transparent);
-      border:1px solid var(--border);
-      padding:8px 10px; border-radius:999px;
-    }
-
+    textarea{min-height:92px;resize:none;}
+    .two{display:flex;gap:10px;}
+    .smallInfo{font-size:12px;color:var(--muted);font-weight:950;margin-top:6px;}
     .toast{
-      position:fixed; left:50%; top:calc(14px + var(--safe-top));
+      position:fixed;left:50%;top:calc(14px + var(--safe-top));
       transform:translate(-50%,-20px);
-      background:var(--text); color:var(--bg);
-      padding:10px 14px; border-radius:99px;
-      font-weight:980; opacity:0; pointer-events:none;
-      transition:.25s ease; z-index:200;
-      max-width:calc(100vw - 20px); text-align:center;
+      background:var(--text);color:var(--bg);
+      padding:10px 14px;border-radius:99px;font-weight:980;
+      opacity:0;pointer-events:none;transition:.25s ease;z-index:200;
+      max-width:calc(100vw - 20px);text-align:center;
     }
-    .toast.show{opacity:1; transform:translate(-50%,0);}
+    .toast.show{opacity:1;transform:translate(-50%,0);}
+    .cardLine{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+    .termBig{font-weight:980;color:var(--primary);font-size:20px;}
+    .badge{
+      font-size:11px;font-weight:980;padding:6px 10px;border-radius:999px;border:1px solid var(--border);
+      color:var(--muted);background:color-mix(in srgb, var(--card2) 60%, transparent);white-space:nowrap;
+    }
+    .badge.due{color:var(--warn);border-color:color-mix(in srgb, var(--warn) 45%, var(--border));background:color-mix(in srgb, var(--warn) 10%, transparent);}
+    .divider{height:1px;background:var(--border);margin:12px 0;}
+    .kbd{font-size:11px;font-weight:980;border:1px solid var(--border);padding:4px 8px;border-radius:10px;background:var(--card);color:var(--muted);}
 
-    /* Quiz Overlay */
-    .overlay{
-      position:fixed; inset:0; z-index:120;
-      background:var(--bg);
-      transform:translateX(110%);
-      transition:.25s ease;
-      display:flex; flex-direction:column;
-    }
+    /* Quiz overlay (simple) */
+    .overlay{position:fixed;inset:0;z-index:120;background:var(--bg);transform:translateX(110%);transition:.25s ease;display:flex;flex-direction:column;}
     .overlay.open{transform:none;}
     .overlayTop{
-      display:flex; align-items:center; justify-content:space-between;
+      display:flex;align-items:center;justify-content:space-between;
       padding:14px 16px calc(14px + var(--safe-top));
       padding-top:calc(14px + var(--safe-top));
       border-bottom:1px solid var(--border);
       background:color-mix(in srgb, var(--bg) 85%, transparent);
       backdrop-filter: blur(12px);
     }
-
-    .qTopStats{display:flex; gap:10px; justify-content:space-between; flex-wrap:wrap;}
-    .qPill{
-      border:1px solid var(--border);
-      background:var(--card);
-      border-radius:999px;
-      padding:10px 12px;
-      font-weight:980;
-      font-size:12px;
-      color:var(--muted);
-    }
-    .qProgOuter{height:10px; border-radius:999px; background:color-mix(in srgb, var(--border) 55%, transparent); margin-top:10px; overflow:hidden;}
-    .qProgInner{height:100%; width:0%; background:var(--primary); transition:.2s ease;}
-
-    .qChoice{
-      text-align:left; background:var(--card);
-      border:1px solid var(--border);
-      padding:14px 14px; border-radius:16px; cursor:pointer; font-weight:950;
-    }
-    .qChoice.correct{border-color: color-mix(in srgb, var(--ok) 70%, var(--border)); background:color-mix(in srgb, var(--ok) 12%, var(--card));}
-    .qChoice.wrong{border-color: color-mix(in srgb, var(--danger) 70%, var(--border)); background:color-mix(in srgb, var(--danger) 10%, var(--card));}
-
-    .qInputWrap{
-      width:100%;
-      max-width:520px;
-      margin:14px auto 0;
-      display:flex;
-      gap:10px;
-    }
-    .qInput{
-      flex:1;
-      padding:14px;
-      border-radius:14px;
-      border:2px solid var(--border);
-      background:var(--card);
-      color:var(--text);
-      font-size:16px;
-      font-weight:900;
-      outline:none;
-    }
-    .qInput.correct{border-color:var(--ok); background:color-mix(in srgb, var(--ok) 12%, transparent);}
-    .qInput.wrong{border-color:var(--danger); background:color-mix(in srgb, var(--danger) 10%, transparent);}
-    .qCheckBtn{
-      padding:14px 18px;
-      border-radius:14px;
-      border:none;
-      background:var(--primary);
-      color:#fff;
-      font-weight:950;
-      cursor:pointer;
-    }
-    .qAnswerReveal{
-      margin-top:10px;
-      font-size:13px;
-      font-weight:950;
-      color:var(--muted);
-      text-align:center;
-      min-height:18px;
-    }
-    .qControls{
-      max-width:520px;
-      margin:12px auto 0;
-      display:flex;
-      gap:10px;
-    }
-    .ghost{
-      background:transparent;
-      border:1px solid var(--border);
-      color:var(--text);
-    }
-
-    #quizSummary{
-      max-width:520px;
-      margin:0 auto;
-    }
-
-    .kbd{
-      font-size:11px; font-weight:980;
-      border:1px solid var(--border);
-      padding:4px 8px; border-radius:10px;
-      background:var(--card);
-      color:var(--muted);
-    }
-
-    .divider{height:1px; background:var(--border); margin:12px 0;}
-
-    /* Cards list tweaks */
-    .cardLine{
-      display:flex; justify-content:space-between; align-items:center; gap:10px;
-    }
-    .termBig{font-weight:980; color:var(--primary); font-size:20px;}
-    .badge{
-      font-size:11px; font-weight:980;
-      padding:6px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      color:var(--muted);
-      background:color-mix(in srgb, var(--card2) 60%, transparent);
-      white-space:nowrap;
-    }
-    .badge.due{
-      color:var(--warn);
-      border-color: color-mix(in srgb, var(--warn) 45%, var(--border));
-      background:color-mix(in srgb, var(--warn) 10%, transparent);
-    }
+    .qChoice{ text-align:left;background:var(--card);border:1px solid var(--border);padding:14px;border-radius:16px;cursor:pointer;font-weight:950;}
+    .qChoice.correct{border-color:color-mix(in srgb, var(--ok) 70%, var(--border));background:color-mix(in srgb, var(--ok) 12%, var(--card));}
+    .qChoice.wrong{border-color:color-mix(in srgb, var(--danger) 70%, var(--border));background:color-mix(in srgb, var(--danger) 10%, var(--card));}
   </style>
 </head>
 
 <body>
 <header>
-  <div class="brand">
-    <div class="logo"></div>
-    <div>LingoMaster</div>
-  </div>
-  <div style="display:flex; gap:10px; align-items:center;">
-    <button class="iconBtn" id="btnTheme" title="Tema">🎨</button>
-    <button class="iconBtn" id="btnSettings" title="Ayarlar">⚙️</button>
+  <div class="brand"><div class="logo"></div><div>LingoMaster</div></div>
+  <div style="display:flex; gap:10px;">
+    <button class="iconBtn" id="btnTheme">🎨</button>
+    <button class="iconBtn" id="btnSettings">⚙️</button>
   </div>
 </header>
 
 <div id="viewport">
-
-  <!-- HOME -->
   <section class="view active" id="home">
     <div class="secTitle">Genel Bakış</div>
-
     <div class="row">
       <div class="card" style="flex:1;">
         <div class="muted" style="font-weight:980;">Toplam Kart</div>
@@ -347,48 +180,30 @@
     </div>
 
     <div class="card" style="margin-top:14px;">
-      <div class="cardLine">
-        <div style="font-size:18px; font-weight:980;">Çalışma Zinciri</div>
-        <div style="font-weight:980; color:var(--primary);" id="dashStreak">0 Gün</div>
+      <div style="font-weight:980;">Hızlı İşlemler</div>
+      <div class="two" style="margin-top:12px;">
+        <button class="btn btnPrimary btnHalf" onclick="go('review')">🧠 Tekrar</button>
+        <button class="btn btnSoft btnHalf" onclick="go('cards')">🗂️ Kartlar</button>
       </div>
-      <div class="muted" style="margin-top:10px; font-weight:950;">
-        Son 7 gün toplam: <span id="dashWeek">0</span>
+      <div class="two" style="margin-top:10px;">
+        <button class="btn btnSoft btnHalf" onclick="openManualAdd()">➕ Elle Kelime Ekle</button>
+        <button class="btn btnSoft btnHalf" onclick="resetTodaysQueue()">🔁 Kuyruğu Yenile</button>
       </div>
-
-      <div class="pillRow">
-        <div class="pill">SRS: Aktif ✅</div>
-        <div class="pill">Offline sözlük: Aktif ✅</div>
-        <div class="pill">Cache: Aktif ✅</div>
-      </div>
-    </div>
-
-    <div class="secTitle" style="margin-top:16px;">Hızlı İşlemler</div>
-
-    <button class="btn btnPrimary" style="width:100%; font-size:16px;" onclick="go('review')">🧠 Bugünkü Tekrarlar</button>
-
-    <div class="two" style="margin-top:10px;">
-      <button class="btn btnSoft btnHalf" onclick="openManualAdd()">➕ Elle Kelime Ekle</button>
-      <button class="btn btnSoft btnHalf" onclick="go('cards')">🗂️ Kartlar</button>
-    </div>
-
-    <div class="card" style="margin-top:12px;">
-      <div style="font-weight:980;">İpucu</div>
-      <div class="smallInfo">Elle kelime girince uygulama: anlam + tür + örnek cümleyi otomatik doldurur. İnternet yoksa offline sözlüğe düşer.</div>
-      <div class="smallInfo" style="margin-top:8px;">
-        Kısayollar: <span class="kbd">Enter</span> otomatik doldur • <span class="kbd">ESC</span> kapat
+      <div class="smallInfo" style="margin-top:10px;">
+        Elle kelime girince uygulama online olarak: <b>anlam + tür + örnek cümle</b> doldurur.
+        <br/>Kısayol: <span class="kbd">Enter</span> doldur • <span class="kbd">ESC</span> kapat
       </div>
     </div>
   </section>
 
-  <!-- REVIEW -->
   <section class="view" id="review">
-    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
       <h2 class="h2">Tekrar</h2>
       <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" onclick="startReviewQuiz()">Başlat</button>
     </div>
 
     <div class="card">
-      <div style="font-weight:980; font-size:16px;">Bugün tekrar edilecek kartlar</div>
+      <div style="font-weight:980;">Bugün tekrar edilecek kartlar</div>
       <div class="smallInfo">Due olan kartlar öncelikli gelir. Due yoksa rastgele pratik açılır.</div>
 
       <div style="display:flex; gap:10px; margin-top:12px;">
@@ -404,121 +219,46 @@
 
       <div class="two" style="margin-top:12px;">
         <button class="btn btnOk btnHalf" onclick="startReviewQuiz()">🎯 Quiz Başlat</button>
-        <button class="btn btnSoft btnHalf" onclick="resetTodaysQueue()">🔁 Kuyruğu Yenile</button>
+        <button class="btn btnSoft btnHalf" onclick="toggleQuizMode()">Mod: <span id="quizModeLabel">Seçmeli</span></button>
       </div>
 
       <div class="divider"></div>
 
-      <div class="two" style="margin-top:8px;">
-        <button class="btn btnSoft btnHalf" onclick="toggleQuizMode()">⌨️ Mod: <span id="quizModeLabel">Seçmeli</span></button>
+      <div class="two">
         <button class="btn btnSoft btnHalf" onclick="clearProgress()">♻️ SRS Sıfırla</button>
+        <button class="btn btnSoft btnHalf" onclick="toast('Online AutoFill aktif ✅')">Durum</button>
       </div>
     </div>
   </section>
 
-  <!-- CARDS -->
   <section class="view" id="cards">
-    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
       <h2 class="h2">Kartlar</h2>
       <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" onclick="openManualAdd()">➕ Ekle</button>
     </div>
 
     <div class="card" style="margin-bottom:12px;">
       <input id="search" placeholder="Kart ara (kelime/anlam/tür)..." />
-      <div class="smallInfo" style="margin-top:8px;">Düzenlemek için kartı aç → Düzenle.</div>
+      <div class="smallInfo" style="margin-top:8px;">Kartı aç → düzenle / sil.</div>
     </div>
 
     <div id="cardsList"></div>
   </section>
-
 </div>
 
-<!-- NAV (Only 3 tabs: Home / Review / Cards) -->
 <nav>
-  <button class="navBtn active" id="navHome" onclick="go('home')">
-    <div class="ico">🏠</div><span>Ana Sayfa</span>
-  </button>
-  <button class="navBtn" id="navReview" onclick="go('review')">
-    <div class="ico">🧠</div><span>Tekrar</span>
-  </button>
-  <button class="navBtn" id="navCards" onclick="go('cards')">
-    <div class="ico">🗂️</div><span>Kartlar</span>
-  </button>
+  <button class="navBtn active" id="navHome" onclick="go('home')"><div class="ico">🏠</div><span>Ana Sayfa</span></button>
+  <button class="navBtn" id="navReview" onclick="go('review')"><div class="ico">🧠</div><span>Tekrar</span></button>
+  <button class="navBtn" id="navCards" onclick="go('cards')"><div class="ico">🗂️</div><span>Kartlar</span></button>
 </nav>
 
 <div class="backdrop" id="backdrop" onclick="closeSheets()"></div>
 <div class="toast" id="toast">—</div>
 
-<!-- WORD SHEET (tap/edit existing card or add from auto) -->
-<div class="sheet" id="wordSheet">
-  <div class="handle"></div>
-
-  <div class="sheetHeader">
-    <div style="min-width:0;">
-      <div class="lang" id="wsLang">EN</div>
-      <div class="word" id="wsWord">word</div>
-      <div class="smallInfo" id="wsStatus">Yeni kart</div>
-      <div class="smallInfo" id="wsSource">Çeviri: —</div>
-    </div>
-    <button class="iconBtn" onclick="speakWordFromSheet()" title="Oku">🔊</button>
-  </div>
-
-  <div class="field">
-    <label>Anlamı (TR)</label>
-    <input id="wsMeaning" placeholder="Türkçesi nedir?" />
-  </div>
-
-  <div class="two">
-    <div style="flex:1;">
-      <label>Tür</label>
-      <select id="wsType">
-        <option value="word">Kelime</option>
-        <option value="phrase">Kalıp</option>
-        <option value="idiom">Deyim</option>
-        <option value="phrasal">Phrasal Verb</option>
-        <option value="noun">İsim</option>
-        <option value="verb">Fiil</option>
-        <option value="adj">Sıfat</option>
-        <option value="adv">Zarf</option>
-      </select>
-    </div>
-    <div style="flex:1;">
-      <label>Dil</label>
-      <select id="wsLangPick" onchange="syncLangPickToWordSheet()">
-        <option value="EN">İngilizce</option>
-        <option value="RU">Rusça</option>
-        <option value="DE">Almanca</option>
-        <option value="FR">Fransızca</option>
-        <option value="TR">Türkçe</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="field">
-    <label>Örnek Cümle</label>
-    <textarea id="wsExample" placeholder="Örn: The foundation transfers loads to the soil."></textarea>
-  </div>
-
-  <div class="field">
-    <label>Not (opsiyonel)</label>
-    <input id="wsNote" placeholder="İpucu / Not" />
-  </div>
-
-  <div class="two" style="margin-top:10px;">
-    <button class="btn btnSoft btnHalf" onclick="autoFillWordSheet()">⚡ Otomatik Doldur</button>
-    <button class="btn btnPrimary btnHalf" onclick="saveCardFromSheet()">💾 Kaydet</button>
-  </div>
-
-  <div class="two" style="margin-top:10px;">
-    <button class="btn btnSoft btnHalf" onclick="enableEditMode()">✏️ Düzenle</button>
-    <button class="btn btnDanger btnHalf" onclick="deleteCardFromSheet()">🗑️ Sil</button>
-  </div>
-</div>
-
-<!-- MANUAL ADD SHEET -->
+<!-- Manual Add -->
 <div class="sheet" id="manualAddSheet">
   <div class="handle"></div>
-  <h2 class="h2">Elle Kelime Ekle</h2>
+  <h2 class="h2">Elle Kelime Ekle (Online Otomatik)</h2>
 
   <div class="field">
     <label>Dil</label>
@@ -534,11 +274,12 @@
   <div class="field">
     <label>Kelime / Terim</label>
     <input id="maTerm" placeholder="Örn: reinforcement" />
+    <div class="smallInfo" id="maHint">Yazınca otomatik doldurur. İnternet şart.</div>
   </div>
 
   <div class="field">
     <label>Anlamı (TR)</label>
-    <input id="maMeaning" placeholder="Otomatik dolacak (istersen düzelt)" />
+    <input id="maMeaning" placeholder="Otomatik dolacak" />
   </div>
 
   <div class="field">
@@ -557,7 +298,7 @@
 
   <div class="field">
     <label>Örnek Cümle</label>
-    <textarea id="maExample" placeholder="Otomatik dolacak (istersen düzelt)"></textarea>
+    <textarea id="maExample" placeholder="Otomatik dolacak"></textarea>
   </div>
 
   <div class="field">
@@ -567,18 +308,21 @@
 
   <div class="two" style="margin-top:10px;">
     <button class="btn btnSoft btnHalf" onclick="closeSheets()">Vazgeç</button>
+    <button class="btn btnSoft btnHalf" onclick="autoFillManualFields(true)">⚡ Doldur</button>
+  </div>
+  <div class="two" style="margin-top:10px;">
     <button class="btn btnPrimary btnHalf" onclick="saveManualCard()">Kaydet</button>
+    <button class="btn btnDanger btnHalf" onclick="clearManual()">Temizle</button>
   </div>
 </div>
 
-<!-- SETTINGS SHEET -->
+<!-- Settings -->
 <div class="sheet" id="settingsSheet">
   <div class="handle"></div>
   <h2 class="h2">Ayarlar</h2>
 
   <div class="card" style="margin-top:10px;">
     <div style="font-weight:980;">Tema</div>
-    <div class="smallInfo">🎨 butonu temayı döndürür.</div>
     <div class="two" style="margin-top:10px;">
       <select id="themeSelect" onchange="applyThemeFromSelect()">
         <option value="dark">dark</option>
@@ -593,379 +337,247 @@
   </div>
 
   <div class="card" style="margin-top:12px;">
-    <div style="font-weight:980;">Quiz</div>
-    <div class="smallInfo">Seçmeli / Yazmalı mod arasında geçiş yap.</div>
+    <div style="font-weight:980;">Quiz Modu</div>
     <div class="two" style="margin-top:10px;">
       <button class="btn btnSoft btnHalf" onclick="toggleQuizMode()">Mod: <span id="quizModeLabel2">Seçmeli</span></button>
-      <button class="btn btnSoft btnHalf" onclick="toast('SRS aktif ✅')">SRS Durumu</button>
-    </div>
-  </div>
-
-  <div class="card" style="margin-top:12px;">
-    <div style="font-weight:980;">Veri Yönetimi</div>
-    <div class="smallInfo">Kartlarını dışa aktar / içe aktar (JSON)</div>
-    <div class="two" style="margin-top:10px;">
       <button class="btn btnSoft btnHalf" onclick="exportAll()">Export</button>
-      <button class="btn btnSoft btnHalf" onclick="importAllPrompt()">Import</button>
     </div>
     <div class="two" style="margin-top:10px;">
-      <button class="btn btnSoft btnHalf" onclick="clearCache()">Cache Temizle</button>
-      <button class="btn btnDanger btnHalf" onclick="hardReset()">Her Şeyi Sıfırla</button>
+      <button class="btn btnSoft btnHalf" onclick="importAllPrompt()">Import</button>
+      <button class="btn btnDanger btnHalf" onclick="hardReset()">Sıfırla</button>
     </div>
   </div>
 
-  <div class="smallInfo" style="margin-top:12px;">Sürüm: single-file • home/review/cards • offline-dict • auto-fill</div>
+  <div class="smallInfo" style="margin-top:12px;">Sürüm: online-autofill • dictionary + translate • no level/category</div>
 </div>
 
-<!-- QUIZ OVERLAY -->
+<!-- Quiz overlay -->
 <div class="overlay" id="quizOverlay">
   <div class="overlayTop">
     <div style="font-weight:980;">Quiz</div>
     <button class="iconBtn" onclick="stopQuiz()">×</button>
   </div>
-
-  <div id="quizBody" style="padding:18px 18px 24px 18px;">
-    <div class="qTopStats" style="margin-top:6px;">
-      <div class="qPill">Kalan: <span id="qRemain">0</span>/<span id="qTotal">0</span></div>
-      <div class="qPill">✅ <span id="qCorrect">0</span>  ❌ <span id="qWrong">0</span></div>
-    </div>
-    <div class="qProgOuter">
-      <div class="qProgInner" id="qProg"></div>
+  <div id="quizBody" style="padding:18px;">
+    <div class="card" style="padding:12px;">
+      <div class="smallInfo">Kalan: <b id="qRemain">0</b>/<b id="qTotal">0</b> • ✅ <b id="qCorrect">0</b> • ❌ <b id="qWrong">0</b></div>
+      <div style="margin-top:10px; font-size:40px; font-weight:1000; text-align:center;" id="qWord">—</div>
+      <div class="smallInfo" style="text-align:center; margin-top:8px;" id="qMeta">—</div>
     </div>
 
-    <div id="qMeta" style="margin-top:12px; opacity:.85; font-weight:900; font-size:12px; text-align:center;">
-      —
+    <div id="qChoices" style="margin-top:12px; display:flex; flex-direction:column; gap:10px;"></div>
+
+    <div id="qTyping" style="margin-top:12px; display:none; gap:10px;">
+      <input id="qInput" placeholder="Anlamını yaz..." style="flex:1; font-weight:950;" />
+      <button class="btn btnPrimary" style="padding:12px 14px;" onclick="checkTypingAnswer()">Kontrol</button>
     </div>
 
-    <div id="qWord" style="margin-top:14px; font-size:40px; font-weight:1000; text-align:center;">
-      —
-    </div>
+    <div class="smallInfo" id="qReveal" style="text-align:center; margin-top:10px; min-height:18px;"></div>
 
-    <!-- CHOICES -->
-    <div id="qChoices" style="margin-top:18px; display:flex; flex-direction:column; gap:10px;"></div>
-
-    <!-- TYPING -->
-    <div class="qInputWrap" id="qTyping" style="display:none">
-      <input id="qInput" class="qInput" placeholder="Anlamını yaz..." />
-      <button class="qCheckBtn" onclick="checkTypingAnswer()">Kontrol</button>
-    </div>
-
-    <div class="qAnswerReveal" id="qReveal"></div>
-
-    <div class="qControls">
-      <button class="btn ghost btnHalf" onclick="speakQuizWord()">🔊 Oku</button>
+    <div class="two" style="margin-top:12px;">
+      <button class="btn btnSoft btnHalf" onclick="speakQuizWord()">🔊 Oku</button>
       <button class="btn btnSoft btnHalf" onclick="skipQuestion()">⏭️ Geç</button>
     </div>
 
     <div class="smallInfo" style="text-align:center; margin-top:10px;">
-      İpucu: <span class="kbd">Enter</span> kontrol (yazmalı mod) • <span class="kbd">Esc</span> çıkış
+      <span class="kbd">Enter</span> kontrol (yazmalı) • <span class="kbd">Esc</span> çıkış
     </div>
-  </div>
-
-  <div id="quizSummary" style="display:none; padding:24px; text-align:center">
-    <h2 style="margin-bottom:10px">Quiz Bitti</h2>
-
-    <div style="font-size:14px; font-weight:900; margin-bottom:16px">
-      Doğru: <span id="sumCorrect">0</span> |
-      Yanlış: <span id="sumWrong">0</span> |
-      Başarı: <span id="sumRate">0%</span>
-    </div>
-
-    <button class="btn btnPrimary" onclick="repeatWrongQuiz()" style="width:100%; margin-bottom:10px">
-      Yanlışları Tekrar Sor
-    </button>
-
-    <button class="btn ghost" onclick="stopQuiz()" style="width:100%">
-      Çık
-    </button>
   </div>
 </div>
 
 <script>
-/* =========================================================
-   LingoMaster — Single-file Vocabulary App
-   - Home / Review / Cards
-   - Manual Add with AUTO: meaning + type + example
-   - Offline dictionary + Cache + Online translate fallback
-   - SRS (SM-2 style)
-   - Quiz: Multiple-choice OR Typing mode
-   ========================================================= */
-
-/* ---------------- Storage ---------------- */
+/* ===========================
+   Storage + helpers
+=========================== */
 const DB = {
   get(key, fallback){ try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } },
   set(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
 };
-
-/* ---------------- Toast ---------------- */
 function toast(msg){
-  const t = document.getElementById("toast");
-  if(!t) return;
-  t.textContent = msg;
+  const t=document.getElementById("toast");
+  t.textContent=msg;
   t.classList.add("show");
   setTimeout(()=>t.classList.remove("show"), 2200);
 }
-
-/* ---------------- Utils ---------------- */
-function normKey(w){ return (w || "").toLowerCase().trim(); }
 function now(){ return Date.now(); }
-function uid(prefix){ return prefix + "_" + Math.random().toString(36).slice(2) + "_" + Math.random().toString(36).slice(2); }
-function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+function norm(s){ return (s||"").toLowerCase().trim(); }
+function uid(){ return "c_" + Math.random().toString(36).slice(2) + "_" + Math.random().toString(36).slice(2); }
 function safeText(s){ return (s ?? "").toString(); }
 
-/* ---------------- State ---------------- */
-const themes = ["dark","light","ocean","emerald","sunset","rose"];
+/* ===========================
+   State
+=========================== */
+const themes=["dark","light","ocean","emerald","sunset","rose"];
 const state = {
-  settings: DB.get("lm_settings", { theme:"dark", quizMode:"choice" }), // choice | typing
+  settings: DB.get("lm_settings", { theme:"dark", quizMode:"choice" }), // choice|typing
   cards: DB.get("lm_cards", []),
-  txCache: DB.get("lm_tx_cache", {}),    // translation cache
-  reviewQueue: DB.get("lm_review_queue", []),
+  txCache: DB.get("lm_tx_cache", {}),        // cache for translations
+  dictCache: DB.get("lm_dict_cache", {}),    // cache for dictionary results (EN)
+  reviewQueue: DB.get("lm_review_queue", [])
 };
-
-function saveAllState(){
+function saveAll(){
   DB.set("lm_settings", state.settings);
   DB.set("lm_cards", state.cards);
   DB.set("lm_tx_cache", state.txCache);
+  DB.set("lm_dict_cache", state.dictCache);
   DB.set("lm_review_queue", state.reviewQueue);
 }
 
-/* ---------------- Theme ---------------- */
+/* ===========================
+   Theme
+=========================== */
 function setTheme(name){
   document.documentElement.setAttribute("data-theme", name);
   state.settings.theme = name;
   DB.set("lm_settings", state.settings);
-
-  const meta = document.getElementById("meta-theme");
+  const meta=document.getElementById("meta-theme");
   meta.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#0b1220");
-
-  const sel = document.getElementById("themeSelect");
-  if(sel) sel.value = name;
+  const sel=document.getElementById("themeSelect"); if(sel) sel.value=name;
 }
-function applyThemeFromSelect(){
-  const v = document.getElementById("themeSelect").value;
-  setTheme(v);
-  toast("Tema: " + v);
-}
-document.getElementById("btnTheme").onclick = () => {
-  const idx = (themes.indexOf(state.settings.theme) + 1) % themes.length;
-  setTheme(themes[idx]);
-  toast("Tema: " + themes[idx]);
+function applyThemeFromSelect(){ setTheme(document.getElementById("themeSelect").value); toast("Tema güncellendi"); }
+document.getElementById("btnTheme").onclick=()=>{
+  const idx=(themes.indexOf(state.settings.theme)+1)%themes.length;
+  setTheme(themes[idx]); toast("Tema: " + themes[idx]);
 };
-document.getElementById("btnSettings").onclick = () => {
+document.getElementById("btnSettings").onclick=()=>{
   document.getElementById("themeSelect").value = state.settings.theme;
   syncQuizModeLabels();
   openSheet("settingsSheet");
 };
 
-/* ---------------- Router ---------------- */
+/* ===========================
+   Router
+=========================== */
 function go(id){
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-
   document.querySelectorAll(".navBtn").forEach(b=>b.classList.remove("active"));
   if(id==="home") document.getElementById("navHome").classList.add("active");
   if(id==="review") document.getElementById("navReview").classList.add("active");
   if(id==="cards") document.getElementById("navCards").classList.add("active");
-
   if(id==="home") renderDash();
   if(id==="review") renderReview();
   if(id==="cards") renderCards();
 }
 
-/* ---------------- Sheets ---------------- */
-const backdrop = document.getElementById("backdrop");
-function openSheet(id){
-  backdrop.classList.add("open");
-  document.getElementById(id).classList.add("open");
-}
-function closeSheets(){
-  backdrop.classList.remove("open");
-  document.querySelectorAll(".sheet").forEach(s=>s.classList.remove("open"));
-}
-
-/* Close sheets with ESC */
-window.addEventListener("keydown", (e)=>{
-  if(e.key === "Escape"){
-    if(document.getElementById("quizOverlay").classList.contains("open")){
-      stopQuiz();
-      return;
-    }
-    closeSheets();
+/* ===========================
+   Sheets
+=========================== */
+const backdrop=document.getElementById("backdrop");
+function openSheet(id){ backdrop.classList.add("open"); document.getElementById(id).classList.add("open"); }
+function closeSheets(){ backdrop.classList.remove("open"); document.querySelectorAll(".sheet").forEach(s=>s.classList.remove("open")); }
+window.addEventListener("keydown",(e)=>{
+  if(e.key==="Escape"){
+    if(document.getElementById("quizOverlay").classList.contains("open")) stopQuiz();
+    else closeSheets();
   }
 });
 
-/* =========================================================
-   OFFLINE DICTIONARY (meaning + type + example)
-   - You can expand this list massively later.
-   - Works offline. Cache stores online results too.
-   ========================================================= */
-const OFFLINE_EN_TR = {
-  // --- General ---
-  "that": { meaning:"şu / o / -diği şey", type:"word", example:"That is the main idea of the project." },
-  "this": { meaning:"bu", type:"word", example:"This is a simple example." },
-  "into": { meaning:"içine", type:"word", example:"Water gets into the cracks over time." },
-  "past": { meaning:"geçmiş / geçmişten", type:"word", example:"In the past, we used different methods." },
-  "notice": { meaning:"fark etmek", type:"verb", example:"We noticed a small defect during inspection." },
-  "matter": { meaning:"mesele / önem", type:"noun", example:"Safety is a serious matter on site." },
-
-  // --- Civil / Construction core ---
-  "civil": { meaning:"inşaat (müh.) / sivil", type:"adj", example:"Civil engineering involves designing infrastructure." },
-  "construction": { meaning:"inşaat / yapım", type:"noun", example:"Construction started after the permit was approved." },
-  "site": { meaning:"şantiye / saha", type:"noun", example:"The site supervisor checked the daily progress." },
-  "contractor": { meaning:"müteahhit / yüklenici", type:"noun", example:"The contractor submitted the schedule update." },
-  "subcontractor": { meaning:"taşeron", type:"noun", example:"The subcontractor installed the formwork." },
-  "schedule": { meaning:"program / takvim", type:"noun", example:"We revised the schedule due to weather delays." },
-  "delay": { meaning:"gecikme", type:"noun", example:"A delay occurred because of material shortages." },
-  "inspection": { meaning:"muayene / denetim", type:"noun", example:"Inspection is required before concrete pouring." },
-  "quality": { meaning:"kalite", type:"noun", example:"Quality control prevents major defects." },
-  "specification": { meaning:"şartname / teknik şartlar", type:"noun", example:"Follow the specification for curing time." },
-  "drawing": { meaning:"çizim / proje", type:"noun", example:"The drawing shows the rebar layout." },
-
-  // --- Concrete ---
-  "concrete": { meaning:"beton", type:"noun", example:"Concrete must be properly cured to gain strength." },
-  "cement": { meaning:"çimento", type:"noun", example:"Cement is mixed with water and aggregates." },
-  "aggregate": { meaning:"agrega", type:"noun", example:"Aggregate grading affects concrete workability." },
-  "mix": { meaning:"karışım / karıştırmak", type:"noun", example:"The concrete mix design was approved by the engineer." },
-  "slump": { meaning:"slump (çökme) değeri", type:"noun", example:"We measured the slump before the pour." },
-  "curing": { meaning:"kür (beton bakımı)", type:"noun", example:"Curing reduces shrinkage and improves strength." },
-  "formwork": { meaning:"kalıp", type:"noun", example:"Formwork must be stable and properly aligned." },
-  "reinforcement": { meaning:"donatı", type:"noun", example:"Reinforcement increases tensile capacity." },
-  "rebar": { meaning:"inşaat demiri (donatı çeliği)", type:"noun", example:"The rebar was tied according to the drawing." },
-  "stirrup": { meaning:"etriye", type:"noun", example:"Stirrups help resist shear forces in beams." },
-  "pour": { meaning:"dökmek (beton)", type:"verb", example:"Workers pour concrete in continuous layers." },
-  "cast": { meaning:"döküm yapmak", type:"verb", example:"They cast the slab in one operation." },
-
-  // --- Structural ---
-  "load": { meaning:"yük", type:"noun", example:"The load is transferred from slab to beams and columns." },
-  "dead load": { meaning:"sabit yük", type:"phrase", example:"Dead load includes self-weight of structural elements." },
-  "live load": { meaning:"hareketli yük", type:"phrase", example:"Live load depends on building usage." },
-  "beam": { meaning:"kiriş", type:"noun", example:"The beam carries loads to the columns." },
-  "column": { meaning:"kolon", type:"noun", example:"The column transfers axial load to the foundation." },
-  "slab": { meaning:"döşeme", type:"noun", example:"The slab was poured after the reinforcement check." },
-  "shear": { meaning:"kesme", type:"noun", example:"Shear capacity was verified in the design." },
-  "moment": { meaning:"moment", type:"noun", example:"Bending moment increases near supports." },
-  "deflection": { meaning:"sehim", type:"noun", example:"Deflection must be within allowable limits." },
-
-  // --- Steel ---
-  "steel": { meaning:"çelik", type:"noun", example:"Steel structures are fast to assemble." },
-  "weld": { meaning:"kaynak", type:"noun", example:"The weld quality was checked during inspection." },
-  "bolt": { meaning:"cıvata", type:"noun", example:"High-strength bolts were used in the connection." },
-  "anchor bolt": { meaning:"ankraj cıvatası", type:"phrase", example:"Anchor bolts fix the base plate to the concrete." },
-
-  // --- Geotech / foundation ---
-  "soil": { meaning:"zemin / toprak", type:"noun", example:"Soil properties affect bearing capacity." },
-  "bearing capacity": { meaning:"taşıma gücü", type:"phrase", example:"Bearing capacity was calculated from site data." },
-  "settlement": { meaning:"oturma", type:"noun", example:"Settlement can cause cracks in structures." },
-  "compaction": { meaning:"sıkıştırma", type:"noun", example:"Compaction improves soil strength." },
-  "foundation": { meaning:"temel", type:"noun", example:"The foundation transfers loads to the ground." },
-  "footing": { meaning:"münferit temel", type:"noun", example:"The footing size was increased for safety." },
-  "pile": { meaning:"kazık", type:"noun", example:"Piles are used when shallow foundations are not suitable." },
-  "excavation": { meaning:"kazı", type:"noun", example:"Excavation depth must follow safety rules." },
-
-  // --- Safety ---
-  "safety": { meaning:"güvenlik", type:"noun", example:"Safety comes first on every site." },
-  "ppe": { meaning:"kişisel koruyucu donanım (KKD)", type:"noun", example:"PPE is required in hazardous areas." },
-  "scaffolding": { meaning:"iskele", type:"noun", example:"Scaffolding should be inspected before use." },
-
-  // You can keep expanding here…
-};
-
-/* ---------------- Offline helpers ---------------- */
-function offlineLookupEN(term){
-  const k = normKey(term);
-  return OFFLINE_EN_TR[k] || null;
-}
-
-/* =========================================================
-   TRANSLATION
-   - Cache -> Offline -> Online gtx (if available)
-   ========================================================= */
+/* ===========================
+   ONLINE: Translate (meaning TR)
+   - uses Google translate gtx (works in browser)
+=========================== */
 async function translateToTR(lang, term){
-  const key = `${lang}|${normKey(term)}`;
-
-  // 1) Cache
+  const key=`${lang}|${norm(term)}`;
   if(state.txCache[key]) return state.txCache[key];
 
-  // 2) Offline EN only
-  if(lang === "EN"){
-    const hit = offlineLookupEN(term);
-    if(hit && hit.meaning){
-      state.txCache[key] = hit.meaning;
-      DB.set("lm_tx_cache", state.txCache);
-      return hit.meaning;
-    }
-  }
+  const sl = ({EN:"en", RU:"ru", DE:"de", FR:"fr", TR:"tr"})[lang] || "auto";
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=tr&dt=t&q=${encodeURIComponent(term)}`;
 
-  // 3) Online
   try{
-    const sl = ({EN:"en", RU:"ru", DE:"de", FR:"fr", TR:"tr"})[lang] || "auto";
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=tr&dt=t&q=${encodeURIComponent(term)}`;
-    const r = await fetch(url);
-    if(!r.ok) throw new Error("gtx_fail");
-    const data = await r.json();
-    const out = (data?.[0]?.[0]?.[0] || "").trim();
+    const r=await fetch(url);
+    if(!r.ok) throw new Error("translate_failed");
+    const data=await r.json();
+    const out=(data?.[0]?.[0]?.[0] || "").trim();
     if(out){
-      state.txCache[key] = out;
+      state.txCache[key]=out;
       DB.set("lm_tx_cache", state.txCache);
       return out;
     }
-  }catch(e){ /* ignore */ }
-
+  }catch(e){
+    return "";
+  }
   return "";
 }
 
-/* =========================================================
-   TYPE INFERENCE + EXAMPLE GENERATION
-   - No level, no category (per your request)
-   ========================================================= */
-function inferTypeEN(term){
-  const t = term.trim();
-  const low = normKey(t);
-
-  if(!t) return "word";
-  if(t.includes(" ")) return "phrase";
-
-  const verbish = ["install","place","pour","cast","cure","weld","bolt","inspect","measure","design","calculate","compact","excavate"];
-  if(verbish.includes(low)) return "verb";
-
-  if(low.endsWith("ly")) return "adv";
-  if(low.endsWith("ing")) return "noun";
-  if(low.endsWith("tion") || low.endsWith("ment") || low.endsWith("ness")) return "noun";
-  if(low.endsWith("ive") || low.endsWith("al") || low.endsWith("ous") || low.endsWith("able")) return "adj";
-
-  return "noun";
+/* ===========================
+   ONLINE: Dictionary (EN only)
+   - dictionaryapi.dev returns meanings/partOfSpeech/examples
+=========================== */
+function mapPosToType(pos){
+  const p=(pos||"").toLowerCase();
+  if(p==="noun") return "noun";
+  if(p==="verb") return "verb";
+  if(p==="adjective") return "adj";
+  if(p==="adverb") return "adv";
+  if(p==="phrasal verb") return "phrasal";
+  if(p==="idiom") return "idiom";
+  return "word";
 }
 
-function generateExampleEN(term, type){
+async function lookupEN(term){
+  const k = norm(term);
+  if(!k) return null;
+  if(state.dictCache[k]) return state.dictCache[k];
+
+  const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(k)}`;
+  try{
+    const r = await fetch(url);
+    if(!r.ok) throw new Error("dict_fail");
+    const data = await r.json();
+
+    // pick first meaning/definition/example
+    let pos="", def="", ex="";
+    const meanings = data?.[0]?.meanings || [];
+    for(const m of meanings){
+      if(!pos && m.partOfSpeech) pos = m.partOfSpeech;
+      const defs = m.definitions || [];
+      for(const d of defs){
+        if(!def && d.definition) def = d.definition;
+        if(!ex && d.example) ex = d.example;
+        if(def && ex) break;
+      }
+      if(def && ex) break;
+    }
+
+    const result = {
+      pos: pos || "",
+      type: mapPosToType(pos),
+      definitionEN: def || "",
+      exampleEN: ex || ""
+    };
+    state.dictCache[k] = result;
+    DB.set("lm_dict_cache", state.dictCache);
+    return result;
+  }catch(e){
+    return null;
+  }
+}
+
+/* ===========================
+   Example generator (fallback)
+=========================== */
+function genExample(term, lang, type){
   const t = term.trim();
   if(!t) return "";
-
-  // If verb: simple civil context
-  if(type === "verb"){
-    return `Workers ${t} the elements according to the drawing.`;
+  if(lang==="EN"){
+    if(type==="verb") return `Workers ${t} the elements according to the drawing.`;
+    if(type==="noun") return `The ${t} was checked during inspection.`;
+    if(type==="adj") return `The structure remained ${t} under the design load.`;
+    if(type==="adv") return `The crew worked ${t} to finish before sunset.`;
+    if(type==="phrase") return `We reviewed "${t}" before starting the work.`;
+    return `We used "${t}" in the daily site report.`;
   }
-
-  // phrase
-  if(type === "phrase"){
-    return `We reviewed the "${t}" requirement before starting the work.`;
-  }
-
-  // noun/adj/adv: civil templates
-  const templates = [
-    `The ${t} was checked during inspection.`,
-    `We documented the ${t} in the daily site report.`,
-    `The engineer approved the ${t} before construction.`,
-    `The ${t} affects the structural performance.`,
-    `We improved the ${t} to meet the specification.`
-  ];
-  return templates[Math.floor(Math.random()*templates.length)];
+  return `(${lang}) ${t} — örnek cümle (istersen düzenle).`;
 }
 
-/* =========================================================
+function inferTypeBasic(term){
+  if(term.includes(" ")) return "phrase";
+  return "word";
+}
+
+/* ===========================
    SRS (SM-2 style)
-   Card schema:
-   {id, term, meaning, lang, type, example, note, due, srs:{interval,reps,ef}, createdAt, updatedAt}
-   ========================================================= */
+=========================== */
 function srsCalc(card, quality){
   let s = card.srs || { interval:0, reps:0, ef:2.5 };
   let { interval, reps, ef } = s;
@@ -974,7 +586,6 @@ function srsCalc(card, quality){
     if(reps === 0) interval = 1;
     else if(reps === 1) interval = 6;
     else interval = Math.round(interval * ef);
-
     reps++;
     ef = ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
     if(ef < 1.3) ef = 1.3;
@@ -982,805 +593,422 @@ function srsCalc(card, quality){
     reps = 0;
     interval = 1;
   }
-
-  const nextDue = now() + interval * 24*60*60*1000;
-  return { due: nextDue, srs:{ interval, reps, ef } };
+  return { due: now() + interval*24*60*60*1000, srs:{interval,reps,ef} };
 }
 
-/* =========================================================
-   DASHBOARD
-   ========================================================= */
+/* ===========================
+   Dash + Review
+=========================== */
 function renderDash(){
   document.getElementById("dashTotal").textContent = state.cards.length;
   document.getElementById("dashDue").textContent = state.cards.filter(c => (c.due||0) <= now()).length;
-
-  const activity = DB.get("lm_activity", {});
-  const today = new Date();
-
-  // streak
-  let streak = 0;
-  for(let i=0;i<365;i++){
-    const d = new Date(today); d.setDate(d.getDate()-i);
-    const k = d.toISOString().slice(0,10);
-    if((activity[k]||0)>0) streak++;
-    else break;
-  }
-  document.getElementById("dashStreak").textContent = streak + " Gün";
-
-  // week total
-  let week = 0;
-  for(let i=0;i<7;i++){
-    const d = new Date(today); d.setDate(d.getDate()-i);
-    const k = d.toISOString().slice(0,10);
-    week += (activity[k]||0);
-  }
-  document.getElementById("dashWeek").textContent = week;
 }
-
-/* =========================================================
-   REVIEW PAGE
-   ========================================================= */
-function getDueCards(){
-  const t = now();
-  return state.cards.filter(c => (c.due||0) <= t);
-}
+function getDueCards(){ return state.cards.filter(c => (c.due||0) <= now()); }
 function renderReview(){
   document.getElementById("rvTotal").textContent = state.cards.length;
   document.getElementById("rvDue").textContent = getDueCards().length;
   syncQuizModeLabels();
 }
-
 function resetTodaysQueue(){
   const due = getDueCards();
-  let q = [];
-  if(due.length > 0){
-    q = due.map(c=>c.id);
-  }else{
-    q = [...state.cards].sort(()=>Math.random()-0.5).slice(0, Math.min(30, state.cards.length)).map(c=>c.id);
-  }
-  state.reviewQueue = q;
+  let q=[];
+  if(due.length) q = due.map(c=>c.id);
+  else q = [...state.cards].sort(()=>Math.random()-0.5).slice(0, Math.min(30, state.cards.length)).map(c=>c.id);
+  state.reviewQueue=q;
   DB.set("lm_review_queue", state.reviewQueue);
   toast("Kuyruk yenilendi ✅");
   renderReview();
 }
-
 function clearProgress(){
   if(!confirm("SRS sıfırlansın mı? (Kartlar silinmez)")) return;
-  state.cards = state.cards.map(c=>({
-    ...c,
-    due: now(),
-    srs:{ interval:0, reps:0, ef:2.5 },
-    updatedAt: now()
-  }));
+  state.cards = state.cards.map(c=>({...c,due:now(),srs:{interval:0,reps:0,ef:2.5},updatedAt:now()}));
   DB.set("lm_cards", state.cards);
   toast("SRS sıfırlandı ✅");
   renderDash(); renderReview(); renderCards();
 }
 
-/* =========================================================
-   CARDS VIEW
-   ========================================================= */
+/* ===========================
+   Cards list
+=========================== */
 document.getElementById("search").addEventListener("input", renderCards);
-
 function renderCards(){
-  const q = (document.getElementById("search").value || "").toLowerCase().trim();
+  const q = norm(document.getElementById("search").value);
   const list = document.getElementById("cardsList");
-  list.innerHTML = "";
+  list.innerHTML="";
 
   const items = state.cards
-    .filter(c => {
+    .filter(c=>{
       if(!q) return true;
-      return (
-        (c.term||"").toLowerCase().includes(q) ||
-        (c.meaning||"").toLowerCase().includes(q) ||
-        (c.type||"").toLowerCase().includes(q)
-      );
+      return norm(c.term).includes(q) || norm(c.meaning).includes(q) || norm(c.type).includes(q);
     })
     .sort((a,b)=> (a.term||"").localeCompare((b.term||""), "en"));
 
-  if(items.length===0){
-    const e = document.createElement("div");
-    e.className = "card";
-    e.innerHTML = `<div style="font-weight:980;">Henüz kart yok</div>
-                   <div class="smallInfo">➕ Elle Kelime Ekle ile başlayabilirsin.</div>`;
+  if(!items.length){
+    const e=document.createElement("div");
+    e.className="card";
+    e.innerHTML=`<div style="font-weight:980;">Henüz kart yok</div><div class="smallInfo">➕ Elle Kelime Ekle ile başla.</div>`;
     list.appendChild(e);
     return;
   }
 
   items.forEach(c=>{
-    const isDue = (c.due||0) <= now();
-    const el = document.createElement("div");
-    el.className = "card";
-    el.style.marginTop = "12px";
-    el.innerHTML = `
+    const isDue=(c.due||0) <= now();
+    const el=document.createElement("div");
+    el.className="card";
+    el.style.marginTop="12px";
+    el.innerHTML=`
       <div class="cardLine">
         <div class="termBig">${safeText(c.term)}</div>
-        <div class="badge ${isDue?'due':''}">${isDue ? 'DUE' : 'OK'}</div>
+        <div class="badge ${isDue?'due':''}">${isDue?'DUE':'OK'}</div>
       </div>
       <div class="smallInfo">${safeText(c.lang)} • ${safeText(c.meaning)}</div>
-      <div class="smallInfo" style="margin-top:6px;">Tür: ${safeText(c.type || '-')}</div>
+      <div class="smallInfo" style="margin-top:6px;">Tür: ${safeText(c.type||'-')}</div>
       <div class="smallInfo" style="margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-        ${safeText(c.example || '')}
+        ${safeText(c.example||'')}
       </div>
       <div class="two" style="margin-top:10px;">
-        <button class="btn btnSoft btnHalf" data-open="${c.id}">Aç</button>
-        <button class="btn btnSoft btnHalf" data-say="${c.id}">🔊</button>
+        <button class="btn btnSoft btnHalf" data-edit="${c.id}">Düzenle</button>
+        <button class="btn btnDanger btnHalf" data-del="${c.id}">Sil</button>
       </div>
     `;
-    el.querySelector(`[data-open="${c.id}"]`).onclick = ()=>openCardSheet(c.id);
-    el.querySelector(`[data-say="${c.id}"]`).onclick = ()=>speakText(c.term, c.lang);
+    el.querySelector(`[data-edit="${c.id}"]`).onclick=()=>openEditPrompt(c.id);
+    el.querySelector(`[data-del="${c.id}"]`).onclick=()=>deleteCard(c.id);
     list.appendChild(el);
   });
 }
 
-/* =========================================================
-   WORD SHEET (Open/Edit existing card)
-   ========================================================= */
-let sheetCardId = null;
-let sheetEditMode = false;
-
-function syncLangPickToWordSheet(){
-  const v = document.getElementById("wsLangPick").value;
-  document.getElementById("wsLang").textContent = v;
-}
-
-function openCardSheet(cardId){
-  const c = state.cards.find(x=>x.id===cardId);
-  if(!c) return;
-
-  sheetCardId = c.id;
-  sheetEditMode = false;
-
-  document.getElementById("wsLang").textContent = c.lang || "EN";
-  document.getElementById("wsLangPick").value = c.lang || "EN";
-  document.getElementById("wsWord").textContent = c.term || "";
-  document.getElementById("wsMeaning").value = c.meaning || "";
-  document.getElementById("wsType").value = c.type || "word";
-  document.getElementById("wsExample").value = c.example || "";
-  document.getElementById("wsNote").value = c.note || "";
-  document.getElementById("wsStatus").textContent = "Kart görüntüleme";
-  document.getElementById("wsSource").textContent = "Çeviri: —";
-
-  setSheetInputsDisabled(true);
-  openSheet("wordSheet");
-}
-
-function setSheetInputsDisabled(disabled){
-  document.getElementById("wsMeaning").disabled = disabled;
-  document.getElementById("wsType").disabled = disabled;
-  document.getElementById("wsExample").disabled = disabled;
-  document.getElementById("wsNote").disabled = disabled;
-  document.getElementById("wsLangPick").disabled = disabled;
-}
-
-function enableEditMode(){
-  if(!sheetCardId){
-    toast("Kart seçili değil.");
-    return;
-  }
-  sheetEditMode = true;
-  document.getElementById("wsStatus").textContent = "Düzenleme modu";
-  setSheetInputsDisabled(false);
-}
-
-async function autoFillWordSheet(){
-  const term = document.getElementById("wsWord").textContent.trim();
-  const lang = document.getElementById("wsLang").textContent.trim() || "EN";
-  if(!term) return toast("Kelime boş.");
-
-  // offline meta first (EN)
-  if(lang === "EN"){
-    const hit = offlineLookupEN(term);
-    if(hit){
-      if(!document.getElementById("wsMeaning").value.trim() && hit.meaning) document.getElementById("wsMeaning").value = hit.meaning;
-      if((document.getElementById("wsType").value === "word" || !document.getElementById("wsType").value) && hit.type) document.getElementById("wsType").value = hit.type;
-      if(!document.getElementById("wsExample").value.trim() && hit.example) document.getElementById("wsExample").value = hit.example;
-      document.getElementById("wsSource").textContent = "Çeviri: Offline ✅";
-      toast("Offline dolduruldu ✅");
-      return;
-    }
-  }
-
-  // meaning
-  if(!document.getElementById("wsMeaning").value.trim()){
-    const m = await translateToTR(lang, term);
-    if(m){
-      document.getElementById("wsMeaning").value = m;
-      document.getElementById("wsSource").textContent = "Çeviri: Online/Cache ✅";
-    }else{
-      document.getElementById("wsSource").textContent = "Çeviri: Bulunamadı";
-    }
-  }
-
-  // type
-  if(document.getElementById("wsType").value === "word"){
-    document.getElementById("wsType").value = (lang==="EN") ? inferTypeEN(term) : (term.includes(" ") ? "phrase" : "word");
-  }
-
-  // example
-  if(!document.getElementById("wsExample").value.trim()){
-    if(lang==="EN"){
-      const ex = generateExampleEN(term, document.getElementById("wsType").value);
-      document.getElementById("wsExample").value = ex;
-    }else{
-      document.getElementById("wsExample").value = `(${lang}) ${term} — örnek cümle (manuel düzenleyebilirsin).`;
-    }
-  }
-
-  toast("Otomatik dolduruldu ✅");
-}
-
-function saveCardFromSheet(){
-  const term = document.getElementById("wsWord").textContent.trim();
-  const lang = document.getElementById("wsLang").textContent.trim() || "EN";
-  const meaning = document.getElementById("wsMeaning").value.trim();
-  const type = document.getElementById("wsType").value;
-  const example = document.getElementById("wsExample").value.trim();
-  const note = document.getElementById("wsNote").value.trim();
-
-  if(!term) return toast("Kelime boş olamaz.");
-  if(!meaning) return toast("Anlam boş olamaz.");
-
-  const existing = sheetCardId ? state.cards.find(c=>c.id===sheetCardId) : null;
-
-  if(existing){
-    existing.lang = lang;
-    existing.meaning = meaning;
-    existing.type = type;
-    existing.example = example;
-    existing.note = note;
-    existing.updatedAt = now();
-    DB.set("lm_cards", state.cards);
-    toast("Güncellendi ✅");
-  }else{
-    const card = {
-      id: uid("c"),
-      term,
-      lang,
-      meaning,
-      type,
-      example,
-      note,
-      due: now(),
-      srs: { interval:0, reps:0, ef:2.5 },
-      createdAt: now(),
-      updatedAt: now()
-    };
-    state.cards.push(card);
-    DB.set("lm_cards", state.cards);
-    toast("Kaydedildi ✅");
-  }
-
-  logActivity();
-  closeSheets();
-  renderDash(); renderReview(); renderCards();
-}
-
-function deleteCardFromSheet(){
-  if(!sheetCardId) return toast("Silinecek kart yok.");
-  if(!confirm("Kart silinsin mi?")) return;
-
-  state.cards = state.cards.filter(c=>c.id !== sheetCardId);
-  DB.set("lm_cards", state.cards);
-
-  // also remove from review queue if exists
-  state.reviewQueue = (state.reviewQueue||[]).filter(id => id !== sheetCardId);
-  DB.set("lm_review_queue", state.reviewQueue);
-
-  toast("Silindi");
-  closeSheets();
-  renderDash(); renderReview(); renderCards();
-}
-
-/* speak from sheet */
-function speakText(txt, lang){
-  const u = new SpeechSynthesisUtterance(txt);
-  const map = {EN:"en-US", RU:"ru-RU", DE:"de-DE", FR:"fr-FR", TR:"tr-TR"};
-  u.lang = map[lang] || "en-US";
-  u.rate = 0.9;
-  speechSynthesis.cancel();
-  speechSynthesis.speak(u);
-}
-function speakWordFromSheet(){
-  const txt = document.getElementById("wsWord").textContent.trim();
-  const lang = document.getElementById("wsLang").textContent.trim();
-  if(!txt) return;
-  speakText(txt, lang);
-}
-
-/* =========================================================
-   MANUAL ADD: Auto fill meaning + type + example
-   ========================================================= */
-let autoFillTimer = null;
-
+/* ===========================
+   Manual Add (ONLINE AUTOFILL)
+=========================== */
+let autoTimer=null;
 function openManualAdd(){
-  document.getElementById("maLang").value = "EN";
-  document.getElementById("maTerm").value = "";
-  document.getElementById("maMeaning").value = "";
-  document.getElementById("maType").value = "word";
-  document.getElementById("maExample").value = "";
-  document.getElementById("maNote").value = "";
+  clearManual();
   openSheet("manualAddSheet");
 }
-
-function scheduleManualAutoFill(){
-  clearTimeout(autoFillTimer);
-  autoFillTimer = setTimeout(autoFillManualFields, 350);
+function clearManual(){
+  document.getElementById("maLang").value="EN";
+  document.getElementById("maTerm").value="";
+  document.getElementById("maMeaning").value="";
+  document.getElementById("maType").value="word";
+  document.getElementById("maExample").value="";
+  document.getElementById("maNote").value="";
+  document.getElementById("maHint").textContent="Yazınca otomatik doldurur. İnternet şart.";
 }
-
-document.getElementById("maTerm").addEventListener("input", scheduleManualAutoFill);
-document.getElementById("maLang").addEventListener("change", scheduleManualAutoFill);
-document.getElementById("maTerm").addEventListener("blur", autoFillManualFields);
-document.getElementById("maTerm").addEventListener("keydown", (e)=>{
-  if(e.key === "Enter"){
+document.getElementById("maTerm").addEventListener("input", ()=>{
+  clearTimeout(autoTimer);
+  autoTimer=setTimeout(()=>autoFillManualFields(false), 450);
+});
+document.getElementById("maLang").addEventListener("change", ()=>{
+  clearTimeout(autoTimer);
+  autoTimer=setTimeout(()=>autoFillManualFields(false), 250);
+});
+document.getElementById("maTerm").addEventListener("keydown",(e)=>{
+  if(e.key==="Enter"){
     e.preventDefault();
-    autoFillManualFields();
+    autoFillManualFields(true);
   }
 });
 
-async function autoFillManualFields(){
-  const lang = document.getElementById("maLang").value;
-  const term = document.getElementById("maTerm").value.trim();
+async function autoFillManualFields(force){
+  const lang=document.getElementById("maLang").value;
+  const term=document.getElementById("maTerm").value.trim();
   if(!term) return;
 
-  // 0) offline meta (EN)
-  if(lang === "EN"){
-    const hit = offlineLookupEN(term);
-    if(hit){
-      if(!document.getElementById("maMeaning").value.trim() && hit.meaning) document.getElementById("maMeaning").value = hit.meaning;
-      if((document.getElementById("maType").value === "word" || !document.getElementById("maType").value) && hit.type) document.getElementById("maType").value = hit.type;
-      if(!document.getElementById("maExample").value.trim() && hit.example) document.getElementById("maExample").value = hit.example;
-      return;
-    }
-  }
+  document.getElementById("maHint").textContent="Dolduruluyor…";
 
-  // 1) type
-  if(document.getElementById("maType").value === "word"){
-    document.getElementById("maType").value = (lang==="EN") ? inferTypeEN(term) : (term.includes(" ") ? "phrase" : "word");
-  }
+  // TYPE + EXAMPLE (try dictionary for EN)
+  let type = document.getElementById("maType").value;
+  let example = document.getElementById("maExample").value.trim();
+  let meaning = document.getElementById("maMeaning").value.trim();
 
-  // 2) meaning (if empty)
-  if(!document.getElementById("maMeaning").value.trim()){
-    const m = await translateToTR(lang, term);
-    if(m) document.getElementById("maMeaning").value = m;
-  }
-
-  // 3) example (if empty)
-  if(!document.getElementById("maExample").value.trim()){
-    if(lang==="EN"){
-      document.getElementById("maExample").value = generateExampleEN(term, document.getElementById("maType").value);
+  // EN dictionary
+  if(lang==="EN"){
+    const dict = await lookupEN(term);
+    if(dict){
+      if((!type || type==="word" || force) && dict.type) type = dict.type;
+      // Prefer dictionary example
+      if((!example || force) && dict.exampleEN) example = dict.exampleEN;
+      // If no example in dict, generate
+      if((!example || force) && !dict.exampleEN) example = genExample(term, lang, type);
     }else{
-      document.getElementById("maExample").value = `(${lang}) ${term} — örnek cümle (manuel düzenleyebilirsin).`;
+      if((!type || type==="word") && (force || !type)) type = inferTypeBasic(term);
+      if((!example || force) && !example) example = genExample(term, lang, type);
     }
+  }else{
+    // non-EN: basic type + template example
+    if((!type || type==="word" || force)) type = inferTypeBasic(term);
+    if((!example || force)) example = genExample(term, lang, type);
+  }
+
+  // MEANING: always translate to TR
+  if((!meaning || force)){
+    const tr = await translateToTR(lang, term);
+    if(tr) meaning = tr;
+  }
+
+  document.getElementById("maType").value = type || "word";
+  document.getElementById("maExample").value = example || "";
+  document.getElementById("maMeaning").value = meaning || "";
+
+  if(!meaning){
+    document.getElementById("maHint").textContent="Anlam alınamadı (internet/translate engeli olabilir).";
+  }else{
+    document.getElementById("maHint").textContent="Otomatik dolduruldu ✅ (istersen düzenle)";
   }
 }
 
 function saveManualCard(){
-  const lang = document.getElementById("maLang").value;
-  const term = document.getElementById("maTerm").value.trim();
-  const meaning = document.getElementById("maMeaning").value.trim();
-  const type = document.getElementById("maType").value;
-  const example = document.getElementById("maExample").value.trim();
-  const note = document.getElementById("maNote").value.trim();
+  const lang=document.getElementById("maLang").value;
+  const term=document.getElementById("maTerm").value.trim();
+  const meaning=document.getElementById("maMeaning").value.trim();
+  const type=document.getElementById("maType").value;
+  const example=document.getElementById("maExample").value.trim();
+  const note=document.getElementById("maNote").value.trim();
 
-  if(!term) return toast("Kelime/terim boş olamaz.");
-  if(!meaning) return toast("Anlam boş olamaz.");
+  if(!term) return toast("Kelime boş olamaz.");
+  if(!meaning) return toast("Anlam boş olamaz (doldur/manuel gir).");
 
-  // prevent duplicates (same term+lang)
-  const dupe = state.cards.find(c => normKey(c.term) === normKey(term) && (c.lang||"EN") === lang);
+  const dupe = state.cards.find(c => norm(c.term)===norm(term) && (c.lang||"EN")===lang);
   if(dupe){
     if(confirm("Bu kelime zaten var. Güncellensin mi?")){
-      dupe.meaning = meaning;
-      dupe.type = type;
-      dupe.example = example;
-      dupe.note = note;
-      dupe.updatedAt = now();
+      dupe.meaning=meaning;
+      dupe.type=type;
+      dupe.example=example;
+      dupe.note=note;
+      dupe.updatedAt=now();
       DB.set("lm_cards", state.cards);
-      logActivity();
       toast("Güncellendi ✅");
-      closeSheets();
-      renderDash(); renderReview(); renderCards();
-      return;
-    } else {
-      return;
+      closeSheets(); renderDash(); renderReview(); renderCards();
     }
+    return;
   }
 
-  const card = {
-    id: uid("c"),
-    term, meaning, lang, type,
-    example, note,
+  state.cards.push({
+    id:uid(),
+    lang, term, meaning, type, example, note,
     due: now(),
-    srs: { interval:0, reps:0, ef:2.5 },
+    srs:{interval:0,reps:0,ef:2.5},
     createdAt: now(),
     updatedAt: now()
-  };
-
-  state.cards.push(card);
+  });
   DB.set("lm_cards", state.cards);
-  logActivity();
   toast("Eklendi ✅");
-  closeSheets();
-  renderDash(); renderCards(); renderReview();
+  closeSheets(); renderDash(); renderReview(); renderCards();
 }
 
-/* =========================================================
-   Activity log
-   ========================================================= */
-function logActivity(){
-  const activity = DB.get("lm_activity", {});
-  const k = new Date().toISOString().slice(0,10);
-  activity[k] = (activity[k] || 0) + 1;
-  DB.set("lm_activity", activity);
+function deleteCard(id){
+  if(!confirm("Silinsin mi?")) return;
+  state.cards = state.cards.filter(c=>c.id!==id);
+  DB.set("lm_cards", state.cards);
+  state.reviewQueue = (state.reviewQueue||[]).filter(x=>x!==id);
+  DB.set("lm_review_queue", state.reviewQueue);
+  toast("Silindi");
+  renderDash(); renderReview(); renderCards();
 }
 
-/* =========================================================
-   Quiz Engine
-   - choice OR typing
-   ========================================================= */
-let quizCurrent = null;   // { card, choices[], correctIndex }
-let quizSelectedChoiceIndex = null;
-let wrongCardsThisQuiz = [];
-let totalThisQuiz = 0;
-let answeredThisQuiz = 0;
+/* Simple edit prompt (keep UI minimal) */
+function openEditPrompt(id){
+  const c = state.cards.find(x=>x.id===id);
+  if(!c) return;
+  const newMeaning = prompt("Anlam (TR):", c.meaning || "");
+  if(newMeaning===null) return;
+  const newType = prompt("Tür (noun/verb/adj/adv/phrase/word…):", c.type || "word");
+  if(newType===null) return;
+  const newExample = prompt("Örnek cümle:", c.example || "");
+  if(newExample===null) return;
 
+  c.meaning = newMeaning.trim();
+  c.type = (newType||"word").trim();
+  c.example = (newExample||"").trim();
+  c.updatedAt = now();
+  DB.set("lm_cards", state.cards);
+  toast("Güncellendi ✅");
+  renderCards();
+}
+
+/* ===========================
+   Quiz
+=========================== */
 function getQuizMode(){ return state.settings.quizMode || "choice"; }
-
 function syncQuizModeLabels(){
-  const label = (getQuizMode()==="typing") ? "Yazmalı" : "Seçmeli";
-  const a = document.getElementById("quizModeLabel");
-  const b = document.getElementById("quizModeLabel2");
-  if(a) a.textContent = label;
-  if(b) b.textContent = label;
+  const label=(getQuizMode()==="typing")?"Yazmalı":"Seçmeli";
+  document.getElementById("quizModeLabel").textContent=label;
+  document.getElementById("quizModeLabel2").textContent=label;
 }
-
 function toggleQuizMode(){
   state.settings.quizMode = (getQuizMode()==="choice") ? "typing" : "choice";
   DB.set("lm_settings", state.settings);
   syncQuizModeLabels();
   toast("Quiz modu: " + ((getQuizMode()==="typing")?"Yazmalı":"Seçmeli"));
 }
-
+let quizCurrent=null;
+let correctCount=0, wrongCount=0;
 function startReviewQuiz(){
-  if(state.cards.length === 0){
-    toast("Kart yok. Önce kelime ekle.");
-    return;
-  }
-  if(!state.reviewQueue || state.reviewQueue.length === 0){
-    resetTodaysQueue();
-  }
-
-  wrongCardsThisQuiz = [];
-  totalThisQuiz = state.reviewQueue.length;
-  answeredThisQuiz = 0;
-
-  document.getElementById("qTotal").textContent = totalThisQuiz;
-  document.getElementById("qRemain").textContent = totalThisQuiz;
-  document.getElementById("qCorrect").textContent = 0;
-  document.getElementById("qWrong").textContent = 0;
-  document.getElementById("qProg").style.width = "0%";
-  document.getElementById("qReveal").textContent = "";
-
-  document.getElementById("quizBody").style.display = "block";
-  document.getElementById("quizSummary").style.display = "none";
+  if(!state.cards.length) return toast("Kart yok.");
+  if(!state.reviewQueue || !state.reviewQueue.length) resetTodaysQueue();
+  correctCount=0; wrongCount=0;
+  document.getElementById("qCorrect").textContent="0";
+  document.getElementById("qWrong").textContent="0";
+  document.getElementById("qTotal").textContent=String(state.reviewQueue.length);
   openQuizOverlay();
-  nextQuizQuestion();
+  nextQuiz();
 }
-
 function openQuizOverlay(){
   document.getElementById("quizOverlay").classList.add("open");
-  // Enter => check in typing mode
-  document.getElementById("qInput").onkeydown = (e)=>{
-    if(e.key === "Enter"){
-      e.preventDefault();
-      checkTypingAnswer();
-    }
+  document.getElementById("qInput").onkeydown=(e)=>{
+    if(e.key==="Enter"){ e.preventDefault(); checkTypingAnswer(); }
   };
 }
-
 function stopQuiz(){
   document.getElementById("quizOverlay").classList.remove("open");
-  quizCurrent = null;
-  quizSelectedChoiceIndex = null;
-  renderDash();
-  renderReview();
+  quizCurrent=null;
+  renderDash(); renderReview();
 }
-
-function updateQuizProgress(){
-  const remain = state.reviewQueue.length;
-  document.getElementById("qRemain").textContent = remain;
-  const done = answeredThisQuiz;
-  const pct = totalThisQuiz ? Math.round((done / totalThisQuiz) * 100) : 0;
-  document.getElementById("qProg").style.width = pct + "%";
+function updateQuizRemain(){
+  document.getElementById("qRemain").textContent=String(state.reviewQueue.length);
 }
-
-function nextQuizQuestion(){
-  document.getElementById("qReveal").textContent = "";
-  document.getElementById("qInput").classList.remove("correct","wrong");
-  document.getElementById("qInput").value = "";
-
-  if(state.reviewQueue.length === 0){
-    showQuizSummary();
+function nextQuiz(){
+  if(!state.reviewQueue.length){
+    toast("Quiz bitti ✅");
+    stopQuiz();
     return;
   }
-
+  updateQuizRemain();
   const id = state.reviewQueue.shift();
   DB.set("lm_review_queue", state.reviewQueue);
-
   const card = state.cards.find(c=>c.id===id);
-  if(!card){
-    nextQuizQuestion();
-    return;
-  }
+  if(!card) return nextQuiz();
 
-  const mode = getQuizMode();
+  quizCurrent = card;
+  document.getElementById("qWord").textContent=card.term;
+  document.getElementById("qMeta").textContent=`${card.lang} • ${card.type || 'word'}`;
+  document.getElementById("qReveal").textContent="";
 
-  document.getElementById("qTyping").style.display = (mode==="typing") ? "flex" : "none";
-  document.getElementById("qChoices").style.display = (mode==="choice") ? "flex" : "none";
+  const mode=getQuizMode();
+  const choicesBox=document.getElementById("qChoices");
+  const typingBox=document.getElementById("qTyping");
+  const input=document.getElementById("qInput");
+  choicesBox.innerHTML="";
 
-  document.getElementById("qMeta").textContent =
-    `${card.lang} • ${card.type||'word'} • Due: ${((card.due||0) <= now()) ? 'YES' : 'NO'}`;
-
-  document.getElementById("qWord").textContent = card.term;
-
-  if(mode === "choice"){
-    const pool = state.cards.filter(c=>c.id!==card.id).sort(()=>Math.random()-0.5);
-    const distractors = pool.slice(0,3).map(x=>x.meaning);
-    const choices = [...distractors, card.meaning].sort(()=>Math.random()-0.5);
-    const correctIndex = choices.indexOf(card.meaning);
-    quizCurrent = { card, choices, correctIndex };
-    quizSelectedChoiceIndex = null;
-
-    const box = document.getElementById("qChoices");
-    box.innerHTML = "";
-    choices.forEach((ch, idx)=>{
-      const b = document.createElement("button");
-      b.className = "qChoice";
-      b.textContent = ch;
-      b.onclick = ()=>selectChoice(idx, b);
-      box.appendChild(b);
-    });
-  } else {
-    quizCurrent = { card };
-    // focus
-    setTimeout(()=>document.getElementById("qInput").focus(), 50);
-  }
-
-  updateQuizProgress();
-}
-
-function selectChoice(idx, btn){
-  quizSelectedChoiceIndex = idx;
-  document.querySelectorAll(".qChoice").forEach(b=>{
-    b.classList.remove("correct","wrong");
-    b.disabled = true;
-  });
-
-  btn.style.outline = `2px solid color-mix(in srgb, var(--primary) 55%, transparent)`;
-
-  setTimeout(()=>{
-    btn.style.outline = "";
-    if(!quizCurrent) return;
-    if(idx === quizCurrent.correctIndex){
-      applyGrade(4, true);
-    }else{
-      applyGrade(2, false);
-    }
-  }, 220);
-}
-
-function normalizeAnswer(a){
-  return normKey(a)
-    .replace(/[.,!?;:"(){}\[\]<>]/g,"")
-    .replace(/\s+/g," ")
-    .trim();
-}
-
-function checkTypingAnswer(){
-  if(!quizCurrent || !quizCurrent.card) return;
-  const input = document.getElementById("qInput");
-  const typed = normalizeAnswer(input.value);
-  const correct = normalizeAnswer(quizCurrent.card.meaning);
-
-  if(!typed){
-    toast("Bir cevap yaz.");
-    return;
-  }
-
-  const isCorrect = (typed === correct) || (correct.includes(typed) && typed.length >= Math.min(6, correct.length));
-  if(isCorrect){
-    input.classList.remove("wrong");
-    input.classList.add("correct");
-    document.getElementById("qReveal").textContent = "✅ Doğru";
-    applyGrade(4, true);
+  if(mode==="typing"){
+    typingBox.style.display="flex";
+    choicesBox.style.display="none";
+    input.value="";
+    setTimeout(()=>input.focus(), 50);
   }else{
-    input.classList.remove("correct");
-    input.classList.add("wrong");
-    document.getElementById("qReveal").textContent = `❌ Doğru: ${quizCurrent.card.meaning}`;
-    applyGrade(2, false);
+    typingBox.style.display="none";
+    choicesBox.style.display="flex";
+    const distractors = state.cards.filter(c=>c.id!==card.id).sort(()=>Math.random()-0.5).slice(0,3).map(x=>x.meaning);
+    const options = [...distractors, card.meaning].sort(()=>Math.random()-0.5);
+    const correctIndex = options.indexOf(card.meaning);
+
+    options.forEach((opt, idx)=>{
+      const b=document.createElement("button");
+      b.className="qChoice";
+      b.textContent=opt;
+      b.onclick=()=>{
+        document.querySelectorAll(".qChoice").forEach(x=>x.disabled=true);
+        if(idx===correctIndex){
+          b.classList.add("correct");
+          grade(card, 4, true);
+        }else{
+          b.classList.add("wrong");
+          document.querySelectorAll(".qChoice")[correctIndex]?.classList.add("correct");
+          grade(card, 2, false);
+        }
+      };
+      choicesBox.appendChild(b);
+    });
   }
 }
-
-function applyGrade(quality, isCorrect){
+function normalizeAnswer(a){
+  return norm(a).replace(/[.,!?;:"(){}\[\]<>]/g,"").replace(/\s+/g," ").trim();
+}
+function checkTypingAnswer(){
   if(!quizCurrent) return;
-  const { card } = quizCurrent;
-
-  // stats
-  const cEl = document.getElementById("qCorrect");
-  const wEl = document.getElementById("qWrong");
-  if(isCorrect) cEl.textContent = (parseInt(cEl.textContent)||0) + 1;
-  else wEl.textContent = (parseInt(wEl.textContent)||0) + 1;
-
-  // show correct/wrong in choice mode
-  if(getQuizMode()==="choice" && quizCurrent.choices){
-    const all = Array.from(document.querySelectorAll(".qChoice"));
-    all.forEach((b,i)=>{
-      if(i === quizCurrent.correctIndex) b.classList.add("correct");
-    });
-    if(quizSelectedChoiceIndex !== null && quizSelectedChoiceIndex !== quizCurrent.correctIndex){
-      all[quizSelectedChoiceIndex]?.classList.add("wrong");
-    }
+  const typed = normalizeAnswer(document.getElementById("qInput").value);
+  if(!typed) return toast("Cevap yaz.");
+  const correct = normalizeAnswer(quizCurrent.meaning);
+  const ok = (typed===correct) || (correct.includes(typed) && typed.length >= Math.min(6, correct.length));
+  if(ok){
+    document.getElementById("qReveal").textContent="✅ Doğru";
+    grade(quizCurrent, 4, true);
+  }else{
+    document.getElementById("qReveal").textContent=`❌ Doğru: ${quizCurrent.meaning}`;
+    grade(quizCurrent, 2, false);
   }
+}
+function grade(card, quality, isCorrect){
+  if(isCorrect){ correctCount++; document.getElementById("qCorrect").textContent=String(correctCount); }
+  else{ wrongCount++; document.getElementById("qWrong").textContent=String(wrongCount); }
 
-  // wrong list
-  if(!isCorrect) wrongCardsThisQuiz.push(card.id);
-
-  // SRS update
   const upd = srsCalc(card, quality);
   card.due = upd.due;
   card.srs = upd.srs;
   card.updatedAt = now();
   DB.set("lm_cards", state.cards);
 
-  // activity
-  logActivity();
-
-  answeredThisQuiz++;
-  updateQuizProgress();
-
-  setTimeout(()=>{
-    quizCurrent = null;
-    quizSelectedChoiceIndex = null;
-    nextQuizQuestion();
-  }, 650);
+  setTimeout(()=>{ quizCurrent=null; nextQuiz(); }, 550);
 }
-
-function speakQuizWord(){
-  const w = document.getElementById("qWord").textContent.trim();
-  const meta = document.getElementById("qMeta").textContent || "";
-  const lang = meta.split("•")[0]?.trim() || "EN";
-  if(!w) return;
-  speakText(w, lang);
-}
-
 function skipQuestion(){
-  if(!quizCurrent || !quizCurrent.card) return;
-  // Put back to end of queue
-  state.reviewQueue.push(quizCurrent.card.id);
+  if(!quizCurrent) return;
+  state.reviewQueue.push(quizCurrent.id);
   DB.set("lm_review_queue", state.reviewQueue);
   toast("Soru sona atıldı");
-  nextQuizQuestion();
+  quizCurrent=null;
+  nextQuiz();
 }
 
-function showQuizSummary(){
-  const correctCount = parseInt(document.getElementById('qCorrect').textContent) || 0;
-  const wrongCount = parseInt(document.getElementById('qWrong').textContent) || 0;
-
-  document.getElementById('sumCorrect').textContent = correctCount;
-  document.getElementById('sumWrong').textContent = wrongCount;
-
-  const total = correctCount + wrongCount;
-  const rate = total ? Math.round((correctCount / total) * 100) : 0;
-  document.getElementById('sumRate').textContent = rate + '%';
-
-  document.getElementById('quizBody').style.display = 'none';
-  document.getElementById('quizSummary').style.display = 'block';
+/* Speak */
+function speakText(txt, lang){
+  const u=new SpeechSynthesisUtterance(txt);
+  const map={EN:"en-US",RU:"ru-RU",DE:"de-DE",FR:"fr-FR",TR:"tr-TR"};
+  u.lang=map[lang] || "en-US";
+  u.rate=0.9;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+function speakQuizWord(){
+  if(!quizCurrent) return;
+  speakText(quizCurrent.term, quizCurrent.lang || "EN");
 }
 
-function repeatWrongQuiz(){
-  if(wrongCardsThisQuiz.length === 0){
-    toast('Yanlış yok.');
-    stopQuiz();
-    return;
-  }
-  state.reviewQueue = wrongCardsThisQuiz.slice();
-  DB.set('lm_review_queue', state.reviewQueue);
-
-  wrongCardsThisQuiz = [];
-  totalThisQuiz = state.reviewQueue.length;
-  answeredThisQuiz = 0;
-
-  document.getElementById('quizSummary').style.display = 'none';
-  document.getElementById('quizBody').style.display = 'block';
-  document.getElementById('qTotal').textContent = totalThisQuiz;
-  document.getElementById('qRemain').textContent = totalThisQuiz;
-  document.getElementById('qCorrect').textContent = 0;
-  document.getElementById('qWrong').textContent = 0;
-  document.getElementById("qProg").style.width = "0%";
-
-  nextQuizQuestion();
-}
-
-/* =========================================================
-   Export / Import / Reset / Cache
-   ========================================================= */
+/* ===========================
+   Export/Import/Reset
+=========================== */
 function exportAll(){
-  const data = JSON.stringify({
-    settings: state.settings,
-    cards: state.cards,
-    cache: state.txCache
-  }, null, 2);
+  const data = JSON.stringify({ settings:state.settings, cards:state.cards }, null, 2);
   prompt("Kopyala (Export JSON):", data);
 }
-
 function importAllPrompt(){
   const txt = prompt("Import JSON yapıştır:");
   if(!txt) return;
   try{
-    const obj = JSON.parse(txt);
-    if(obj.settings) state.settings = obj.settings;
-    if(obj.cards) state.cards = obj.cards;
-    if(obj.cache) state.txCache = obj.cache;
-
-    saveAllState();
+    const obj=JSON.parse(txt);
+    if(obj.settings) state.settings=obj.settings;
+    if(obj.cards) state.cards=obj.cards;
+    saveAll();
     setTheme(state.settings.theme || "dark");
     syncQuizModeLabels();
-    toast("Import tamam ✅");
-    renderDash(); renderCards(); renderReview();
+    toast("Import ✅");
+    renderDash(); renderReview(); renderCards();
   }catch(e){
     toast("Import hata");
   }
 }
-
-function clearCache(){
-  state.txCache = {};
-  DB.set("lm_tx_cache", state.txCache);
-  toast("Cache temizlendi ✅");
-}
-
 function hardReset(){
   if(!confirm("Her şeyi sıfırlamak istiyor musun?")) return;
-  localStorage.removeItem("lm_settings");
-  localStorage.removeItem("lm_cards");
-  localStorage.removeItem("lm_tx_cache");
-  localStorage.removeItem("lm_review_queue");
-  localStorage.removeItem("lm_activity");
+  localStorage.clear();
   location.reload();
 }
 
-/* =========================================================
-   Open-add quick: if you want to open wordSheet as "new"
-   (kept for future extension)
-   ========================================================= */
-function openNewWordSheet(term=""){
-  sheetCardId = null;
-  sheetEditMode = true;
-
-  document.getElementById("wsLang").textContent = "EN";
-  document.getElementById("wsLangPick").value = "EN";
-  document.getElementById("wsWord").textContent = term || "word";
-  document.getElementById("wsMeaning").value = "";
-  document.getElementById("wsType").value = "word";
-  document.getElementById("wsExample").value = "";
-  document.getElementById("wsNote").value = "";
-  document.getElementById("wsStatus").textContent = "Yeni kart";
-  document.getElementById("wsSource").textContent = "Çeviri: —";
-
-  setSheetInputsDisabled(false);
-  openSheet("wordSheet");
-}
-
-/* =========================================================
-   INIT
-   ========================================================= */
+/* ===========================
+   Init
+=========================== */
 setTheme(state.settings.theme || "dark");
 syncQuizModeLabels();
-renderDash();
-renderCards();
-renderReview();
-
-/* Ensure queue exists */
-if(!state.reviewQueue) state.reviewQueue = [];
+renderDash(); renderReview(); renderCards();
+if(!state.reviewQueue) state.reviewQueue=[];
 </script>
 </body>
 </html>
