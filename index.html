@@ -270,7 +270,20 @@
       <h2 class="h2">Kartlar</h2>
       <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" onclick="openManualAdd()">➕ Ekle</button>
     </div>
-
+<div class="row" style="margin-bottom:12px; gap:8px;">
+      <div class="card" style="flex:1; padding:10px; border:1px solid var(--border); text-align:center; background:var(--card2);">
+        <div style="font-size:11px; font-weight:bold; color:var(--muted);">⚪ Yeni</div>
+        <div style="font-size:18px; font-weight:900; color:var(--text);" id="statNew">0</div>
+      </div>
+      <div class="card" style="flex:1; padding:10px; border:1px solid var(--warn); text-align:center; background:color-mix(in srgb, var(--warn) 5%, var(--card2));">
+        <div style="font-size:11px; font-weight:bold; color:var(--warn);">🟡 Öğreniyorum</div>
+        <div style="font-size:18px; font-weight:900; color:var(--warn);" id="statLearn">0</div>
+      </div>
+      <div class="card" style="flex:1; padding:10px; border:1px solid var(--ok); text-align:center; background:color-mix(in srgb, var(--ok) 5%, var(--card2));">
+        <div style="font-size:11px; font-weight:bold; color:var(--ok);">🟢 Öğrendim</div>
+        <div style="font-size:18px; font-weight:900; color:var(--ok);" id="statMaster">0</div>
+      </div>
+    </div>
     <div class="card" style="margin-bottom:12px;">
       <input id="search" placeholder="Kart ara (kelime/anlam/tür)..." />
       <div class="smallInfo" style="margin-top:8px;">Kartı aç → düzenle / sil.</div>
