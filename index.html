@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>LingoMaster</title>
+  <title>Vocabify</title>
   <meta name="theme-color" content="#0b1220" id="meta-theme">
   <style>
     :root{
@@ -158,7 +158,7 @@
 
 <body>
 <header>
-  <div class="brand"><div class="logo"></div><div>LingoMaster</div></div>
+  <div class="brand"><div class="logo"></div><div>Vocabify</div></div>
   <div style="display:flex; gap:10px;">
     <button class="iconBtn" id="btnTheme">🎨</button>
     <button class="iconBtn" id="btnSettings">⚙️</button>
@@ -181,7 +181,7 @@
         <div class="big" id="dashTotal">0</div>
       </div>
       <div class="card" style="flex:1; border-color:color-mix(in srgb, var(--warn) 45%, var(--border));">
-        <div style="font-weight:980; color:var(--warn);">Tekrar (Due)</div>
+        <div style="font-weight:980; color:var(--warn);">Tekrar</div>
         <div class="big" style="color:var(--warn);" id="dashDue">0</div>
       </div>
     </div>
@@ -366,65 +366,102 @@
   <button class="btn btnPrimary" style="width:100%; margin-top:16px;" onclick="copyToManualAdd()">➕ Bu Kelimeyi Karta Ekle</button>
   <button class="btn btnSoft" style="width:100%; margin-top:10px;" onclick="closeSheets()">Kapat</button>
 </div>
-  <div class="sheet" id="grammarSheet" style="height:85vh;">
+  <div class="sheet" id="grammarSheet" style="height:90vh;">
   <div class="handle"></div>
-  <h2 class="h2" style="color:var(--primary); text-align:center;">📘 Hızlı Gramer</h2>
+  <h2 class="h2" style="color:var(--primary); text-align:center;">📘 İngilizce İpuçları</h2>
 
   <div class="card" style="margin-bottom:14px; padding:0; overflow:hidden; border:1px solid var(--border);">
-    <div style="background:var(--card2); padding:12px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">⏳ Zamanlar (Tenses)</div>
+    <div style="background:var(--card2); padding:10px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">👤 Zamirler (Pronouns)</div>
+    <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:center;">
+      <tr style="background:color-mix(in srgb, var(--primary) 15%, transparent); font-weight:bold;">
+        <td style="padding:6px;">Ben</td>
+        <td style="padding:6px;">Beni</td>
+        <td style="padding:6px;">Benim</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:6px; font-weight:bold; color:var(--primary);">I</td>
+        <td style="padding:6px;">Me</td>
+        <td style="padding:6px;">My</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:6px; font-weight:bold; color:var(--primary);">You</td>
+        <td style="padding:6px;">You</td>
+        <td style="padding:6px;">Your</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:6px; font-weight:bold; color:var(--primary);">He/She</td>
+        <td style="padding:6px;">Him/Her</td>
+        <td style="padding:6px;">His/Her</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:6px; font-weight:bold; color:var(--primary);">We</td>
+        <td style="padding:6px;">Us</td>
+        <td style="padding:6px;">Our</td>
+      </tr>
+      <tr>
+        <td style="padding:6px; font-weight:bold; color:var(--primary);">They</td>
+        <td style="padding:6px;">Them</td>
+        <td style="padding:6px;">Their</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card" style="margin-bottom:14px; padding:0; overflow:hidden; border:1px solid var(--border);">
+    <div style="background:var(--card2); padding:10px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">⏳ Zamanlar (Tenses)</div>
     <table style="width:100%; border-collapse:collapse; font-size:13px;">
-      <tr style="background:color-mix(in srgb, var(--primary) 15%, transparent); color:var(--primary);">
-        <th style="padding:8px; text-align:left;">Zaman</th>
-        <th style="padding:8px; text-align:left;">İpucu</th>
-        <th style="padding:8px; text-align:left;">Örnek</th>
+      <tr style="background:color-mix(in srgb, var(--primary) 15%, transparent);">
+        <th style="padding:6px; text-align:left;">Zaman</th>
+        <th style="padding:6px; text-align:left;">İpucu</th>
+        <th style="padding:6px; text-align:left;">Örnek</th>
       </tr>
       <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold;">Present Simple</td>
-        <td style="padding:8px; color:var(--muted);">Genel / Her zaman</td>
-        <td style="padding:8px;">I <b style="color:var(--primary)">play</b>.</td>
+        <td style="padding:6px; font-weight:bold;">Genel</td>
+        <td style="padding:6px; color:var(--muted);">Her gün</td>
+        <td style="padding:6px;">I <b style="color:var(--primary)">play</b>.</td>
       </tr>
       <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold;">Present Cont.</td>
-        <td style="padding:8px; color:var(--muted);">Şu an</td>
-        <td style="padding:8px;">I am <b style="color:var(--primary)">playing</b>.</td>
+        <td style="padding:6px; font-weight:bold;">Şimdiki</td>
+        <td style="padding:6px; color:var(--muted);">Şu an</td>
+        <td style="padding:6px;">I am <b style="color:var(--primary)">playing</b>.</td>
       </tr>
       <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold;">Past Simple</td>
-        <td style="padding:8px; color:var(--muted);">Geçmiş (Bitti)</td>
-        <td style="padding:8px;">I <b style="color:var(--primary)">played</b>.</td>
+        <td style="padding:6px; font-weight:bold;">Geçmiş</td>
+        <td style="padding:6px; color:var(--muted);">Dün</td>
+        <td style="padding:6px;">I <b style="color:var(--primary)">played</b>.</td>
       </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold;">Future (Will)</td>
-        <td style="padding:8px; color:var(--muted);">Gelecek</td>
-        <td style="padding:8px;">I <b style="color:var(--primary)">will play</b>.</td>
+      <tr>
+        <td style="padding:6px; font-weight:bold;">Gelecek</td>
+        <td style="padding:6px; color:var(--muted);">Yarın</td>
+        <td style="padding:6px;">I <b style="color:var(--primary)">will play</b>.</td>
       </tr>
     </table>
   </div>
 
   <div class="card" style="margin-bottom:14px;">
-    <div style="font-weight:900; color:var(--warn); margin-bottom:10px; text-align:center;">📍 IN - ON - AT Kuralı</div>
-    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; text-align:center;">
-      <div style="background:var(--card2); padding:10px 4px; border-radius:12px; border:1px solid var(--border);">
-        <div style="font-weight:900; color:var(--text); font-size:20px;">AT</div>
-        <div style="font-size:11px; margin-top:4px; font-weight:bold;">SAAT</div>
-        <div style="font-size:10px; color:var(--muted); margin-top:4px;">at 5:00</div>
+    <div style="font-weight:900; color:var(--warn); margin-bottom:10px; text-align:center;">🛠️ Modals (Kip Ekleri)</div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+      <div style="background:var(--bg); padding:8px; border-radius:8px; border:1px dashed var(--border);">
+        <div style="font-weight:bold; color:var(--primary);">CAN</div>
+        <div style="font-size:11px;">-ebilmek (Yetenek)</div>
       </div>
-      <div style="background:var(--card2); padding:10px 4px; border-radius:12px; border:1px solid var(--border);">
-        <div style="font-weight:900; color:var(--text); font-size:20px;">ON</div>
-        <div style="font-size:11px; margin-top:4px; font-weight:bold;">GÜN</div>
-        <div style="font-size:10px; color:var(--muted); margin-top:4px;">on Monday</div>
+      <div style="background:var(--bg); padding:8px; border-radius:8px; border:1px dashed var(--border);">
+        <div style="font-weight:bold; color:var(--primary);">SHOULD</div>
+        <div style="font-size:11px;">-meli (Tavsiye)</div>
       </div>
-      <div style="background:var(--card2); padding:10px 4px; border-radius:12px; border:1px solid var(--border);">
-        <div style="font-weight:900; color:var(--text); font-size:20px;">IN</div>
-        <div style="font-size:11px; margin-top:4px; font-weight:bold;">AY / YIL</div>
-        <div style="font-size:10px; color:var(--muted); margin-top:4px;">in 2024</div>
+      <div style="background:var(--bg); padding:8px; border-radius:8px; border:1px dashed var(--border);">
+        <div style="font-weight:bold; color:var(--primary);">MUST</div>
+        <div style="font-size:11px;">-meli (Zorunlu)</div>
+      </div>
+      <div style="background:var(--bg); padding:8px; border-radius:8px; border:1px dashed var(--border);">
+        <div style="font-weight:bold; color:var(--primary);">MIGHT</div>
+        <div style="font-size:11px;">-ebilir (İhtimal)</div>
       </div>
     </div>
   </div>
 
   <button class="btn btnSoft" style="width:100%; margin-top:20px;" onclick="closeSheets()">Kapat</button>
 </div>
-<div class="overlay" id="quizOverlay">
+  <div class="overlay" id="quizOverlay">
   <div class="overlayTop">
     <div style="font-weight:980;">Quiz</div>
     <button class="iconBtn" onclick="stopQuiz()">×</button>
