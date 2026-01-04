@@ -240,13 +240,13 @@
     Kaç kart çalışacaksın?
   </div>
 
-  <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px;">
-    <button class="btn btnSoft" style="padding:10px 0;" onclick="startReviewQuiz(5)">5</button>
-    <button class="btn btnSoft" style="padding:10px 0;" onclick="startReviewQuiz(10)">10</button>
-    <button class="btn btnSoft" style="padding:10px 0;" onclick="startReviewQuiz(15)">15</button>
-    <button class="btn btnSoft" style="padding:10px 0;" onclick="startReviewQuiz(20)">20</button>
-    <button class="btn btnPrimary" style="padding:10px 0; font-size:11px;" onclick="startReviewQuiz(9999)">Hepsi</button>
-  </div>
+  <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(5)">5</button>
+  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(10)">10</button>
+  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(15)">15</button>
+  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(20)">20</button>
+  <button class="btn btnPrimary" style="flex:1.5; min-width:70px; padding:12px 0;" onclick="startReviewQuiz(9999)">Hepsi</button>
+</div>
 
 </div>
         <button class="btn btnSoft btnHalf" onclick="toggleQuizMode()">Mod: <span id="quizModeLabel">Seçmeli</span></button>
@@ -1168,51 +1168,60 @@ let correctCount=0, wrongCount=0;
 // GÜNCELLENMİŞ START FONKSİYONU (LİMİTLİ)
 // GÜNCELLENMİŞ START FONKSİYONU (LİMİTLİ)
 // GÜVENLİ BAŞLATMA FONKSİYONU
+/* ===========================
+   GÜVENLİ TEKRAR BAŞLATMA (Hata Korumalı)
+=========================== */
 function startReviewQuiz(limit = 9999){
+  // 1. Tıklama algılandı mı? (Test)
+  console.log("Start butonu tıklandı. Limit:", limit);
+  
   try {
-    // 1. Pencereleri kapatmayı dene (Hata verirse yoksay)
+    // 2. Güvenlik Kontrolleri
+    if(!state || !state.cards) {
+       toast("Hata: Kart verisi bulunamadı!");
+       return;
+    }
+
+    // 3. Pencereleri Kapat
     if(typeof closeSheets === "function") closeSheets();
-    
-    // 2. Zamanı gelen kartları bul
+
+    // 4. Zamanı gelenleri hesapla
     const now = Date.now();
-    // Eğer kart yoksa boş dizi ata
-    if(!state.cards) state.cards = [];
-    
     let dueCards = state.cards.filter(c => (c.due || 0) <= now);
 
-    // 3. Hiç tekrar yoksa rastgele karıştır
+    // 5. Kart yoksa rastgele karıştır
     if(dueCards.length === 0){
       dueCards = [...state.cards].sort(() => Math.random() - 0.5);
     } else {
-      // Varsa tarihe göre sırala
       dueCards.sort((a,b) => (a.due||0) - (b.due||0));
     }
 
-    // 4. LİMİT UYGULA
+    // 6. LİMİT UYGULA
     if(dueCards.length > limit){
        dueCards = dueCards.slice(0, limit);
     }
 
-    // 5. Kuyruğa ata
+    // 7. Kuyruğa Ata
     state.reviewQueue = dueCards.map(c => c.id);
     DB.set("lm_review_queue", state.reviewQueue);
 
     if(state.reviewQueue.length === 0) return toast("Çalışılacak kart yok!");
 
-    // 6. Quiz ekranını aç
+    // 8. Quiz Ekranını Aç
     const overlay = document.getElementById("quizOverlay");
     if(overlay) overlay.classList.add("active");
     
-    // nextQuiz fonksiyonunu çağır
+    // 9. Soruyu Getir
     if(typeof nextQuiz === "function") {
         nextQuiz();
     } else {
-        toast("Hata: Quiz fonksiyonu bulunamadı!");
+        toast("Hata: nextQuiz fonksiyonu yok!");
     }
-    
-  } catch(e) {
-    console.error(e);
-    toast("Bir hata oluştu: " + e.message);
+
+  } catch(err) {
+    // Hata olursa ekrana yazdır ki görelim
+    alert("Bir hata oluştu: " + err.message);
+    console.error(err);
   }
 }
 function openQuizOverlay(){
