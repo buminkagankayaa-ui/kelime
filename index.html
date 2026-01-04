@@ -2,7 +2,7 @@
 <html lang="tr" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Vocabify</title>
   <meta name="theme-color" content="#0b1220" id="meta-theme">
   <style>
@@ -32,7 +32,11 @@
     [data-theme="emerald"]{ --bg:#071a14; --card:#0b2a21; --card2:#082018; --border:#1f6b52; --text:#ecfdf5; --muted:#9fe3c7; --primary:#10b981;}
     [data-theme="sunset"]{ --bg:#1b1020; --card:#2a1731; --card2:#1f1225; --border:#6b2a59; --text:#fff7ed; --muted:#fbcfe8; --primary:#fb7185;}
     [data-theme="rose"]{ --bg:#120a10; --card:#1f0f1b; --card2:#160b13; --border:#7f1d1d; --text:#fff1f2; --muted:#fda4af; --primary:#f43f5e;}
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    *{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  touch-action: manipulation; /* Çift tıklama zoom'unu engeller */
+}
     body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,system-ui,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
     header{
       position:sticky; top:0; z-index:20;
