@@ -611,13 +611,26 @@ function renderReview(){
   syncQuizModeLabels();
 }
 function resetTodaysQueue(){
-  const due = getDueCards();
-  let q=[];
-  if(due.length) q = due.map(c=>c.id);
-  else q = [...state.cards].sort(()=>Math.random()-0.5).slice(0, Math.min(30, state.cards.length)).map(c=>c.id);
-  state.reviewQueue=q;
+  // 1. Vakti gelen (Due) kartları bul
+  let due = getDueCards();
+  let q = [];
+
+  if(due.length > 0) {
+    // Vakti gelenleri RASTGELE karıştır (Shuffle)
+    q = due.sort(() => Math.random() - 0.5).map(c => c.id);
+  } else {
+    // Vakti gelen yoksa, tüm havuzdan RASTGELE 30 tane seç
+    q = [...state.cards]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, Math.min(30, state.cards.length))
+        .map(c => c.id);
+  }
+
+  state.reviewQueue = q;
   DB.set("lm_review_queue", state.reviewQueue);
-  toast("Kuyruk yenilendi ✅");
+  
+  // Kullanıcıya bilgi ver
+  toast("Kuyruk karıştırıldı 🔀");
   renderReview();
 }
 function clearProgress(){
