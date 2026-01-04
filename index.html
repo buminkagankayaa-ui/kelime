@@ -1171,57 +1171,57 @@ let correctCount=0, wrongCount=0;
 /* ===========================
    GÜVENLİ TEKRAR BAŞLATMA (Hata Korumalı)
 =========================== */
+/* ===========================
+   GÜVENLİ TEKRAR BAŞLATMA (DÜZELTİLDİ: .open)
+=========================== */
 function startReviewQuiz(limit = 9999){
-  // 1. Tıklama algılandı mı? (Test)
-  console.log("Start butonu tıklandı. Limit:", limit);
+  console.log("Start: ", limit);
   
   try {
-    // 2. Güvenlik Kontrolleri
-    if(!state || !state.cards) {
-       toast("Hata: Kart verisi bulunamadı!");
-       return;
-    }
+    // 1. Güvenlik Kontrolleri
+    if(!state || !state.cards) return toast("Kart verisi yok!");
 
-    // 3. Pencereleri Kapat
+    // 2. Açık pencereleri kapat
     if(typeof closeSheets === "function") closeSheets();
 
-    // 4. Zamanı gelenleri hesapla
+    // 3. Zamanı gelenleri hesapla
     const now = Date.now();
     let dueCards = state.cards.filter(c => (c.due || 0) <= now);
 
-    // 5. Kart yoksa rastgele karıştır
+    // 4. Kart yoksa rastgele karıştır
     if(dueCards.length === 0){
       dueCards = [...state.cards].sort(() => Math.random() - 0.5);
     } else {
       dueCards.sort((a,b) => (a.due||0) - (b.due||0));
     }
 
-    // 6. LİMİT UYGULA
+    // 5. LİMİT UYGULA
     if(dueCards.length > limit){
        dueCards = dueCards.slice(0, limit);
     }
 
-    // 7. Kuyruğa Ata
+    // 6. Kuyruğa Ata
     state.reviewQueue = dueCards.map(c => c.id);
     DB.set("lm_review_queue", state.reviewQueue);
 
     if(state.reviewQueue.length === 0) return toast("Çalışılacak kart yok!");
 
-    // 8. Quiz Ekranını Aç
+    // 7. Quiz Ekranını Aç (DÜZELTİLEN KISIM BURASI)
     const overlay = document.getElementById("quizOverlay");
-    if(overlay) overlay.classList.add("active");
+    if(overlay) {
+        overlay.classList.remove("active"); // Eskisi varsa sil
+        overlay.classList.add("open");      // DOĞRUSU BU
+    }
     
-    // 9. Soruyu Getir
+    // 8. Soruyu Getir
     if(typeof nextQuiz === "function") {
         nextQuiz();
     } else {
-        toast("Hata: nextQuiz fonksiyonu yok!");
+        toast("Hata: nextQuiz yok!");
     }
 
   } catch(err) {
-    // Hata olursa ekrana yazdır ki görelim
-    alert("Bir hata oluştu: " + err.message);
-    console.error(err);
+    alert("Hata: " + err.message);
   }
 }
 function openQuizOverlay(){
