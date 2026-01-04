@@ -266,11 +266,10 @@
       <option value="EN">İngilizce</option>
       <option value="RU">Rusça</option>
       <option value="DE">Almanca</option>
-      <option value="FR">Fransızca</option>
+      <option value="ES">İspanyolca</option> <option value="FR">Fransızca</option>
       <option value="TR">Türkçe</option>
     </select>
   </div>
-
   <div class="field">
     <label>Kelime / Terim</label>
     <input id="maTerm" placeholder="Örn: reinforcement" />
@@ -480,7 +479,8 @@ async function translateToTR(lang, term){
   const key=`${lang}|${norm(term)}`;
   if(state.txCache[key]) return state.txCache[key];
 
-  const sl = ({EN:"en", RU:"ru", DE:"de", FR:"fr", TR:"tr"})[lang] || "auto";
+  // İspanyolca (ES: 'es') eklendi
+const sl = ({EN:"en", RU:"ru", DE:"de", FR:"fr", ES:"es", TR:"tr"})[lang] || "auto";
   const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=tr&dt=t&q=${encodeURIComponent(term)}`;
 
   try{
@@ -962,7 +962,8 @@ function skipQuestion(){
 /* Speak */
 function speakText(txt, lang){
   const u=new SpeechSynthesisUtterance(txt);
-  const map={EN:"en-US",RU:"ru-RU",DE:"de-DE",FR:"fr-FR",TR:"tr-TR"};
+  // İspanyolca (ES: 'es-ES') eklendi
+const map={EN:"en-US", RU:"ru-RU", DE:"de-DE", FR:"fr-FR", ES:"es-ES", TR:"tr-TR"};
   u.lang=map[lang] || "en-US";
   u.rate=0.9;
   speechSynthesis.cancel();
