@@ -231,55 +231,54 @@
     .qChoice.correct{border-color: color-mix(in srgb, var(--ok) 70%, var(--border)); background:color-mix(in srgb, var(--ok) 12%, var(--card));}
     .qChoice.wrong{border-color: color-mix(in srgb, var(--danger) 70%, var(--border)); background:color-mix(in srgb, var(--danger) 10%, var(--card));}
     /* --- QUIZ TYPING MODE --- */
-.qInputWrap{
-  width:100%;
-  max-width:420px;
-  margin:10px auto 0;
-  display:flex;
-  gap:10px;
-}
-.qInput{
-  flex:1;
-  padding:14px;
-  border-radius:14px;
-  border:2px solid var(--border);
-  background:var(--card);
-  color:var(--text);
-  font-size:16px;
-  font-weight:900;
-  outline:none;
-}
-.qInput.correct{
-  border-color:#22c55e;
-  background:rgba(34,197,94,.12);
-}
-.qInput.wrong{
-  border-color:#ef4444;
-  background:rgba(239,68,68,.12);
-}
-.qCheckBtn{
-  padding:14px 18px;
-  border-radius:14px;
-  border:none;
-  background:var(--primary);
-  color:#fff;
-  font-weight:950;
-}
-.qAnswerReveal{
-  margin-top:10px;
-  font-size:14px;
-  font-weight:900;
-  color:var(--muted);
-}
-/* --- QUIZ SUMMARY --- */
-#quizSummary{
-  max-width:420px;
-  margin:0 auto;
-}
-#quizSummary h2{
-  font-weight:1000;
-}
-
+    .qInputWrap{
+      width:100%;
+      max-width:420px;
+      margin:10px auto 0;
+      display:flex;
+      gap:10px;
+    }
+    .qInput{
+      flex:1;
+      padding:14px;
+      border-radius:14px;
+      border:2px solid var(--border);
+      background:var(--card);
+      color:var(--text);
+      font-size:16px;
+      font-weight:900;
+      outline:none;
+    }
+    .qInput.correct{
+      border-color:#22c55e;
+      background:rgba(34,197,94,.12);
+    }
+    .qInput.wrong{
+      border-color:#ef4444;
+      background:rgba(239,68,68,.12);
+    }
+    .qCheckBtn{
+      padding:14px 18px;
+      border-radius:14px;
+      border:none;
+      background:var(--primary);
+      color:#fff;
+      font-weight:950;
+    }
+    .qAnswerReveal{
+      margin-top:10px;
+      font-size:14px;
+      font-weight:900;
+      color:var(--muted);
+    }
+    /* --- QUIZ SUMMARY --- */
+    #quizSummary{
+      max-width:420px;
+      margin:0 auto;
+    }
+    #quizSummary h2{
+      font-weight:1000;
+    }
   </style>
 </head>
 
@@ -712,13 +711,12 @@
       Yanlışları Tekrar Sor
     </button>
 
-    <button class="btn ghost" onclick="closeQuiz()" style="width:100%">
+    <button class="btn ghost" onclick="stopQuiz()" style="width:100%">
       Çık
     </button>
   </div>
 
 </div><!-- /quizOverlay -->
-
 
 <script>
   // ---------------- Storage ----------------
@@ -1327,8 +1325,8 @@ However little known the feelings or views of such a man may be on his first ent
   // ---------------- Quiz Engine ----------------
   let quizCurrent = null; // { card, choices[], correctIndex }
   let quizSelectedChoiceIndex = null;
-  let quizMode = "choice"; // "choice" | "typing"
-
+  let quizMode = "choice";
+  let wrongCardsThisQuiz = [];
 
   function startReviewQuiz(){
     if(state.cards.length === 0){
@@ -1338,6 +1336,15 @@ However little known the feelings or views of such a man may be on his first ent
     if(!state.reviewQueue || state.reviewQueue.length === 0){
       resetTodaysQueue();
     }
+    // Initialize quiz counters and UI
+    const total = state.reviewQueue.length;
+    document.getElementById("qTotal").textContent = total;
+    document.getElementById("qRemain").textContent = total;
+    document.getElementById("qCorrect").textContent = 0;
+    document.getElementById("qWrong").textContent = 0;
+    wrongCardsThisQuiz = [];
+    document.getElementById("quizBody").style.display = "block";
+    document.getElementById("quizSummary").style.display = "none";
     openQuizOverlay();
     nextQuizQuestion();
   }
@@ -1355,36 +1362,25 @@ However little known the feelings or views of such a man may be on his first ent
 
   function nextQuizQuestion(){
     if(state.reviewQueue.length === 0){
-  showQuizSummary();
-  return;
-}
-
-      toast("Bitti ✅");
-      stopQuiz();
+      showQuizSummary();
       return;
     }
-
     const id = state.reviewQueue.shift();
     DB.set("lm_review_queue", state.reviewQueue);
-
     const card = state.cards.find(c=>c.id===id);
     if(!card){
       nextQuizQuestion();
       return;
     }
-
-    // choices: 3 yanlış + 1 doğru
+    // Generate choices for question
     const pool = state.cards.filter(c=>c.id!==card.id).sort(()=>Math.random()-0.5);
     const distractors = pool.slice(0,3).map(x=>x.meaning);
     const choices = [...distractors, card.meaning].sort(()=>Math.random()-0.5);
     const correctIndex = choices.indexOf(card.meaning);
-
     quizCurrent = { card, choices, correctIndex };
     quizSelectedChoiceIndex = null;
-
     document.getElementById("qMeta").textContent = `${card.lang} • ${card.type||'word'} • ${card.level||'UNK'} • Due: ${((card.due||0) <= Date.now()) ? 'YES' : 'NO'}`;
     document.getElementById("qWord").textContent = card.term;
-
     const box = document.getElementById("qChoices");
     box.innerHTML = "";
     choices.forEach((ch, idx)=>{
@@ -1399,43 +1395,90 @@ However little known the feelings or views of such a man may be on his first ent
   function selectChoice(idx, btn){
     quizSelectedChoiceIndex = idx;
     document.querySelectorAll(".qChoice").forEach(b=>b.classList.remove("correct","wrong"));
-    // seçimi hafif vurgula
+    // highlight selection briefly
     btn.style.outline = `2px solid color-mix(in srgb, var(--primary) 55%, transparent)`;
-    setTimeout(()=>btn.style.outline = "", 250);
+    document.querySelectorAll(".qChoice").forEach(b=>b.disabled = true);
+    setTimeout(()=>{
+      btn.style.outline = "";
+      if(quizCurrent){
+        if(idx === quizCurrent.correctIndex){
+          gradeCurrent(4);
+        } else {
+          gradeCurrent(2);
+        }
+      }
+    }, 300);
   }
 
   function gradeCurrent(q){
     if(!quizCurrent) return;
     const { card, correctIndex } = quizCurrent;
-
-    // show correct/wrong
     const all = Array.from(document.querySelectorAll(".qChoice"));
     all.forEach((b,i)=>{
       b.disabled = true;
       if(i === correctIndex) b.classList.add("correct");
     });
-
     if(quizSelectedChoiceIndex !== null && quizSelectedChoiceIndex !== correctIndex){
       all[quizSelectedChoiceIndex]?.classList.add("wrong");
     }
-
+    // track wrong answers for repeat
+    if(quizSelectedChoiceIndex !== null && quizSelectedChoiceIndex !== correctIndex){
+      wrongCardsThisQuiz.push(card.id);
+    }
     // SRS update
     const upd = srsCalc(card, q);
     card.due = upd.due;
     card.srs = upd.srs;
-
     // log activity
     const activity = DB.get("lm_activity", {});
     const k = new Date().toISOString().slice(0,10);
     activity[k] = (activity[k] || 0) + 1;
     DB.set("lm_activity", activity);
-
     DB.set("lm_cards", state.cards);
-
     setTimeout(()=>{
       all.forEach(b=>b.disabled=false);
       nextQuizQuestion();
     }, 900);
+  }
+
+  function gradeAnswer(level){
+    let q = 3;
+    if(level === 'medium') q = 4;
+    if(level === 'easy') q = 5;
+    gradeCurrent(q);
+  }
+
+  function showQuizSummary(){
+    // Calculate and display summary stats
+    const correctCount = parseInt(document.getElementById('qCorrect').textContent) || 0;
+    const wrongCount = parseInt(document.getElementById('qWrong').textContent) || 0;
+    document.getElementById('sumCorrect').textContent = correctCount;
+    document.getElementById('sumWrong').textContent = wrongCount;
+    const total = correctCount + wrongCount;
+    const rate = total ? Math.round((correctCount / total) * 100) : 0;
+    document.getElementById('sumRate').textContent = rate + '%';
+    // Show summary and hide quiz body
+    document.getElementById('quizBody').style.display = 'none';
+    document.getElementById('quizSummary').style.display = 'block';
+  }
+
+  function repeatWrongQuiz(){
+    if(wrongCardsThisQuiz.length === 0){
+      toast('Yanlış yok.');
+      stopQuiz();
+      return;
+    }
+    state.reviewQueue = wrongCardsThisQuiz.slice();
+    DB.set('lm_review_queue', state.reviewQueue);
+    wrongCardsThisQuiz = [];
+    document.getElementById('quizSummary').style.display = 'none';
+    document.getElementById('quizBody').style.display = 'block';
+    const total = state.reviewQueue.length;
+    document.getElementById('qTotal').textContent = total;
+    document.getElementById('qRemain').textContent = total;
+    document.getElementById('qCorrect').textContent = 0;
+    document.getElementById('qWrong').textContent = 0;
+    nextQuizQuestion();
   }
 
   // ---------------- Depot ----------------
@@ -1478,8 +1521,8 @@ However little known the feelings or views of such a man may be on his first ent
         </div>
         <div class="smallInfo" style="margin-top:6px;">${x.meaning}</div>
         <div class="two" style="margin-top:10px;">
-          <button class="btn btnSoft btnHalf" onclick="copyText('${escapeQuotes(x.word)} — ${escapeQuotes(x.meaning)}')">Kopyala</button>
-          <button class="btn btnDanger btnHalf" onclick="deleteDepotItem('${escapeQuotes(x.key)}')">Sil</button>
+          <button class="btn btnSoft btnHalf" onclick="copyText('${x.word.replace(/'/g,"\\'").replace(/"/g,'\\"')} — ${x.meaning.replace(/'/g,"\\'").replace(/"/g,'\\"')}')">Kopyala</button>
+          <button class="btn btnDanger btnHalf" onclick="deleteDepotItem('${x.key.replace(/'/g,"\\'").replace(/"/g,'\\"')}')">Sil</button>
         </div>
       `;
       list.appendChild(e);
@@ -1590,14 +1633,6 @@ However little known the feelings or views of such a man may be on his first ent
 
   // If review queue empty but due exists, keep ok
   if(!state.reviewQueue) state.reviewQueue = [];
-  function closeQuiz(){
-  const ov = document.getElementById("quizOverlay");
-  if(ov) ov.classList.remove("open");
-}
-function stopQuiz(){
-  closeQuiz();
-}
-
 </script>
 </body>
 </html>
