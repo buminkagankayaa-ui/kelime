@@ -175,13 +175,6 @@
     <button class="iconBtn" style="background:var(--primary); color:white; border:none;" onclick="doQuickTranslate()">🔎</button>
   </div>
 </div>
-    <div class="card" style="margin-bottom:14px; border-color:var(--primary);">
-  <div style="font-weight:980; color:var(--primary); margin-bottom:8px;">🚀 Hızlı Çeviri & Sözlük</div>
-  <div style="display:flex; gap:8px;">
-    <input id="quickTransInput" placeholder="Kelime yaz (Her dilde)..." style="background:var(--bg);" />
-    <button class="iconBtn" style="background:var(--primary); color:white; border:none;" onclick="doQuickTranslate()">🔎</button>
-  </div>
-</div>
     <div class="row">
       <div class="card" style="flex:1;">
         <div class="muted" style="font-weight:980;">Toplam Kart</div>
@@ -993,55 +986,117 @@ function stopQuiz(){
 function updateQuizRemain(){
   document.getElementById("qRemain").textContent=String(state.reviewQueue.length);
 }
+/* ===========================
+   BAĞLAM (CONTEXT) MODU QUİZ SİSTEMİ
+   - Soruyu cümle içinde boşluk olarak sorar.
+   - Cevap olarak kelimenin kendisini ister.
+=========================== */
 function nextQuiz(){
+  // Kuyruk bitti mi kontrolü
   if(!state.reviewQueue.length){
-    toast("Quiz bitti ✅");
+    toast("Tebrikler! Hepsi bitti 🎉");
     stopQuiz();
     return;
   }
   updateQuizRemain();
+  
+  // Sıradaki kartı çek
   const id = state.reviewQueue.shift();
   DB.set("lm_review_queue", state.reviewQueue);
-  const card = state.cards.find(c=>c.id===id);
-  if(!card) return nextQuiz();
+  
+  const card = state.cards.find(c => c.id === id);
+  if(!card) return nextQuiz(); // Kart silinmişse geç
 
   quizCurrent = card;
-  document.getElementById("qWord").textContent=card.term;
-  document.getElementById("qMeta").textContent=`${card.lang} • ${card.type || 'word'}`;
+
+  // --- SORU HAZIRLAMA (BAĞLAM/CONTEXT) ---
+  let questionText = "";
+  let hintText = "";
+  
+  // 1. Örnek cümle var mı ve yeterince uzun mu?
+  if(card.example && card.example.length > 5) {
+     // Kelimeyi cümle içinde bul ve gizle (büyük/küçük harf duyarsız)
+     // Örn: "I accept your apology" -> "I ____ your apology"
+     const termRegex = new RegExp(`\\b${card.term}\\b`, "gi"); 
+     const hiddenExample = card.example.replace(termRegex, "___?___");
+     
+     // Eğer kelime cümle içinde başarıyla gizlendiyse soru budur:
+     if(hiddenExample !== card.example){
+        questionText = hiddenExample; 
+        hintText = "Bu boşluğa hangi kelime gelmeli?";
+     } else {
+        // Kelime cümlede geçmiyorsa, mecburen anlam sor
+        questionText = card.meaning;
+        hintText = "Bu anlama gelen kelime hangisi?";
+     }
+  } else {
+     // Örnek cümle yoksa anlam sor
+     questionText = card.meaning;
+     hintText = "Bu anlama gelen kelime hangisi?";
+  }
+
+  // Ekrana Yazdır
+  const qWordEl = document.getElementById("qWord");
+  qWordEl.textContent = questionText;
+  
+  // Uzun cümleler taşmasın diye font ayarı
+  if(questionText.length > 50) qWordEl.style.fontSize = "22px";
+  else qWordEl.style.fontSize = "32px";
+
+  document.getElementById("qMeta").textContent = hintText;
+  document.getElementById("qExample").textContent = ""; // Cevabı bilene kadar orijinal cümleyi sakla
   document.getElementById("qReveal").textContent="";
-  // --- YENİ EKLENECEK SATIR ---
-  document.getElementById("qExample").textContent = card.example || "";
 
-  const mode=getQuizMode();
-  const choicesBox=document.getElementById("qChoices");
-  const typingBox=document.getElementById("qTyping");
-  const input=document.getElementById("qInput");
-  choicesBox.innerHTML="";
+  // Şıkları veya Yazma Alanını Hazırla
+  const mode = getQuizMode();
+  const choicesBox = document.getElementById("qChoices");
+  const typingBox = document.getElementById("qTyping");
+  const input = document.getElementById("qInput");
+  choicesBox.innerHTML = "";
 
-  if(mode==="typing"){
-    typingBox.style.display="flex";
-    choicesBox.style.display="none";
-    input.value="";
-    setTimeout(()=>input.focus(), 50);
-  }else{
-    typingBox.style.display="none";
-    choicesBox.style.display="flex";
-    const distractors = state.cards.filter(c=>c.id!==card.id).sort(()=>Math.random()-0.5).slice(0,3).map(x=>x.meaning);
-    const options = [...distractors, card.meaning].sort(()=>Math.random()-0.5);
-    const correctIndex = options.indexOf(card.meaning);
+  if(mode === "typing"){
+    // Yazma Modu
+    typingBox.style.display = "flex";
+    choicesBox.style.display = "none";
+    input.value = "";
+    input.placeholder = "Kelimeyi yazın...";
+    setTimeout(() => input.focus(), 50);
+  } else {
+    // Seçmeli Mod
+    typingBox.style.display = "none";
+    choicesBox.style.display = "flex";
+    
+    // Şıklar: Doğru kelime + 3 rastgele yanlış kelime (Term)
+    const distractors = state.cards
+        .filter(c => c.id !== card.id)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3)
+        .map(x => x.term); 
+        
+    const options = [...distractors, card.term].sort(() => Math.random() - 0.5);
+    const correctTerm = card.term;
 
-    options.forEach((opt, idx)=>{
-      const b=document.createElement("button");
-      b.className="qChoice";
-      b.textContent=opt;
-      b.onclick=()=>{
-        document.querySelectorAll(".qChoice").forEach(x=>x.disabled=true);
-        if(idx===correctIndex){
+    options.forEach((opt, idx) => {
+      const b = document.createElement("button");
+      b.className = "qChoice";
+      b.textContent = opt; // Butonlarda İngilizce kelimeler yazar
+      b.onclick = () => {
+        document.querySelectorAll(".qChoice").forEach(x => x.disabled = true);
+        
+        if(opt === correctTerm){
           b.classList.add("correct");
-          grade(card, 4, true);
-        }else{
+          // Doğru bilince: Orijinal cümleyi ve Anlamını göster
+          document.getElementById("qExample").textContent = `✅ ${card.example}`;
+          document.getElementById("qMeta").innerHTML = `<span style='color:var(--ok)'>${card.term}</span>: ${card.meaning}`;
+          grade(card, 5, true);
+        } else {
           b.classList.add("wrong");
-          document.querySelectorAll(".qChoice")[correctIndex]?.classList.add("correct");
+          // Doğru olanı göster
+          document.querySelectorAll(".qChoice").forEach(btn => {
+            if(btn.textContent === correctTerm) btn.classList.add("correct");
+          });
+          document.getElementById("qExample").textContent = `Doğrusu: ${card.example}`;
+          document.getElementById("qMeta").textContent = `${card.term} = ${card.meaning}`;
           grade(card, 2, false);
         }
       };
@@ -1055,14 +1110,20 @@ function normalizeAnswer(a){
 function checkTypingAnswer(){
   if(!quizCurrent) return;
   const typed = normalizeAnswer(document.getElementById("qInput").value);
-  if(!typed) return toast("Cevap yaz.");
-  const correct = normalizeAnswer(quizCurrent.meaning);
-  const ok = (typed===correct) || (correct.includes(typed) && typed.length >= Math.min(6, correct.length));
+  if(!typed) return toast("Bir cevap yazın.");
+  
+  // Artık kontrol ettiğimiz şey KELİMENİN KENDİSİ (term)
+  const correct = normalizeAnswer(quizCurrent.term);
+  
+  const ok = (typed === correct);
+  
   if(ok){
-    document.getElementById("qReveal").textContent="✅ Doğru";
-    grade(quizCurrent, 4, true);
-  }else{
-    document.getElementById("qReveal").textContent=`❌ Doğru: ${quizCurrent.meaning}`;
+    document.getElementById("qReveal").textContent = "✅ Doğru!";
+    document.getElementById("qExample").textContent = quizCurrent.example; 
+    grade(quizCurrent, 5, true);
+  } else {
+    document.getElementById("qReveal").textContent = `❌ Doğrusu: ${quizCurrent.term}`;
+    document.getElementById("qExample").textContent = quizCurrent.example;
     grade(quizCurrent, 2, false);
   }
 }
