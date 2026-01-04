@@ -236,16 +236,16 @@
 
       <div style="margin-top:20px; margin-bottom:20px;">
   
-  <div style="text-align:center; font-weight:bold; color:var(--text); margin-bottom:10px;">
-    Kaç kart çalışacaksın?
-  </div>
+<div style="text-align:center; font-weight:bold; color:var(--text); margin-bottom:12px;">
+  Kaç kart çalışacaksın?
+</div>
 
-  <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
-  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(5)">5</button>
-  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(10)">10</button>
-  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(15)">15</button>
-  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(20)">20</button>
-  <button class="btn btnPrimary" style="flex:1.5; min-width:70px; padding:12px 0;" onclick="startReviewQuiz(9999)">Hepsi</button>
+<div id="limitContainer" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(5, this)">5</button>
+  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(10, this)">10</button>
+  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(15, this)">15</button>
+  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(20, this)">20</button>
+  <button class="btn btnSoft" style="flex:1.5; min-width:70px; padding:12px 0;" onclick="startReviewQuiz(9999, this)">Hepsi</button>
 </div>
 
 </div>
@@ -599,7 +599,7 @@
     <div class="smallInfo" id="qReveal" style="text-align:center; margin-top:10px; min-height:18px;"></div>
 
     <div class="two" style="margin-top:12px;">
-      <button class="btn btnSoft btnHalf" onclick="skipQuestion()">⏭️ Geç</button>
+      <button class="btn btnSoft btnHalf" onclick="markAsUnknown()">🔴 Bilmiyorum / Sonra</button>
     </div>
 
     <div class="smallInfo" style="text-align:center; margin-top:10px;">
@@ -887,22 +887,45 @@ function inferTypeBasic(term){
 /* ===========================
    SRS (SM-2 style)
 =========================== */
+/* ===========================
+   3 SEVİYELİ SRS MOTORU
+   - Bilmiyorum: Sıfırlar (Hemen tekrar etmeli)
+   - Öğreniyorum: Normal ilerler
+   - Öğrendim: Hızlı ilerler (Daha geç sorar)
+=========================== */
 function srsCalc(card, quality){
+  // quality: 0 (Bilmiyorum), 3 (Öğreniyorum), 5 (Öğrendim)
   let s = card.srs || { interval:0, reps:0, ef:2.5 };
   let { interval, reps, ef } = s;
 
-  if(quality >= 3){
-    if(reps === 0) interval = 1;
-    else if(reps === 1) interval = 6;
-    else interval = Math.round(interval * ef);
-    reps++;
-    ef = ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
-    if(ef < 1.3) ef = 1.3;
-  }else{
-    reps = 0;
-    interval = 1;
+  if(quality === 0){
+     // BİLMİYORUM: Kartı sıfırla, hemen "Tekrar" listesine at
+     reps = 0;
+     interval = 0; // Hemen (Şimdi)
+     // EF değerini biraz düşür (zorlandık)
+     ef = Math.max(1.3, ef - 0.2);
+  } 
+  else {
+     // ÖĞRENİYORUM (3) veya ÖĞRENDİM (5)
+     if(reps === 0) interval = 1;
+     else if(reps === 1) interval = 6;
+     else interval = Math.round(interval * ef);
+
+     // Öğrendim (5) dediysek ekstra bonus ver (daha ileri at)
+     if(quality === 5) interval = Math.round(interval * 1.3);
+
+     reps++;
+     
+     // SuperMemo-2 formülü
+     // q=5 ise EF artar (kolaylaşır), q=3 ise EF hafif azalır
+     ef = ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+     if(ef < 1.3) ef = 1.3;
   }
-  return { due: now() + interval*24*60*60*1000, srs:{interval,reps,ef} };
+
+  // Yeni tarih hesapla
+  // interval gün cinsinden, milisaniyeye çeviriyoruz
+  // Eğer interval 0 ise (bilmiyorum), due = şimdi olur.
+  return { due: Date.now() + (interval * 24 * 60 * 60 * 1000), srs:{interval,reps,ef} };
 }
 
 /* ===========================
@@ -1177,56 +1200,64 @@ let correctCount=0, wrongCount=0;
 /* ===========================
    GÜVENLİ TEKRAR BAŞLATMA (DÜZELTİLDİ: .open KULLANILDI)
 =========================== */
-function startReviewQuiz(limit = 9999){
-  console.log("Start butonu tıklandı. Limit:", limit);
-  
-  try {
-    // 1. Güvenlik ve Veri Kontrolü
-    if(!state || !state.cards) return toast("Kart verisi bulunamadı!");
+/* ===========================
+   GÖRSEL EFEKTLİ TEKRAR BAŞLATMA
+   (Tıklanan butonu yakar, diğerlerini söndürür)
+=========================== */
+/* ===========================
+   GÜVENLİ TEKRAR BAŞLATMA (KARIŞTIRMALI)
+   - 5-10-15 seçince hep aynıları gelmesin diye karıştırır.
+=========================== */
+function startReviewQuiz(limit = 9999, btnElement = null){
+  // 1. Görsel Efekt (Buton Rengi)
+  if(btnElement){
+     const container = document.getElementById("limitContainer");
+     if(container){
+        container.querySelectorAll(".btn").forEach(b => {
+           b.classList.remove("btnPrimary"); 
+           b.classList.add("btnSoft"); 
+        });
+     }
+     btnElement.classList.remove("btnSoft");
+     btnElement.classList.add("btnPrimary");
+  }
 
-    // 2. Açık olan diğer pencereleri kapat
+  try {
+    if(!state || !state.cards) return toast("Kart verisi yok!");
     if(typeof closeSheets === "function") closeSheets();
 
-    // 3. Zamanı gelen kartları bul
     const now = Date.now();
     let dueCards = state.cards.filter(c => (c.due || 0) <= now);
 
-    // 4. Eğer tekrar kartı yoksa, rastgele kart seç (Pratik Modu)
-    if(dueCards.length === 0){
-      dueCards = [...state.cards].sort(() => Math.random() - 0.5);
+    // --- DEĞİŞİKLİK BURADA: ÖNCE KARIŞTIR ---
+    // Eğer kart varsa, tarihine bakmaksızın önce bir karıştır ki hep aynıları gelmesin
+    if(dueCards.length > 0){
+       dueCards.sort(() => Math.random() - 0.5);
     } else {
-      // Varsa tarihe göre sırala
-      dueCards.sort((a,b) => (a.due||0) - (b.due||0));
+       // Hiç kart yoksa rastgele pratik için tüm havuzu karıştır
+       dueCards = [...state.cards].sort(() => Math.random() - 0.5);
     }
 
-    // 5. LİMİT UYGULA (5-10-15 seçimine göre kes)
+    // LİMİT UYGULA
     if(dueCards.length > limit){
        dueCards = dueCards.slice(0, limit);
     }
 
-    // 6. Kuyruğa Ata ve Kaydet
     state.reviewQueue = dueCards.map(c => c.id);
     DB.set("lm_review_queue", state.reviewQueue);
 
     if(state.reviewQueue.length === 0) return toast("Çalışılacak kart yok!");
 
-    // 7. EKRANI AÇMA KOMUTU (DÜZELTİLEN YER BURASI)
     const overlay = document.getElementById("quizOverlay");
     if(overlay) {
-        overlay.classList.remove("active"); // Eskisi varsa sil
-        overlay.classList.add("open");      // DOĞRUSU BU: CSS .open bekliyor
+        overlay.classList.remove("active");
+        overlay.classList.add("open");
     }
     
-    // 8. Soruyu Getir
-    if(typeof nextQuiz === "function") {
-        nextQuiz();
-    } else {
-        toast("Hata: nextQuiz fonksiyonu bulunamadı!");
-    }
+    if(typeof nextQuiz === "function") nextQuiz();
 
   } catch(err) {
-    alert("Bir hata oluştu: " + err.message);
-    console.error(err);
+    alert("Hata: " + err.message);
   }
 }
 function openQuizOverlay(){
@@ -1269,9 +1300,15 @@ function updateQuizRemain(){
 /* ===========================
    ADIM 2: GELİŞMİŞ QUIZ (İPUÇLU & AÇIKLAMALI)
 =========================== */
+/* ===========================
+   GELİŞMİŞ QUIZ ARAYÜZÜ
+   - Doğru bilinirse: "Öğrendim" veya "Öğreniyorum" seçtirir.
+   - Yanlış bilinirse: Otomatik "Bilmiyorum" sayar.
+   - Geç butonu: "Bilmiyorum" sayar ve sıradakine geçer.
+=========================== */
 function nextQuiz(){
   if(!state.reviewQueue.length){
-    toast("Tebrikler! Hepsi bitti 🎉");
+    toast("Tebrikler! Oturum bitti 🎉");
     stopQuiz();
     return;
   }
@@ -1281,39 +1318,34 @@ function nextQuiz(){
   DB.set("lm_review_queue", state.reviewQueue);
   
   const card = state.cards.find(c => c.id === id);
-  if(!card) return nextQuiz();
+  if(!card) return nextQuiz(); // Kart silinmişse sonrakine geç
 
   quizCurrent = card;
 
-  // --- SORU HAZIRLIĞI ---
+  // --- SORU TİPİ ---
   let isContextMode = false;
   let questionHtml = "";
   let hintText = "";
-  let explanationHtml = ""; 
+  let explanationHtml = "";
   
-  // 1. CONTEXT MODU (Cümle varsa)
+  // Context (Cümle) Modu Kontrolü
   if(card.example && card.example.length > 5) {
      const termRegex = new RegExp(`\\b${card.term}\\b`, "gi"); 
-     // Şık boşluk çizgisi
      const blankStyle = `<span style='color:var(--primary); border-bottom:3px solid var(--primary); font-weight:bold;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
-     
      const hiddenExample = card.example.replace(termRegex, blankStyle);
      
      if(hiddenExample !== card.example){
         isContextMode = true; 
         questionHtml = hiddenExample; 
         hintText = "Boşluğa hangisi gelmeli?";
-        // İPUCU: Cümlenin Türkçe anlamı (Varsa)
         explanationHtml = `<div style="margin-top:20px; font-size:16px; color:var(--muted); font-style:italic;">🇹🇷 İpucu: "${card.meaning}"</div>`;
      }
   }
 
-  // 2. KLASİK MOD (Kelime -> Anlam)
+  // Klasik Mod
   if(!isContextMode) {
      questionHtml = `<span style="font-size:36px; color:var(--primary);">${card.term}</span>`;
      hintText = "Bu kelimenin anlamı nedir?";
-     
-     // İPUCU: İngilizce örnek cümle (Kelimeyi gizleyerek)
      if(card.example && card.example.length > 5){
         const termRegex = new RegExp(`\\b${card.term}\\b`, "gi");
         const hiddenInExample = card.example.replace(termRegex, "___");
@@ -1323,21 +1355,17 @@ function nextQuiz(){
      }
   }
 
-  // EKRANA YAZDIR (Soru + Açıklama)
+  // EKRANA YAZ
   const qWordEl = document.getElementById("qWord");
-  qWordEl.innerHTML = `
-    <div>${questionHtml}</div>
-    ${explanationHtml}
-  `;
+  qWordEl.innerHTML = `<div>${questionHtml}</div>${explanationHtml}`;
   
-  // Font Ayarı
   if(qWordEl.innerText.length > 80) qWordEl.style.fontSize = "20px";
   else if(!isContextMode) qWordEl.style.fontSize = "28px";
   else qWordEl.style.fontSize = "24px";
 
   document.getElementById("qMeta").textContent = hintText;
   document.getElementById("qExample").textContent = ""; 
-  document.getElementById("qReveal").textContent="";
+  document.getElementById("qReveal").innerHTML = ""; // Temizle
 
   // ŞIKLARI HAZIRLA
   const choicesBox = document.getElementById("qChoices");
@@ -1346,39 +1374,56 @@ function nextQuiz(){
   typingBox.style.display = "none";
   choicesBox.style.display = "flex";
 
+  // Şıkları üret (Doğru + 3 Yanlış)
   let options = [];
-  let correctVal = "";
-
-  if(isContextMode){
-      correctVal = card.term;
-      const distractors = state.cards.filter(c => c.id !== card.id).sort(() => Math.random() - 0.5).slice(0, 3).map(x => x.term);
-      options = [...distractors, correctVal].sort(() => Math.random() - 0.5);
-  } else {
-      correctVal = card.meaning;
-      const distractors = state.cards.filter(c => c.id !== card.id).sort(() => Math.random() - 0.5).slice(0, 3).map(x => x.meaning);
-      options = [...distractors, correctVal].sort(() => Math.random() - 0.5);
-  }
+  let correctVal = isContextMode ? card.term : card.meaning;
+  
+  const distractors = state.cards
+      .filter(c => c.id !== card.id)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+      .map(x => isContextMode ? x.term : x.meaning);
+      
+  options = [...distractors, correctVal].sort(() => Math.random() - 0.5);
 
   options.forEach(opt => {
       const b = document.createElement("button");
       b.className = "qChoice";
       b.textContent = opt; 
       b.onclick = () => {
+        // Tüm şıkları kilitle
         document.querySelectorAll(".qChoice").forEach(x => x.disabled = true);
+        
         if(opt === correctVal){
+          // DOĞRU BİLİNDİ
           b.classList.add("correct");
-          // Doğruysa cümleyi tamamla
+          
           if(isContextMode){
              const completedHtml = card.example.replace(new RegExp(`\\b${card.term}\\b`, "gi"), `<span style='color:var(--ok); font-weight:900;'>${card.term}</span>`);
              qWordEl.innerHTML = `<div>${completedHtml}</div>${explanationHtml}`;
           }
-          document.getElementById("qMeta").innerHTML = `<span style='color:var(--ok)'>✅ Doğru!</span>`;
-          grade(card, 5, true);
+          
+          // --- YENİ KISIM: ZORLUK SEÇİMİ BUTONLARI ---
+          // Kullanıcıya soruyoruz: Tam öğrendin mi yoksa hala çalışıyor musun?
+          document.getElementById("qReveal").innerHTML = `
+            <div style="font-weight:bold; color:var(--ok); margin-bottom:8px;">✅ Doğru! Ne kadar rahattın?</div>
+            <div style="display:flex; gap:10px;">
+              <button class="btn btnSoft btnHalf" onclick="grade(state.cards.find(c=>c.id=='${card.id}'), 3, true)">🟡 Öğreniyorum</button>
+              <button class="btn btnOk btnHalf" onclick="grade(state.cards.find(c=>c.id=='${card.id}'), 5, true)">🟢 Tam Öğrendim</button>
+            </div>
+          `;
+          
+          // Otomatik geçişi iptal et, kullanıcı butona basınca geçecek
         } else {
+          // YANLIŞ BİLİNDİ
           b.classList.add("wrong");
+          // Doğru şıkkı göster
           document.querySelectorAll(".qChoice").forEach(btn => { if(btn.textContent === correctVal) btn.classList.add("correct"); });
-          if(isContextMode) document.getElementById("qExample").textContent = `Doğrusu: ${card.example}`;
-          grade(card, 2, false);
+          
+          if(isContextMode) document.getElementById("qExample").textContent = `Doğrusu: ${card.term}`;
+          
+          // Yanlış bilinince direkt "Bilmiyorum" olarak işaretle ve geç
+          grade(card, 0, false);
         }
       };
       choicesBox.appendChild(b);
@@ -1408,16 +1453,37 @@ function checkTypingAnswer(){
   }
 }
 function grade(card, quality, isCorrect){
-  if(isCorrect){ correctCount++; document.getElementById("qCorrect").textContent=String(correctCount); }
-  else{ wrongCount++; document.getElementById("qWrong").textContent=String(wrongCount); }
+  // İstatistik güncelle
+  if(isCorrect){ 
+      correctCount++; 
+      document.getElementById("qCorrect").textContent=String(correctCount); 
+  } else { 
+      wrongCount++; 
+      document.getElementById("qWrong").textContent=String(wrongCount); 
+  }
 
+  // Kartı güncelle
   const upd = srsCalc(card, quality);
   card.due = upd.due;
   card.srs = upd.srs;
-  card.updatedAt = now();
+  card.updatedAt = Date.now();
   DB.set("lm_cards", state.cards);
 
-  setTimeout(()=>{ quizCurrent=null; nextQuiz(); }, 550);
+  // 550ms bekleyip diğer soruya geç
+  setTimeout(()=>{ 
+      quizCurrent=null; 
+      nextQuiz(); 
+  }, 550);
+}
+
+// "BİLMİYORUM / GEÇ" BUTONU İŞLEVİ
+// Soruya cevap vermeden "Geç" denilirse veya yanlış bilinirse çalışır
+function markAsUnknown(){
+  if(!quizCurrent) return;
+  // Quality 0 = Bilmiyorum (Sıfırlar)
+  // isCorrect false = Yanlış sayısına ekle
+  toast("Tekrar listesine eklendi 📅");
+  grade(quizCurrent, 0, false);
 }
 function skipQuestion(){
   if(!quizCurrent) return;
