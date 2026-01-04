@@ -1167,35 +1167,53 @@ let quizCurrent=null;
 let correctCount=0, wrongCount=0;
 // GÜNCELLENMİŞ START FONKSİYONU (LİMİTLİ)
 // GÜNCELLENMİŞ START FONKSİYONU (LİMİTLİ)
+// GÜVENLİ BAŞLATMA FONKSİYONU
 function startReviewQuiz(limit = 9999){
-  closeSheets(); // Varsa açık pencereleri kapat
-  
-  const now = Date.now();
-  // 1. Zamanı gelen kartları bul
-  let dueCards = state.cards.filter(c => (c.due || 0) <= now);
+  try {
+    // 1. Pencereleri kapatmayı dene (Hata verirse yoksay)
+    if(typeof closeSheets === "function") closeSheets();
+    
+    // 2. Zamanı gelen kartları bul
+    const now = Date.now();
+    // Eğer kart yoksa boş dizi ata
+    if(!state.cards) state.cards = [];
+    
+    let dueCards = state.cards.filter(c => (c.due || 0) <= now);
 
-  // 2. Hiç tekrar yoksa rastgele karıştır
-  if(dueCards.length === 0){
-    dueCards = [...state.cards].sort(() => Math.random() - 0.5);
-  } else {
-    // Varsa en eskileri öne al
-    dueCards.sort((a,b) => (a.due||0) - (b.due||0));
+    // 3. Hiç tekrar yoksa rastgele karıştır
+    if(dueCards.length === 0){
+      dueCards = [...state.cards].sort(() => Math.random() - 0.5);
+    } else {
+      // Varsa tarihe göre sırala
+      dueCards.sort((a,b) => (a.due||0) - (b.due||0));
+    }
+
+    // 4. LİMİT UYGULA
+    if(dueCards.length > limit){
+       dueCards = dueCards.slice(0, limit);
+    }
+
+    // 5. Kuyruğa ata
+    state.reviewQueue = dueCards.map(c => c.id);
+    DB.set("lm_review_queue", state.reviewQueue);
+
+    if(state.reviewQueue.length === 0) return toast("Çalışılacak kart yok!");
+
+    // 6. Quiz ekranını aç
+    const overlay = document.getElementById("quizOverlay");
+    if(overlay) overlay.classList.add("active");
+    
+    // nextQuiz fonksiyonunu çağır
+    if(typeof nextQuiz === "function") {
+        nextQuiz();
+    } else {
+        toast("Hata: Quiz fonksiyonu bulunamadı!");
+    }
+    
+  } catch(e) {
+    console.error(e);
+    toast("Bir hata oluştu: " + e.message);
   }
-
-  // 3. LİMİT UYGULA (Seçilen sayı kadar kes)
-  if(dueCards.length > limit){
-     dueCards = dueCards.slice(0, limit);
-  }
-
-  // 4. Kuyruğa ata
-  state.reviewQueue = dueCards.map(c => c.id);
-  DB.set("lm_review_queue", state.reviewQueue);
-
-  if(state.reviewQueue.length === 0) return toast("Çalışılacak kart yok!");
-
-  // 5. Quiz ekranını aç
-  document.getElementById("quizOverlay").classList.add("active");
-  nextQuiz(); // İlk soruyu getir
 }
 function openQuizOverlay(){
   document.getElementById("quizOverlay").classList.add("open");
