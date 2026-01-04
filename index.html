@@ -234,14 +234,20 @@
         </div>
       </div>
 
-      <div class="two" style="margin-top:12px;">
-        <div style="font-weight:bold; margin-bottom:8px; color:var(--text); margin-top:10px;">Kaç kart çalışacaksın?</div>
-<div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:6px; margin-bottom:14px;">
-  <button class="btn btnSoft" onclick="startReviewQuiz(5)">5</button>
-  <button class="btn btnSoft" onclick="startReviewQuiz(10)">10</button>
-  <button class="btn btnSoft" onclick="startReviewQuiz(15)">15</button>
-  <button class="btn btnSoft" onclick="startReviewQuiz(20)">20</button>
-  <button class="btn btnPrimary" onclick="startReviewQuiz(9999)">Hepsi</button>
+      <div style="margin-top:20px; margin-bottom:20px;">
+  
+  <div style="text-align:center; font-weight:bold; color:var(--text); margin-bottom:10px;">
+    Kaç kart çalışacaksın?
+  </div>
+
+  <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px;">
+    <button class="btn btnSoft" style="padding:10px 0;" onclick="startReviewQuiz(5)">5</button>
+    <button class="btn btnSoft" style="padding:10px 0;" onclick="startReviewQuiz(10)">10</button>
+    <button class="btn btnSoft" style="padding:10px 0;" onclick="startReviewQuiz(15)">15</button>
+    <button class="btn btnSoft" style="padding:10px 0;" onclick="startReviewQuiz(20)">20</button>
+    <button class="btn btnPrimary" style="padding:10px 0; font-size:11px;" onclick="startReviewQuiz(9999)">Hepsi</button>
+  </div>
+
 </div>
         <button class="btn btnSoft btnHalf" onclick="toggleQuizMode()">Mod: <span id="quizModeLabel">Seçmeli</span></button>
       </div>
@@ -1160,35 +1166,36 @@ function toggleQuizMode(){
 let quizCurrent=null;
 let correctCount=0, wrongCount=0;
 // GÜNCELLENMİŞ START FONKSİYONU (LİMİTLİ)
+// GÜNCELLENMİŞ START FONKSİYONU (LİMİTLİ)
 function startReviewQuiz(limit = 9999){
-  closeSheets();
+  closeSheets(); // Varsa açık pencereleri kapat
   
-  // 1. "Tekrar" (Due) zamanı gelenleri bul
   const now = Date.now();
+  // 1. Zamanı gelen kartları bul
   let dueCards = state.cards.filter(c => (c.due || 0) <= now);
 
-  // 2. Eğer hiç tekrar yoksa, rastgele pratik yap
+  // 2. Hiç tekrar yoksa rastgele karıştır
   if(dueCards.length === 0){
     dueCards = [...state.cards].sort(() => Math.random() - 0.5);
   } else {
-    // Varsa tarihe göre sırala (En eskiler önce)
+    // Varsa en eskileri öne al
     dueCards.sort((a,b) => (a.due||0) - (b.due||0));
   }
 
-  // 3. LİMİT UYGULA (Seçilen sayı kadar al)
+  // 3. LİMİT UYGULA (Seçilen sayı kadar kes)
   if(dueCards.length > limit){
      dueCards = dueCards.slice(0, limit);
   }
 
-  // 4. Kuyruğa ata ve başlat
+  // 4. Kuyruğa ata
   state.reviewQueue = dueCards.map(c => c.id);
   DB.set("lm_review_queue", state.reviewQueue);
 
   if(state.reviewQueue.length === 0) return toast("Çalışılacak kart yok!");
 
-  // Quiz ekranını aç
+  // 5. Quiz ekranını aç
   document.getElementById("quizOverlay").classList.add("active");
-  nextQuiz();
+  nextQuiz(); // İlk soruyu getir
 }
 function openQuizOverlay(){
   document.getElementById("quizOverlay").classList.add("open");
