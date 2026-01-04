@@ -168,6 +168,20 @@
 <div id="viewport">
   <section class="view active" id="home">
     <div class="secTitle">Genel Bakış</div>
+    <div class="card" style="margin-bottom:14px; border:1px solid var(--primary);">
+  <div style="font-weight:980; color:var(--primary); margin-bottom:8px;">🚀 Hızlı Çeviri & Sözlük</div>
+  <div style="display:flex; gap:8px;">
+    <input id="quickTransInput" placeholder="Kelime yaz (Her dilde)..." style="background:var(--bg);" onkeydown="if(event.key==='Enter') doQuickTranslate()" />
+    <button class="iconBtn" style="background:var(--primary); color:white; border:none;" onclick="doQuickTranslate()">🔎</button>
+  </div>
+</div>
+    <div class="card" style="margin-bottom:14px; border-color:var(--primary);">
+  <div style="font-weight:980; color:var(--primary); margin-bottom:8px;">🚀 Hızlı Çeviri & Sözlük</div>
+  <div style="display:flex; gap:8px;">
+    <input id="quickTransInput" placeholder="Kelime yaz (Her dilde)..." style="background:var(--bg);" />
+    <button class="iconBtn" style="background:var(--primary); color:white; border:none;" onclick="doQuickTranslate()">🔎</button>
+  </div>
+</div>
     <div class="row">
       <div class="card" style="flex:1;">
         <div class="muted" style="font-weight:980;">Toplam Kart</div>
@@ -277,8 +291,8 @@
   </div>
 
   <div class="field">
-    <label>Anlamı (TR)</label>
-    <input id="maMeaning" placeholder="Otomatik dolacak" />
+    <label>Anlamı (TR) - (Çoklu Anlam)</label>
+    <textarea id="maMeaning" placeholder="Otomatik dolacak (Çoklu anlam)" style="min-height:60px; font-family:inherit; background:var(--card2); border:1px solid var(--border); border-radius:16px; width:100%; padding:14px; color:var(--text);"></textarea>
   </div>
 
   <div class="field">
@@ -351,6 +365,15 @@
 </div>
 
 <!-- Quiz overlay -->
+  <div class="sheet" id="transResultSheet" style="height:auto; max-height:80vh;">
+  <div class="handle"></div>
+  <h2 class="h2">Çeviri Sonucu</h2>
+  
+  <div id="trResContent" style="line-height:1.6;"></div>
+
+  <button class="btn btnPrimary" style="width:100%; margin-top:16px;" onclick="copyToManualAdd()">➕ Bu Kelimeyi Karta Ekle</button>
+  <button class="btn btnSoft" style="width:100%; margin-top:10px;" onclick="closeSheets()">Kapat</button>
+</div>
 <div class="overlay" id="quizOverlay">
   <div class="overlayTop">
     <div style="font-weight:980;">Quiz</div>
@@ -476,28 +499,112 @@ window.addEventListener("keydown",(e)=>{
    ONLINE: Translate (meaning TR)
    - uses Google translate gtx (works in browser)
 =========================== */
+/* ===========================
+   1. GELİŞMİŞ ÇEVİRİ MOTORU (Detaylı Anlam Çeker)
+=========================== */
 async function translateToTR(lang, term){
-  const key=`${lang}|${norm(term)}`;
+  const key = `${lang}|${norm(term)}`;
   if(state.txCache[key]) return state.txCache[key];
 
-  // İspanyolca (ES: 'es') eklendi
-const sl = ({EN:"en", RU:"ru", DE:"de", FR:"fr", ES:"es", TR:"tr"})[lang] || "auto";
-  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=tr&dt=t&q=${encodeURIComponent(term)}`;
+  // Dil ayarı (Hızlı çeviri için 'auto' gelirse EN varsayalım veya Google'a bırakalım)
+  const sl = ({EN:"en", RU:"ru", DE:"de", FR:"fr", ES:"es", TR:"tr"})[lang] || "auto";
+  
+  // Google API (Detaylı mod: dt=t ana çeviri, dt=bd sözlük/eş anlamlılar)
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=tr&dt=t&dt=bd&q=${encodeURIComponent(term)}`;
 
   try{
-    const r=await fetch(url);
-    if(!r.ok) throw new Error("translate_failed");
-    const data=await r.json();
-    const out=(data?.[0]?.[0]?.[0] || "").trim();
-    if(out){
-      state.txCache[key]=out;
-      DB.set("lm_tx_cache", state.txCache);
-      return out;
+    const r = await fetch(url);
+    if(!r.ok) throw new Error("fail");
+    const data = await r.json();
+
+    // 1. Ana Çeviri
+    let mainMean = (data?.[0]?.[0]?.[0] || "").trim();
+
+    // 2. Detaylı Anlamlar (Varsa: İsim, Fiil kategorileri)
+    let extraMeans = [];
+    if(data[1]){
+      data[1].forEach(group => {
+        const pos = group[0]; // tür (noun/verb)
+        // O türdeki ilk 5 anlamı alıp birleştir
+        const words = group[1].slice(0, 5).join(", "); 
+        extraMeans.push(`[${pos}]: ${words}`);
+      });
     }
+
+    // Hepsini birleştir
+    let finalResult = mainMean;
+    if(extraMeans.length > 0){
+      // Alt satıra detayları ekle
+      finalResult = mainMean + "\n\n(" + extraMeans.join(") \n(") + ")";
+    }
+
+    // Hafızaya kaydet ve döndür
+    state.txCache[key] = finalResult;
+    DB.set("lm_tx_cache", state.txCache);
+    return finalResult;
+
   }catch(e){
-    return "";
+    console.log(e);
+    return ""; 
   }
-  return "";
+}
+
+/* ===========================
+   2. HIZLI ÇEVİRİ BUTONU MANTIĞI
+=========================== */
+let quickTermCache = ""; // Karta eklerken kullanmak için
+
+async function doQuickTranslate(){
+  const input = document.getElementById("quickTransInput");
+  if(!input) return; // Kutu yoksa dur
+  
+  const term = input.value.trim();
+  if(!term) return toast("Lütfen bir kelime yazın.");
+
+  toast("Çevriliyor... ⏳");
+  
+  // 1. Google'dan detaylı anlamı çek (Varsayılan EN gönderiyoruz, Google dili anlar)
+  const meaning = await translateToTR("EN", term);
+  
+  // 2. İngilizce Sözlük verisi (Sadece harflerden oluşuyorsa bak)
+  let dictInfo = "";
+  if(term.match(/^[a-zA-Z\s]+$/)){
+     const dict = await lookupEN(term);
+     if(dict){
+       dictInfo = `
+       <div style="margin-top:15px; padding:12px; background:var(--card2); border-radius:12px; border:1px solid var(--border);">
+         <div style="font-weight:bold; color:var(--muted); margin-bottom:4px;">🇬🇧 İngilizce Sözlük:</div>
+         <div style="font-style:italic;">${dict.type}</div>
+         <div style="margin-top:4px;">${dict.definitionEN}</div>
+         <div style="color:var(--primary); margin-top:6px; font-weight:500;">"${dict.exampleEN}"</div>
+       </div>`;
+     }
+  }
+
+  // 3. Sonuç ekranını hazırla
+  const content = `
+    <div style="font-size:28px; font-weight:900; color:var(--primary); text-align:center; margin-bottom:10px;">${term}</div>
+    <div style="font-size:16px; line-height:1.5; white-space:pre-wrap; background:var(--card); padding:12px; border-radius:12px; border:1px solid var(--border);">${meaning}</div>
+    ${dictInfo}
+  `;
+
+  // 4. Pencereyi aç
+  document.getElementById("trResContent").innerHTML = content;
+  quickTermCache = term; 
+  openSheet("transResultSheet"); 
+  input.value = ""; // Kutuyu temizle
+}
+
+// "Bu Kelimeyi Karta Ekle" butonuna basınca çalışır
+function copyToManualAdd(){
+  closeSheets(); // Sonuç penceresini kapat
+  openManualAdd(); // Ekleme penceresini aç
+  
+  // Kelimeyi kutuya yaz
+  document.getElementById("maTerm").value = quickTermCache;
+  
+  // Otomatik doldurmayı tetikle
+  autoFillManualFields(true);
 }
 
 /* ===========================
