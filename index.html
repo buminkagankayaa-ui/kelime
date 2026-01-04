@@ -235,7 +235,14 @@
       </div>
 
       <div class="two" style="margin-top:12px;">
-        <button class="btn btnOk btnHalf" onclick="startReviewQuiz()">🎯 Quiz Başlat</button>
+        <div style="font-weight:bold; margin-bottom:8px; color:var(--text); margin-top:10px;">Kaç kart çalışacaksın?</div>
+<div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:6px; margin-bottom:14px;">
+  <button class="btn btnSoft" onclick="startReviewQuiz(5)">5</button>
+  <button class="btn btnSoft" onclick="startReviewQuiz(10)">10</button>
+  <button class="btn btnSoft" onclick="startReviewQuiz(15)">15</button>
+  <button class="btn btnSoft" onclick="startReviewQuiz(20)">20</button>
+  <button class="btn btnPrimary" onclick="startReviewQuiz(9999)">Hepsi</button>
+</div>
         <button class="btn btnSoft btnHalf" onclick="toggleQuizMode()">Mod: <span id="quizModeLabel">Seçmeli</span></button>
       </div>
 
@@ -968,7 +975,7 @@ function renderCards(){
     el.innerHTML=`
       <div class="cardLine">
         <div class="termBig">${safeText(c.term)}</div>
-        <div class="badge ${isDue?'due':''}">${isDue?'DUE':'OK'}</div>
+        <div class="badge ${isDue?'due':''}">${isDue?'Tekrar':'Tamam'}</div>
       </div>
       <div class="smallInfo">${safeText(c.lang)} • ${safeText(c.meaning)}</div>
       <div class="smallInfo" style="margin-top:6px;">Tür: ${safeText(c.type||'-')}</div>
@@ -1152,14 +1159,35 @@ function toggleQuizMode(){
 }
 let quizCurrent=null;
 let correctCount=0, wrongCount=0;
-function startReviewQuiz(){
-  if(!state.cards.length) return toast("Kart yok.");
-  if(!state.reviewQueue || !state.reviewQueue.length) resetTodaysQueue();
-  correctCount=0; wrongCount=0;
-  document.getElementById("qCorrect").textContent="0";
-  document.getElementById("qWrong").textContent="0";
-  document.getElementById("qTotal").textContent=String(state.reviewQueue.length);
-  openQuizOverlay();
+// GÜNCELLENMİŞ START FONKSİYONU (LİMİTLİ)
+function startReviewQuiz(limit = 9999){
+  closeSheets();
+  
+  // 1. "Tekrar" (Due) zamanı gelenleri bul
+  const now = Date.now();
+  let dueCards = state.cards.filter(c => (c.due || 0) <= now);
+
+  // 2. Eğer hiç tekrar yoksa, rastgele pratik yap
+  if(dueCards.length === 0){
+    dueCards = [...state.cards].sort(() => Math.random() - 0.5);
+  } else {
+    // Varsa tarihe göre sırala (En eskiler önce)
+    dueCards.sort((a,b) => (a.due||0) - (b.due||0));
+  }
+
+  // 3. LİMİT UYGULA (Seçilen sayı kadar al)
+  if(dueCards.length > limit){
+     dueCards = dueCards.slice(0, limit);
+  }
+
+  // 4. Kuyruğa ata ve başlat
+  state.reviewQueue = dueCards.map(c => c.id);
+  DB.set("lm_review_queue", state.reviewQueue);
+
+  if(state.reviewQueue.length === 0) return toast("Çalışılacak kart yok!");
+
+  // Quiz ekranını aç
+  document.getElementById("quizOverlay").classList.add("active");
   nextQuiz();
 }
 function openQuizOverlay(){
@@ -1199,6 +1227,9 @@ function updateQuizRemain(){
    - Asla Türkçe kelime verip İngilizcesini sormaz.
    - Ya cümle tamamlatır (En->En) ya da Kelime sorar (En->Tr).
 =========================== */
+/* ===========================
+   ADIM 2: GELİŞMİŞ QUIZ (İPUÇLU & AÇIKLAMALI)
+=========================== */
 function nextQuiz(){
   if(!state.reviewQueue.length){
     toast("Tebrikler! Hepsi bitti 🎉");
@@ -1215,42 +1246,61 @@ function nextQuiz(){
 
   quizCurrent = card;
 
-  // --- SORU TİPİNİ BELİRLE ---
+  // --- SORU HAZIRLIĞI ---
   let isContextMode = false;
   let questionHtml = "";
   let hintText = "";
+  let explanationHtml = ""; 
   
-  // 1. "Cümle Tamamlama" (Context) modu
+  // 1. CONTEXT MODU (Cümle varsa)
   if(card.example && card.example.length > 5) {
      const termRegex = new RegExp(`\\b${card.term}\\b`, "gi"); 
+     // Şık boşluk çizgisi
      const blankStyle = `<span style='color:var(--primary); border-bottom:3px solid var(--primary); font-weight:bold;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
+     
      const hiddenExample = card.example.replace(termRegex, blankStyle);
      
      if(hiddenExample !== card.example){
         isContextMode = true; 
         questionHtml = hiddenExample; 
         hintText = "Boşluğa hangisi gelmeli?";
+        // İPUCU: Cümlenin Türkçe anlamı (Varsa)
+        explanationHtml = `<div style="margin-top:20px; font-size:16px; color:var(--muted); font-style:italic;">🇹🇷 İpucu: "${card.meaning}"</div>`;
      }
   }
 
-  // 2. Eğer cümle yoksa: KLASİK MOD (İngilizce Kelime -> Türkçe Anlam)
+  // 2. KLASİK MOD (Kelime -> Anlam)
   if(!isContextMode) {
      questionHtml = `<span style="font-size:36px; color:var(--primary);">${card.term}</span>`;
      hintText = "Bu kelimenin anlamı nedir?";
+     
+     // İPUCU: İngilizce örnek cümle (Kelimeyi gizleyerek)
+     if(card.example && card.example.length > 5){
+        const termRegex = new RegExp(`\\b${card.term}\\b`, "gi");
+        const hiddenInExample = card.example.replace(termRegex, "___");
+        explanationHtml = `<div style="margin-top:20px; font-size:16px; color:var(--text); opacity:0.8;">🇬🇧 Örnek: "${hiddenInExample}"</div>`;
+     } else {
+        explanationHtml = `<div style="margin-top:20px; font-size:14px; color:var(--muted);">(Örnek cümle yok)</div>`;
+     }
   }
 
-  // Ekrana Yazdır
+  // EKRANA YAZDIR (Soru + Açıklama)
   const qWordEl = document.getElementById("qWord");
-  qWordEl.innerHTML = questionHtml; 
-  if(qWordEl.innerText.length > 60) qWordEl.style.fontSize = "20px";
-  else if(!isContextMode) qWordEl.style.fontSize = "36px";
-  else qWordEl.style.fontSize = "28px";
+  qWordEl.innerHTML = `
+    <div>${questionHtml}</div>
+    ${explanationHtml}
+  `;
+  
+  // Font Ayarı
+  if(qWordEl.innerText.length > 80) qWordEl.style.fontSize = "20px";
+  else if(!isContextMode) qWordEl.style.fontSize = "28px";
+  else qWordEl.style.fontSize = "24px";
 
   document.getElementById("qMeta").textContent = hintText;
   document.getElementById("qExample").textContent = ""; 
   document.getElementById("qReveal").textContent="";
 
-  // Şıkları Hazırla
+  // ŞIKLARI HAZIRLA
   const choicesBox = document.getElementById("qChoices");
   const typingBox = document.getElementById("qTyping");
   choicesBox.innerHTML = "";
@@ -1261,12 +1311,10 @@ function nextQuiz(){
   let correctVal = "";
 
   if(isContextMode){
-      // Context Modunda şıklar: İNGİLİZCE KELİMELER
       correctVal = card.term;
       const distractors = state.cards.filter(c => c.id !== card.id).sort(() => Math.random() - 0.5).slice(0, 3).map(x => x.term);
       options = [...distractors, correctVal].sort(() => Math.random() - 0.5);
   } else {
-      // Klasik Modda şıklar: TÜRKÇE ANLAMLAR
       correctVal = card.meaning;
       const distractors = state.cards.filter(c => c.id !== card.id).sort(() => Math.random() - 0.5).slice(0, 3).map(x => x.meaning);
       options = [...distractors, correctVal].sort(() => Math.random() - 0.5);
@@ -1280,8 +1328,12 @@ function nextQuiz(){
         document.querySelectorAll(".qChoice").forEach(x => x.disabled = true);
         if(opt === correctVal){
           b.classList.add("correct");
-          if(isContextMode) document.getElementById("qWord").innerHTML = card.example.replace(new RegExp(`\\b${card.term}\\b`, "gi"), `<span style='color:var(--ok); font-weight:900;'>${card.term}</span>`);
-          document.getElementById("qMeta").innerHTML = `<span style='color:var(--ok)'>${card.term}</span> = ${card.meaning}`;
+          // Doğruysa cümleyi tamamla
+          if(isContextMode){
+             const completedHtml = card.example.replace(new RegExp(`\\b${card.term}\\b`, "gi"), `<span style='color:var(--ok); font-weight:900;'>${card.term}</span>`);
+             qWordEl.innerHTML = `<div>${completedHtml}</div>${explanationHtml}`;
+          }
+          document.getElementById("qMeta").innerHTML = `<span style='color:var(--ok)'>✅ Doğru!</span>`;
           grade(card, 5, true);
         } else {
           b.classList.add("wrong");
