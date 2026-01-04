@@ -361,6 +361,7 @@
       <div class="smallInfo">Kalan: <b id="qRemain">0</b>/<b id="qTotal">0</b> • ✅ <b id="qCorrect">0</b> • ❌ <b id="qWrong">0</b></div>
       <div style="margin-top:10px; font-size:40px; font-weight:1000; text-align:center;" id="qWord">—</div>
       <div class="smallInfo" style="text-align:center; margin-top:8px;" id="qMeta">—</div>
+      <div style="text-align:center; font-style:italic; color:var(--primary); margin-top:6px; min-height:20px;" id="qExample"></div>
     </div>
 
     <div id="qChoices" style="margin-top:12px; display:flex; flex-direction:column; gap:10px;"></div>
@@ -883,6 +884,8 @@ function nextQuiz(){
   document.getElementById("qWord").textContent=card.term;
   document.getElementById("qMeta").textContent=`${card.lang} • ${card.type || 'word'}`;
   document.getElementById("qReveal").textContent="";
+  // --- YENİ EKLENECEK SATIR ---
+  document.getElementById("qExample").textContent = card.example || "";
 
   const mode=getQuizMode();
   const choicesBox=document.getElementById("qChoices");
@@ -1231,6 +1234,7 @@ if (state.cards.length === 0) {
     { t: "illegal", m: "yasadışı", y: "adj", e: "It is illegal to park here." },
     { t: "important", m: "önemli", y: "adj", e: "This is very important." },
     { t: "impossible", m: "imkansız", y: "adj", e: "Nothing is impossible." }
+    
   ];
 
   state.cards = starterPack.map(w => ({
@@ -1257,6 +1261,126 @@ setTheme(state.settings.theme || "dark");
 syncQuizModeLabels();
 renderDash(); renderReview(); renderCards();
 if(!state.reviewQueue) state.reviewQueue=[];
+  /* ===========================
+   EKSTRA KELİME PAKETİ (Mevcut listenin üzerine ekleme yapar)
+   Öncekileri silmez, sadece olmayanları ekler.
+=========================== */
+(function addExtraWords() {
+  const extraPack = [
+    // --- YENİ FİİLLER (VERBS) ---
+    { t: "apply", m: "başvurmak, uygulamak", y: "verb", e: "I applied for the job." },
+    { t: "break", m: "kırmak, bozmak", y: "verb", e: "Don't break the glass." },
+    { t: "build", m: "inşa etmek", y: "verb", e: "They are building a new house." },
+    { t: "buy", m: "satın almak", y: "verb", e: "I want to buy a car." },
+    { t: "care", m: "önemsemek, ilgilenmek", y: "verb", e: "I don't care about money." },
+    { t: "catch", m: "yakalamak", y: "verb", e: "Catch the ball!" },
+    { t: "change", m: "değiştirmek", y: "verb", e: "You haven't changed at all." },
+    { t: "check", m: "kontrol etmek", y: "verb", e: "Please check your answers." },
+    { t: "choose", m: "seçmek", y: "verb", e: "Choose a color." },
+    { t: "close", m: "kapatmak", y: "verb", e: "Close the door, please." },
+    { t: "communicate", m: "iletişim kurmak", y: "verb", e: "We communicate by email." },
+    { t: "complete", m: "tamamlamak", y: "verb", e: "Complete the sentence." },
+    { t: "connect", m: "bağlamak, bağlanmak", y: "verb", e: "Connect to the internet." },
+    { t: "control", m: "kontrol etmek, yönetmek", y: "verb", e: "He can't control his anger." },
+    { t: "cook", m: "pişirmek", y: "verb", e: "My mom cooks delicious food." },
+    { t: "cost", m: "mal olmak (fiyat)", y: "verb", e: "How much does it cost?" },
+    { t: "count", m: "saymak", y: "verb", e: "Can you count to ten?" },
+    { t: "cover", m: "örtmek, kaplamak", y: "verb", e: "Snow covered the ground." },
+    { t: "cry", m: "ağlamak", y: "verb", e: "Don't cry, be happy." },
+    { t: "cut", m: "kesmek", y: "verb", e: "Cut the paper." },
+    { t: "dance", m: "dans etmek", y: "verb", e: "Do you like to dance?" },
+    { t: "deal", m: "uğraşmak, anlaşmak", y: "verb", e: "I can't deal with this problem." },
+    { t: "depend", m: "bağlı olmak", y: "verb", e: "It depends on the weather." },
+    { t: "design", m: "tasarlamak", y: "verb", e: "Who designed this building?" },
+    { t: "destroy", m: "yok etmek", y: "verb", e: "Fire destroyed the house." },
+
+    // --- YENİ İSİMLER (NOUNS) ---
+    { t: "action", m: "eylem, aksiyon", y: "noun", e: "Take action now." },
+    { t: "activity", m: "aktivite", y: "noun", e: "Outdoor activities." },
+    { t: "age", m: "yaş, çağ", y: "noun", e: "What is your age?" },
+    { t: "air", m: "hava", y: "noun", e: "Fresh air." },
+    { t: "answer", m: "cevap", y: "noun", e: "I need an answer." },
+    { t: "area", m: "alan, bölge", y: "noun", e: "This is a restricted area." },
+    { t: "art", m: "sanat", y: "noun", e: "Modern art." },
+    { t: "bed", m: "yatak", y: "noun", e: "Time to go to bed." },
+    { t: "blood", m: "kan", y: "noun", e: "Blood type." },
+    { t: "body", m: "vücut", y: "noun", e: "Human body." },
+    { t: "book", m: "kitap", y: "noun", e: "Read a book." },
+    { t: "box", m: "kutu", y: "noun", e: "What is in the box?" },
+    { t: "boy", m: "erkek çocuk", y: "noun", e: "He is a good boy." },
+    { t: "business", m: "iş, işletme", y: "noun", e: "Business trip." },
+    { t: "car", m: "araba", y: "noun", e: "A fast car." },
+    { t: "case", m: "durum, vaka", y: "noun", e: "In that case, I agree." },
+    { t: "center", m: "merkez", y: "noun", e: "City center." },
+    { t: "change", m: "değişim, para üstü", y: "noun", e: "Keep the change." },
+    { t: "city", m: "şehir", y: "noun", e: "New York is a big city." },
+    { t: "class", m: "sınıf, ders", y: "noun", e: "History class." },
+    { t: "color", m: "renk", y: "noun", e: "What is your favorite color?" },
+    { t: "company", m: "şirket", y: "noun", e: "A tech company." },
+    { t: "country", m: "ülke", y: "noun", e: "Which country are you from?" },
+    { t: "day", m: "gün", y: "noun", e: "Have a nice day." },
+    { t: "death", m: "ölüm", y: "noun", e: "Life and death." },
+
+    // --- YENİ SIFATLAR (ADJECTIVES) ---
+    { t: "bad", m: "kötü", y: "adj", e: "Bad weather." },
+    { t: "big", m: "büyük", y: "adj", e: "A big house." },
+    { t: "black", m: "siyah", y: "adj", e: "Black coffee." },
+    { t: "blue", m: "mavi", y: "adj", e: "Blue sky." },
+    { t: "certain", m: "kesin, belirli", y: "adj", e: "Are you certain?" },
+    { t: "cold", m: "soğuk", y: "adj", e: "It is cold outside." },
+    { t: "cool", m: "serin, havalı", y: "adj", e: "He is a cool guy." },
+    { t: "current", m: "şu anki, mevcut", y: "adj", e: "Current situation." },
+    { t: "dead", m: "ölü", y: "adj", e: "A dead tree." },
+    { t: "dry", m: "kuru", y: "adj", e: "My throat is dry." },
+    { t: "early", m: "erken", y: "adj", e: "Early morning." },
+    { t: "fair", m: "adil", y: "adj", e: "That's not fair." },
+    { t: "false", m: "yanlış, sahte", y: "adj", e: "False information." },
+    { t: "final", m: "son, nihai", y: "adj", e: "Final exam." },
+    { t: "fine", m: "iyi, ince", y: "adj", e: "I am fine, thanks." },
+    { t: "foreign", m: "yabancı", y: "adj", e: "Foreign language." },
+    { t: "future", m: "gelecek", y: "adj", e: "Future plans." },
+    { t: "general", m: "genel", y: "adj", e: "General knowledge." },
+    { t: "green", m: "yeşil", y: "adj", e: "Green grass." },
+    { t: "high", m: "yüksek", y: "adj", e: "High prices." },
+    { t: "human", m: "insani", y: "adj", e: "Human nature." },
+    { t: "kind", m: "kibar", y: "adj", e: "Be kind to others." },
+    { t: "large", m: "geniş, büyük", y: "adj", e: "A large pizza." },
+    { t: "late", m: "geç", y: "adj", e: "Don't be late." },
+    { t: "left", m: "sol", y: "adj", e: "Turn left." }
+  ];
+
+  let addedCount = 0;
+  extraPack.forEach(w => {
+    // Kelime daha önce var mı diye kontrol et (büyük/küçük harf duyarsız)
+    const exists = state.cards.some(c => c.term.toLowerCase().trim() === w.t.toLowerCase().trim());
+    
+    // Eğer yoksa ekle
+    if (!exists) {
+      state.cards.push({
+        id: uid(),
+        lang: "EN",
+        term: w.t,
+        meaning: w.m,
+        type: w.y,
+        example: w.e,
+        note: "Ekstra Paket",
+        due: now(), 
+        srs: { interval: 0, reps: 0, ef: 2.5 },
+        createdAt: now(),
+        updatedAt: now()
+      });
+      addedCount++;
+    }
+  });
+
+  if (addedCount > 0) {
+    saveAll();
+    console.log(addedCount + " adet yeni kelime eklendi.");
+    // Ekranı güncelle ki yeni kelimeler görünsün
+    renderDash(); renderReview(); renderCards();
+    toast(addedCount + " yeni kelime eklendi! 🚀");
+  }
+})();
 </script>
 </body>
 </html>
