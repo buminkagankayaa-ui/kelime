@@ -69,12 +69,13 @@ html, body {
     /* SADECE ORTANIN KAYMASINI SAĞLAR */
 #viewport {
   position: absolute;
-  top: calc(var(--header-h) + var(--safe-top)); /* Header'ın hemen altından başla */
-  bottom: calc(var(--nav-h) + var(--safe-bottom)); /* Nav'ın hemen üstünde bit */
+  top: calc(var(--header-h) + var(--safe-top));
+  bottom: calc(var(--nav-h) + var(--safe-bottom));
   left: 0; right: 0;
-  overflow-y: auto; /* Sadece burası scroll olsun */
-  -webkit-overflow-scrolling: touch; /* Mobilde yağ gibi kayması için */
-  z-index: 1;
+  overflow-y: auto !important; /* Kaydırmayı zorla */
+  -webkit-overflow-scrolling: touch;
+  z-index: 5; /* Sayıyı biraz artırdık ki altta kalmasın */
+  pointer-events: auto !important; /* Tıklamayı zorla */
 }
 /* GÜNCELLENMİŞ GÖRÜNÜM AYARLARI */
 .view {
@@ -82,16 +83,11 @@ html, body {
   min-height: 100%; 
   padding: 18px; 
   display: none; /* Pasifken gizle */
-  opacity: 0; 
-  transform: translateY(8px);
-  transition: .25s ease;
 }
 
 .view.active {
   display: block; /* Aktifken göster */
-  opacity: 1; 
-  transform: none;
-  pointer-events: auto !important; /* TIKLAMAYI ZORLA AÇ */
+  /* pointer-events satırını sildik, varsayılan (auto) olsun */
 }
     .view.active{opacity:1; pointer-events:auto; transform:none;}
     .row{display:flex;gap:12px;}
@@ -129,8 +125,17 @@ html, body {
     .navBtn span{font-size:11.5px;font-weight:980;line-height:1;transform:translateY(-1px);white-space:nowrap;}
     .navBtn.active{color:var(--primary);}
     .navBtn.active .ico{background:color-mix(in srgb, var(--primary) 15%, transparent);border-radius:14px;}
-    .backdrop{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:.2s ease;}
-    .backdrop.open{opacity:1;pointer-events:auto;}
+    .backdrop {
+  position: fixed; inset: 0; z-index: 40;
+  background: rgba(0,0,0,.55);
+  opacity: 0;
+  pointer-events: none; /* <--- İŞTE BU EKSİKTİ! Kapalıyken tıklamayı engelleme */
+  transition: .2s ease;
+}
+.backdrop.open {
+  opacity: 1;
+  pointer-events: auto; /* Açıkken tıklamayı yakala */
+}
     .sheet{
       position:fixed;left:0;right:0;bottom:0;z-index:50;
       background:var(--card);
