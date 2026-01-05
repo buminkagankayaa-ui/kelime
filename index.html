@@ -136,18 +136,24 @@ html, body {
   opacity: 1;
   pointer-events: auto; /* Açıkken tıklamayı yakala */
 }
-    .sheet{
-      position:fixed;left:0;right:0;bottom:0;z-index:50;
-      background:var(--card);
-      border-radius:26px 26px 0 0;
-      border:1px solid var(--border);
-      transform:translateY(110%);
-      transition:.25s ease;
-      max-height: 85dvh; /* dvh: Dinamik yükseklik (Klavye dostu) */
-      height: auto;
-      display: flex; flex-direction: column; /* İçeriği düzgün sırala */
-      padding:14px 16px calc(16px + var(--safe-bottom));
-    }
+   .sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+  background: var(--card);
+  border-radius: 26px 26px 0 0;
+  border: 1px solid var(--border);
+  transform: translateY(110%);
+  transition: .25s ease;
+  
+  max-height: 85dvh; /* En fazla bu kadar uzasın */
+  height: auto;
+  
+  display: flex; flex-direction: column;
+  padding: 14px 16px calc(16px + var(--safe-bottom));
+  
+  /* --- İŞTE EKSİK OLAN PARÇA BU --- */
+  overflow-y: auto !important;  /* İçerik taşarsa kaydır */
+  -webkit-overflow-scrolling: touch; /* Mobilde yağ gibi kaysın */
+}
     .sheet.open{transform:none;}
     .handle{width:48px;height:5px;border-radius:99px;background:var(--border);margin:6px auto 14px;}
     .field{margin:10px 0;}
