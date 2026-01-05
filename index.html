@@ -993,34 +993,9 @@ function clearProgress(){
   toast("SRS sıfırlandı ✅");
   renderDash(); renderReview(); renderCards();
 }
-
 /* ===========================
-   AKILLI KART LİSTELEME & FİLTRELEME
-   - İstatistik kutularına tıklayınca listeyi süzer.
-   - Sayıları anlık günceller.
-=========================== */
-let activeFilter = "all"; // Hangi filtre seçili? (all, new, learning, mastered)
-
-// Arama kutusuna yazınca çalışır (Eğer hata verirse bu satırı silip en alta ekleyebilirsin)
-const searchInput = document.getElementById("search");
-if(searchInput) searchInput.addEventListener("input", renderCards);
-
-// Kutulara tıklayınca çalışır (Filtreyi aç/kapa)
-function toggleFilter(type){
-  if(activeFilter === type){
-     activeFilter = "all"; // Zaten seçiliyse filtreyi kaldır (Hepsini göster)
-     toast("Tüm kartlar gösteriliyor");
-  } else {
-     activeFilter = type; // Yeni filtreyi seç
-     if(type === 'new') toast("Sadece YENİ kartlar");
-     if(type === 'learning') toast("Sadece ÖĞRENİLEN kartlar");
-     if(type === 'mastered') toast("Sadece ÖĞRENİLMİŞ kartlar");
-  }
-  renderCards(); // Listeyi yenile
-}/* ===========================
    AKILLI KART LİSTELEME & ÖZEL PRATİK
-   - İstatistik kutularında "Başlat" butonu var (Sarı/Yeşil için).
-   - Kartlarda "Başa Al" butonu var (Yeni'ye düşürür).
+   (Düzeltilmiş Tek Sürüm)
 =========================== */
 let activeFilter = "all"; 
 
@@ -1040,6 +1015,131 @@ function toggleFilter(type){
      if(type === 'mastered') toast("Sadece ÖĞRENİLMİŞ kartlar");
   }
   renderCards();
+}
+
+// LİSTELEME FONKSİYONU
+function renderCards(){
+  const searchEl = document.getElementById("search");
+  const q = searchEl ? norm(searchEl.value) : "";
+  const list = document.getElementById("cardsList");
+  if(!list) return;
+  list.innerHTML="";
+
+  // --- 1. İSTATİSTİKLERİ SAY ---
+  let countNew = 0;       
+  let countLearning = 0;  
+  let countMastered = 0;  
+
+  if(state.cards){
+      state.cards.forEach(c => {
+          const r = c.srs ? c.srs.reps : 0;
+          if(r === 0) countNew++;
+          else if(r < 5) countLearning++;
+          else countMastered++;
+      });
+  }
+
+  // --- 2. HTML GÜNCELLEME (KUTULAR + PLAY BUTONLARI) ---
+  if(document.getElementById("statNew")) document.getElementById("statNew").textContent = countNew;
+  
+  // ÖĞRENİYORUM KUTUSU
+  const boxLearn = document.getElementById("filterBtnLearn");
+  if(boxLearn) {
+      boxLearn.innerHTML = `
+        <div style="font-size:11px; font-weight:bold; color:var(--warn);">🟡 Öğreniyorum</div>
+        <div style="font-size:18px; font-weight:900; color:var(--warn);">${countLearning}</div>
+        <button class="btn btnSoft" style="padding:4px 8px; font-size:10px; margin-top:4px; width:100%; border-color:var(--warn); color:var(--warn);" 
+        onclick="event.stopPropagation(); startCategoryQuiz('learning')">▶️ Çalış</button>
+      `;
+      boxLearn.style.opacity = (activeFilter === 'all' || activeFilter === 'learning') ? "1" : "0.4";
+      boxLearn.style.borderWidth = (activeFilter === 'learning') ? "2px" : "1px";
+  }
+
+  // ÖĞRENDİM KUTUSU
+  const boxMaster = document.getElementById("filterBtnMaster");
+  if(boxMaster) {
+      boxMaster.innerHTML = `
+        <div style="font-size:11px; font-weight:bold; color:var(--ok);">🟢 Öğrendim</div>
+        <div style="font-size:18px; font-weight:900; color:var(--ok);">${countMastered}</div>
+        <button class="btn btnSoft" style="padding:4px 8px; font-size:10px; margin-top:4px; width:100%; border-color:var(--ok); color:var(--ok);" 
+        onclick="event.stopPropagation(); startCategoryQuiz('mastered')">▶️ Çalış</button>
+      `;
+      boxMaster.style.opacity = (activeFilter === 'all' || activeFilter === 'mastered') ? "1" : "0.4";
+      boxMaster.style.borderWidth = (activeFilter === 'mastered') ? "2px" : "1px";
+  }
+  
+  // YENİ KUTUSU
+  const btnNew = document.getElementById("filterBtnNew");
+  if(btnNew) {
+      btnNew.style.opacity = (activeFilter === 'all' || activeFilter === 'new') ? "1" : "0.4";
+      btnNew.style.borderWidth = (activeFilter === 'new') ? "2px" : "1px";
+  }
+
+  // --- 3. LİSTEYİ FİLTRELE ---
+  const items = state.cards
+    .filter(c => {
+      const matchesSearch = !q || (norm(c.term).includes(q) || norm(c.meaning).includes(q) || norm(c.type).includes(q));
+      
+      const r = c.srs ? c.srs.reps : 0;
+      let matchesStatus = true;
+      if(activeFilter === 'new') matchesStatus = (r === 0);
+      else if(activeFilter === 'learning') matchesStatus = (r > 0 && r < 5);
+      else if(activeFilter === 'mastered') matchesStatus = (r >= 5);
+      
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a,b)=> (a.term||"").localeCompare((b.term||""), "en"));
+
+  // --- 4. KARTLARI BAS ---
+  if(!items.length){
+    list.innerHTML=`<div class="card" style="text-align:center; padding:20px; color:var(--muted);">Bu kategoride kart yok.</div>`;
+    return;
+  }
+
+  items.forEach(c=>{
+    const isDue = (c.due||0) <= Date.now();
+    const reps = c.srs ? c.srs.reps : 0;
+    
+    // Rozet
+    let statusBadge = "";
+    if(reps === 0) statusBadge = `<span class="badge" style="border:1px solid var(--border);">Yeni</span>`;
+    else if(reps < 5) statusBadge = `<span class="badge" style="color:var(--warn); border-color:var(--warn);">Öğreniliyor</span>`;
+    else statusBadge = `<span class="badge" style="color:var(--ok); border-color:var(--ok); background:color-mix(in srgb, var(--ok) 10%, transparent);">Öğrenildi</span>`;
+
+    const dueBadge = isDue ? `<span class="badge due" style="margin-left:4px;">Tekrar</span>` : ``;
+
+    const el=document.createElement("div");
+    el.className="card";
+    el.style.marginTop="12px";
+    
+    // BUTONLAR: Başa Al butonu (reps > 0 ise görünür)
+    const resetBtn = reps > 0 ? `<button class="btn btnSoft btnHalf" style="font-size:11px;" data-reset="${c.id}">↩️ Başa Al</button>` : ``;
+
+    el.innerHTML=`
+      <div class="cardLine">
+        <div class="termBig">${safeText(c.term)}</div>
+        <div style="display:flex;">${statusBadge} ${dueBadge}</div>
+      </div>
+      <div class="smallInfo">${safeText(c.lang)} • ${safeText(c.meaning)}</div>
+      <div class="smallInfo" style="margin-top:6px;">Tür: ${safeText(c.type||'-')}</div>
+      <div class="smallInfo" style="margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:0.7;">
+        ${safeText(c.example||'')}
+      </div>
+      <div class="two" style="margin-top:10px;">
+        <button class="btn btnSoft btnHalf" data-edit="${c.id}">Düzenle</button>
+        ${resetBtn}
+        <button class="btn btnDanger btnHalf" data-del="${c.id}">Sil</button>
+      </div>
+    `;
+    
+    el.querySelector(`[data-edit="${c.id}"]`).onclick=()=>openEditPrompt(c.id);
+    el.querySelector(`[data-del="${c.id}"]`).onclick=()=>deleteCard(c.id);
+    if(reps > 0){
+        el.querySelector(`[data-reset="${c.id}"]`).onclick=()=>resetSingleCard(c.id);
+    }
+    
+    list.appendChild(el);
+  });
 }
 
 // LİSTELEME FONKSİYONU
