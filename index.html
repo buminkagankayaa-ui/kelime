@@ -212,6 +212,20 @@ html, body {
     touch-action: pan-y !important; /* Parmak hareketini algıla */
     z-index: 10 !important;         /* Her şeyin üstüne çıkar */
 }
+    /* --- DONMAYI ÇÖZEN ACİL YAMA --- */
+#viewport {
+  overflow-y: auto !important;    /* Kaydırmayı zorla aç */
+  pointer-events: auto !important; /* Tıklamayı zorla aç */
+  z-index: 5 !important;           /* İçeriği öne getir */
+}
+
+.view.active {
+  pointer-events: auto !important; /* Görünür sayfayı tıklanabilir yap */
+}
+
+.sheet {
+  display: block !important;       /* Açılır pencereleri düzelt */
+}
   </style>
 </head>
 
@@ -686,6 +700,14 @@ html, body {
 </div>
 
 <script>
+  // Ana Durum (State)
+const state = {
+  settings: DB.get("lm_settings", { theme:"dark", quizMode:"choice" }),
+  cards: DB.get("lm_cards", []),
+  txCache: DB.get("lm_tx_cache", {}),
+  dictCache: DB.get("lm_dict_cache", {}),
+  reviewQueue: DB.get("lm_review_queue", [])
+};
 /* ===========================
    1. GLOBAL DEĞİŞKENLER VE AYARLAR
    (Hata almamak için en üstte tanımlandı)
@@ -693,15 +715,6 @@ html, body {
 const DB = {
   get(key, fallback){ try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } },
   set(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
-};
-
-// Ana Durum (State)
-const state = {
-  settings: DB.get("lm_settings", { theme:"dark", quizMode:"choice" }),
-  cards: DB.get("lm_cards", []),
-  txCache: DB.get("lm_tx_cache", {}),
-  dictCache: DB.get("lm_dict_cache", {}),
-  reviewQueue: DB.get("lm_review_queue", [])
 };
 
 // Global Değişkenler
