@@ -136,24 +136,31 @@ html, body {
   opacity: 1;
   pointer-events: auto; /* Açıkken tıklamayı yakala */
 }
-   .sheet {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+   /* DÜZELTİLMİŞ SHEET SINIFI */
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; 
+  z-index: 150; /* Header'ın üstüne çıksın */
   background: var(--card);
   border-radius: 26px 26px 0 0;
   border: 1px solid var(--border);
   transform: translateY(110%);
   transition: .25s ease;
   
-  max-height: 85dvh; /* En fazla bu kadar uzasın */
-  height: auto;
+  /* ESNEK YÜKSEKLİK AYARI */
+  max-height: 85dvh; /* Ekranın %85'ini geçmesin */
+  height: auto;      /* İçerik kadar uzasın */
   
-  display: flex; flex-direction: column;
+  /* FLEX YERİNE BLOCK YAPIYORUZ (Kaydırma Sorunu Çözümü) */
+  display: block; 
   padding: 14px 16px calc(16px + var(--safe-bottom));
   
-  /* --- İŞTE EKSİK OLAN PARÇA BU --- */
-  overflow-y: auto !important;  /* İçerik taşarsa kaydır */
-  -webkit-overflow-scrolling: touch; /* Mobilde yağ gibi kaysın */
+  /* KAYDIRMA AYARLARI */
+  overflow-y: auto !important; 
+  -webkit-overflow-scrolling: touch; 
+  overscroll-behavior: contain;
+  pointer-events: auto !important;
 }
+.sheet.open { transform: none; }
     .sheet.open{transform:none;}
     .handle{width:48px;height:5px;border-radius:99px;background:var(--border);margin:6px auto 14px;}
     .field{margin:10px 0;}
@@ -444,7 +451,7 @@ html, body {
 </div>
 
 <!-- Quiz overlay -->
-  <div class="sheet" id="transResultSheet" style="height:auto; max-height:80vh;">
+  <div class="sheet" id="transResultSheet">
   <div class="handle"></div>
   <h2 class="h2">Çeviri Sonucu</h2>
   
@@ -453,7 +460,7 @@ html, body {
   <button class="btn btnPrimary" style="width:100%; margin-top:16px;" onclick="copyToManualAdd()">➕ Bu Kelimeyi Karta Ekle</button>
   <button class="btn btnSoft" style="width:100%; margin-top:10px;" onclick="closeSheets()">Kapat</button>
 </div>
-  <div class="sheet" id="grammarSheet" style="height:90vh;">
+  <div class="sheet" id="grammarSheet">
   <div class="handle"></div>
   <h2 class="h2" style="color:var(--primary); text-align:center;">📘 İngilizce İpuçları</h2>
 
