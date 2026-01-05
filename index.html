@@ -259,7 +259,6 @@
       <div class="divider"></div>
 
       <div class="two">
-        <button class="btn btnSoft btnHalf" onclick="clearProgress()">♻️ SRS Sıfırla</button>
         <button class="btn btnSoft btnHalf" onclick="toast('Online AutoFill aktif ✅')">Durum</button>
       </div>
     </div>
@@ -1018,19 +1017,40 @@ function toggleFilter(type){
      if(type === 'mastered') toast("Sadece ÖĞRENİLMİŞ kartlar");
   }
   renderCards(); // Listeyi yenile
+}/* ===========================
+   AKILLI KART LİSTELEME & ÖZEL PRATİK
+   - İstatistik kutularında "Başlat" butonu var (Sarı/Yeşil için).
+   - Kartlarda "Başa Al" butonu var (Yeni'ye düşürür).
+=========================== */
+let activeFilter = "all"; 
+
+// Arama dinleyicisi
+const searchInput = document.getElementById("search");
+if(searchInput) searchInput.addEventListener("input", renderCards);
+
+// Filtreleme Fonksiyonu
+function toggleFilter(type){
+  if(activeFilter === type){
+     activeFilter = "all"; 
+     toast("Tüm kartlar gösteriliyor");
+  } else {
+     activeFilter = type; 
+     if(type === 'new') toast("Sadece YENİ kartlar");
+     if(type === 'learning') toast("Sadece ÖĞRENİLEN kartlar");
+     if(type === 'mastered') toast("Sadece ÖĞRENİLMİŞ kartlar");
+  }
+  renderCards();
 }
 
+// LİSTELEME FONKSİYONU
 function renderCards(){
-  // Hata önleyici: Eğer search kutusu yoksa boş string al
   const searchEl = document.getElementById("search");
   const q = searchEl ? norm(searchEl.value) : "";
-  
   const list = document.getElementById("cardsList");
-  if(!list) return; // Liste yoksa dur
-  
+  if(!list) return;
   list.innerHTML="";
 
-  // --- 1. İSTATİSTİKLERİ SAY (Her zaman tüm kartlar üzerinden) ---
+  // --- 1. İSTATİSTİKLERİ SAY ---
   let countNew = 0;       
   let countLearning = 0;  
   let countMastered = 0;  
@@ -1044,36 +1064,55 @@ function renderCards(){
       });
   }
 
-  // Sayıları kutulara yaz (Eğer kutular ekranda varsa)
-  if(document.getElementById("statNew")) document.getElementById("statNew").textContent = countNew;
-  if(document.getElementById("statLearn")) document.getElementById("statLearn").textContent = countLearning;
-  if(document.getElementById("statMaster")) document.getElementById("statMaster").textContent = countMastered;
-
-  // --- 2. KUTULARIN GÖRÜNÜMÜNÜ GÜNCELLE (Seçili olan parlasın) ---
-  const btnNew = document.getElementById("filterBtnNew");
-  const btnLearn = document.getElementById("filterBtnLearn");
-  const btnMaster = document.getElementById("filterBtnMaster");
-
-  // Seçili olmayanı silikleştir (Opacity ayarı)
-  if(btnNew) btnNew.style.opacity = (activeFilter === 'all' || activeFilter === 'new') ? "1" : "0.4";
-  if(btnLearn) btnLearn.style.opacity = (activeFilter === 'all' || activeFilter === 'learning') ? "1" : "0.4";
-  if(btnMaster) btnMaster.style.opacity = (activeFilter === 'all' || activeFilter === 'mastered') ? "1" : "0.4";
+  // --- 2. HTML GÜNCELLEME (KUTULAR + PLAY BUTONLARI) ---
+  // Burayı JavaScript ile dinamik çizdiriyoruz ki butonlara tıklayınca filtre karışmasın.
+  // HTML dosyasındaki o istatistik div'lerini (id="filterBtnNew" vb.) güncelliyoruz.
   
-  // Seçili olana kalın kenarlık ver
-  if(btnNew) btnNew.style.borderWidth = (activeFilter === 'new') ? "2px" : "1px";
-  if(btnLearn) btnLearn.style.borderWidth = (activeFilter === 'learning') ? "2px" : "1px";
-  if(btnMaster) btnMaster.style.borderWidth = (activeFilter === 'mastered') ? "2px" : "1px";
+  if(document.getElementById("statNew")) document.getElementById("statNew").textContent = countNew;
+  
+  // ÖĞRENİYORUM KUTUSU GÜNCELLEME (Play butonu ekliyoruz)
+  const boxLearn = document.getElementById("filterBtnLearn");
+  if(boxLearn) {
+      boxLearn.innerHTML = `
+        <div style="font-size:11px; font-weight:bold; color:var(--warn);">🟡 Öğreniyorum</div>
+        <div style="font-size:18px; font-weight:900; color:var(--warn);">${countLearning}</div>
+        <button class="btn btnSoft" style="padding:4px 8px; font-size:10px; margin-top:4px; width:100%; border-color:var(--warn); color:var(--warn);" 
+        onclick="event.stopPropagation(); startCategoryQuiz('learning')">▶️ Çalış</button>
+      `;
+      // Görünüm (Seçili mi?)
+      boxLearn.style.opacity = (activeFilter === 'all' || activeFilter === 'learning') ? "1" : "0.4";
+      boxLearn.style.borderWidth = (activeFilter === 'learning') ? "2px" : "1px";
+  }
+
+  // ÖĞRENDİM KUTUSU GÜNCELLEME (Play butonu ekliyoruz)
+  const boxMaster = document.getElementById("filterBtnMaster");
+  if(boxMaster) {
+      boxMaster.innerHTML = `
+        <div style="font-size:11px; font-weight:bold; color:var(--ok);">🟢 Öğrendim</div>
+        <div style="font-size:18px; font-weight:900; color:var(--ok);">${countMastered}</div>
+        <button class="btn btnSoft" style="padding:4px 8px; font-size:10px; margin-top:4px; width:100%; border-color:var(--ok); color:var(--ok);" 
+        onclick="event.stopPropagation(); startCategoryQuiz('mastered')">▶️ Çalış</button>
+      `;
+      // Görünüm
+      boxMaster.style.opacity = (activeFilter === 'all' || activeFilter === 'mastered') ? "1" : "0.4";
+      boxMaster.style.borderWidth = (activeFilter === 'mastered') ? "2px" : "1px";
+  }
+  
+  // Yeni Kutusu Görünüm (Buton yok, sadece sayı)
+  const btnNew = document.getElementById("filterBtnNew");
+  if(btnNew) {
+      btnNew.style.opacity = (activeFilter === 'all' || activeFilter === 'new') ? "1" : "0.4";
+      btnNew.style.borderWidth = (activeFilter === 'new') ? "2px" : "1px";
+  }
+
 
   // --- 3. LİSTEYİ FİLTRELE ---
   const items = state.cards
     .filter(c => {
-      // A) Arama Filtresi
       const matchesSearch = !q || (norm(c.term).includes(q) || norm(c.meaning).includes(q) || norm(c.type).includes(q));
       
-      // B) Durum Filtresi (Kutulara tıklama)
       const r = c.srs ? c.srs.reps : 0;
       let matchesStatus = true;
-      
       if(activeFilter === 'new') matchesStatus = (r === 0);
       else if(activeFilter === 'learning') matchesStatus = (r > 0 && r < 5);
       else if(activeFilter === 'mastered') matchesStatus = (r >= 5);
@@ -1082,14 +1121,9 @@ function renderCards(){
     })
     .sort((a,b)=> (a.term||"").localeCompare((b.term||""), "en"));
 
-  // --- 4. SONUCU BAS ---
+  // --- 4. KARTLARI BAS ---
   if(!items.length){
-    let msg = "Kart bulunamadı.";
-    if(activeFilter === 'new') msg = "Henüz YENİ kart yok.";
-    if(activeFilter === 'learning') msg = "Şu an ÖĞRENİLEN kart yok.";
-    if(activeFilter === 'mastered') msg = "Henüz tamamlanan kart yok.";
-    
-    list.innerHTML=`<div class="card" style="text-align:center; padding:20px; color:var(--muted);">${msg}</div>`;
+    list.innerHTML=`<div class="card" style="text-align:center; padding:20px; color:var(--muted);">Bu kategoride kart yok.</div>`;
     return;
   }
 
@@ -1097,7 +1131,7 @@ function renderCards(){
     const isDue = (c.due||0) <= Date.now();
     const reps = c.srs ? c.srs.reps : 0;
     
-    // Rozet Rengi (Listede durumunu görmek için)
+    // Rozet
     let statusBadge = "";
     if(reps === 0) statusBadge = `<span class="badge" style="border:1px solid var(--border);">Yeni</span>`;
     else if(reps < 5) statusBadge = `<span class="badge" style="color:var(--warn); border-color:var(--warn);">Öğreniliyor</span>`;
@@ -1108,6 +1142,10 @@ function renderCards(){
     const el=document.createElement("div");
     el.className="card";
     el.style.marginTop="12px";
+    
+    // BUTONLAR KISMI: "Başa Al" butonu eklendi (reps > 0 ise görünür)
+    const resetBtn = reps > 0 ? `<button class="btn btnSoft btnHalf" style="font-size:11px;" data-reset="${c.id}">↩️ Başa Al</button>` : ``;
+
     el.innerHTML=`
       <div class="cardLine">
         <div class="termBig">${safeText(c.term)}</div>
@@ -1120,11 +1158,18 @@ function renderCards(){
       </div>
       <div class="two" style="margin-top:10px;">
         <button class="btn btnSoft btnHalf" data-edit="${c.id}">Düzenle</button>
+        ${resetBtn}
         <button class="btn btnDanger btnHalf" data-del="${c.id}">Sil</button>
       </div>
     `;
+    
     el.querySelector(`[data-edit="${c.id}"]`).onclick=()=>openEditPrompt(c.id);
     el.querySelector(`[data-del="${c.id}"]`).onclick=()=>deleteCard(c.id);
+    // Sıfırlama butonu varsa ona da özellik ekle
+    if(reps > 0){
+        el.querySelector(`[data-reset="${c.id}"]`).onclick=()=>resetSingleCard(c.id);
+    }
+    
     list.appendChild(el);
   });
 }
@@ -2077,6 +2122,62 @@ async function doQuickTranslateTR(){
     console.log(e);
     toast("Çeviri yapılamadı"); 
   }
+}
+  /* ===========================
+   YENİ ÖZELLİKLER: KATEGORİ QUİZ & KART SIFIRLAMA
+=========================== */
+
+// 1. KATEGORİ QUİZ BAŞLATICI
+// (Öğreniyorum veya Öğrendim kutusundaki butona basınca çalışır)
+function startCategoryQuiz(type){
+  closeSheets(); // Varsa açık pencereleri kapat
+  
+  let filtered = [];
+  if(type === 'learning'){
+      // Reps 1,2,3,4 olanlar (Sarılar)
+      filtered = state.cards.filter(c => c.srs && c.srs.reps > 0 && c.srs.reps < 5);
+      toast("Öğrenilenler çalışılıyor... (" + filtered.length + ")");
+  } else if(type === 'mastered'){
+      // Reps 5 ve üzeri olanlar (Yeşiller)
+      filtered = state.cards.filter(c => c.srs && c.srs.reps >= 5);
+      toast("Öğrenilenler tekrar ediliyor... (" + filtered.length + ")");
+  }
+
+  if(filtered.length === 0) return toast("Bu kategoride kart yok!");
+
+  // Karıştır
+  filtered.sort(() => Math.random() - 0.5);
+
+  // Kuyruğa ata ve başlat
+  state.reviewQueue = filtered.map(c => c.id);
+  DB.set("lm_review_queue", state.reviewQueue);
+
+  // Quiz ekranını aç
+  const overlay = document.getElementById("quizOverlay");
+  if(overlay) {
+      overlay.classList.remove("active");
+      overlay.classList.add("open");
+  }
+  nextQuiz();
+}
+
+// 2. TEK KARTI SIFIRLAMA (YENİ KLASÖRÜNE ATMA)
+function resetSingleCard(id){
+  const c = state.cards.find(x => x.id === id);
+  if(!c) return;
+  
+  // Kullanıcıya sor
+  if(!confirm("Bu kart 'Yeni' durumuna dönecek. Emin misin?")) return;
+
+  // Kartı fabrika ayarlarına döndür (Sıfırla)
+  c.srs = { interval:0, reps:0, ef:2.5 };
+  c.due = Date.now(); // Hemen tekrar listesine girsin
+  c.updatedAt = Date.now();
+  
+  DB.set("lm_cards", state.cards);
+  
+  toast("Kart başa alındı ↩️");
+  renderCards(); // Listeyi güncelle ki rengi değişsin
 }
 </script>
 </body>
