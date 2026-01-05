@@ -1,376 +1,307 @@
 <!DOCTYPE html>
 <html lang="tr" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Vocabify</title>
-  <meta name="theme-color" content="#0b1220" id="meta-theme">
-  <style>
-    :root{
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-      --safe-top: env(safe-area-inset-top, 0px);
-      --header-h: 60px;
-      --nav-h: 78px;
-      --radius: 18px;
-      --bg:#0b1220;
-      --card:#111b2d;
-      --card2:#0f172a;
-      --border:#25324a;
-      --text:#e5e7eb;
-      --muted:#94a3b8;
-      --primary:#6366f1;
-      --danger:#ef4444;
-      --warn:#f59e0b;
-      --ok:#10b981;
-    }
-    [data-theme="light"]{
-      --bg:#f8fafc; --card:#ffffff; --card2:#f1f5f9; --border:#cbd5e1;
-      --text:#0f172a; --muted:#64748b; --primary:#4f46e5;
-      --danger:#dc2626; --warn:#d97706; --ok:#059669;
-    }
-    [data-theme="ocean"]{ --bg:#06131f; --card:#0b2236; --card2:#0a1b2a; --border:#245070; --text:#e6f2ff; --muted:#9bb7d3; --primary:#38bdf8;}
-    [data-theme="emerald"]{ --bg:#071a14; --card:#0b2a21; --card2:#082018; --border:#1f6b52; --text:#ecfdf5; --muted:#9fe3c7; --primary:#10b981;}
-    [data-theme="sunset"]{ --bg:#1b1020; --card:#2a1731; --card2:#1f1225; --border:#6b2a59; --text:#fff7ed; --muted:#fbcfe8; --primary:#fb7185;}
-    [data-theme="rose"]{ --bg:#120a10; --card:#1f0f1b; --card2:#160b13; --border:#7f1d1d; --text:#fff1f2; --muted:#fda4af; --primary:#f43f5e;}
-    *{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-  touch-action: manipulation; /* Çift tıklama zoom'unu engeller */
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Vocabify</title>
+  <meta name="theme-color" content="#0b1220" id="meta-theme">
+  <style>
+    :root{
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --header-h: 60px;
+      --nav-h: 78px;
+      --radius: 18px;
+      --bg:#0b1220;
+      --card:#111b2d;
+      --card2:#0f172a;
+      --border:#25324a;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --primary:#6366f1;
+      --danger:#ef4444;
+      --warn:#f59e0b;
+      --ok:#10b981;
+    }
+    [data-theme="light"]{
+      --bg:#f8fafc; --card:#ffffff; --card2:#f1f5f9; --border:#cbd5e1;
+      --text:#0f172a; --muted:#64748b; --primary:#4f46e5;
+      --danger:#dc2626; --warn:#d97706; --ok:#059669;
+    }
+    [data-theme="ocean"]{ --bg:#06131f; --card:#0b2236; --card2:#0a1b2a; --border:#245070; --text:#e6f2ff; --muted:#9bb7d3; --primary:#38bdf8;}
+    [data-theme="emerald"]{ --bg:#071a14; --card:#0b2a21; --card2:#082018; --border:#1f6b52; --text:#ecfdf5; --muted:#9fe3c7; --primary:#10b981;}
+    [data-theme="sunset"]{ --bg:#1b1020; --card:#2a1731; --card2:#1f1225; --border:#6b2a59; --text:#fff7ed; --muted:#fbcfe8; --primary:#fb7185;}
+    [data-theme="rose"]{ --bg:#120a10; --card:#1f0f1b; --card2:#160b13; --border:#7f1d1d; --text:#fff1f2; --muted:#fda4af; --primary:#f43f5e;}
+    *{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  touch-action: manipulation; /* Çift tıklama zoom'unu engeller */
 }
-    /* SAYFAYI EKRANA SABİTLEME */
-html, body {
-  margin: 0; padding: 0;
-  height: 100%; width: 100%;
-  overflow: hidden; /* Sayfanın komple kaymasını engeller */
-  position: fixed; /* Ekrana çiviler (iOS zıplamasını önler) */
-  background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Inter", Roboto, system-ui, sans-serif;
-}
-   header {
-  position: fixed; /* Ekrana yapıştırır */
-  top: 0; left: 0; right: 0; /* Sağa sola yaslar */
-  z-index: 100; /* Her şeyin üstünde dursun */
-  height: calc(var(--header-h) + var(--safe-top));
-  padding-top: var(--safe-top);
-  display: flex; align-items: center; justify-content: space-between;
-  padding-left: 16px; padding-right: 16px;
-  background: color-mix(in srgb, var(--bg) 78%, transparent);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:950;}
-    .logo{width:18px;height:18px;border:2px solid var(--primary);border-radius:6px;transform:rotate(15deg);}
-    .iconBtn{
-      width:44px;height:44px;border-radius:14px;background:transparent;border:1px solid var(--border);
-      color:var(--muted);display:grid;place-items:center;cursor:pointer;user-select:none;
-    }
-    .iconBtn:active{transform:scale(.98);opacity:.9;}
-    /* SADECE ORTANIN KAYMASINI SAĞLAR */
-#viewport {
-  position: absolute;
-  top: calc(var(--header-h) + var(--safe-top));
-  bottom: calc(var(--nav-h) + var(--safe-bottom));
-  left: 0; right: 0;
-  overflow-y: auto !important; /* Kaydırmayı zorla */
-  -webkit-overflow-scrolling: touch;
-  z-index: 5; /* Sayıyı biraz artırdık ki altta kalmasın */
-  pointer-events: auto !important; /* Tıklamayı zorla */
-}
-/* GÜNCELLENMİŞ GÖRÜNÜM AYARLARI */
-.view {
-  width: 100%;
-  min-height: 100%; 
-  padding: 18px; 
-  display: none; /* Pasifken gizle */
-}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,system-ui,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
+    header{
+      position:sticky; top:0; z-index:20;
+      height:calc(var(--header-h) + var(--safe-top));
+      padding-top:var(--safe-top);
+      display:flex; align-items:center; justify-content:space-between;
+      padding-left:16px; padding-right:16px;
+      background:color-mix(in srgb, var(--bg) 78%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom:1px solid var(--border);
+    }
+    .brand{display:flex;align-items:center;gap:10px;font-weight:950;}
+    .logo{width:18px;height:18px;border:2px solid var(--primary);border-radius:6px;transform:rotate(15deg);}
+    .iconBtn{
+      width:44px;height:44px;border-radius:14px;background:transparent;border:1px solid var(--border);
+      color:var(--muted);display:grid;place-items:center;cursor:pointer;user-select:none;
+    }
+    .iconBtn:active{transform:scale(.98);opacity:.9;}
+    #viewport{position:relative;height:calc(100vh - (var(--header-h) + var(--safe-top)));}
+    .view{
+      position:absolute; inset:0;
+      padding:18px;
+      padding-bottom:calc(var(--nav-h) + var(--safe-bottom) + 18px);
+      overflow:auto;
+      opacity:0; pointer-events:none;
+      transform:translateY(8px);
+      transition:.25s ease;
+    }
+    .view.active{opacity:1; pointer-events:auto; transform:none;}
+    .row{display:flex;gap:12px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;}
+    .muted{color:var(--muted);}
+    .big{font-size:34px;font-weight:980;}
+    .h2{font-size:20px;font-weight:980;margin:0 0 12px 0;}
+    .secTitle{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:950;margin:4px 0 10px;}
+    .btn{
+      border:0;cursor:pointer;border-radius:16px;padding:14px 16px;font-weight:980;
+      display:flex;align-items:center;justify-content:center;gap:10px;user-select:none;
+    }
+    .btn:active{transform:scale(.985);opacity:.92;}
+    .btnPrimary{background:var(--primary);color:white;}
+    .btnSoft{background:var(--card2);color:var(--text);border:1px solid var(--border);}
+    .btnDanger{background:var(--danger);color:white;}
+    .btnOk{background:var(--ok);color:white;}
+    .btnHalf{flex:1;}
+    nav{
+      position:fixed;left:0;right:0;bottom:0;z-index:30;
+      height:calc(var(--nav-h) + var(--safe-bottom));
+      padding-bottom:var(--safe-bottom);
+      background:var(--card2);
+      border-top:1px solid var(--border);
+      display:flex;
+    }
+    .navBtn{
+      flex:1;background:transparent;border:0;color:var(--muted);
+      cursor:pointer;user-select:none;
+      display:grid;grid-template-rows:36px 18px;
+      align-items:center;justify-items:center;
+      padding:6px 0;line-height:1;min-width:0;
+    }
+    .navBtn .ico{width:46px;height:36px;display:grid;place-items:center;font-size:20px;line-height:1;}
+    .navBtn span{font-size:11.5px;font-weight:980;line-height:1;transform:translateY(-1px);white-space:nowrap;}
+    .navBtn.active{color:var(--primary);}
+    .navBtn.active .ico{background:color-mix(in srgb, var(--primary) 15%, transparent);border-radius:14px;}
+    .backdrop{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:.2s ease;}
+    .backdrop.open{opacity:1;pointer-events:auto;}
+    .sheet{
+      position:fixed;left:0;right:0;bottom:0;z-index:50;
+      background:var(--card);
+      border-radius:26px 26px 0 0;
+      border:1px solid var(--border);
+      transform:translateY(110%);
+      transition:.25s ease;
+      max-height:85vh;overflow:auto;
+      padding:14px 16px calc(16px + var(--safe-bottom));
+    }
+    .sheet.open{transform:none;}
+    .handle{width:48px;height:5px;border-radius:99px;background:var(--border);margin:6px auto 14px;}
+    .field{margin:10px 0;}
+    label{display:block;font-size:12px;font-weight:980;color:var(--muted);margin-bottom:6px;}
+    input, textarea, select{
+      width:100%;background:var(--card2);border:1px solid var(--border);border-radius:16px;
+      padding:14px;color:var(--text);font-size:16px;outline:none;
+    }
+    textarea{min-height:92px;resize:none;}
+    .two{display:flex;gap:10px;}
+    .smallInfo{font-size:12px;color:var(--muted);font-weight:950;margin-top:6px;}
+    .toast{
+      position:fixed;left:50%;top:calc(14px + var(--safe-top));
+      transform:translate(-50%,-20px);
+      background:var(--text);color:var(--bg);
+      padding:10px 14px;border-radius:99px;font-weight:980;
+      opacity:0;pointer-events:none;transition:.25s ease;z-index:200;
+      max-width:calc(100vw - 20px);text-align:center;
+    }
+    .toast.show{opacity:1;transform:translate(-50%,0);}
+    .cardLine{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+    .termBig{font-weight:980;color:var(--primary);font-size:20px;}
+    .badge{
+      font-size:11px;font-weight:980;padding:6px 10px;border-radius:999px;border:1px solid var(--border);
+      color:var(--muted);background:color-mix(in srgb, var(--card2) 60%, transparent);white-space:nowrap;
+    }
+    .badge.due{color:var(--warn);border-color:color-mix(in srgb, var(--warn) 45%, var(--border));background:color-mix(in srgb, var(--warn) 10%, transparent);}
+    .divider{height:1px;background:var(--border);margin:12px 0;}
+    .kbd{font-size:11px;font-weight:980;border:1px solid var(--border);padding:4px 8px;border-radius:10px;background:var(--card);color:var(--muted);}
 
-.view.active {
-  display: block; /* Aktifken göster */
-  /* pointer-events satırını sildik, varsayılan (auto) olsun */
-}
-    .view.active{opacity:1; pointer-events:auto; transform:none;}
-    .row{display:flex;gap:12px;}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;}
-    .muted{color:var(--muted);}
-    .big{font-size:34px;font-weight:980;}
-    .h2{font-size:20px;font-weight:980;margin:0 0 12px 0;}
-    .secTitle{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:950;margin:4px 0 10px;}
-    .btn{
-      border:0;cursor:pointer;border-radius:16px;padding:14px 16px;font-weight:980;
-      display:flex;align-items:center;justify-content:center;gap:10px;user-select:none;
-    }
-    .btn:active{transform:scale(.985);opacity:.92;}
-    .btnPrimary{background:var(--primary);color:white;}
-    .btnSoft{background:var(--card2);color:var(--text);border:1px solid var(--border);}
-    .btnDanger{background:var(--danger);color:white;}
-    .btnOk{background:var(--ok);color:white;}
-    .btnHalf{flex:1;}
-    nav{
-      position:fixed;left:0;right:0;bottom:0;z-index:30;
-      height:calc(var(--nav-h) + var(--safe-bottom));
-      padding-bottom:var(--safe-bottom);
-      background:var(--card2);
-      border-top:1px solid var(--border);
-      display:flex;
-    }
-    .navBtn{
-      flex:1;background:transparent;border:0;color:var(--muted);
-      cursor:pointer;user-select:none;
-      display:grid;grid-template-rows:36px 18px;
-      align-items:center;justify-items:center;
-      padding:6px 0;line-height:1;min-width:0;
-    }
-    .navBtn .ico{width:46px;height:36px;display:grid;place-items:center;font-size:20px;line-height:1;}
-    .navBtn span{font-size:11.5px;font-weight:980;line-height:1;transform:translateY(-1px);white-space:nowrap;}
-    .navBtn.active{color:var(--primary);}
-    .navBtn.active .ico{background:color-mix(in srgb, var(--primary) 15%, transparent);border-radius:14px;}
-    .backdrop {
-  position: fixed; inset: 0; z-index: 40;
-  background: rgba(0,0,0,.55);
-  opacity: 0;
-  pointer-events: none; /* <--- İŞTE BU EKSİKTİ! Kapalıyken tıklamayı engelleme */
-  transition: .2s ease;
-}
-.backdrop.open {
-  opacity: 1;
-  pointer-events: auto; /* Açıkken tıklamayı yakala */
-}
-   /* DÜZELTİLMİŞ SHEET SINIFI */
-.sheet {
-  position: fixed; left: 0; right: 0; bottom: 0; 
-  z-index: 150; /* Header'ın üstüne çıksın */
-  background: var(--card);
-  border-radius: 26px 26px 0 0;
-  border: 1px solid var(--border);
-  transform: translateY(110%);
-  transition: .25s ease;
-  
-  /* ESNEK YÜKSEKLİK AYARI */
-  max-height: 85dvh; /* Ekranın %85'ini geçmesin */
-  height: auto;      /* İçerik kadar uzasın */
-  
-  /* FLEX YERİNE BLOCK YAPIYORUZ (Kaydırma Sorunu Çözümü) */
-  display: block; 
-  padding: 14px 16px calc(16px + var(--safe-bottom));
-  
-  /* KAYDIRMA AYARLARI */
-  overflow-y: auto !important; 
-  -webkit-overflow-scrolling: touch; 
-  overscroll-behavior: contain;
-  pointer-events: auto !important;
-}
-.sheet.open { transform: none; }
-    .sheet.open{transform:none;}
-    .handle{width:48px;height:5px;border-radius:99px;background:var(--border);margin:6px auto 14px;}
-    .field{margin:10px 0;}
-    label{display:block;font-size:12px;font-weight:980;color:var(--muted);margin-bottom:6px;}
-    input, textarea, select{
-      width:100%;background:var(--card2);border:1px solid var(--border);border-radius:16px;
-      padding:14px;color:var(--text);font-size:16px;outline:none;
-    }
-    textarea{min-height:92px;resize:none;}
-    .two{display:flex;gap:10px;}
-    .smallInfo{font-size:12px;color:var(--muted);font-weight:950;margin-top:6px;}
-    .toast{
-      position:fixed;left:50%;top:calc(14px + var(--safe-top));
-      transform:translate(-50%,-20px);
-      background:var(--text);color:var(--bg);
-      padding:10px 14px;border-radius:99px;font-weight:980;
-      opacity:0;pointer-events:none;transition:.25s ease;z-index:200;
-      max-width:calc(100vw - 20px);text-align:center;
-    }
-    .toast.show{opacity:1;transform:translate(-50%,0);}
-    .cardLine{display:flex;justify-content:space-between;align-items:center;gap:10px;}
-    .termBig{font-weight:980;color:var(--primary);font-size:20px;}
-    .badge{
-      font-size:11px;font-weight:980;padding:6px 10px;border-radius:999px;border:1px solid var(--border);
-      color:var(--muted);background:color-mix(in srgb, var(--card2) 60%, transparent);white-space:nowrap;
-    }
-    .badge.due{color:var(--warn);border-color:color-mix(in srgb, var(--warn) 45%, var(--border));background:color-mix(in srgb, var(--warn) 10%, transparent);}
-    .divider{height:1px;background:var(--border);margin:12px 0;}
-    .kbd{font-size:11px;font-weight:980;border:1px solid var(--border);padding:4px 8px;border-radius:10px;background:var(--card);color:var(--muted);}
-
-    /* Quiz overlay (simple) */
-    .overlay{position:fixed;inset:0;z-index:120;background:var(--bg);transform:translateX(110%);transition:.25s ease;display:flex;flex-direction:column;}
-    .overlay.open{transform:none;}
-    .overlayTop{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:14px 16px calc(14px + var(--safe-top));
-      padding-top:calc(14px + var(--safe-top));
-      border-bottom:1px solid var(--border);
-      background:color-mix(in srgb, var(--bg) 85%, transparent);
-      backdrop-filter: blur(12px);
-    }
-    .qChoice{ text-align:left;background:var(--card);border:1px solid var(--border);padding:14px;border-radius:16px;cursor:pointer;font-weight:950;}
-    .qChoice.correct{border-color:color-mix(in srgb, var(--ok) 70%, var(--border));background:color-mix(in srgb, var(--ok) 12%, var(--card));}
-    .qChoice.wrong{border-color:color-mix(in srgb, var(--danger) 70%, var(--border));background:color-mix(in srgb, var(--danger) 10%, var(--card));}
-  /* --- DONMA SORUNU İÇİN ACİL TAMİR KODU --- */
-#viewport, .view.active, #cards {
-    pointer-events: auto !important; /* Tıklamayı ZORLA aç */
-    overflow-y: auto !important;    /* Kaydırmayı ZORLA aç */
-    touch-action: pan-y !important; /* Parmak hareketini algıla */
-    z-index: 10 !important;         /* Her şeyin üstüne çıkar */
-}
-    /* --- DONMAYI ÇÖZEN ACİL YAMA --- */
-#viewport {
-  overflow-y: auto !important;    /* Kaydırmayı zorla aç */
-  pointer-events: auto !important; /* Tıklamayı zorla aç */
-  z-index: 5 !important;           /* İçeriği öne getir */
-}
-
-.view.active {
-  pointer-events: auto !important; /* Görünür sayfayı tıklanabilir yap */
-}
-
-.sheet {
-  display: block !important;       /* Açılır pencereleri düzelt */
-}
-  </style>
+    /* Quiz overlay (simple) */
+    .overlay{position:fixed;inset:0;z-index:120;background:var(--bg);transform:translateX(110%);transition:.25s ease;display:flex;flex-direction:column;}
+    .overlay.open{transform:none;}
+    .overlayTop{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 16px calc(14px + var(--safe-top));
+      padding-top:calc(14px + var(--safe-top));
+      border-bottom:1px solid var(--border);
+      background:color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter: blur(12px);
+    }
+    .qChoice{ text-align:left;background:var(--card);border:1px solid var(--border);padding:14px;border-radius:16px;cursor:pointer;font-weight:950;}
+    .qChoice.correct{border-color:color-mix(in srgb, var(--ok) 70%, var(--border));background:color-mix(in srgb, var(--ok) 12%, var(--card));}
+    .qChoice.wrong{border-color:color-mix(in srgb, var(--danger) 70%, var(--border));background:color-mix(in srgb, var(--danger) 10%, var(--card));}
+  </style>
 </head>
 
 <body>
 <header>
-  <div class="brand"><div class="logo"></div><div>Vocabify</div></div>
-  <div style="display:flex; gap:10px;">
-    <button class="iconBtn" id="btnTheme">🎨</button>
-    <button class="iconBtn" id="btnSettings">⚙️</button>
-  </div>
+  <div class="brand"><div class="logo"></div><div>Vocabify</div></div>
+  <div style="display:flex; gap:10px;">
+    <button class="iconBtn" id="btnTheme">🎨</button>
+    <button class="iconBtn" id="btnSettings">⚙️</button>
+  </div>
 </header>
 
 <div id="viewport">
-  <section class="view active" id="home">
-    <div class="secTitle">Genel Bakış</div>
-    <div class="row" style="gap:10px; margin-bottom:14px;">
-  
-  <div class="card" style="flex:1; border:1px solid var(--primary); padding:10px;">
-    <div style="font-weight:bold; color:var(--primary); font-size:12px; margin-bottom:6px;">🇬🇧 İngilizce ➡️ 🇹🇷 Türkçe</div>
-    <div style="display:flex; gap:6px;">
-      <input id="quickTransInput" placeholder="İngilizce yaz..." style="background:var(--bg); font-size:16px;" onkeydown="if(event.key==='Enter') doQuickTranslate()" />
-      <button class="iconBtn" style="background:var(--primary); color:white; border:none; width:36px; height:36px;" onclick="doQuickTranslate()">🔎</button>
-    </div>
-  </div>
+  <section class="view active" id="home">
+    <div class="secTitle">Genel Bakış</div>
+    <div class="row" style="gap:10px; margin-bottom:14px;">
+  
+  <div class="card" style="flex:1; border:1px solid var(--primary); padding:10px;">
+    <div style="font-weight:bold; color:var(--primary); font-size:12px; margin-bottom:6px;">🇬🇧 İngilizce ➡️ 🇹🇷 Türkçe</div>
+    <div style="display:flex; gap:6px;">
+      <input id="quickTransInput" placeholder="İngilizce yaz..." style="background:var(--bg); font-size:16px;" onkeydown="if(event.key==='Enter') doQuickTranslate()" />
+      <button class="iconBtn" style="background:var(--primary); color:white; border:none; width:36px; height:36px;" onclick="doQuickTranslate()">🔎</button>
+    </div>
+  </div>
 
-  <div class="card" style="flex:1; border:1px solid var(--warn); padding:10px;">
-    <div style="font-weight:bold; color:var(--warn); font-size:12px; margin-bottom:6px;">🇹🇷 Türkçe ➡️ 🇬🇧 İngilizce</div>
-    <div style="display:flex; gap:6px;">
-      <input id="quickTransInputTR" placeholder="Türkçe yaz..." style="background:var(--bg); font-size:16px;" onkeydown="if(event.key==='Enter') doQuickTranslateTR()" />
-      <button class="iconBtn" style="background:var(--warn); color:white; border:none; width:36px; height:36px;" onclick="doQuickTranslateTR()">🔎</button>
-    </div>
-  </div>
+  <div class="card" style="flex:1; border:1px solid var(--warn); padding:10px;">
+    <div style="font-weight:bold; color:var(--warn); font-size:12px; margin-bottom:6px;">🇹🇷 Türkçe ➡️ 🇬🇧 İngilizce</div>
+    <div style="display:flex; gap:6px;">
+      <input id="quickTransInputTR" placeholder="Türkçe yaz..." style="background:var(--bg); font-size:16px;" onkeydown="if(event.key==='Enter') doQuickTranslateTR()" />
+      <button class="iconBtn" style="background:var(--warn); color:white; border:none; width:36px; height:36px;" onclick="doQuickTranslateTR()">🔎</button>
+    </div>
+  </div>
 </div>
-    <div class="row">
-      <div class="card" style="flex:1;">
-        <div class="muted" style="font-weight:980;">Toplam Kart</div>
-        <div class="big" id="dashTotal">0</div>
-      </div>
-      <div class="card" style="flex:1; border-color:color-mix(in srgb, var(--warn) 45%, var(--border));">
-        <div style="font-weight:980; color:var(--warn);">Tekrar</div>
-        <div class="big" style="color:var(--warn);" id="dashDue">0</div>
-      </div>
-    </div>
+    <div class="row">
+      <div class="card" style="flex:1;">
+        <div class="muted" style="font-weight:980;">Toplam Kart</div>
+        <div class="big" id="dashTotal">0</div>
+      </div>
+      <div class="card" style="flex:1; border-color:color-mix(in srgb, var(--warn) 45%, var(--border));">
+        <div style="font-weight:980; color:var(--warn);">Tekrar</div>
+        <div class="big" style="color:var(--warn);" id="dashDue">0</div>
+      </div>
+    </div>
 
-    <div class="card" style="margin-top:14px;">
-      <div style="font-weight:980;">Hızlı İşlemler</div>
-      <div class="two" style="margin-top:12px;">
-        <button class="btn btnPrimary btnHalf" onclick="go('review')">🧠 Tekrar</button>
-        <button class="btn btnSoft btnHalf" onclick="go('cards')">🗂️ Kartlar</button>
-      </div>
-      <div class="two" style="margin-top:10px;">
-        <button class="btn btnSoft btnHalf" onclick="openManualAdd()">➕ Elle Kelime Ekle</button>
-        <button class="btn btnSoft btnHalf" onclick="resetTodaysQueue()">🔁 Kuyruğu Yenile</button>
-      </div>
-      <div class="two" style="margin-top:10px;">
-   <button class="btn btnPrimary" style="width:100%;" onclick="openSheet('grammarSheet')">📘 Hızlı Gramer Kitapçığı</button>
+    <div class="card" style="margin-top:14px;">
+      <div style="font-weight:980;">Hızlı İşlemler</div>
+      <div class="two" style="margin-top:12px;">
+        <button class="btn btnPrimary btnHalf" onclick="go('review')">🧠 Tekrar</button>
+        <button class="btn btnSoft btnHalf" onclick="go('cards')">🗂️ Kartlar</button>
+      </div>
+      <div class="two" style="margin-top:10px;">
+        <button class="btn btnSoft btnHalf" onclick="openManualAdd()">➕ Elle Kelime Ekle</button>
+        <button class="btn btnSoft btnHalf" onclick="resetTodaysQueue()">🔁 Kuyruğu Yenile</button>
+      </div>
+      <div class="two" style="margin-top:10px;">
+   <button class="btn btnPrimary" style="width:100%;" onclick="openSheet('grammarSheet')">📘 Hızlı Gramer Kitapçığı</button>
 </div>
-    </div>
-  </section>
+    </div>
+  </section>
 
-  <section class="view" id="review">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h2 class="h2">Tekrar</h2>
-      <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" onclick="startReviewQuiz()">Başlat</button>
-    </div>
+  <section class="view" id="review">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h2 class="h2">Tekrar</h2>
+      <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" onclick="startReviewQuiz()">Başlat</button>
+    </div>
 
-    <div class="card">
-      <div style="font-weight:980;">Bugün tekrar edilecek kartlar</div>
-      <div class="smallInfo">Zamanı gelen kartlar öncelikli gelir. Yoksa rastgele pratik açılır.</div>
+    <div class="card">
+      <div style="font-weight:980;">Bugün tekrar edilecek kartlar</div>
+      <div class="smallInfo">Zamanı gelen kartlar öncelikli gelir. Yoksa rastgele pratik açılır.</div>
 
-      <div style="display:flex; gap:10px; margin-top:12px;">
-        <div class="card" style="flex:1; padding:12px;">
-          <div class="smallInfo">Sıradaki</div>
-          <div class="big" id="rvDue">0</div>
-        </div>
-        <div class="card" style="flex:1; padding:12px;">
-          <div class="smallInfo">Toplam</div>
-          <div class="big" id="rvTotal">0</div>
-        </div>
-      </div>
+      <div style="display:flex; gap:10px; margin-top:12px;">
+        <div class="card" style="flex:1; padding:12px;">
+          <div class="smallInfo">Sıradaki</div>
+          <div class="big" id="rvDue">0</div>
+        </div>
+        <div class="card" style="flex:1; padding:12px;">
+          <div class="smallInfo">Toplam</div>
+          <div class="big" id="rvTotal">0</div>
+        </div>
+      </div>
 
-      <div style="margin-top:20px; margin-bottom:20px;">
-  
+      <div style="margin-top:20px; margin-bottom:20px;">
+  
 <div style="text-align:center; font-weight:bold; color:var(--text); margin-bottom:12px;">
-  Kaç kart çalışacaksın?
+  Kaç kart çalışacaksın?
 </div>
 
 <div id="limitContainer" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
-  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(5, this)">5</button>
-  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(10, this)">10</button>
-  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(15, this)">15</button>
-  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(20, this)">20</button>
-  <button class="btn btnSoft" style="flex:1.5; min-width:70px; padding:12px 0;" onclick="startReviewQuiz(9999, this)">Hepsi</button>
+  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(5, this)">5</button>
+  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(10, this)">10</button>
+  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(15, this)">15</button>
+  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(20, this)">20</button>
+  <button class="btn btnSoft" style="flex:1.5; min-width:70px; padding:12px 0;" onclick="startReviewQuiz(9999, this)">Hepsi</button>
 </div>
 
 </div>
-        <button class="btn btnSoft btnHalf" onclick="toggleQuizMode()">Mod: <span id="quizModeLabel">Seçmeli</span></button>
-      </div>
+        <button class="btn btnSoft btnHalf" onclick="toggleQuizMode()">Mod: <span id="quizModeLabel">Seçmeli</span></button>
+      </div>
 
-      <div class="divider"></div>
+      <div class="divider"></div>
 
-      <div class="two">
-        <button class="btn btnSoft btnHalf" onclick="toast('Online AutoFill aktif ✅')">Durum</button>
-      </div>
-    </div>
-  </section>
+      <div class="two">
+        <button class="btn btnSoft btnHalf" onclick="toast('Online AutoFill aktif ✅')">Durum</button>
+      </div>
+    </div>
+  </section>
 
-  <section class="view" id="cards">
-    <div style="display:flex; justify-content:space-between; align-items:center; padding-top: 60px;">
-      <h2 class="h2">Kartlar</h2>
-      <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" onclick="openManualAdd()">➕ Ekle</button>
-    </div>
+  <section class="view" id="cards">
+    <div style="display:flex; justify-content:space-between; align-items:center; padding-top: 60px;">
+      <h2 class="h2">Kartlar</h2>
+      <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" onclick="openManualAdd()">➕ Ekle</button>
+    </div>
 <div class="row" style="margin-bottom:12px; gap:8px;">
-  <div id="filterBtnNew" class="card" onclick="toggleFilter('new')" 
-       style="flex:1; padding:10px; border:1px solid var(--border); text-align:center; background:var(--card2); cursor:pointer; transition:0.2s;">
-    <div style="font-size:11px; font-weight:bold; color:var(--muted);">⚪ Yeni</div>
-    <div style="font-size:18px; font-weight:900; color:var(--text);" id="statNew">0</div>
-  </div>
-  
-  <div id="filterBtnLearn" class="card" onclick="toggleFilter('learning')" 
-       style="flex:1; padding:10px; border:1px solid var(--warn); text-align:center; background:color-mix(in srgb, var(--warn) 5%, var(--card2)); cursor:pointer; transition:0.2s;">
-    <div style="font-size:11px; font-weight:bold; color:var(--warn);">🟡 Öğreniyorum</div>
-    <div style="font-size:18px; font-weight:900; color:var(--warn);" id="statLearn">0</div>
-  </div>
-  
-  <div id="filterBtnMaster" class="card" onclick="toggleFilter('mastered')" 
-       style="flex:1; padding:10px; border:1px solid var(--ok); text-align:center; background:color-mix(in srgb, var(--ok) 5%, var(--card2)); cursor:pointer; transition:0.2s;">
-    <div style="font-size:11px; font-weight:bold; color:var(--ok);">🟢 Öğrendim</div>
-    <div style="font-size:18px; font-weight:900; color:var(--ok);" id="statMaster">0</div>
-  </div>
+  <div id="filterBtnNew" class="card" onclick="toggleFilter('new')" 
+       style="flex:1; padding:10px; border:1px solid var(--border); text-align:center; background:var(--card2); cursor:pointer; transition:0.2s;">
+    <div style="font-size:11px; font-weight:bold; color:var(--muted);">⚪ Yeni</div>
+    <div style="font-size:18px; font-weight:900; color:var(--text);" id="statNew">0</div>
+  </div>
+  
+  <div id="filterBtnLearn" class="card" onclick="toggleFilter('learning')" 
+       style="flex:1; padding:10px; border:1px solid var(--warn); text-align:center; background:color-mix(in srgb, var(--warn) 5%, var(--card2)); cursor:pointer; transition:0.2s;">
+    <div style="font-size:11px; font-weight:bold; color:var(--warn);">🟡 Öğreniyorum</div>
+    <div style="font-size:18px; font-weight:900; color:var(--warn);" id="statLearn">0</div>
+  </div>
+  
+  <div id="filterBtnMaster" class="card" onclick="toggleFilter('mastered')" 
+       style="flex:1; padding:10px; border:1px solid var(--ok); text-align:center; background:color-mix(in srgb, var(--ok) 5%, var(--card2)); cursor:pointer; transition:0.2s;">
+    <div style="font-size:11px; font-weight:bold; color:var(--ok);">🟢 Öğrendim</div>
+    <div style="font-size:18px; font-weight:900; color:var(--ok);" id="statMaster">0</div>
+  </div>
 </div>
-    </div>
-    <div class="card" style="margin-bottom:12px;">
-      <input id="search" placeholder="Kart ara (kelime/anlam/tür)..." />
-      <div class="smallInfo" style="margin-top:8px;">Kartı aç → düzenle / sil.</div>
-    </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <input id="search" placeholder="Kart ara (kelime/anlam/tür)..." />
+      <div class="smallInfo" style="margin-top:8px;">Kartı aç → düzenle / sil.</div>
+    </div>
 
-    <div id="cardsList"></div>
-  </section>
+    <div id="cardsList"></div>
+  </section>
 </div>
 
 <nav>
-  <button class="navBtn active" id="navHome" onclick="go('home')"><div class="ico">🏠</div><span>Ana Sayfa</span></button>
-  <button class="navBtn" id="navReview" onclick="go('review')"><div class="ico">🧠</div><span>Tekrar</span></button>
-  <button class="navBtn" id="navCards" onclick="go('cards')"><div class="ico">🗂️</div><span>Kartlar</span></button>
+  <button class="navBtn active" id="navHome" onclick="go('home')"><div class="ico">🏠</div><span>Ana Sayfa</span></button>
+  <button class="navBtn" id="navReview" onclick="go('review')"><div class="ico">🧠</div><span>Tekrar</span></button>
+  <button class="navBtn" id="navCards" onclick="go('cards')"><div class="ico">🗂️</div><span>Kartlar</span></button>
 </nav>
 
 <div class="backdrop" id="backdrop" onclick="closeSheets()"></div>
@@ -378,876 +309,1876 @@ html, body {
 
 <!-- Manual Add -->
 <div class="sheet" id="manualAddSheet">
-  <div class="handle"></div>
-  <h2 class="h2">Elle Kelime Ekle (Online Otomatik)</h2>
+  <div class="handle"></div>
+  <h2 class="h2">Elle Kelime Ekle (Online Otomatik)</h2>
 
-  <div class="field">
-    <label>Dil</label>
-    <select id="maLang">
-      <option value="EN">İngilizce</option>
-      <option value="RU">Rusça</option>
-      <option value="DE">Almanca</option>
-      <option value="ES">İspanyolca</option> <option value="FR">Fransızca</option>
-      <option value="TR">Türkçe</option>
-    </select>
-  </div>
-  <div class="field">
-    <label>Kelime / Terim</label>
-    <input id="maTerm" placeholder="Örn: reinforcement" />
-    <div class="smallInfo" id="maHint">Yazınca otomatik doldurur. İnternet şart.</div>
-  </div>
+  <div class="field">
+    <label>Dil</label>
+    <select id="maLang">
+      <option value="EN">İngilizce</option>
+      <option value="RU">Rusça</option>
+      <option value="DE">Almanca</option>
+      <option value="ES">İspanyolca</option> <option value="FR">Fransızca</option>
+      <option value="TR">Türkçe</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Kelime / Terim</label>
+    <input id="maTerm" placeholder="Örn: reinforcement" />
+    <div class="smallInfo" id="maHint">Yazınca otomatik doldurur. İnternet şart.</div>
+  </div>
 
-  <div class="field">
-    <label>Anlamı (TR) - (Çoklu Anlam)</label>
-    <textarea id="maMeaning" placeholder="Otomatik dolacak (Çoklu anlam)" style="min-height:60px; font-family:inherit; background:var(--card2); border:1px solid var(--border); border-radius:16px; width:100%; padding:14px; color:var(--text);"></textarea>
-  </div>
+  <div class="field">
+    <label>Anlamı (TR) - (Çoklu Anlam)</label>
+    <textarea id="maMeaning" placeholder="Otomatik dolacak (Çoklu anlam)" style="min-height:60px; font-family:inherit; background:var(--card2); border:1px solid var(--border); border-radius:16px; width:100%; padding:14px; color:var(--text);"></textarea>
+  </div>
 
-  <div class="field">
-    <label>Tür</label>
-    <select id="maType">
-      <option value="word">Kelime</option>
-      <option value="phrase">Kalıp</option>
-      <option value="idiom">Deyim</option>
-      <option value="phrasal">Phrasal Verb</option>
-      <option value="noun">İsim</option>
-      <option value="verb">Fiil</option>
-      <option value="adj">Sıfat</option>
-      <option value="adv">Zarf</option>
-    </select>
-  </div>
+  <div class="field">
+    <label>Tür</label>
+    <select id="maType">
+      <option value="word">Kelime</option>
+      <option value="phrase">Kalıp</option>
+      <option value="idiom">Deyim</option>
+      <option value="phrasal">Phrasal Verb</option>
+      <option value="noun">İsim</option>
+      <option value="verb">Fiil</option>
+      <option value="adj">Sıfat</option>
+      <option value="adv">Zarf</option>
+    </select>
+  </div>
 
-  <div class="field">
-    <label>Örnek Cümle</label>
-    <textarea id="maExample" placeholder="Otomatik dolacak"></textarea>
-  </div>
+  <div class="field">
+    <label>Örnek Cümle</label>
+    <textarea id="maExample" placeholder="Otomatik dolacak"></textarea>
+  </div>
 
-  <div class="field">
-    <label>Not (opsiyonel)</label>
-    <input id="maNote" placeholder="İpucu/Not" />
-  </div>
+  <div class="field">
+    <label>Not (opsiyonel)</label>
+    <input id="maNote" placeholder="İpucu/Not" />
+  </div>
 
-  <div class="two" style="margin-top:10px;">
-    <button class="btn btnSoft btnHalf" onclick="closeSheets()">Vazgeç</button>
-    <button class="btn btnSoft btnHalf" onclick="autoFillManualFields(true)">⚡ Doldur</button>
-  </div>
-  <div class="two" style="margin-top:10px;">
-    <button class="btn btnPrimary btnHalf" onclick="saveManualCard()">Kaydet</button>
-    <button class="btn btnDanger btnHalf" onclick="clearManual()">Temizle</button>
-  </div>
+  <div class="two" style="margin-top:10px;">
+    <button class="btn btnSoft btnHalf" onclick="closeSheets()">Vazgeç</button>
+    <button class="btn btnSoft btnHalf" onclick="autoFillManualFields(true)">⚡ Doldur</button>
+  </div>
+  <div class="two" style="margin-top:10px;">
+    <button class="btn btnPrimary btnHalf" onclick="saveManualCard()">Kaydet</button>
+    <button class="btn btnDanger btnHalf" onclick="clearManual()">Temizle</button>
+  </div>
 </div>
 
 <!-- Settings -->
 <div class="sheet" id="settingsSheet">
-  <div class="handle"></div>
-  <h2 class="h2">Ayarlar</h2>
+  <div class="handle"></div>
+  <h2 class="h2">Ayarlar</h2>
 
-  <div class="card" style="margin-top:10px;">
-    <div style="font-weight:980;">Tema</div>
-    <div class="two" style="margin-top:10px;">
-      <select id="themeSelect" onchange="applyThemeFromSelect()">
-        <option value="dark">dark</option>
-        <option value="light">light</option>
-        <option value="ocean">ocean</option>
-        <option value="emerald">emerald</option>
-        <option value="sunset">sunset</option>
-        <option value="rose">rose</option>
-      </select>
-      <button class="btn btnSoft" style="padding:12px 12px;" onclick="document.getElementById('btnTheme').click()">Döndür</button>
-    </div>
-  </div>
+  <div class="card" style="margin-top:10px;">
+    <div style="font-weight:980;">Tema</div>
+    <div class="two" style="margin-top:10px;">
+      <select id="themeSelect" onchange="applyThemeFromSelect()">
+        <option value="dark">dark</option>
+        <option value="light">light</option>
+        <option value="ocean">ocean</option>
+        <option value="emerald">emerald</option>
+        <option value="sunset">sunset</option>
+        <option value="rose">rose</option>
+      </select>
+      <button class="btn btnSoft" style="padding:12px 12px;" onclick="document.getElementById('btnTheme').click()">Döndür</button>
+    </div>
+  </div>
 
-  <div class="card" style="margin-top:12px;">
-    <div style="font-weight:980;">Quiz Modu</div>
-    <div class="two" style="margin-top:10px;">
-      <button class="btn btnSoft btnHalf" onclick="toggleQuizMode()">Mod: <span id="quizModeLabel2">Seçmeli</span></button>
-      <button class="btn btnSoft btnHalf" onclick="exportAll()">Export</button>
-    </div>
-    <div class="two" style="margin-top:10px;">
-      <button class="btn btnSoft btnHalf" onclick="importAllPrompt()">Import</button>
-      <button class="btn btnDanger btnHalf" onclick="hardReset()">Sıfırla</button>
-    </div>
-  </div>
+  <div class="card" style="margin-top:12px;">
+    <div style="font-weight:980;">Quiz Modu</div>
+    <div class="two" style="margin-top:10px;">
+      <button class="btn btnSoft btnHalf" onclick="toggleQuizMode()">Mod: <span id="quizModeLabel2">Seçmeli</span></button>
+      <button class="btn btnSoft btnHalf" onclick="exportAll()">Export</button>
+    </div>
+    <div class="two" style="margin-top:10px;">
+      <button class="btn btnSoft btnHalf" onclick="importAllPrompt()">Import</button>
+      <button class="btn btnDanger btnHalf" onclick="hardReset()">Sıfırla</button>
+    </div>
+  </div>
 
-  <div class="smallInfo" style="margin-top:12px;">Sürüm: online-autofill • dictionary + translate • no level/category</div>
+  <div class="smallInfo" style="margin-top:12px;">Sürüm: online-autofill • dictionary + translate • no level/category</div>
 </div>
 
 <!-- Quiz overlay -->
-  <div class="sheet" id="transResultSheet">
-  <div class="handle"></div>
-  <h2 class="h2">Çeviri Sonucu</h2>
-  
-  <div id="trResContent" style="line-height:1.6;"></div>
+  <div class="sheet" id="transResultSheet" style="height:auto; max-height:80vh;">
+  <div class="handle"></div>
+  <h2 class="h2">Çeviri Sonucu</h2>
+  
+  <div id="trResContent" style="line-height:1.6;"></div>
 
-  <button class="btn btnPrimary" style="width:100%; margin-top:16px;" onclick="copyToManualAdd()">➕ Bu Kelimeyi Karta Ekle</button>
-  <button class="btn btnSoft" style="width:100%; margin-top:10px;" onclick="closeSheets()">Kapat</button>
+  <button class="btn btnPrimary" style="width:100%; margin-top:16px;" onclick="copyToManualAdd()">➕ Bu Kelimeyi Karta Ekle</button>
+  <button class="btn btnSoft" style="width:100%; margin-top:10px;" onclick="closeSheets()">Kapat</button>
 </div>
-  <div class="sheet" id="grammarSheet">
-  <div class="handle"></div>
-  <h2 class="h2" style="color:var(--primary); text-align:center;">📘 İngilizce İpuçları</h2>
+  <div class="sheet" id="grammarSheet" style="height:90vh;">
+  <div class="handle"></div>
+  <h2 class="h2" style="color:var(--primary); text-align:center;">📘 İngilizce İpuçları</h2>
 
-  <div class="card" style="margin-bottom:14px; padding:0; overflow:hidden; border:1px solid var(--border);">
-    <div style="background:var(--card2); padding:10px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">👤 Zamirler (Pronouns)</div>
-    <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:center;">
-      <tr style="background:color-mix(in srgb, var(--primary) 15%, transparent); font-weight:bold;">
-        <td style="padding:6px;">Ben</td>
-        <td style="padding:6px;">Beni</td>
-        <td style="padding:6px;">Benim</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:6px; font-weight:bold; color:var(--primary);">I</td>
-        <td style="padding:6px;">Me</td>
-        <td style="padding:6px;">My</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:6px; font-weight:bold; color:var(--primary);">You</td>
-        <td style="padding:6px;">You</td>
-        <td style="padding:6px;">Your</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:6px; font-weight:bold; color:var(--primary);">He/She</td>
-        <td style="padding:6px;">Him/Her</td>
-        <td style="padding:6px;">His/Her</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:6px; font-weight:bold; color:var(--primary);">We</td>
-        <td style="padding:6px;">Us</td>
-        <td style="padding:6px;">Our</td>
-      </tr>
-      <tr>
-        <td style="padding:6px; font-weight:bold; color:var(--primary);">They</td>
-        <td style="padding:6px;">Them</td>
-        <td style="padding:6px;">Their</td>
-      </tr>
-    </table>
-  </div>
+  <div class="card" style="margin-bottom:14px; padding:0; overflow:hidden; border:1px solid var(--border);">
+    <div style="background:var(--card2); padding:10px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">👤 Zamirler (Pronouns)</div>
+    <table style="width:100%; border-collapse:collapse; font-size:12px; text-align:center;">
+      <tr style="background:color-mix(in srgb, var(--primary) 15%, transparent); font-weight:bold;">
+        <td style="padding:6px;">Ben</td>
+        <td style="padding:6px;">Beni</td>
+        <td style="padding:6px;">Benim</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:6px; font-weight:bold; color:var(--primary);">I</td>
+        <td style="padding:6px;">Me</td>
+        <td style="padding:6px;">My</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:6px; font-weight:bold; color:var(--primary);">You</td>
+        <td style="padding:6px;">You</td>
+        <td style="padding:6px;">Your</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:6px; font-weight:bold; color:var(--primary);">He/She</td>
+        <td style="padding:6px;">Him/Her</td>
+        <td style="padding:6px;">His/Her</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:6px; font-weight:bold; color:var(--primary);">We</td>
+        <td style="padding:6px;">Us</td>
+        <td style="padding:6px;">Our</td>
+      </tr>
+      <tr>
+        <td style="padding:6px; font-weight:bold; color:var(--primary);">They</td>
+        <td style="padding:6px;">Them</td>
+        <td style="padding:6px;">Their</td>
+      </tr>
+    </table>
+  </div>
 
-  <div class="card" style="margin-bottom:14px; padding:0; overflow:hidden; border:1px solid var(--border);">
-    <div style="background:var(--card2); padding:10px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">⏳ Zamanlar (Tenses)</div>
-    <table style="width:100%; border-collapse:collapse; font-size:13px;">
-      <tr style="background:color-mix(in srgb, var(--primary) 15%, transparent);">
-        <th style="padding:6px; text-align:left;">Zaman</th>
-        <th style="padding:6px; text-align:left;">İpucu</th>
-        <th style="padding:6px; text-align:left;">Örnek</th>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:6px; font-weight:bold;">Genel</td>
-        <td style="padding:6px; color:var(--muted);">Her gün</td>
-        <td style="padding:6px;">I <b style="color:var(--primary)">play</b>.</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:6px; font-weight:bold;">Şimdiki</td>
-        <td style="padding:6px; color:var(--muted);">Şu an</td>
-        <td style="padding:6px;">I am <b style="color:var(--primary)">playing</b>.</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:6px; font-weight:bold;">Geçmiş</td>
-        <td style="padding:6px; color:var(--muted);">Dün</td>
-        <td style="padding:6px;">I <b style="color:var(--primary)">played</b>.</td>
-      </tr>
-      <tr>
-        <td style="padding:6px; font-weight:bold;">Gelecek</td>
-        <td style="padding:6px; color:var(--muted);">Yarın</td>
-        <td style="padding:6px;">I <b style="color:var(--primary)">will play</b>.</td>
-      </tr>
-    </table>
-  </div>
+  <div class="card" style="margin-bottom:14px; padding:0; overflow:hidden; border:1px solid var(--border);">
+    <div style="background:var(--card2); padding:10px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">⏳ Zamanlar (Tenses)</div>
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+      <tr style="background:color-mix(in srgb, var(--primary) 15%, transparent);">
+        <th style="padding:6px; text-align:left;">Zaman</th>
+        <th style="padding:6px; text-align:left;">İpucu</th>
+        <th style="padding:6px; text-align:left;">Örnek</th>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:6px; font-weight:bold;">Genel</td>
+        <td style="padding:6px; color:var(--muted);">Her gün</td>
+        <td style="padding:6px;">I <b style="color:var(--primary)">play</b>.</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:6px; font-weight:bold;">Şimdiki</td>
+        <td style="padding:6px; color:var(--muted);">Şu an</td>
+        <td style="padding:6px;">I am <b style="color:var(--primary)">playing</b>.</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:6px; font-weight:bold;">Geçmiş</td>
+        <td style="padding:6px; color:var(--muted);">Dün</td>
+        <td style="padding:6px;">I <b style="color:var(--primary)">played</b>.</td>
+      </tr>
+      <tr>
+        <td style="padding:6px; font-weight:bold;">Gelecek</td>
+        <td style="padding:6px; color:var(--muted);">Yarın</td>
+        <td style="padding:6px;">I <b style="color:var(--primary)">will play</b>.</td>
+      </tr>
+    </table>
+  </div>
 
-  <div class="card" style="margin-bottom:14px;">
-    <div style="font-weight:900; color:var(--warn); margin-bottom:10px; text-align:center;">🛠️ Modals (Kip Ekleri)</div>
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-      <div style="background:var(--bg); padding:8px; border-radius:8px; border:1px dashed var(--border);">
-        <div style="font-weight:bold; color:var(--primary);">CAN</div>
-        <div style="font-size:11px;">-ebilmek (Yetenek)</div>
-      </div>
-      <div style="background:var(--bg); padding:8px; border-radius:8px; border:1px dashed var(--border);">
-        <div style="font-weight:bold; color:var(--primary);">SHOULD</div>
-        <div style="font-size:11px;">-meli (Tavsiye)</div>
-      </div>
-      <div style="background:var(--bg); padding:8px; border-radius:8px; border:1px dashed var(--border);">
-        <div style="font-weight:bold; color:var(--primary);">MUST</div>
-        <div style="font-size:11px;">-meli (Zorunlu)</div>
-      </div>
-      <div style="background:var(--bg); padding:8px; border-radius:8px; border:1px dashed var(--border);">
-        <div style="font-weight:bold; color:var(--primary);">MIGHT</div>
-        <div style="font-size:11px;">-ebilir (İhtimal)</div>
-      </div>
-    </div>
-  </div>
+  <div class="card" style="margin-bottom:14px;">
+    <div style="font-weight:900; color:var(--warn); margin-bottom:10px; text-align:center;">🛠️ Modals (Kip Ekleri)</div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+      <div style="background:var(--bg); padding:8px; border-radius:8px; border:1px dashed var(--border);">
+        <div style="font-weight:bold; color:var(--primary);">CAN</div>
+        <div style="font-size:11px;">-ebilmek (Yetenek)</div>
+      </div>
+      <div style="background:var(--bg); padding:8px; border-radius:8px; border:1px dashed var(--border);">
+        <div style="font-weight:bold; color:var(--primary);">SHOULD</div>
+        <div style="font-size:11px;">-meli (Tavsiye)</div>
+      </div>
+      <div style="background:var(--bg); padding:8px; border-radius:8px; border:1px dashed var(--border);">
+        <div style="font-weight:bold; color:var(--primary);">MUST</div>
+        <div style="font-size:11px;">-meli (Zorunlu)</div>
+      </div>
+      <div style="background:var(--bg); padding:8px; border-radius:8px; border:1px dashed var(--border);">
+        <div style="font-weight:bold; color:var(--primary);">MIGHT</div>
+        <div style="font-size:11px;">-ebilir (İhtimal)</div>
+      </div>
+    </div>
+  </div>
 
-  <div class="card" style="margin-bottom:14px; padding:0; overflow:hidden; border:1px solid var(--border);">
-    <div style="background:var(--card2); padding:10px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">❓ Soru Kelimeleri (Wh- Questions)</div>
-    <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:center;">
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold; color:var(--primary);">WHO</td>
-        <td style="padding:8px;">Kim?</td>
-        <td style="padding:8px; font-style:italic; color:var(--muted);">Who are you?</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold; color:var(--primary);">WHAT</td>
-        <td style="padding:8px;">Ne?</td>
-        <td style="padding:8px; font-style:italic; color:var(--muted);">What is this?</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold; color:var(--primary);">WHERE</td>
-        <td style="padding:8px;">Nerede?</td>
-        <td style="padding:8px; font-style:italic; color:var(--muted);">Where is Ali?</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold; color:var(--primary);">WHEN</td>
-        <td style="padding:8px;">Ne zaman?</td>
-        <td style="padding:8px; font-style:italic; color:var(--muted);">When do we go?</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold; color:var(--primary);">WHY</td>
-        <td style="padding:8px;">Neden?</td>
-        <td style="padding:8px; font-style:italic; color:var(--muted);">Why are you sad?</td>
-      </tr>
-      <tr>
-        <td style="padding:8px; font-weight:bold; color:var(--primary);">HOW</td>
-        <td style="padding:8px;">Nasıl?</td>
-        <td style="padding:8px; font-style:italic; color:var(--muted);">How are you?</td>
-      </tr>
-    </table>
-  </div>
+  <div class="card" style="margin-bottom:14px; padding:0; overflow:hidden; border:1px solid var(--border);">
+    <div style="background:var(--card2); padding:10px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">❓ Soru Kelimeleri (Wh- Questions)</div>
+    <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:center;">
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:8px; font-weight:bold; color:var(--primary);">WHO</td>
+        <td style="padding:8px;">Kim?</td>
+        <td style="padding:8px; font-style:italic; color:var(--muted);">Who are you?</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:8px; font-weight:bold; color:var(--primary);">WHAT</td>
+        <td style="padding:8px;">Ne?</td>
+        <td style="padding:8px; font-style:italic; color:var(--muted);">What is this?</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:8px; font-weight:bold; color:var(--primary);">WHERE</td>
+        <td style="padding:8px;">Nerede?</td>
+        <td style="padding:8px; font-style:italic; color:var(--muted);">Where is Ali?</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:8px; font-weight:bold; color:var(--primary);">WHEN</td>
+        <td style="padding:8px;">Ne zaman?</td>
+        <td style="padding:8px; font-style:italic; color:var(--muted);">When do we go?</td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:8px; font-weight:bold; color:var(--primary);">WHY</td>
+        <td style="padding:8px;">Neden?</td>
+        <td style="padding:8px; font-style:italic; color:var(--muted);">Why are you sad?</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; font-weight:bold; color:var(--primary);">HOW</td>
+        <td style="padding:8px;">Nasıl?</td>
+        <td style="padding:8px; font-style:italic; color:var(--muted);">How are you?</td>
+      </tr>
+    </table>
+  </div>
 
-  <div class="card" style="margin-bottom:14px;">
-    <div style="font-weight:900; color:var(--warn); margin-bottom:10px; text-align:center;">🍎 A - AN - THE Farkı</div>
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-      <div style="background:var(--bg); padding:10px; border-radius:8px; border:1px dashed var(--border);">
-        <div style="font-weight:bold; color:var(--primary); font-size:16px;">A / AN</div>
-        <div style="font-size:11px; margin-top:2px; font-weight:bold;">HERHANGİ BİR</div>
-        <div style="font-size:11px; margin-top:4px; color:var(--muted);">
-          Bilinmeyen şeylerde.<br>
-          👉 <b>a</b> car (bir araba)<br>
-          👉 <b>an</b> apple (bir elma)
-        </div>
-      </div>
-      <div style="background:var(--bg); padding:10px; border-radius:8px; border:1px dashed var(--border);">
-        <div style="font-weight:bold; color:var(--primary); font-size:16px;">THE</div>
-        <div style="font-size:11px; margin-top:2px; font-weight:bold;">BİLİNEN O ŞEY</div>
-        <div style="font-size:11px; margin-top:4px; color:var(--muted);">
-          Konuşulan belirli şey.<br>
-          👉 <b>the</b> moon (ay)<br>
-          👉 <b>the</b> door (o kapı)
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="card" style="margin-bottom:14px;">
+    <div style="font-weight:900; color:var(--warn); margin-bottom:10px; text-align:center;">🍎 A - AN - THE Farkı</div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+      <div style="background:var(--bg); padding:10px; border-radius:8px; border:1px dashed var(--border);">
+        <div style="font-weight:bold; color:var(--primary); font-size:16px;">A / AN</div>
+        <div style="font-size:11px; margin-top:2px; font-weight:bold;">HERHANGİ BİR</div>
+        <div style="font-size:11px; margin-top:4px; color:var(--muted);">
+          Bilinmeyen şeylerde.<br>
+          👉 <b>a</b> car (bir araba)<br>
+          👉 <b>an</b> apple (bir elma)
+        </div>
+      </div>
+      <div style="background:var(--bg); padding:10px; border-radius:8px; border:1px dashed var(--border);">
+        <div style="font-weight:bold; color:var(--primary); font-size:16px;">THE</div>
+        <div style="font-size:11px; margin-top:2px; font-weight:bold;">BİLİNEN O ŞEY</div>
+        <div style="font-size:11px; margin-top:4px; color:var(--muted);">
+          Konuşulan belirli şey.<br>
+          👉 <b>the</b> moon (ay)<br>
+          👉 <b>the</b> door (o kapı)
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <div class="card" style="margin-bottom:14px; padding:0; overflow:hidden; border:1px solid var(--border);">
-    <div style="background:var(--card2); padding:10px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">📏 Sıfatlar (Karşılaştırma)</div>
-    <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:center;">
-      <tr style="background:color-mix(in srgb, var(--primary) 15%, transparent);">
-        <th style="padding:6px;">Sıfat</th>
-        <th style="padding:6px;">Daha ...</th>
-        <th style="padding:6px;">En ...</th>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:6px;">Big (Büyük)</td>
-        <td style="padding:6px; font-weight:bold;">Big<span style="color:var(--warn)">ger</span></td>
-        <td style="padding:6px; font-weight:bold;">The Big<span style="color:var(--warn)">gest</span></td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:6px;">Fast (Hızlı)</td>
-        <td style="padding:6px; font-weight:bold;">Fast<span style="color:var(--warn)">er</span></td>
-        <td style="padding:6px; font-weight:bold;">The Fast<span style="color:var(--warn)">est</span></td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:6px;">Good (İyi)</td>
-        <td style="padding:6px; font-weight:bold; color:var(--ok);">Better</td>
-        <td style="padding:6px; font-weight:bold; color:var(--ok);">The Best</td>
-      </tr>
-      <tr>
-        <td style="padding:6px;">Bad (Kötü)</td>
-        <td style="padding:6px; font-weight:bold; color:var(--warn);">Worse</td>
-        <td style="padding:6px; font-weight:bold; color:var(--warn);">The Worst</td>
-      </tr>
-    </table>
-  </div>
+  <div class="card" style="margin-bottom:14px; padding:0; overflow:hidden; border:1px solid var(--border);">
+    <div style="background:var(--card2); padding:10px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">📏 Sıfatlar (Karşılaştırma)</div>
+    <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:center;">
+      <tr style="background:color-mix(in srgb, var(--primary) 15%, transparent);">
+        <th style="padding:6px;">Sıfat</th>
+        <th style="padding:6px;">Daha ...</th>
+        <th style="padding:6px;">En ...</th>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:6px;">Big (Büyük)</td>
+        <td style="padding:6px; font-weight:bold;">Big<span style="color:var(--warn)">ger</span></td>
+        <td style="padding:6px; font-weight:bold;">The Big<span style="color:var(--warn)">gest</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:6px;">Fast (Hızlı)</td>
+        <td style="padding:6px; font-weight:bold;">Fast<span style="color:var(--warn)">er</span></td>
+        <td style="padding:6px; font-weight:bold;">The Fast<span style="color:var(--warn)">est</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:6px;">Good (İyi)</td>
+        <td style="padding:6px; font-weight:bold; color:var(--ok);">Better</td>
+        <td style="padding:6px; font-weight:bold; color:var(--ok);">The Best</td>
+      </tr>
+      <tr>
+        <td style="padding:6px;">Bad (Kötü)</td>
+        <td style="padding:6px; font-weight:bold; color:var(--warn);">Worse</td>
+        <td style="padding:6px; font-weight:bold; color:var(--warn);">The Worst</td>
+      </tr>
+    </table>
+  </div>
 
-  <button class="btn btnSoft" style="width:100%; margin-top:20px;" onclick="closeSheets()">Kapat</button>
+  <button class="btn btnSoft" style="width:100%; margin-top:20px;" onclick="closeSheets()">Kapat</button>
 </div>
-  <div class="overlay" id="quizOverlay">
-  <div class="overlayTop">
-    <div style="font-weight:980;">Quiz</div>
-    <button class="iconBtn" onclick="stopQuiz()">×</button>
-  </div>
-  <div id="quizBody" style="padding:18px;">
-    <div class="card" style="padding:12px;">
-      <div class="smallInfo">Kalan: <b id="qRemain">0</b>/<b id="qTotal">0</b> • ✅ <b id="qCorrect">0</b> • ❌ <b id="qWrong">0</b></div>
-      <div style="margin-top:10px; font-size:40px; font-weight:1000; text-align:center;" id="qWord">—</div>
-      <div class="smallInfo" style="text-align:center; margin-top:8px;" id="qMeta">—</div>
-      <div style="text-align:center; font-style:italic; color:var(--primary); margin-top:6px; min-height:20px;" id="qExample"></div>
-    </div>
+  <div class="overlay" id="quizOverlay">
+  <div class="overlayTop">
+    <div style="font-weight:980;">Quiz</div>
+    <button class="iconBtn" onclick="stopQuiz()">×</button>
+  </div>
+  <div id="quizBody" style="padding:18px;">
+    <div class="card" style="padding:12px;">
+      <div class="smallInfo">Kalan: <b id="qRemain">0</b>/<b id="qTotal">0</b> • ✅ <b id="qCorrect">0</b> • ❌ <b id="qWrong">0</b></div>
+      <div style="margin-top:10px; font-size:40px; font-weight:1000; text-align:center;" id="qWord">—</div>
+      <div class="smallInfo" style="text-align:center; margin-top:8px;" id="qMeta">—</div>
+      <div style="text-align:center; font-style:italic; color:var(--primary); margin-top:6px; min-height:20px;" id="qExample"></div>
+    </div>
 
-    <div id="qChoices" style="margin-top:12px; display:flex; flex-direction:column; gap:10px;"></div>
+    <div id="qChoices" style="margin-top:12px; display:flex; flex-direction:column; gap:10px;"></div>
 
-    <div id="qTyping" style="margin-top:12px; display:none; gap:10px;">
-      <input id="qInput" placeholder="Anlamını yaz..." style="flex:1; font-weight:950;" />
-      <button class="btn btnPrimary" style="padding:12px 14px;" onclick="checkTypingAnswer()">Kontrol</button>
-    </div>
+    <div id="qTyping" style="margin-top:12px; display:none; gap:10px;">
+      <input id="qInput" placeholder="Anlamını yaz..." style="flex:1; font-weight:950;" />
+      <button class="btn btnPrimary" style="padding:12px 14px;" onclick="checkTypingAnswer()">Kontrol</button>
+    </div>
 
-    <div class="smallInfo" id="qReveal" style="text-align:center; margin-top:10px; min-height:18px;"></div>
+    <div class="smallInfo" id="qReveal" style="text-align:center; margin-top:10px; min-height:18px;"></div>
 
-    <div class="two" style="margin-top:12px;">
-      <button class="btn btnSoft btnHalf" onclick="markAsUnknown()">🔴 Bilmiyorum / Sonra</button>
-    </div>
+    <div class="two" style="margin-top:12px;">
+      <button class="btn btnSoft btnHalf" onclick="markAsUnknown()">🔴 Bilmiyorum / Sonra</button>
+    </div>
 
-    <div class="smallInfo" style="text-align:center; margin-top:10px;">
-      <span class="kbd">Enter</span> kontrol (yazmalı) • <span class="kbd">Esc</span> çıkış
-    </div>
-  </div>
+    <div class="smallInfo" style="text-align:center; margin-top:10px;">
+      <span class="kbd">Enter</span> kontrol (yazmalı) • <span class="kbd">Esc</span> çıkış
+    </div>
+  </div>
 </div>
 
 <script>
-  // Ana Durum (State)
-const state = {
-  settings: DB.get("lm_settings", { theme:"dark", quizMode:"choice" }),
-  cards: DB.get("lm_cards", []),
-  txCache: DB.get("lm_tx_cache", {}),
-  dictCache: DB.get("lm_dict_cache", {}),
-  reviewQueue: DB.get("lm_review_queue", [])
-};
 /* ===========================
-   1. GLOBAL DEĞİŞKENLER VE AYARLAR
-   (Hata almamak için en üstte tanımlandı)
+   Storage + helpers
 =========================== */
 const DB = {
-  get(key, fallback){ try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } },
-  set(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+  get(key, fallback){ try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } },
+  set(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
 };
-
-// Global Değişkenler
-let activeFilter = "all"; 
-let quizCurrent = null;
-let correctCount = 0;
-let wrongCount = 0;
-let autoTimer = null;
-let quickTermCache = "";
-
-/* ===========================
-   2. YARDIMCI FONKSİYONLAR
-=========================== */
+function toast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2200);
+}
 function now(){ return Date.now(); }
 function norm(s){ return (s||"").toLowerCase().trim(); }
 function uid(){ return "c_" + Math.random().toString(36).slice(2) + "_" + Math.random().toString(36).slice(2); }
 function safeText(s){ return (s ?? "").toString(); }
 
-function toast(msg){
-  const t=document.getElementById("toast");
-  if(!t) return;
-  t.textContent=msg;
-  t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"), 2200);
-}
-
+/* ===========================
+   State
+=========================== */
+const themes=["dark","light","ocean","emerald","sunset","rose"];
+const state = {
+  settings: DB.get("lm_settings", { theme:"dark", quizMode:"choice" }), // choice|typing
+  cards: DB.get("lm_cards", []),
+  txCache: DB.get("lm_tx_cache", {}),        // cache for translations
+  dictCache: DB.get("lm_dict_cache", {}),    // cache for dictionary results (EN)
+  reviewQueue: DB.get("lm_review_queue", [])
+};
 function saveAll(){
-  DB.set("lm_settings", state.settings);
-  DB.set("lm_cards", state.cards);
-  DB.set("lm_tx_cache", state.txCache);
-  DB.set("lm_dict_cache", state.dictCache);
-  DB.set("lm_review_queue", state.reviewQueue);
+  DB.set("lm_settings", state.settings);
+  DB.set("lm_cards", state.cards);
+  DB.set("lm_tx_cache", state.txCache);
+  DB.set("lm_dict_cache", state.dictCache);
+  DB.set("lm_review_queue", state.reviewQueue);
 }
 
 /* ===========================
-   3. SAYFA GEÇİŞLERİ (ROUTER)
+   Theme
+=========================== */
+function setTheme(name){
+  document.documentElement.setAttribute("data-theme", name);
+  state.settings.theme = name;
+  DB.set("lm_settings", state.settings);
+  const meta=document.getElementById("meta-theme");
+  meta.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#0b1220");
+  const sel=document.getElementById("themeSelect"); if(sel) sel.value=name;
+}
+function applyThemeFromSelect(){ setTheme(document.getElementById("themeSelect").value); toast("Tema güncellendi"); }
+document.getElementById("btnTheme").onclick=()=>{
+  const idx=(themes.indexOf(state.settings.theme)+1)%themes.length;
+  setTheme(themes[idx]); toast("Tema: " + themes[idx]);
+};
+document.getElementById("btnSettings").onclick=()=>{
+  document.getElementById("themeSelect").value = state.settings.theme;
+  syncQuizModeLabels();
+  openSheet("settingsSheet");
+};
+
+/* ===========================
+   Router
 =========================== */
 function go(id){
-  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
-  const target = document.getElementById(id);
-  if(target) target.classList.add("active");
-  
-  document.querySelectorAll(".navBtn").forEach(b=>b.classList.remove("active"));
-  const navBtn = document.getElementById("nav"+id.charAt(0).toUpperCase() + id.slice(1));
-  if(navBtn) navBtn.classList.add("active");
-
-  // Sayfa açılınca verileri tazele
-  if(id==="home") renderDash();
-  if(id==="review") renderReview();
-  if(id==="cards") renderCards();
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll(".navBtn").forEach(b=>b.classList.remove("active"));
+  if(id==="home") document.getElementById("navHome").classList.add("active");
+  if(id==="review") document.getElementById("navReview").classList.add("active");
+  if(id==="cards") document.getElementById("navCards").classList.add("active");
+  if(id==="home") renderDash();
+  if(id==="review") renderReview();
+  if(id==="cards") renderCards();
 }
 
 /* ===========================
-   4. ARAYÜZ (RENDER) FONKSİYONLARI
+   Sheets
+=========================== */
+const backdrop=document.getElementById("backdrop");
+function openSheet(id){ backdrop.classList.add("open"); document.getElementById(id).classList.add("open"); }
+function closeSheets(){ backdrop.classList.remove("open"); document.querySelectorAll(".sheet").forEach(s=>s.classList.remove("open")); }
+window.addEventListener("keydown",(e)=>{
+  if(e.key==="Escape"){
+    if(document.getElementById("quizOverlay").classList.contains("open")) stopQuiz();
+    else closeSheets();
+  }
+});
+
+/* ===========================
+   ONLINE: Translate (meaning TR)
+   - uses Google translate gtx (works in browser)
+=========================== */
+/* ===========================
+   1. GELİŞMİŞ ÇEVİRİ MOTORU (Detaylı Anlam Çeker)
+=========================== */
+async function translateToTR(lang, term){
+  const key = `${lang}|${norm(term)}`;
+  if(state.txCache[key]) return state.txCache[key];
+
+  // Dil ayarı (Hızlı çeviri için 'auto' gelirse EN varsayalım veya Google'a bırakalım)
+  const sl = ({EN:"en", RU:"ru", DE:"de", FR:"fr", ES:"es", TR:"tr"})[lang] || "auto";
+  
+  // Google API (Detaylı mod: dt=t ana çeviri, dt=bd sözlük/eş anlamlılar)
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=tr&dt=t&dt=bd&q=${encodeURIComponent(term)}`;
+
+  try{
+    const r = await fetch(url);
+    if(!r.ok) throw new Error("fail");
+    const data = await r.json();
+
+    // 1. Ana Çeviri
+    let mainMean = (data?.[0]?.[0]?.[0] || "").trim();
+
+    // 2. Detaylı Anlamlar (Varsa: İsim, Fiil kategorileri)
+    let extraMeans = [];
+    if(data[1]){
+      data[1].forEach(group => {
+        const pos = group[0]; // tür (noun/verb)
+        // O türdeki ilk 5 anlamı alıp birleştir
+        const words = group[1].slice(0, 5).join(", "); 
+        extraMeans.push(`[${pos}]: ${words}`);
+      });
+    }
+
+    // Hepsini birleştir
+    let finalResult = mainMean;
+    if(extraMeans.length > 0){
+      // Alt satıra detayları ekle
+      finalResult = mainMean + "\n\n(" + extraMeans.join(") \n(") + ")";
+    }
+
+    // Hafızaya kaydet ve döndür
+    state.txCache[key] = finalResult;
+    DB.set("lm_tx_cache", state.txCache);
+    return finalResult;
+
+  }catch(e){
+    console.log(e);
+    return ""; 
+  }
+}
+
+/* ===========================
+   2. HIZLI ÇEVİRİ BUTONU MANTIĞI
+=========================== */
+let quickTermCache = ""; // Karta eklerken kullanmak için
+
+async function doQuickTranslate(){
+  const input = document.getElementById("quickTransInput");
+  if(!input) return; // Kutu yoksa dur
+  
+  const term = input.value.trim();
+  if(!term) return toast("Lütfen bir kelime yazın.");
+
+  toast("Çevriliyor... ⏳");
+  
+  // 1. Google'dan detaylı anlamı çek (Varsayılan EN gönderiyoruz, Google dili anlar)
+  const meaning = await translateToTR("EN", term);
+  
+  // 2. İngilizce Sözlük verisi (Sadece harflerden oluşuyorsa bak)
+  let dictInfo = "";
+  if(term.match(/^[a-zA-Z\s]+$/)){
+     const dict = await lookupEN(term);
+     if(dict){
+       dictInfo = `
+       <div style="margin-top:15px; padding:12px; background:var(--card2); border-radius:12px; border:1px solid var(--border);">
+         <div style="font-weight:bold; color:var(--muted); margin-bottom:4px;">🇬🇧 İngilizce Sözlük:</div>
+         <div style="font-style:italic;">${dict.type}</div>
+         <div style="margin-top:4px;">${dict.definitionEN}</div>
+         <div style="color:var(--primary); margin-top:6px; font-weight:500;">"${dict.exampleEN}"</div>
+       </div>`;
+     }
+  }
+
+  // 3. Sonuç ekranını hazırla
+  const content = `
+    <div style="font-size:28px; font-weight:900; color:var(--primary); text-align:center; margin-bottom:10px;">${term}</div>
+    <div style="font-size:16px; line-height:1.5; white-space:pre-wrap; background:var(--card); padding:12px; border-radius:12px; border:1px solid var(--border);">${meaning}</div>
+    ${dictInfo}
+  `;
+
+  // 4. Pencereyi aç
+  document.getElementById("trResContent").innerHTML = content;
+  quickTermCache = term; 
+  openSheet("transResultSheet"); 
+  input.value = ""; // Kutuyu temizle
+}
+
+// "Bu Kelimeyi Karta Ekle" butonuna basınca çalışır
+function copyToManualAdd(){
+  closeSheets(); // Sonuç penceresini kapat
+  openManualAdd(); // Ekleme penceresini aç
+  
+  // Kelimeyi kutuya yaz
+  document.getElementById("maTerm").value = quickTermCache;
+  
+  // Otomatik doldurmayı tetikle
+  autoFillManualFields(true);
+}
+
+/* ===========================
+   ONLINE: Dictionary (EN only)
+   - dictionaryapi.dev returns meanings/partOfSpeech/examples
+=========================== */
+function mapPosToType(pos){
+  const p=(pos||"").toLowerCase();
+  if(p==="noun") return "noun";
+  if(p==="verb") return "verb";
+  if(p==="adjective") return "adj";
+  if(p==="adverb") return "adv";
+  if(p==="phrasal verb") return "phrasal";
+  if(p==="idiom") return "idiom";
+  return "word";
+}
+
+async function lookupEN(term){
+  const k = norm(term);
+  if(!k) return null;
+  if(state.dictCache[k]) return state.dictCache[k];
+
+  const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(k)}`;
+  try{
+    const r = await fetch(url);
+    if(!r.ok) throw new Error("dict_fail");
+    const data = await r.json();
+
+    // pick first meaning/definition/example
+    let pos="", def="", ex="";
+    const meanings = data?.[0]?.meanings || [];
+    for(const m of meanings){
+      if(!pos && m.partOfSpeech) pos = m.partOfSpeech;
+      const defs = m.definitions || [];
+      for(const d of defs){
+        if(!def && d.definition) def = d.definition;
+        if(!ex && d.example) ex = d.example;
+        if(def && ex) break;
+      }
+      if(def && ex) break;
+    }
+
+    const result = {
+      pos: pos || "",
+      type: mapPosToType(pos),
+      definitionEN: def || "",
+      exampleEN: ex || ""
+    };
+    state.dictCache[k] = result;
+    DB.set("lm_dict_cache", state.dictCache);
+    return result;
+  }catch(e){
+    return null;
+  }
+}
+
+/* ===========================
+   Example generator (fallback)
+=========================== */
+function genExample(term, lang, type){
+  const t = term.trim();
+  if(!t) return "";
+  if(lang==="EN"){
+    if(type==="verb") return `Workers ${t} the elements according to the drawing.`;
+    if(type==="noun") return `The ${t} was checked during inspection.`;
+    if(type==="adj") return `The structure remained ${t} under the design load.`;
+    if(type==="adv") return `The crew worked ${t} to finish before sunset.`;
+    if(type==="phrase") return `We reviewed "${t}" before starting the work.`;
+    return `We used "${t}" in the daily site report.`;
+  }
+  return `(${lang}) ${t} — örnek cümle (istersen düzenle).`;
+}
+
+function inferTypeBasic(term){
+  if(term.includes(" ")) return "phrase";
+  return "word";
+}
+
+/* ===========================
+   SRS (SM-2 style)
+=========================== */
+/* ===========================
+   3 SEVİYELİ SRS MOTORU
+   - Bilmiyorum: Sıfırlar (Hemen tekrar etmeli)
+   - Öğreniyorum: Normal ilerler
+   - Öğrendim: Hızlı ilerler (Daha geç sorar)
+=========================== */
+function srsCalc(card, quality){
+  // quality: 0 (Bilmiyorum), 3 (Öğreniyorum), 5 (Öğrendim)
+  let s = card.srs || { interval:0, reps:0, ef:2.5 };
+  let { interval, reps, ef } = s;
+
+  if(quality === 0){
+     // BİLMİYORUM: Kartı sıfırla, hemen "Tekrar" listesine at
+     reps = 0;
+     interval = 0; // Hemen (Şimdi)
+     // EF değerini biraz düşür (zorlandık)
+     ef = Math.max(1.3, ef - 0.2);
+  } 
+  else {
+     // ÖĞRENİYORUM (3) veya ÖĞRENDİM (5)
+     if(reps === 0) interval = 1;
+     else if(reps === 1) interval = 6;
+     else interval = Math.round(interval * ef);
+
+     // Öğrendim (5) dediysek ekstra bonus ver (daha ileri at)
+     if(quality === 5) interval = Math.round(interval * 1.3);
+
+     reps++;
+     
+     // SuperMemo-2 formülü
+     // q=5 ise EF artar (kolaylaşır), q=3 ise EF hafif azalır
+     ef = ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+     if(ef < 1.3) ef = 1.3;
+  }
+
+  // Yeni tarih hesapla
+  // interval gün cinsinden, milisaniyeye çeviriyoruz
+  // Eğer interval 0 ise (bilmiyorum), due = şimdi olur.
+  return { due: Date.now() + (interval * 24 * 60 * 60 * 1000), srs:{interval,reps,ef} };
+}
+
+/* ===========================
+   Dash + Review
 =========================== */
 function renderDash(){
-  document.getElementById("dashTotal").textContent = state.cards.length;
-  document.getElementById("dashDue").textContent = state.cards.filter(c => (c.due||0) <= now()).length;
+  document.getElementById("dashTotal").textContent = state.cards.length;
+  document.getElementById("dashDue").textContent = state.cards.filter(c => (c.due||0) <= now()).length;
 }
-
 function getDueCards(){ return state.cards.filter(c => (c.due||0) <= now()); }
-
 function renderReview(){
-  document.getElementById("rvTotal").textContent = state.cards.length;
-  document.getElementById("rvDue").textContent = getDueCards().length;
-  syncQuizModeLabels();
+  document.getElementById("rvTotal").textContent = state.cards.length;
+  document.getElementById("rvDue").textContent = getDueCards().length;
+  syncQuizModeLabels();
+}
+function resetTodaysQueue(){
+  // 1. Vakti gelen (Due) kartları bul
+  let due = getDueCards();
+  let q = [];
+
+  if(due.length > 0) {
+    // Vakti gelenleri RASTGELE karıştır (Shuffle)
+    q = due.sort(() => Math.random() - 0.5).map(c => c.id);
+  } else {
+    // Vakti gelen yoksa, tüm havuzdan RASTGELE 30 tane seç
+    q = [...state.cards]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, Math.min(30, state.cards.length))
+        .map(c => c.id);
+  }
+
+  state.reviewQueue = q;
+  DB.set("lm_review_queue", state.reviewQueue);
+  
+  // Kullanıcıya bilgi ver
+  toast("Kuyruk karıştırıldı 🔀");
+  renderReview();
+}
+function clearProgress(){
+  if(!confirm("SRS sıfırlansın mı? (Kartlar silinmez)")) return;
+  state.cards = state.cards.map(c=>({...c,due:now(),srs:{interval:0,reps:0,ef:2.5},updatedAt:now()}));
+  DB.set("lm_cards", state.cards);
+  toast("SRS sıfırlandı ✅");
+  renderDash(); renderReview(); renderCards();
 }
 
-function renderCards(){
-  const searchEl = document.getElementById("search");
-  const q = searchEl ? norm(searchEl.value) : "";
-  const list = document.getElementById("cardsList");
-  if(!list) return;
-  list.innerHTML="";
+/* ===========================
+   AKILLI KART LİSTELEME & FİLTRELEME
+   - İstatistik kutularına tıklayınca listeyi süzer.
+   - Sayıları anlık günceller.
+=========================== */
+let activeFilter = "all"; // Hangi filtre seçili? (all, new, learning, mastered)
 
-  // İstatistikleri Hesapla
-  let countNew = 0, countLearning = 0, countMastered = 0;
-  state.cards.forEach(c => {
-      const r = c.srs ? c.srs.reps : 0;
-      if(r === 0) countNew++;
-      else if(r < 5) countLearning++;
-      else countMastered++;
-  });
+// Arama kutusuna yazınca çalışır (Eğer hata verirse bu satırı silip en alta ekleyebilirsin)
+const searchInput = document.getElementById("search");
+if(searchInput) searchInput.addEventListener("input", renderCards);
 
-  // HTML İstatistiklerini Güncelle
-  const statNew = document.getElementById("statNew");
-  if(statNew) statNew.textContent = countNew;
-
-  // Filtre Butonlarını Güncelle
-  updateFilterBox("filterBtnNew", "all", "new", activeFilter);
-  updateFilterBoxContent("filterBtnLearn", "warn", "🟡 Öğreniyorum", countLearning, "learning", activeFilter);
-  updateFilterBoxContent("filterBtnMaster", "ok", "🟢 Öğrendim", countMastered, "mastered", activeFilter);
-
-  // Kartları Filtrele
-  const items = state.cards.filter(c => {
-      const matchesSearch = !q || (norm(c.term).includes(q) || norm(c.meaning).includes(q) || norm(c.type).includes(q));
-      const r = c.srs ? c.srs.reps : 0;
-      let matchesStatus = true;
-      if(activeFilter === 'new') matchesStatus = (r === 0);
-      else if(activeFilter === 'learning') matchesStatus = (r > 0 && r < 5);
-      else if(activeFilter === 'mastered') matchesStatus = (r >= 5);
-      return matchesSearch && matchesStatus;
-  }).sort((a,b)=> (a.term||"").localeCompare((b.term||""), "en"));
-
-  // Listeyi Bas
-  if(!items.length){
-    list.innerHTML=`<div class="card" style="text-align:center; padding:20px; color:var(--muted);">Kart bulunamadı.</div>`;
-    return;
-  }
-
-  items.forEach(c=>{
-    const reps = c.srs ? c.srs.reps : 0;
-    const isDue = (c.due||0) <= now();
-    
-    let badge = `<span class="badge" style="border:1px solid var(--border);">Yeni</span>`;
-    if(reps > 0 && reps < 5) badge = `<span class="badge" style="color:var(--warn); border-color:var(--warn);">Öğreniliyor</span>`;
-    if(reps >= 5) badge = `<span class="badge" style="color:var(--ok); border-color:var(--ok); background:rgba(16,185,129,0.1);">Öğrendim</span>`;
-    
-    const dueBadge = isDue ? `<span class="badge due" style="margin-left:4px;">Tekrar</span>` : ``;
-    const resetBtn = reps > 0 ? `<button class="btn btnSoft btnHalf" style="font-size:11px;" onclick="resetSingleCard('${c.id}')">↩️ Başa Al</button>` : ``;
-
-    const el=document.createElement("div");
-    el.className="card";
-    el.style.marginTop="12px";
-    el.innerHTML=`
-      <div class="cardLine">
-        <div class="termBig">${safeText(c.term)}</div>
-        <div style="display:flex;">${badge} ${dueBadge}</div>
-      </div>
-      <div class="smallInfo">${safeText(c.lang)} • ${safeText(c.meaning)}</div>
-      <div class="smallInfo" style="margin-top:6px;">Tür: ${safeText(c.type||'-')}</div>
-      <div class="smallInfo" style="margin-top:6px; opacity:0.7;">${safeText(c.example||'')}</div>
-      <div class="two" style="margin-top:10px;">
-        <button class="btn btnSoft btnHalf" onclick="openEditPrompt('${c.id}')">Düzenle</button>
-        ${resetBtn}
-        <button class="btn btnDanger btnHalf" onclick="deleteCard('${c.id}')">Sil</button>
-      </div>
-    `;
-    list.appendChild(el);
-  });
-}
-
-// Filtre Kutusu Yardımcıları
-function updateFilterBox(id, defaultFilter, myFilter, current){
-  const el = document.getElementById(id);
-  if(!el) return;
-  el.style.opacity = (current === 'all' || current === myFilter) ? "1" : "0.4";
-  el.style.borderWidth = (current === myFilter) ? "2px" : "1px";
-}
-function updateFilterBoxContent(id, colorVar, label, count, type, current){
-  const el = document.getElementById(id);
-  if(!el) return;
-  el.innerHTML = `
-    <div style="font-size:11px; font-weight:bold; color:var(--${colorVar});">${label}</div>
-    <div style="font-size:18px; font-weight:900; color:var(--${colorVar});">${count}</div>
-    <button class="btn btnSoft" style="padding:4px 8px; font-size:10px; margin-top:4px; width:100%; border-color:var(--${colorVar}); color:var(--${colorVar});" 
-    onclick="event.stopPropagation(); startCategoryQuiz('${type}')">▶️ Çalış</button>
-  `;
-  el.style.opacity = (current === 'all' || current === type) ? "1" : "0.4";
-  el.style.borderWidth = (current === type) ? "2px" : "1px";
-}
-
+// Kutulara tıklayınca çalışır (Filtreyi aç/kapa)
 function toggleFilter(type){
-  if(activeFilter === type) activeFilter = "all";
-  else activeFilter = type;
-  
-  if(activeFilter === 'new') toast("Sadece YENİ kartlar");
-  else if(activeFilter === 'all') toast("Tüm kartlar");
-  else toast("Filtre: " + activeFilter);
-  
-  renderCards();
+  if(activeFilter === type){
+     activeFilter = "all"; // Zaten seçiliyse filtreyi kaldır (Hepsini göster)
+     toast("Tüm kartlar gösteriliyor");
+  } else {
+     activeFilter = type; // Yeni filtreyi seç
+     if(type === 'new') toast("Sadece YENİ kartlar");
+     if(type === 'learning') toast("Sadece ÖĞRENİLEN kartlar");
+     if(type === 'mastered') toast("Sadece ÖĞRENİLMİŞ kartlar");
+  }
+  renderCards(); // Listeyi yenile
+}/* ===========================
+   AKILLI KART LİSTELEME & ÖZEL PRATİK
+   - İstatistik kutularında "Başlat" butonu var (Sarı/Yeşil için).
+   - Kartlarda "Başa Al" butonu var (Yeni'ye düşürür).
+=========================== */
+let activeFilter = "all"; 
+
+// Arama dinleyicisi
+const searchInput = document.getElementById("search");
+if(searchInput) searchInput.addEventListener("input", renderCards);
+
+// Filtreleme Fonksiyonu
+function toggleFilter(type){
+  if(activeFilter === type){
+     activeFilter = "all"; 
+     toast("Tüm kartlar gösteriliyor");
+  } else {
+     activeFilter = type; 
+     if(type === 'new') toast("Sadece YENİ kartlar");
+     if(type === 'learning') toast("Sadece ÖĞRENİLEN kartlar");
+     if(type === 'mastered') toast("Sadece ÖĞRENİLMİŞ kartlar");
+  }
+  renderCards();
+}
+
+// LİSTELEME FONKSİYONU
+function renderCards(){
+  const searchEl = document.getElementById("search");
+  const q = searchEl ? norm(searchEl.value) : "";
+  const list = document.getElementById("cardsList");
+  if(!list) return;
+  list.innerHTML="";
+
+  // --- 1. İSTATİSTİKLERİ SAY ---
+  let countNew = 0;       
+  let countLearning = 0;  
+  let countMastered = 0;  
+
+  if(state.cards){
+      state.cards.forEach(c => {
+          const r = c.srs ? c.srs.reps : 0;
+          if(r === 0) countNew++;
+          else if(r < 5) countLearning++;
+          else countMastered++;
+      });
+  }
+
+  // --- 2. HTML GÜNCELLEME (KUTULAR + PLAY BUTONLARI) ---
+  // Burayı JavaScript ile dinamik çizdiriyoruz ki butonlara tıklayınca filtre karışmasın.
+  // HTML dosyasındaki o istatistik div'lerini (id="filterBtnNew" vb.) güncelliyoruz.
+  
+  if(document.getElementById("statNew")) document.getElementById("statNew").textContent = countNew;
+  
+  // ÖĞRENİYORUM KUTUSU GÜNCELLEME (Play butonu ekliyoruz)
+  const boxLearn = document.getElementById("filterBtnLearn");
+  if(boxLearn) {
+      boxLearn.innerHTML = `
+        <div style="font-size:11px; font-weight:bold; color:var(--warn);">🟡 Öğreniyorum</div>
+        <div style="font-size:18px; font-weight:900; color:var(--warn);">${countLearning}</div>
+        <button class="btn btnSoft" style="padding:4px 8px; font-size:10px; margin-top:4px; width:100%; border-color:var(--warn); color:var(--warn);" 
+        onclick="event.stopPropagation(); startCategoryQuiz('learning')">▶️ Çalış</button>
+      `;
+      // Görünüm (Seçili mi?)
+      boxLearn.style.opacity = (activeFilter === 'all' || activeFilter === 'learning') ? "1" : "0.4";
+      boxLearn.style.borderWidth = (activeFilter === 'learning') ? "2px" : "1px";
+  }
+
+  // ÖĞRENDİM KUTUSU GÜNCELLEME (Play butonu ekliyoruz)
+  const boxMaster = document.getElementById("filterBtnMaster");
+  if(boxMaster) {
+      boxMaster.innerHTML = `
+        <div style="font-size:11px; font-weight:bold; color:var(--ok);">🟢 Öğrendim</div>
+        <div style="font-size:18px; font-weight:900; color:var(--ok);">${countMastered}</div>
+        <button class="btn btnSoft" style="padding:4px 8px; font-size:10px; margin-top:4px; width:100%; border-color:var(--ok); color:var(--ok);" 
+        onclick="event.stopPropagation(); startCategoryQuiz('mastered')">▶️ Çalış</button>
+      `;
+      // Görünüm
+      boxMaster.style.opacity = (activeFilter === 'all' || activeFilter === 'mastered') ? "1" : "0.4";
+      boxMaster.style.borderWidth = (activeFilter === 'mastered') ? "2px" : "1px";
+  }
+  
+  // Yeni Kutusu Görünüm (Buton yok, sadece sayı)
+  const btnNew = document.getElementById("filterBtnNew");
+  if(btnNew) {
+      btnNew.style.opacity = (activeFilter === 'all' || activeFilter === 'new') ? "1" : "0.4";
+      btnNew.style.borderWidth = (activeFilter === 'new') ? "2px" : "1px";
+  }
+
+
+  // --- 3. LİSTEYİ FİLTRELE ---
+  const items = state.cards
+    .filter(c => {
+      const matchesSearch = !q || (norm(c.term).includes(q) || norm(c.meaning).includes(q) || norm(c.type).includes(q));
+      
+      const r = c.srs ? c.srs.reps : 0;
+      let matchesStatus = true;
+      if(activeFilter === 'new') matchesStatus = (r === 0);
+      else if(activeFilter === 'learning') matchesStatus = (r > 0 && r < 5);
+      else if(activeFilter === 'mastered') matchesStatus = (r >= 5);
+      
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a,b)=> (a.term||"").localeCompare((b.term||""), "en"));
+
+  // --- 4. KARTLARI BAS ---
+  if(!items.length){
+    list.innerHTML=`<div class="card" style="text-align:center; padding:20px; color:var(--muted);">Bu kategoride kart yok.</div>`;
+    return;
+  }
+
+  items.forEach(c=>{
+    const isDue = (c.due||0) <= Date.now();
+    const reps = c.srs ? c.srs.reps : 0;
+    
+    // Rozet
+    let statusBadge = "";
+    if(reps === 0) statusBadge = `<span class="badge" style="border:1px solid var(--border);">Yeni</span>`;
+    else if(reps < 5) statusBadge = `<span class="badge" style="color:var(--warn); border-color:var(--warn);">Öğreniliyor</span>`;
+    else statusBadge = `<span class="badge" style="color:var(--ok); border-color:var(--ok); background:color-mix(in srgb, var(--ok) 10%, transparent);">Öğrenildi</span>`;
+
+    const dueBadge = isDue ? `<span class="badge due" style="margin-left:4px;">Tekrar</span>` : ``;
+
+    const el=document.createElement("div");
+    el.className="card";
+    el.style.marginTop="12px";
+    
+    // BUTONLAR KISMI: "Başa Al" butonu eklendi (reps > 0 ise görünür)
+    const resetBtn = reps > 0 ? `<button class="btn btnSoft btnHalf" style="font-size:11px;" data-reset="${c.id}">↩️ Başa Al</button>` : ``;
+
+    el.innerHTML=`
+      <div class="cardLine">
+        <div class="termBig">${safeText(c.term)}</div>
+        <div style="display:flex;">${statusBadge} ${dueBadge}</div>
+      </div>
+      <div class="smallInfo">${safeText(c.lang)} • ${safeText(c.meaning)}</div>
+      <div class="smallInfo" style="margin-top:6px;">Tür: ${safeText(c.type||'-')}</div>
+      <div class="smallInfo" style="margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:0.7;">
+        ${safeText(c.example||'')}
+      </div>
+      <div class="two" style="margin-top:10px;">
+        <button class="btn btnSoft btnHalf" data-edit="${c.id}">Düzenle</button>
+        ${resetBtn}
+        <button class="btn btnDanger btnHalf" data-del="${c.id}">Sil</button>
+      </div>
+    `;
+    
+    el.querySelector(`[data-edit="${c.id}"]`).onclick=()=>openEditPrompt(c.id);
+    el.querySelector(`[data-del="${c.id}"]`).onclick=()=>deleteCard(c.id);
+    // Sıfırlama butonu varsa ona da özellik ekle
+    if(reps > 0){
+        el.querySelector(`[data-reset="${c.id}"]`).onclick=()=>resetSingleCard(c.id);
+    }
+    
+    list.appendChild(el);
+  });
 }
 
 /* ===========================
-   5. QUIZ MOTORU
+   Manual Add (ONLINE AUTOFILL)
 =========================== */
-function startReviewQuiz(limit = 9999, btnElement = null){
-  if(btnElement){
-     document.querySelectorAll("#limitContainer .btn").forEach(b => {
-        b.classList.remove("btnPrimary"); b.classList.add("btnSoft"); 
-     });
-     btnElement.classList.remove("btnSoft"); btnElement.classList.add("btnPrimary");
-  }
-
-  let dueCards = getDueCards();
-  if(dueCards.length === 0) dueCards = [...state.cards]; // Hiç yoksa hepsi
-
-  // Karıştır
-  dueCards.sort(() => Math.random() - 0.5);
-  
-  // Limitle
-  if(dueCards.length > limit) dueCards = dueCards.slice(0, limit);
-
-  if(dueCards.length === 0) return toast("Çalışılacak kart yok!");
-
-  state.reviewQueue = dueCards.map(c => c.id);
-  DB.set("lm_review_queue", state.reviewQueue);
-
-  openSheetOverlay("quizOverlay");
-  nextQuiz();
+let autoTimer=null;
+function openManualAdd(){
+  clearManual();
+  openSheet("manualAddSheet");
 }
-
-function startCategoryQuiz(type){
-  closeSheets(); 
-  let filtered = [];
-  if(type === 'learning') filtered = state.cards.filter(c => c.srs && c.srs.reps > 0 && c.srs.reps < 5);
-  else if(type === 'mastered') filtered = state.cards.filter(c => c.srs && c.srs.reps >= 5);
-  
-  if(filtered.length === 0) return toast("Bu kategoride kart yok!");
-  
-  filtered.sort(() => Math.random() - 0.5);
-  state.reviewQueue = filtered.map(c => c.id);
-  DB.set("lm_review_queue", state.reviewQueue);
-  
-  openSheetOverlay("quizOverlay");
-  nextQuiz();
-}
-
-function nextQuiz(){
-  if(!state.reviewQueue.length){
-    toast("Tebrikler! Bitti 🎉");
-    stopQuiz();
-    return;
-  }
-  document.getElementById("qRemain").textContent = state.reviewQueue.length;
-  
-  const id = state.reviewQueue.shift();
-  DB.set("lm_review_queue", state.reviewQueue);
-  
-  const card = state.cards.find(c => c.id === id);
-  if(!card) return nextQuiz();
-  
-  quizCurrent = card;
-  renderQuizQuestion(card);
-}
-
-function renderQuizQuestion(card){
-  // Soruyu Hazırla
-  let qHtml = `<span style="font-size:36px; color:var(--primary);">${card.term}</span>`;
-  let hint = "Bu kelimenin anlamı nedir?";
-  
-  // Context Modu Kontrolü
-  let isContext = false;
-  if(card.example && card.example.length > 5){
-      const regex = new RegExp(`\\b${card.term}\\b`, "gi");
-      if(regex.test(card.example)){
-          const blank = `<span style='color:var(--primary); border-bottom:3px solid var(--primary);'>______</span>`;
-          qHtml = card.example.replace(regex, blank);
-          hint = "Boşluğa ne gelmeli?";
-          isContext = true;
-      }
-  }
-
-  const qWord = document.getElementById("qWord");
-  qWord.innerHTML = qHtml;
-  qWord.style.fontSize = isContext ? "24px" : "32px";
-  document.getElementById("qMeta").textContent = hint;
-  document.getElementById("qExample").textContent = "";
-  document.getElementById("qReveal").innerHTML = "";
-
-  // Şıkları Hazırla
-  const choicesBox = document.getElementById("qChoices");
-  const typingBox = document.getElementById("qTyping");
-  choicesBox.innerHTML = "";
-  
-  const mode = state.settings.quizMode || "choice";
-  
-  if(mode === "typing" && !isContext){
-      choicesBox.style.display = "none";
-      typingBox.style.display = "flex";
-      document.getElementById("qInput").value = "";
-      document.getElementById("qInput").focus();
-  } else {
-      typingBox.style.display = "none";
-      choicesBox.style.display = "flex";
-      
-      let correctVal = isContext ? card.term : card.meaning;
-      let options = state.cards.filter(c => c.id !== card.id)
-          .sort(()=>Math.random()-0.5).slice(0,3)
-          .map(c => isContext ? c.term : c.meaning);
-      
-      options.push(correctVal);
-      options.sort(()=>Math.random()-0.5);
-
-      options.forEach(opt => {
-          const btn = document.createElement("button");
-          btn.className = "qChoice";
-          btn.textContent = opt;
-          btn.onclick = () => checkChoice(btn, opt, correctVal, card, isContext);
-          choicesBox.appendChild(btn);
-      });
-  }
-}
-
-function checkChoice(btn, selected, correct, card, isContext){
-  const allBtns = document.querySelectorAll(".qChoice");
-  allBtns.forEach(b => b.disabled = true);
-  
-  if(selected === correct){
-      btn.classList.add("correct");
-      showGradeButtons(card);
-      if(isContext) document.getElementById("qWord").innerHTML = card.example.replace(new RegExp(`\\b${card.term}\\b`, "gi"), `<b style='color:var(--ok)'>${card.term}</b>`);
-  } else {
-      btn.classList.add("wrong");
-      allBtns.forEach(b => { if(b.textContent === correct) b.classList.add("correct"); });
-      grade(card, 0, false);
-  }
-}
-
-function checkTypingAnswer(){
-  if(!quizCurrent) return;
-  const val = norm(document.getElementById("qInput").value);
-  const correct = norm(quizCurrent.term); // Yazma modunda hep kelimenin kendisini soruyoruz (TR->EN gibi düşün) veya Anlam soruyorsak meaning.
-  // Basitlik için yazma modunu şimdilik sadece "Anlamı Yaz" olarak kurguladıysak:
-  // Ancak yukarıdaki mantıkta EN kelimeyi gösterip anlam soruyoruz.
-  // Kullanıcı anlamı tam tutturamaz. Bu yüzden yazma modu EN->TR için zordur.
-  // Biz yine de basit bir kontrol yapalım:
-  
-  if(val === norm(quizCurrent.meaning)){
-      showGradeButtons(quizCurrent);
-  } else {
-      document.getElementById("qReveal").textContent = `Doğrusu: ${quizCurrent.meaning}`;
-      grade(quizCurrent, 0, false);
-  }
-}
-
-function showGradeButtons(card){
-  document.getElementById("qReveal").innerHTML = `
-    <div style="font-weight:bold; color:var(--ok); margin-bottom:8px;">✅ Doğru!</div>
-    <div style="display:flex; gap:10px;">
-      <button class="btn btnSoft btnHalf" onclick="grade(state.cards.find(c=>c.id=='${card.id}'), 3, true)">🟡 Öğreniyorum</button>
-      <button class="btn btnOk btnHalf" onclick="grade(state.cards.find(c=>c.id=='${card.id}'), 5, true)">🟢 Tam Öğrendim</button>
-    </div>
-  `;
-}
-
-function grade(card, quality, isCorrect){
-  if(isCorrect){ correctCount++; document.getElementById("qCorrect").textContent=correctCount; }
-  else { wrongCount++; document.getElementById("qWrong").textContent=wrongCount; }
-
-  // SRS Hesapla
-  let s = card.srs || { interval:0, reps:0, ef:2.5 };
-  let { interval, reps, ef } = s;
-
-  if(quality === 0){
-     reps = 0; interval = 0; ef = Math.max(1.3, ef - 0.2);
-  } else {
-     if(reps === 0) interval = 1;
-     else if(reps === 1) interval = 6;
-     else interval = Math.round(interval * ef);
-     if(quality === 5) interval = Math.round(interval * 1.3);
-     reps++;
-     ef = ef + (0.1 - (5-quality)*(0.08+(5-quality)*0.02));
-     if(ef<1.3) ef=1.3;
-  }
-
-  card.srs = {interval, reps, ef};
-  card.due = now() + (interval * 24 * 60 * 60 * 1000);
-  card.updatedAt = now();
-  
-  DB.set("lm_cards", state.cards);
-  
-  setTimeout(() => { quizCurrent=null; nextQuiz(); }, quality===0 ? 1500 : 100);
-}
-
-function stopQuiz(){
-  if(quizCurrent && quizCurrent.id){
-      state.reviewQueue.unshift(quizCurrent.id);
-      DB.set("lm_review_queue", state.reviewQueue);
-  }
-  document.getElementById("quizOverlay").classList.remove("open");
-  renderDash(); renderReview();
-}
-
-function markAsUnknown(){ 
-  if(quizCurrent) grade(quizCurrent, 0, false); 
-}
-
-/* ===========================
-   6. DİĞER İŞLEMLER (Ekle, Sil, Sıfırla)
-=========================== */
-function openManualAdd(){ clearManual(); openSheet("manualAddSheet"); }
 function clearManual(){
-  document.getElementById("maTerm").value="";
-  document.getElementById("maMeaning").value="";
-  document.getElementById("maExample").value="";
+  document.getElementById("maLang").value="EN";
+  document.getElementById("maTerm").value="";
+  document.getElementById("maMeaning").value="";
+  document.getElementById("maType").value="word";
+  document.getElementById("maExample").value="";
+  document.getElementById("maNote").value="";
+  document.getElementById("maHint").textContent="Yazınca otomatik doldurur. İnternet şart.";
 }
+document.getElementById("maTerm").addEventListener("input", ()=>{
+  clearTimeout(autoTimer);
+  autoTimer=setTimeout(()=>autoFillManualFields(false), 450);
+});
+document.getElementById("maLang").addEventListener("change", ()=>{
+  clearTimeout(autoTimer);
+  autoTimer=setTimeout(()=>autoFillManualFields(false), 250);
+});
+document.getElementById("maTerm").addEventListener("keydown",(e)=>{
+  if(e.key==="Enter"){
+    e.preventDefault();
+    autoFillManualFields(true);
+  }
+});
+
+async function autoFillManualFields(force){
+  const lang=document.getElementById("maLang").value;
+  const term=document.getElementById("maTerm").value.trim();
+  if(!term) return;
+
+  document.getElementById("maHint").textContent="Dolduruluyor…";
+
+  // TYPE + EXAMPLE (try dictionary for EN)
+  let type = document.getElementById("maType").value;
+  let example = document.getElementById("maExample").value.trim();
+  let meaning = document.getElementById("maMeaning").value.trim();
+
+  // EN dictionary
+  if(lang==="EN"){
+    const dict = await lookupEN(term);
+    if(dict){
+      if((!type || type==="word" || force) && dict.type) type = dict.type;
+      // Prefer dictionary example
+      if((!example || force) && dict.exampleEN) example = dict.exampleEN;
+      // If no example in dict, generate
+      if((!example || force) && !dict.exampleEN) example = genExample(term, lang, type);
+    }else{
+      if((!type || type==="word") && (force || !type)) type = inferTypeBasic(term);
+      if((!example || force) && !example) example = genExample(term, lang, type);
+    }
+  }else{
+    // non-EN: basic type + template example
+    if((!type || type==="word" || force)) type = inferTypeBasic(term);
+    if((!example || force)) example = genExample(term, lang, type);
+  }
+
+  // MEANING: always translate to TR
+  if((!meaning || force)){
+    const tr = await translateToTR(lang, term);
+    if(tr) meaning = tr;
+  }
+
+  document.getElementById("maType").value = type || "word";
+  document.getElementById("maExample").value = example || "";
+  document.getElementById("maMeaning").value = meaning || "";
+
+  if(!meaning){
+    document.getElementById("maHint").textContent="Anlam alınamadı (internet/translate engeli olabilir).";
+  }else{
+    document.getElementById("maHint").textContent="Otomatik dolduruldu ✅ (istersen düzenle)";
+  }
+}
+
 function saveManualCard(){
-  const term = document.getElementById("maTerm").value.trim();
-  const meaning = document.getElementById("maMeaning").value.trim();
-  const type = document.getElementById("maType").value;
-  const example = document.getElementById("maExample").value.trim();
-  const lang = document.getElementById("maLang").value;
-  
-  if(!term || !meaning) return toast("Kelime ve anlam girilmeli.");
-  
-  state.cards.push({
-      id: uid(), lang, term, meaning, type, example, note:"",
-      due: now(), srs: {interval:0, reps:0, ef:2.5}, createdAt: now()
-  });
-  
-  DB.set("lm_cards", state.cards);
-  toast("Eklendi ✅");
-  closeSheets(); renderDash(); renderCards();
+  const lang=document.getElementById("maLang").value;
+  const term=document.getElementById("maTerm").value.trim();
+  const meaning=document.getElementById("maMeaning").value.trim();
+  const type=document.getElementById("maType").value;
+  const example=document.getElementById("maExample").value.trim();
+  const note=document.getElementById("maNote").value.trim();
+
+  if(!term) return toast("Kelime boş olamaz.");
+  if(!meaning) return toast("Anlam boş olamaz (doldur/manuel gir).");
+
+  const dupe = state.cards.find(c => norm(c.term)===norm(term) && (c.lang||"EN")===lang);
+  if(dupe){
+    if(confirm("Bu kelime zaten var. Güncellensin mi?")){
+      dupe.meaning=meaning;
+      dupe.type=type;
+      dupe.example=example;
+      dupe.note=note;
+      dupe.updatedAt=now();
+      DB.set("lm_cards", state.cards);
+      toast("Güncellendi ✅");
+      closeSheets(); renderDash(); renderReview(); renderCards();
+    }
+    return;
+  }
+
+  state.cards.push({
+    id:uid(),
+    lang, term, meaning, type, example, note,
+    due: now(),
+    srs:{interval:0,reps:0,ef:2.5},
+    createdAt: now(),
+    updatedAt: now()
+  });
+  DB.set("lm_cards", state.cards);
+  toast("Eklendi ✅");
+  closeSheets(); renderDash(); renderReview(); renderCards();
 }
 
 function deleteCard(id){
-  if(!confirm("Silinsin mi?")) return;
-  state.cards = state.cards.filter(c => c.id !== id);
-  DB.set("lm_cards", state.cards);
-  renderCards(); renderDash();
+  if(!confirm("Silinsin mi?")) return;
+  state.cards = state.cards.filter(c=>c.id!==id);
+  DB.set("lm_cards", state.cards);
+  state.reviewQueue = (state.reviewQueue||[]).filter(x=>x!==id);
+  DB.set("lm_review_queue", state.reviewQueue);
+  toast("Silindi");
+  renderDash(); renderReview(); renderCards();
 }
 
-function resetSingleCard(id){
-  const c = state.cards.find(x=>x.id===id);
-  if(c && confirm("Başa alınsın mı?")){
-      c.srs = {interval:0, reps:0, ef:2.5};
-      c.due = now();
-      DB.set("lm_cards", state.cards);
-      renderCards(); toast("Sıfırlandı.");
-  }
-}
-
+/* Simple edit prompt (keep UI minimal) */
 function openEditPrompt(id){
-  const c = state.cards.find(x=>x.id===id);
-  if(!c) return;
-  const m = prompt("Yeni Anlam:", c.meaning);
-  if(m){
-      c.meaning = m;
-      DB.set("lm_cards", state.cards);
-      renderCards();
-  }
-}
+  const c = state.cards.find(x=>x.id===id);
+  if(!c) return;
+  const newMeaning = prompt("Anlam (TR):", c.meaning || "");
+  if(newMeaning===null) return;
+  const newType = prompt("Tür (noun/verb/adj/adv/phrase/word…):", c.type || "word");
+  if(newType===null) return;
+  const newExample = prompt("Örnek cümle:", c.example || "");
+  if(newExample===null) return;
 
-function hardReset(){
-  if(confirm("Tüm veriler silinecek!")){
-      localStorage.clear();
-      location.reload();
-  }
-}
-
-/* ===========================
-   7. SHEET / POPUP YÖNETİMİ
-=========================== */
-const backdrop = document.getElementById("backdrop");
-function openSheet(id){ 
-  backdrop.classList.add("open"); 
-  const el = document.getElementById(id);
-  if(el) el.classList.add("open"); 
-}
-function openSheetOverlay(id){
-   const el = document.getElementById(id);
-   if(el) el.classList.add("open");
-}
-function closeSheets(){ 
-  backdrop.classList.remove("open"); 
-  document.querySelectorAll(".sheet").forEach(s => s.classList.remove("open")); 
+  c.meaning = newMeaning.trim();
+  c.type = (newType||"word").trim();
+  c.example = (newExample||"").trim();
+  c.updatedAt = now();
+  DB.set("lm_cards", state.cards);
+  toast("Güncellendi ✅");
+  renderCards();
 }
 
 /* ===========================
-   8. ÇEVİRİ VE API İŞLEMLERİ
+   Quiz
 =========================== */
-async function doQuickTranslate(){
-  const inp = document.getElementById("quickTransInput");
-  const term = inp.value.trim();
-  if(!term) return;
-  
-  toast("Çevriliyor...");
-  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=tr&dt=t&q=${encodeURIComponent(term)}`;
-  try {
-      const r = await fetch(url);
-      const d = await r.json();
-      const mean = d[0][0][0];
-      
-      document.getElementById("trResContent").innerHTML = `
-         <div class="big" style="text-align:center; color:var(--primary)">${term}</div>
-         <div style="text-align:center; margin-top:10px;">${mean}</div>
-      `;
-      openSheet("transResultSheet");
-      quickTermCache = term;
-      inp.value = "";
-  } catch(e) { toast("Hata oluştu"); }
-}
-
-function copyToManualAdd(){
-    closeSheets();
-    openManualAdd();
-    document.getElementById("maTerm").value = quickTermCache;
-}
-
-// Otomatik Doldurma Tetikleyicisi
-document.getElementById("maTerm").addEventListener("change", function(){
-   // Buraya istenirse otomatik doldurma eklenebilir
-});
-
+function getQuizMode(){ return state.settings.quizMode || "choice"; }
 function syncQuizModeLabels(){
-   const txt = (state.settings.quizMode === "typing") ? "Yazmalı" : "Seçmeli";
-   const l1 = document.getElementById("quizModeLabel");
-   const l2 = document.getElementById("quizModeLabel2");
-   if(l1) l1.textContent = txt;
-   if(l2) l2.textContent = txt;
+  const label=(getQuizMode()==="typing")?"Yazmalı":"Seçmeli";
+  document.getElementById("quizModeLabel").textContent=label;
+  document.getElementById("quizModeLabel2").textContent=label;
 }
 function toggleQuizMode(){
-   state.settings.quizMode = (state.settings.quizMode === "choice") ? "typing" : "choice";
-   saveAll(); syncQuizModeLabels();
-   toast("Mod: " + state.settings.quizMode);
+  state.settings.quizMode = (getQuizMode()==="choice") ? "typing" : "choice";
+  DB.set("lm_settings", state.settings);
+  syncQuizModeLabels();
+  toast("Quiz modu: " + ((getQuizMode()==="typing")?"Yazmalı":"Seçmeli"));
+}
+let quizCurrent=null;
+let correctCount=0, wrongCount=0;
+// GÜNCELLENMİŞ START FONKSİYONU (LİMİTLİ)
+// GÜNCELLENMİŞ START FONKSİYONU (LİMİTLİ)
+// GÜVENLİ BAŞLATMA FONKSİYONU
+/* ===========================
+   GÜVENLİ TEKRAR BAŞLATMA (Hata Korumalı)
+=========================== */
+/* ===========================
+   GÜVENLİ TEKRAR BAŞLATMA (DÜZELTİLDİ: .open)
+=========================== */
+/* ===========================
+   GÜVENLİ TEKRAR BAŞLATMA (DÜZELTİLDİ: .open KULLANILDI)
+=========================== */
+/* ===========================
+   GÖRSEL EFEKTLİ TEKRAR BAŞLATMA
+   (Tıklanan butonu yakar, diğerlerini söndürür)
+=========================== */
+/* ===========================
+   GÜVENLİ TEKRAR BAŞLATMA (KARIŞTIRMALI)
+   - 5-10-15 seçince hep aynıları gelmesin diye karıştırır.
+=========================== */
+function startReviewQuiz(limit = 9999, btnElement = null){
+  // 1. Görsel Efekt (Buton Rengi)
+  if(btnElement){
+     const container = document.getElementById("limitContainer");
+     if(container){
+        container.querySelectorAll(".btn").forEach(b => {
+           b.classList.remove("btnPrimary"); 
+           b.classList.add("btnSoft"); 
+        });
+     }
+     btnElement.classList.remove("btnSoft");
+     btnElement.classList.add("btnPrimary");
+  }
+
+  try {
+    if(!state || !state.cards) return toast("Kart verisi yok!");
+    if(typeof closeSheets === "function") closeSheets();
+
+    const now = Date.now();
+    let dueCards = state.cards.filter(c => (c.due || 0) <= now);
+
+    // --- DEĞİŞİKLİK BURADA: ÖNCE KARIŞTIR ---
+    // Eğer kart varsa, tarihine bakmaksızın önce bir karıştır ki hep aynıları gelmesin
+    if(dueCards.length > 0){
+       dueCards.sort(() => Math.random() - 0.5);
+    } else {
+       // Hiç kart yoksa rastgele pratik için tüm havuzu karıştır
+       dueCards = [...state.cards].sort(() => Math.random() - 0.5);
+    }
+
+    // LİMİT UYGULA
+    if(dueCards.length > limit){
+       dueCards = dueCards.slice(0, limit);
+    }
+
+    state.reviewQueue = dueCards.map(c => c.id);
+    DB.set("lm_review_queue", state.reviewQueue);
+
+    if(state.reviewQueue.length === 0) return toast("Çalışılacak kart yok!");
+
+    const overlay = document.getElementById("quizOverlay");
+    if(overlay) {
+        overlay.classList.remove("active");
+        overlay.classList.add("open");
+    }
+    
+    if(typeof nextQuiz === "function") nextQuiz();
+
+  } catch(err) {
+    alert("Hata: " + err.message);
+  }
+}
+function openQuizOverlay(){
+  document.getElementById("quizOverlay").classList.add("open");
+  document.getElementById("qInput").onkeydown=(e)=>{
+    if(e.key==="Enter"){ e.preventDefault(); checkTypingAnswer(); }
+  };
+}
+function stopQuiz(){
+  // --- DÜZELTME BAŞLANGICI ---
+  // Eğer ekranda aktif bir soru varken çıkış yapılıyorsa,
+  // o soruyu kuyruğun EN BAŞINA geri ekle (böylece sayı düşmez)
+  if(quizCurrent && quizCurrent.id){
+     state.reviewQueue.unshift(quizCurrent.id);
+     DB.set("lm_review_queue", state.reviewQueue);
+  }
+  // --- DÜZELTME BİTİŞİ ---
+
+  document.getElementById("quizOverlay").classList.remove("open");
+  quizCurrent=null;
+  renderDash(); renderReview();
+}
+function updateQuizRemain(){
+  document.getElementById("qRemain").textContent=String(state.reviewQueue.length);
+}
+/* ===========================
+   BAĞLAM (CONTEXT) MODU QUİZ SİSTEMİ
+   - Soruyu cümle içinde boşluk olarak sorar.
+   - Cevap olarak kelimenin kendisini ister.
+=========================== */
+/* ===========================
+   GÜNCELLENMİŞ QUIZ GÖRÜNÜMÜ
+   (Soru işareti kalktı, şık boşluk geldi)
+=========================== */
+/* ===========================
+   GÜNCELLENMİŞ QUIZ (Sadece EN -> TR ve Context)
+   - Asla Türkçe kelime verip İngilizcesini sormaz.
+   - Ya cümle tamamlatır (En->En) ya da Kelime sorar (En->Tr).
+=========================== */
+/* ===========================
+   ADIM 2: GELİŞMİŞ QUIZ (İPUÇLU & AÇIKLAMALI)
+=========================== */
+/* ===========================
+   GELİŞMİŞ QUIZ ARAYÜZÜ
+   - Doğru bilinirse: "Öğrendim" veya "Öğreniyorum" seçtirir.
+   - Yanlış bilinirse: Otomatik "Bilmiyorum" sayar.
+   - Geç butonu: "Bilmiyorum" sayar ve sıradakine geçer.
+=========================== */
+function nextQuiz(){
+  if(!state.reviewQueue.length){
+    toast("Tebrikler! Oturum bitti 🎉");
+    stopQuiz();
+    return;
+  }
+  updateQuizRemain();
+  
+  const id = state.reviewQueue.shift();
+  DB.set("lm_review_queue", state.reviewQueue);
+  
+  const card = state.cards.find(c => c.id === id);
+  if(!card) return nextQuiz(); // Kart silinmişse sonrakine geç
+
+  quizCurrent = card;
+
+  // --- SORU TİPİ ---
+  let isContextMode = false;
+  let questionHtml = "";
+  let hintText = "";
+  let explanationHtml = "";
+  
+  // Context (Cümle) Modu Kontrolü
+  if(card.example && card.example.length > 5) {
+     const termRegex = new RegExp(`\\b${card.term}\\b`, "gi"); 
+     const blankStyle = `<span style='color:var(--primary); border-bottom:3px solid var(--primary); font-weight:bold;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
+     const hiddenExample = card.example.replace(termRegex, blankStyle);
+     
+     if(hiddenExample !== card.example){
+        isContextMode = true; 
+        questionHtml = hiddenExample; 
+        hintText = "Boşluğa hangisi gelmeli?";
+        explanationHtml = `<div style="margin-top:20px; font-size:16px; color:var(--muted); font-style:italic;">🇹🇷 İpucu: "${card.meaning}"</div>`;
+     }
+  }
+
+  // Klasik Mod
+  if(!isContextMode) {
+     questionHtml = `<span style="font-size:36px; color:var(--primary);">${card.term}</span>`;
+     hintText = "Bu kelimenin anlamı nedir?";
+     if(card.example && card.example.length > 5){
+        const termRegex = new RegExp(`\\b${card.term}\\b`, "gi");
+        const hiddenInExample = card.example.replace(termRegex, "___");
+        explanationHtml = `<div style="margin-top:20px; font-size:16px; color:var(--text); opacity:0.8;">🇬🇧 Örnek: "${hiddenInExample}"</div>`;
+     } else {
+        explanationHtml = `<div style="margin-top:20px; font-size:14px; color:var(--muted);">(Örnek cümle yok)</div>`;
+     }
+  }
+
+  // EKRANA YAZ
+  const qWordEl = document.getElementById("qWord");
+  qWordEl.innerHTML = `<div>${questionHtml}</div>${explanationHtml}`;
+  
+  if(qWordEl.innerText.length > 80) qWordEl.style.fontSize = "20px";
+  else if(!isContextMode) qWordEl.style.fontSize = "28px";
+  else qWordEl.style.fontSize = "24px";
+
+  document.getElementById("qMeta").textContent = hintText;
+  document.getElementById("qExample").textContent = ""; 
+  document.getElementById("qReveal").innerHTML = ""; // Temizle
+
+  // ŞIKLARI HAZIRLA
+  const choicesBox = document.getElementById("qChoices");
+  const typingBox = document.getElementById("qTyping");
+  choicesBox.innerHTML = "";
+  typingBox.style.display = "none";
+  choicesBox.style.display = "flex";
+
+  // Şıkları üret (Doğru + 3 Yanlış)
+  let options = [];
+  let correctVal = isContextMode ? card.term : card.meaning;
+  
+  const distractors = state.cards
+      .filter(c => c.id !== card.id)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+      .map(x => isContextMode ? x.term : x.meaning);
+      
+  options = [...distractors, correctVal].sort(() => Math.random() - 0.5);
+
+  options.forEach(opt => {
+      const b = document.createElement("button");
+      b.className = "qChoice";
+      b.textContent = opt; 
+      b.onclick = () => {
+        // Tüm şıkları kilitle
+        document.querySelectorAll(".qChoice").forEach(x => x.disabled = true);
+        
+        if(opt === correctVal){
+          // DOĞRU BİLİNDİ
+          b.classList.add("correct");
+          
+          if(isContextMode){
+             const completedHtml = card.example.replace(new RegExp(`\\b${card.term}\\b`, "gi"), `<span style='color:var(--ok); font-weight:900;'>${card.term}</span>`);
+             qWordEl.innerHTML = `<div>${completedHtml}</div>${explanationHtml}`;
+          }
+          
+          // --- YENİ KISIM: ZORLUK SEÇİMİ BUTONLARI ---
+          // Kullanıcıya soruyoruz: Tam öğrendin mi yoksa hala çalışıyor musun?
+          document.getElementById("qReveal").innerHTML = `
+            <div style="font-weight:bold; color:var(--ok); margin-bottom:8px;">✅ Doğru! Ne kadar rahattın?</div>
+            <div style="display:flex; gap:10px;">
+              <button class="btn btnSoft btnHalf" onclick="grade(state.cards.find(c=>c.id=='${card.id}'), 3, true)">🟡 Öğreniyorum</button>
+              <button class="btn btnOk btnHalf" onclick="grade(state.cards.find(c=>c.id=='${card.id}'), 5, true)">🟢 Tam Öğrendim</button>
+            </div>
+          `;
+          
+          // Otomatik geçişi iptal et, kullanıcı butona basınca geçecek
+        } else {
+          // YANLIŞ BİLİNDİ
+          b.classList.add("wrong");
+          // Doğru şıkkı göster
+          document.querySelectorAll(".qChoice").forEach(btn => { if(btn.textContent === correctVal) btn.classList.add("correct"); });
+          
+          if(isContextMode) document.getElementById("qExample").textContent = `Doğrusu: ${card.term}`;
+          
+          // Yanlış bilinince direkt "Bilmiyorum" olarak işaretle ve geç
+          grade(card, 0, false);
+        }
+      };
+      choicesBox.appendChild(b);
+  });
+}
+function normalizeAnswer(a){
+  return norm(a).replace(/[.,!?;:"(){}\[\]<>]/g,"").replace(/\s+/g," ").trim();
+}
+function checkTypingAnswer(){
+  if(!quizCurrent) return;
+  const typed = normalizeAnswer(document.getElementById("qInput").value);
+  if(!typed) return toast("Bir cevap yazın.");
+  
+  // Artık kontrol ettiğimiz şey KELİMENİN KENDİSİ (term)
+  const correct = normalizeAnswer(quizCurrent.term);
+  
+  const ok = (typed === correct);
+  
+  if(ok){
+    document.getElementById("qReveal").textContent = "✅ Doğru!";
+    document.getElementById("qExample").textContent = quizCurrent.example; 
+    grade(quizCurrent, 5, true);
+  } else {
+    document.getElementById("qReveal").textContent = `❌ Doğrusu: ${quizCurrent.term}`;
+    document.getElementById("qExample").textContent = quizCurrent.example;
+    grade(quizCurrent, 2, false);
+  }
+}
+function grade(card, quality, isCorrect){
+  // İstatistik güncelle
+  if(isCorrect){ 
+      correctCount++; 
+      document.getElementById("qCorrect").textContent=String(correctCount); 
+  } else { 
+      wrongCount++; 
+      document.getElementById("qWrong").textContent=String(wrongCount); 
+  }
+
+  // Kartı güncelle
+  const upd = srsCalc(card, quality);
+  card.due = upd.due;
+  card.srs = upd.srs;
+  card.updatedAt = Date.now();
+  DB.set("lm_cards", state.cards);
+
+  // 550ms bekleyip diğer soruya geç
+  setTimeout(()=>{ 
+      quizCurrent=null; 
+      nextQuiz(); 
+  }, 550);
+}
+
+// "BİLMİYORUM / GEÇ" BUTONU İŞLEVİ
+// Soruya cevap vermeden "Geç" denilirse veya yanlış bilinirse çalışır
+function markAsUnknown(){
+  if(!quizCurrent) return;
+  // Quality 0 = Bilmiyorum (Sıfırlar)
+  // isCorrect false = Yanlış sayısına ekle
+  toast("Tekrar listesine eklendi 📅");
+  grade(quizCurrent, 0, false);
+}
+function skipQuestion(){
+  if(!quizCurrent) return;
+  state.reviewQueue.push(quizCurrent.id);
+  DB.set("lm_review_queue", state.reviewQueue);
+  toast("Soru sona atıldı");
+  quizCurrent=null;
+  nextQuiz();
+}
+
+/* Speak */
+function speakText(txt, lang){
+  const u=new SpeechSynthesisUtterance(txt);
+  // İspanyolca (ES: 'es-ES') eklendi
+const map={EN:"en-US", RU:"ru-RU", DE:"de-DE", FR:"fr-FR", ES:"es-ES", TR:"tr-TR"};
+  u.lang=map[lang] || "en-US";
+  u.rate=0.9;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+function speakQuizWord(){
+  if(!quizCurrent) return;
+  speakText(quizCurrent.term, quizCurrent.lang || "EN");
 }
 
 /* ===========================
-   9. BAŞLATMA (INIT)
-   (En sonda çalışır, veriyi ekrana basar)
+   Export/Import/Reset
 =========================== */
-// Tema Yükle
+function exportAll(){
+  const data = JSON.stringify({ settings:state.settings, cards:state.cards }, null, 2);
+  prompt("Kopyala (Export JSON):", data);
+}
+function importAllPrompt(){
+  const txt = prompt("Import JSON yapıştır:");
+  if(!txt) return;
+  try{
+    const obj=JSON.parse(txt);
+    if(obj.settings) state.settings=obj.settings;
+    if(obj.cards) state.cards=obj.cards;
+    saveAll();
+    setTheme(state.settings.theme || "dark");
+    syncQuizModeLabels();
+    toast("Import ✅");
+    renderDash(); renderReview(); renderCards();
+  }catch(e){
+    toast("Import hata");
+  }
+}
+function hardReset(){
+  if(!confirm("Her şeyi sıfırlamak istiyor musun?")) return;
+  localStorage.clear();
+  location.reload();
+}
+/* ===========================
+   TOP 100 İNGİLİZCE KELİME PAKETİ (Veritabanı boşsa yüklenir)
+=========================== */
+if (state.cards.length === 0) {
+  // En sık kullanılan, akademik ve günlük hayati kelimelerden seçki
+  const starterPack = [
+    // --- VERBS (Fiiller) ---
+    { t: "achieve", m: "başarmak, elde etmek", y: "verb", e: "She worked hard to achieve her goals." },
+    { t: "admit", m: "kabul etmek, itiraf etmek", y: "verb", e: "He admitted that he made a mistake." },
+    { t: "affect", m: "etkilemek", y: "verb", e: "The weather can affect your mood." },
+    { t: "afford", m: "gücü yetmek (maddi)", y: "verb", e: "I can't afford a new car right now." },
+    { t: "allow", m: "izin vermenk", y: "verb", e: "Smoking is not allowed here." },
+    { t: "appear", m: "görünmek, ortaya çıkmak", y: "verb", e: "He appears to be tired." },
+    { t: "appreciate", m: "takdir etmek, değerini bilmek", y: "verb", e: "I appreciate your help." },
+    { t: "argue", m: "tartışmak, iddia etmek", y: "verb", e: "They argue about money all the time." },
+    { t: "avoid", m: "kaçınmak", y: "verb", e: "You should avoid eating too much sugar." },
+    { t: "become", m: "olmak, haline gelmek", y: "verb", e: "The caterpillar becomes a butterfly." },
+    { t: "believe", m: "inanmak", y: "verb", e: "I believe in you." },
+    { t: "borrow", m: "ödünç almak", y: "verb", e: "Can I borrow your pen?" },
+    { t: "complain", m: "şikayet etmek", y: "verb", e: "He is always complaining about the noise." },
+    { t: "consider", m: "göz önünde bulundurmak, düşünmek", y: "verb", e: "Please consider my offer." },
+    { t: "contain", m: "içermek", y: "verb", e: "This box contains old photos." },
+    { t: "convince", m: "ikna etmek", y: "verb", e: "I couldn't convince him to stay." },
+    { t: "create", m: "yaratmak, oluşturmak", y: "verb", e: "The software creates a backup automatically." },
+    { t: "decide", m: "karar vermek", y: "verb", e: "Have you decided what to wear?" },
+    { t: "describe", m: "tarif etmek, tanımlamak", y: "verb", e: "Can you describe the thief?" },
+    { t: "develop", m: "geliştirmek", y: "verb", e: "They are developing a new drug." },
+    { t: "disappear", m: "gözden kaybolmak", y: "verb", e: "The sun disappeared behind the clouds." },
+    { t: "discover", m: "keşfetmek", y: "verb", e: "Columbus discovered America." },
+    { t: "encourage", m: "cesaretlendirmek, teşvik etmek", y: "verb", e: "My teacher encouraged me to study art." },
+    { t: "establish", m: "kurmak, tesis etmek", y: "verb", e: "The company was established in 1990." },
+    { t: "exist", m: "var olmak", y: "verb", e: "Does life exist on other planets?" },
+    { t: "expect", m: "ummak, beklemek", y: "verb", e: "I expect him to be late." },
+    { t: "explain", m: "açıklamak", y: "verb", e: "Can you explain this rule to me?" },
+    { t: "explore", m: "keşfe çıkmak, incelemek", y: "verb", e: "We explored the old city." },
+    { t: "improve", m: "geliştirmek, iyileştirmek", y: "verb", e: "You need to improve your English." },
+    { t: "increase", m: "artmak, arttırmak", y: "verb", e: "Sales increased by 10% this year." },
+    { t: "indicate", m: "göstermek, işaret etmek", y: "verb", e: "The map indicates where the treasure is." },
+    { t: "insist", m: "ısrar etmek", y: "verb", e: "She insisted on paying for dinner." },
+    { t: "involve", m: "içermek, kapsamak", y: "verb", e: "The job involves a lot of travel." },
+    { t: "mention", m: "bahsetmek", y: "verb", e: "Did he mention my name?" },
+    { t: "obtain", m: "elde etmek, edinmek", y: "verb", e: "Where can I obtain a visa?" },
+    { t: "occur", m: "meydana gelmek", y: "verb", e: "The accident occurred at night." },
+    { t: "offer", m: "teklif etmek, sunmak", y: "verb", e: "He offered me a job." },
+    { t: "participate", m: "katılmak", y: "verb", e: "All students must participate in the event." },
+    { t: "perform", m: "sahnelemek, performans göstermek", y: "verb", e: "The band performed live." },
+    { t: "persuade", m: "ikna etmek", y: "verb", e: "Try to persuade him to come." },
+    { t: "predict", m: "tahmin etmek, öngörmek", y: "verb", e: "It is hard to predict the weather." },
+    { t: "prepare", m: "hazırlamak", y: "verb", e: "I need to prepare for the exam." },
+    { t: "prevent", m: "önlemek, engel olmak", y: "verb", e: "Seatbelts prevent injuries." },
+    { t: "produce", m: "üretmek", y: "verb", e: "This factory produces cars." },
+    { t: "protect", m: "korumak", y: "verb", e: "Sunglasses protect your eyes from the sun." },
+    { t: "prove", m: "kanıtlamak", y: "verb", e: "Can you prove your theory?" },
+    { t: "provide", m: "sağlamak, temin etmek", y: "verb", e: "The hotel provides free Wi-Fi." },
+    { t: "realize", m: "farkına varmak", y: "verb", e: "I realized I left my keys at home." },
+    { t: "recognize", m: "tanımak (birini/bir şeyi)", y: "verb", e: "I didn't recognize him with a beard." },
+    { t: "reduce", m: "azaltmak", y: "verb", e: "We need to reduce costs." },
+    { t: "refuse", m: "reddetmek", y: "verb", e: "He refused to answer the question." },
+    { t: "regret", m: "pişman olmak", y: "verb", e: "I regret saying that." },
+    { t: "relate", m: "ilişkilendirmek", y: "verb", e: "How does this relate to the problem?" },
+    { t: "remain", m: "kalmak (durumunu korumak)", y: "verb", e: "Please remain seated." },
+    { t: "remember", m: "hatırlamak", y: "verb", e: "Do you remember me?" },
+    { t: "remind", m: "hatırlatmak", y: "verb", e: "Please remind me to call her." },
+    { t: "replace", m: "yerini almak, değiştirmek", y: "verb", e: "Robots might replace workers." },
+    { t: "require", m: "gerektirmek", y: "verb", e: "Plants require water to grow." },
+    { t: "reveal", m: "açığa çıkarmak", y: "verb", e: "The investigation revealed the truth." },
+    { t: "seem", m: "gibi görünmek", y: "verb", e: "It seems like a good idea." },
+    { t: "solve", m: "çözmek", y: "verb", e: "I can't solve this puzzle." },
+    { t: "suffer", m: "acı çekmek, katlanmak", y: "verb", e: "She suffers from migraines." },
+    { t: "suggest", m: "önermek", y: "verb", e: "I suggest you take a taxi." },
+    { t: "supply", m: "tedarik etmek", y: "verb", e: "They supply us with paper." },
+    { t: "suppose", m: "varsaymak, zannetmek", y: "verb", e: "I suppose you are right." },
+    { t: "survive", m: "hayatta kalmak", y: "verb", e: "Only a few survived the crash." },
+    { t: "tend", m: "eğiliminde olmak", y: "verb", e: "Prices tend to go up in winter." },
+    { t: "threaten", m: "tehdit etmek", y: "verb", e: "He threatened to call the police." },
+    { t: "understand", m: "anlamak", y: "verb", e: "I don't understand French." },
+    { t: "wonder", m: "merak etmek", y: "verb", e: "I wonder what happened." },
+
+    // --- NOUNS (İsimler) ---
+    { t: "ability", m: "yetenek", y: "noun", e: "He has the ability to learn quickly." },
+    { t: "access", m: "erişim", y: "noun", e: "Do you have internet access?" },
+    { t: "accident", m: "kaza", y: "noun", e: "He had a car accident." },
+    { t: "account", m: "hesap", y: "noun", e: "I opened a bank account." },
+    { t: "advantage", m: "avantaj", y: "noun", e: "Speed is a big advantage." },
+    { t: "advice", m: "tavsiye", y: "noun", e: "Can you give me some advice?" },
+    { t: "amount", m: "miktar", y: "noun", e: "A large amount of money." },
+    { t: "attitude", m: "tavır, tutum", y: "noun", e: "She has a positive attitude." },
+    { t: "audience", m: "seyirci kitlesi", y: "noun", e: "The audience clapped loudly." },
+    { t: "behavior", m: "davranış", y: "noun", e: "His behavior was unacceptable." },
+    { t: "benefit", m: "fayda, yarar", y: "noun", e: "The benefits of exercise are many." },
+    { t: "career", m: "kariyer", y: "noun", e: "She wants a career in medicine." },
+    { t: "challenge", m: "zorluk, meydan okuma", y: "noun", e: "This game is a real challenge." },
+    { t: "choice", m: "seçim", y: "noun", e: "It was a difficult choice." },
+    { t: "circumstance", m: "koşul, durum", y: "noun", e: "Under normal circumstances, I would agree." },
+    { t: "community", m: "topluluk", y: "noun", e: "We have a strong community." },
+    { t: "competition", m: "yarışma, rekabet", y: "noun", e: "There is a lot of competition." },
+    { t: "complaint", m: "şikayet", y: "noun", e: "I have a complaint about the food." },
+    { t: "conclusion", m: "sonuç", y: "noun", e: "What is your conclusion?" },
+    { t: "condition", m: "durum, şart", y: "noun", e: "The car is in good condition." },
+    { t: "consequence", m: "sonuç (genelde kötü)", y: "noun", e: "You must face the consequences." },
+    { t: "contribution", m: "katkı", y: "noun", e: "Thank you for your contribution." },
+    { t: "courage", m: "cesaret", y: "noun", e: "It takes courage to speak up." },
+    { t: "culture", m: "kültür", y: "noun", e: "I love learning about other cultures." },
+    { t: "damage", m: "hasar", y: "noun", e: "The storm caused a lot of damage." },
+    { t: "decision", m: "karar", y: "noun", e: "It was a tough decision." },
+    { t: "demand", m: "talep", y: "noun", e: "Supply and demand." },
+    { t: "development", m: "gelişim", y: "noun", e: "Economic development is slow." },
+    { t: "difference", m: "fark", y: "noun", e: "What is the difference?" },
+    { t: "direction", m: "yön", y: "noun", e: "Which direction did he go?" },
+    { t: "disease", m: "hastalık", y: "noun", e: "Heart disease is common." },
+    { t: "doubt", m: "şüphe", y: "noun", e: "I have no doubt about it." },
+    { t: "economy", m: "ekonomi", y: "noun", e: "The global economy is recovering." },
+    { t: "education", m: "eğitim", y: "noun", e: "Education is very important." },
+    { t: "effect", m: "etki", y: "noun", e: "The special effects were amazing." },
+    { t: "effort", m: "çaba", y: "noun", e: "He put a lot of effort into this." },
+    { t: "election", m: "seçim (siyasi)", y: "noun", e: "The election is next month." },
+    { t: "emotion", m: "duygu", y: "noun", e: "Fear is a strong emotion." },
+    { t: "emphasis", m: "vurgu", y: "noun", e: "The emphasis is on quality." },
+    { t: "energy", m: "enerji", y: "noun", e: "I don't have enough energy." },
+    { t: "environment", m: "çevre", y: "noun", e: "We must protect the environment." },
+    { t: "equipment", m: "ekipman", y: "noun", e: "We need camping equipment." },
+    { t: "evidence", m: "kanıt", y: "noun", e: "There is no evidence of a crime." },
+    { t: "experience", m: "tecrübe, deneyim", y: "noun", e: "She has 5 years of experience." },
+    { t: "explanation", m: "açıklama", y: "noun", e: "I need an explanation." },
+    { t: "fact", m: "gerçek", y: "noun", e: "It is a scientific fact." },
+    { t: "failure", m: "başarısızlık", y: "noun", e: "Failure is part of learning." },
+    { t: "feature", m: "özellik", y: "noun", e: "This phone has many new features." },
+    { t: "feeling", m: "his", y: "noun", e: "I have a bad feeling about this." },
+    { t: "freedom", m: "özgürlük", y: "noun", e: "Freedom of speech." },
+    { t: "goal", m: "hedef, amaç", y: "noun", e: "My goal is to learn English." },
+    { t: "government", m: "hükümet", y: "noun", e: "The government lowered taxes." },
+    { t: "growth", m: "büyüme", y: "noun", e: "Population growth is rapid." },
+    { t: "habit", m: "alışkanlık", y: "noun", e: "Smoking is a bad habit." },
+    { t: "health", m: "sağlık", y: "noun", e: "Health is wealth." },
+    { t: "history", m: "tarih", y: "noun", e: "History repeats itself." },
+    { t: "idea", m: "fikir", y: "noun", e: "I have a great idea." },
+    { t: "importance", m: "önem", y: "noun", e: "I understand the importance of time." },
+    { t: "income", m: "gelir", y: "noun", e: "His income has increased." },
+    { t: "industry", m: "sanayi, endüstri", y: "noun", e: "The car industry." },
+    { t: "information", m: "bilgi", y: "noun", e: "For more information, visit our website." },
+    { t: "injury", m: "yaralanma", y: "noun", e: "Luckily, it was a minor injury." },
+    { t: "knowledge", m: "bilgi (birikim)", y: "noun", e: "Knowledge is power." },
+
+    // --- ADJECTIVES (Sıfatlar) ---
+    { t: "able", m: "yapabilir, muktedir", y: "adj", e: "Will you be able to come?" },
+    { t: "actual", m: "gerçek, asıl", y: "adj", e: "What is the actual cost?" },
+    { t: "afraid", m: "korkmuş", y: "adj", e: "Are you afraid of spiders?" },
+    { t: "alone", m: "yalnız", y: "adj", e: "I am home alone." },
+    { t: "amazing", m: "şaşırtıcı, harika", y: "adj", e: "The view was amazing." },
+    { t: "angry", m: "kızgın", y: "adj", e: "Why are you angry?" },
+    { t: "available", m: "müsait, mevcut", y: "adj", e: "Is this seat available?" },
+    { t: "basic", m: "temel", y: "adj", e: "Basic human rights." },
+    { t: "beautiful", m: "güzel", y: "adj", e: "A beautiful garden." },
+    { t: "best", m: "en iyi", y: "adj", e: "She is my best friend." },
+    { t: "better", m: "daha iyi", y: "adj", e: "I feel better today." },
+    { t: "big", m: "büyük", y: "adj", e: "It's a big house." },
+    { t: "boring", m: "sıkıcı", y: "adj", e: "The movie was boring." },
+    { t: "brave", m: "cesur", y: "adj", e: "He was a brave soldier." },
+    { t: "bright", m: "parlak, zeki", y: "adj", e: "A bright future." },
+    { t: "busy", m: "meşgul", y: "adj", e: "I am very busy right now." },
+    { t: "careful", m: "dikkatli", y: "adj", e: "Be careful driving." },
+    { t: "cheap", m: "ucuz", y: "adj", e: "This shirt was very cheap." },
+    { t: "clean", m: "temiz", y: "adj", e: "Keep your room clean." },
+    { t: "clear", m: "açık, net", y: "adj", e: "The instructions are clear." },
+    { t: "common", m: "yaygın, ortak", y: "adj", e: "It is a common mistake." },
+    { t: "complex", m: "karmaşık", y: "adj", e: "It is a complex problem." },
+    { t: "concerned", m: "endişeli", y: "adj", e: "I am concerned about his health." },
+    { t: "confident", m: "kendine güvenen", y: "adj", e: "She is confident she will win." },
+    { t: "confused", m: "kafası karışmış", y: "adj", e: "I am totally confused." },
+    { t: "conscious", m: "bilinçli", y: "adj", e: "He is conscious of his faults." },
+    { t: "consistent", m: "tutarlı", y: "adj", e: "We need consistent results." },
+    { t: "constant", m: "sürekli", y: "adj", e: "Constant noise makes me crazy." },
+    { t: "crazy", m: "çılgın, deli", y: "adj", e: "Are you crazy?" },
+    { t: "creative", m: "yaratıcı", y: "adj", e: "She is very creative." },
+    { t: "critical", m: "eleştirel, kritik", y: "adj", e: "It is a critical moment." },
+    { t: "curious", m: "meraklı", y: "adj", e: "I was curious to see it." },
+    { t: "dangerous", m: "tehlikeli", y: "adj", e: "It is dangerous to swim here." },
+    { t: "dark", m: "karanlık", y: "adj", e: "It gets dark early in winter." },
+    { t: "deep", m: "derin", y: "adj", e: "The ocean is deep." },
+    { t: "different", m: "farklı", y: "adj", e: "We have different opinions." },
+    { t: "difficult", m: "zor", y: "adj", e: "Math is difficult for me." },
+    { t: "dirty", m: "kirli", y: "adj", e: "Your shoes are dirty." },
+    { t: "disappointed", m: "hayal kırıklığına uğramış", y: "adj", e: "I was disappointed with the service." },
+    { t: "distinct", m: "belirgin, farklı", y: "adj", e: "There is a distinct smell." },
+    { t: "dramatic", m: "dramatik, çarpıcı", y: "adj", e: "A dramatic change." },
+    { t: "early", m: "erken", y: "adj", e: "I woke up early." },
+    { t: "easy", m: "kolay", y: "adj", e: "The test was easy." },
+    { t: "effective", m: "etkili", y: "adj", e: "This medicine is effective." },
+    { t: "efficient", m: "verimli", y: "adj", e: "He is an efficient worker." },
+    { t: "embarrassed", m: "utanmış", y: "adj", e: "I felt embarrassed." },
+    { t: "empty", m: "boş", y: "adj", e: "The glass is empty." },
+    { t: "environmental", m: "çevresel", y: "adj", e: "Environmental issues." },
+    { t: "equal", m: "eşit", y: "adj", e: "All men are created equal." },
+    { t: "essential", m: "temel, elzem", y: "adj", e: "Water is essential for life." },
+    { t: "exact", m: "tam, kesin", y: "adj", e: "Tell me the exact time." },
+    { t: "excellent", m: "mükemmel", y: "adj", e: "Excellent work!" },
+    { t: "excited", m: "heyecanlı", y: "adj", e: "I am excited about the trip." },
+    { t: "expensive", m: "pahalı", y: "adj", e: "Cars are expensive." },
+    { t: "external", m: "harici", y: "adj", e: "External hard drive." },
+    { t: "extreme", m: "aşırı", y: "adj", e: "Extreme weather." },
+    { t: "famous", m: "ünlü", y: "adj", e: "He is a famous actor." },
+    { t: "fast", m: "hızlı", y: "adj", e: "A fast car." },
+    { t: "financial", m: "finansal", y: "adj", e: "Financial problems." },
+    { t: "foreign", m: "yabancı", y: "adj", e: "Foreign language." },
+    { t: "formal", m: "resmi", y: "adj", e: "Formal dress code." },
+    { t: "free", m: "özgür, bedava", y: "adj", e: "Are you free tonight?" },
+    { t: "frequent", m: "sık", y: "adj", e: "Frequent flyer." },
+    { t: "friendly", m: "arkadaş canlısı", y: "adj", e: "A friendly dog." },
+    { t: "full", m: "dolu, tok", y: "adj", e: "I am full." },
+    { t: "funny", m: "komik", y: "adj", e: "He is very funny." },
+    { t: "general", m: "genel", y: "adj", e: "In general, I agree." },
+    { t: "global", m: "küresel", y: "adj", e: "Global warming." },
+    { t: "good", m: "iyi", y: "adj", e: "Have a good day." },
+    { t: "great", m: "harika, büyük", y: "adj", e: "It was a great party." },
+    { t: "guilty", m: "suçlu", y: "adj", e: "He feels guilty." },
+    { t: "happy", m: "mutlu", y: "adj", e: "A happy family." },
+    { t: "hard", m: "zor, sert", y: "adj", e: "The ground is hard." },
+    { t: "healthy", m: "sağlıklı", y: "adj", e: "Healthy food." },
+    { t: "heavy", m: "ağır", y: "adj", e: "This bag is heavy." },
+    { t: "helpful", m: "yardımsever", y: "adj", e: "The staff was helpful." },
+    { t: "historical", m: "tarihi", y: "adj", e: "A historical building." },
+    { t: "honest", m: "dürüst", y: "adj", e: "Be honest with me." },
+    { t: "hot", m: "sıcak", y: "adj", e: "It is hot today." },
+    { t: "huge", m: "kocaman", y: "adj", e: "A huge mistake." },
+    { t: "human", m: "insani", y: "adj", e: "Human rights." },
+    { t: "hungry", m: "aç", y: "adj", e: "I am hungry." },
+    { t: "illegal", m: "yasadışı", y: "adj", e: "It is illegal to park here." },
+    { t: "important", m: "önemli", y: "adj", e: "This is very important." },
+    { t: "impossible", m: "imkansız", y: "adj", e: "Nothing is impossible." }
+    
+  ];
+
+  state.cards = starterPack.map(w => ({
+    id: uid(),
+    lang: "EN",
+    term: w.t,
+    meaning: w.m,
+    type: w.y,
+    example: w.e,
+    note: "Başlangıç Paketi",
+    due: now(), 
+    srs: { interval: 0, reps: 0, ef: 2.5 },
+    createdAt: now(),
+    updatedAt: now()
+  }));
+
+  saveAll();
+  console.log("Başlangıç paketi (200+ Kelime) yüklendi.");
+}
+/* ===========================
+   Init
+=========================== */
 setTheme(state.settings.theme || "dark");
-function setTheme(name){
-  document.documentElement.setAttribute("data-theme", name);
-  state.settings.theme = name;
-  saveAll();
+syncQuizModeLabels();
+renderDash(); renderReview(); renderCards();
+if(!state.reviewQueue) state.reviewQueue=[];
+  /* ===========================
+   EKSTRA KELİME PAKETİ (Mevcut listenin üzerine ekleme yapar)
+   Öncekileri silmez, sadece olmayanları ekler.
+=========================== */
+(function addExtraWords() {
+  const extraPack = [
+    // --- YENİ FİİLLER (VERBS) ---
+    { t: "apply", m: "başvurmak, uygulamak", y: "verb", e: "I applied for the job." },
+    { t: "break", m: "kırmak, bozmak", y: "verb", e: "Don't break the glass." },
+    { t: "build", m: "inşa etmek", y: "verb", e: "They are building a new house." },
+    { t: "buy", m: "satın almak", y: "verb", e: "I want to buy a car." },
+    { t: "care", m: "önemsemek, ilgilenmek", y: "verb", e: "I don't care about money." },
+    { t: "catch", m: "yakalamak", y: "verb", e: "Catch the ball!" },
+    { t: "change", m: "değiştirmek", y: "verb", e: "You haven't changed at all." },
+    { t: "check", m: "kontrol etmek", y: "verb", e: "Please check your answers." },
+    { t: "choose", m: "seçmek", y: "verb", e: "Choose a color." },
+    { t: "close", m: "kapatmak", y: "verb", e: "Close the door, please." },
+    { t: "communicate", m: "iletişim kurmak", y: "verb", e: "We communicate by email." },
+    { t: "complete", m: "tamamlamak", y: "verb", e: "Complete the sentence." },
+    { t: "connect", m: "bağlamak, bağlanmak", y: "verb", e: "Connect to the internet." },
+    { t: "control", m: "kontrol etmek, yönetmek", y: "verb", e: "He can't control his anger." },
+    { t: "cook", m: "pişirmek", y: "verb", e: "My mom cooks delicious food." },
+    { t: "cost", m: "mal olmak (fiyat)", y: "verb", e: "How much does it cost?" },
+    { t: "count", m: "saymak", y: "verb", e: "Can you count to ten?" },
+    { t: "cover", m: "örtmek, kaplamak", y: "verb", e: "Snow covered the ground." },
+    { t: "cry", m: "ağlamak", y: "verb", e: "Don't cry, be happy." },
+    { t: "cut", m: "kesmek", y: "verb", e: "Cut the paper." },
+    { t: "dance", m: "dans etmek", y: "verb", e: "Do you like to dance?" },
+    { t: "deal", m: "uğraşmak, anlaşmak", y: "verb", e: "I can't deal with this problem." },
+    { t: "depend", m: "bağlı olmak", y: "verb", e: "It depends on the weather." },
+    { t: "design", m: "tasarlamak", y: "verb", e: "Who designed this building?" },
+    { t: "destroy", m: "yok etmek", y: "verb", e: "Fire destroyed the house." },
+
+    // --- YENİ İSİMLER (NOUNS) ---
+    { t: "action", m: "eylem, aksiyon", y: "noun", e: "Take action now." },
+    { t: "activity", m: "aktivite", y: "noun", e: "Outdoor activities." },
+    { t: "age", m: "yaş, çağ", y: "noun", e: "What is your age?" },
+    { t: "air", m: "hava", y: "noun", e: "Fresh air." },
+    { t: "answer", m: "cevap", y: "noun", e: "I need an answer." },
+    { t: "area", m: "alan, bölge", y: "noun", e: "This is a restricted area." },
+    { t: "art", m: "sanat", y: "noun", e: "Modern art." },
+    { t: "bed", m: "yatak", y: "noun", e: "Time to go to bed." },
+    { t: "blood", m: "kan", y: "noun", e: "Blood type." },
+    { t: "body", m: "vücut", y: "noun", e: "Human body." },
+    { t: "book", m: "kitap", y: "noun", e: "Read a book." },
+    { t: "box", m: "kutu", y: "noun", e: "What is in the box?" },
+    { t: "boy", m: "erkek çocuk", y: "noun", e: "He is a good boy." },
+    { t: "business", m: "iş, işletme", y: "noun", e: "Business trip." },
+    { t: "car", m: "araba", y: "noun", e: "A fast car." },
+    { t: "case", m: "durum, vaka", y: "noun", e: "In that case, I agree." },
+    { t: "center", m: "merkez", y: "noun", e: "City center." },
+    { t: "change", m: "değişim, para üstü", y: "noun", e: "Keep the change." },
+    { t: "city", m: "şehir", y: "noun", e: "New York is a big city." },
+    { t: "class", m: "sınıf, ders", y: "noun", e: "History class." },
+    { t: "color", m: "renk", y: "noun", e: "What is your favorite color?" },
+    { t: "company", m: "şirket", y: "noun", e: "A tech company." },
+    { t: "country", m: "ülke", y: "noun", e: "Which country are you from?" },
+    { t: "day", m: "gün", y: "noun", e: "Have a nice day." },
+    { t: "death", m: "ölüm", y: "noun", e: "Life and death." },
+
+    // --- YENİ SIFATLAR (ADJECTIVES) ---
+    { t: "bad", m: "kötü", y: "adj", e: "Bad weather." },
+    { t: "big", m: "büyük", y: "adj", e: "A big house." },
+    { t: "black", m: "siyah", y: "adj", e: "Black coffee." },
+    { t: "blue", m: "mavi", y: "adj", e: "Blue sky." },
+    { t: "certain", m: "kesin, belirli", y: "adj", e: "Are you certain?" },
+    { t: "cold", m: "soğuk", y: "adj", e: "It is cold outside." },
+    { t: "cool", m: "serin, havalı", y: "adj", e: "He is a cool guy." },
+    { t: "current", m: "şu anki, mevcut", y: "adj", e: "Current situation." },
+    { t: "dead", m: "ölü", y: "adj", e: "A dead tree." },
+    { t: "dry", m: "kuru", y: "adj", e: "My throat is dry." },
+    { t: "early", m: "erken", y: "adj", e: "Early morning." },
+    { t: "fair", m: "adil", y: "adj", e: "That's not fair." },
+    { t: "false", m: "yanlış, sahte", y: "adj", e: "False information." },
+    { t: "final", m: "son, nihai", y: "adj", e: "Final exam." },
+    { t: "fine", m: "iyi, ince", y: "adj", e: "I am fine, thanks." },
+    { t: "foreign", m: "yabancı", y: "adj", e: "Foreign language." },
+    { t: "future", m: "gelecek", y: "adj", e: "Future plans." },
+    { t: "general", m: "genel", y: "adj", e: "General knowledge." },
+    { t: "green", m: "yeşil", y: "adj", e: "Green grass." },
+    { t: "high", m: "yüksek", y: "adj", e: "High prices." },
+    { t: "human", m: "insani", y: "adj", e: "Human nature." },
+    { t: "kind", m: "kibar", y: "adj", e: "Be kind to others." },
+    { t: "large", m: "geniş, büyük", y: "adj", e: "A large pizza." },
+    { t: "late", m: "geç", y: "adj", e: "Don't be late." },
+    { t: "left", m: "sol", y: "adj", e: "Turn left." }
+  ];
+
+  let addedCount = 0;
+  extraPack.forEach(w => {
+    // Kelime daha önce var mı diye kontrol et (büyük/küçük harf duyarsız)
+    const exists = state.cards.some(c => c.term.toLowerCase().trim() === w.t.toLowerCase().trim());
+    
+    // Eğer yoksa ekle
+    if (!exists) {
+      state.cards.push({
+        id: uid(),
+        lang: "EN",
+        term: w.t,
+        meaning: w.m,
+        type: w.y,
+        example: w.e,
+        note: "Ekstra Paket",
+        due: now(), 
+        srs: { interval: 0, reps: 0, ef: 2.5 },
+        createdAt: now(),
+        updatedAt: now()
+      });
+      addedCount++;
+    }
+  });
+
+  if (addedCount > 0) {
+    saveAll();
+    console.log(addedCount + " adet yeni kelime eklendi.");
+    // Ekranı güncelle ki yeni kelimeler görünsün
+    renderDash(); renderReview(); renderCards();
+    toast(addedCount + " yeni kelime eklendi! 🚀");
+  }
+})();
+/* ===========================
+   TÜRKÇE -> İNGİLİZCE ÇEVİRİ MOTORU
+=========================== */
+async function doQuickTranslateTR(){
+  const input = document.getElementById("quickTransInputTR");
+  // Eğer input yoksa hata vermesin
+  if(!input) return;
+
+  const term = input.value.trim();
+  if(!term) return toast("Lütfen Türkçe kelime yazın");
+
+  toast("Çevriliyor... ⏳");
+
+  // Google Translate API: Kaynak=TR, Hedef=EN
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=tr&tl=en&dt=t&dt=bd&q=${encodeURIComponent(term)}`;
+
+  try{
+    const r = await fetch(url);
+    if(!r.ok) throw new Error("Bağlantı hatası");
+    const data = await r.json();
+    
+    // Ana Çeviri (İngilizcesi)
+    let mainMean = (data?.[0]?.[0]?.[0] || "").trim();
+    
+    // Detaylı Anlamlar (Varsa)
+    let extraMeans = [];
+    if(data[1]){
+      data[1].forEach(group => {
+        const pos = group[0]; // noun, verb vs.
+        const words = group[1].slice(0, 4).join(", "); 
+        extraMeans.push(`[${pos}]: ${words}`);
+      });
+    }
+
+    // Sonuç Penceresi İçeriği
+    let content = `
+      <div style="font-size:24px; font-weight:900; color:var(--warn); text-align:center;">${term}</div>
+      <div style="font-size:32px; margin-top:10px; text-align:center; color:var(--text);">🇬🇧 ${mainMean}</div>
+    `;
+    
+    if(extraMeans.length > 0){
+        content += `<div style="margin-top:15px; padding:10px; background:var(--card2); border-radius:8px; font-size:14px; color:var(--muted);">${extraMeans.join("<br>")}</div>`;
+    }
+
+    document.getElementById("trResContent").innerHTML = content;
+    
+    // Karta Ekleme Hafızası:
+    // Kullanıcı Türkçe arattı ama karta eklerken İngilizcesini "Term" (Ön yüz) yapacağız.
+    quickTermCache = mainMean; 
+    
+    openSheet("transResultSheet"); // Pencereyi aç
+    input.value = ""; // Kutuyu temizle
+
+  } catch(e){ 
+    console.log(e);
+    toast("Çeviri yapılamadı"); 
+  }
+}
+  /* ===========================
+   YENİ ÖZELLİKLER: KATEGORİ QUİZ & KART SIFIRLAMA
+=========================== */
+
+// 1. KATEGORİ QUİZ BAŞLATICI
+// (Öğreniyorum veya Öğrendim kutusundaki butona basınca çalışır)
+function startCategoryQuiz(type){
+  closeSheets(); // Varsa açık pencereleri kapat
+  
+  let filtered = [];
+  if(type === 'learning'){
+      // Reps 1,2,3,4 olanlar (Sarılar)
+      filtered = state.cards.filter(c => c.srs && c.srs.reps > 0 && c.srs.reps < 5);
+      toast("Öğrenilenler çalışılıyor... (" + filtered.length + ")");
+  } else if(type === 'mastered'){
+      // Reps 5 ve üzeri olanlar (Yeşiller)
+      filtered = state.cards.filter(c => c.srs && c.srs.reps >= 5);
+      toast("Öğrenilenler tekrar ediliyor... (" + filtered.length + ")");
+  }
+
+  if(filtered.length === 0) return toast("Bu kategoride kart yok!");
+
+  // Karıştır
+  filtered.sort(() => Math.random() - 0.5);
+
+  // Kuyruğa ata ve başlat
+  state.reviewQueue = filtered.map(c => c.id);
+  DB.set("lm_review_queue", state.reviewQueue);
+
+  // Quiz ekranını aç
+  const overlay = document.getElementById("quizOverlay");
+  if(overlay) {
+      overlay.classList.remove("active");
+      overlay.classList.add("open");
+  }
+  nextQuiz();
 }
 
-// Ekranları İlk Kez Çiz
-renderDash();
-renderCards(); 
-renderReview();
+// 2. TEK KARTI SIFIRLAMA (YENİ KLASÖRÜNE ATMA)
+function resetSingleCard(id){
+  const c = state.cards.find(x => x.id === id);
+  if(!c) return;
+  
+  // Kullanıcıya sor
+  if(!confirm("Bu kart 'Yeni' durumuna dönecek. Emin misin?")) return;
 
-// Eğer "Kart Ara" kutusu varsa dinle
-const sInput = document.getElementById("search");
-if(sInput) sInput.addEventListener("input", renderCards);
-
-// Veritabanı boşsa (İlk Kullanım) - İstersen buraya starter pack ekleyebilirsin
-if(state.cards.length === 0){
-   console.log("Kart yok, temiz başlangıç.");
+  // Kartı fabrika ayarlarına döndür (Sıfırla)
+  c.srs = { interval:0, reps:0, ef:2.5 };
+  c.due = Date.now(); // Hemen tekrar listesine girsin
+  c.updatedAt = Date.now();
+  
+  DB.set("lm_cards", state.cards);
+  
+  toast("Kart başa alındı ↩️");
+  renderCards(); // Listeyi güncelle ki rengi değişsin
 }
 </script>
 </body>
-</html>
+</html> 
