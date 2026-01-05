@@ -37,7 +37,16 @@
   -webkit-tap-highlight-color:transparent;
   touch-action: manipulation; /* Çift tıklama zoom'unu engeller */
 }
-    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,system-ui,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
+    /* SAYFAYI EKRANA SABİTLEME */
+html, body {
+  margin: 0; padding: 0;
+  height: 100%; width: 100%;
+  overflow: hidden; /* Sayfanın komple kaymasını engeller */
+  position: fixed; /* Ekrana çiviler (iOS zıplamasını önler) */
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", Roboto, system-ui, sans-serif;
+}
    header {
   position: fixed; /* Ekrana yapıştırır */
   top: 0; left: 0; right: 0; /* Sağa sola yaslar */
@@ -57,17 +66,33 @@
       color:var(--muted);display:grid;place-items:center;cursor:pointer;user-select:none;
     }
     .iconBtn:active{transform:scale(.98);opacity:.9;}
-    #viewport{position:relative;height:calc(100vh - (var(--header-h) + var(--safe-top)));}
-    .view{
-      position:absolute; inset:0;
-      /* Üstten 85px boşluk bırak ki Header'ın altında kalmasın */
-      padding: 85px 18px 18px 18px;
-      padding-bottom:calc(var(--nav-h) + var(--safe-bottom) + 18px);
-      overflow:auto;
-      opacity:0; pointer-events:none;
-      transform:translateY(8px);
-      transition:.25s ease;
-    }
+    /* SADECE ORTANIN KAYMASINI SAĞLAR */
+#viewport {
+  position: absolute;
+  top: calc(var(--header-h) + var(--safe-top)); /* Header'ın hemen altından başla */
+  bottom: calc(var(--nav-h) + var(--safe-bottom)); /* Nav'ın hemen üstünde bit */
+  left: 0; right: 0;
+  overflow-y: auto; /* Sadece burası scroll olsun */
+  -webkit-overflow-scrolling: touch; /* Mobilde yağ gibi kayması için */
+  z-index: 1;
+}
+    .view {
+  /* position:absolute ve inset gerek yok artık, viewport hallediyor */
+  width: 100%;
+  min-height: 100%; /* İçerik kısaysa bile uzasın */
+  padding: 18px; /* Normal boşluğa döndük */
+  /* padding-bottom zaten viewport tarafından kesildiği için gerek yok */
+  
+  display: none; /* Varsayılan gizli */
+  opacity: 0; 
+  transform: translateY(8px);
+  transition: .25s ease;
+}
+.view.active {
+  display: block; /* Sadece aktif olan görünsün */
+  opacity: 1; 
+  transform: none;
+}
     .view.active{opacity:1; pointer-events:auto; transform:none;}
     .row{display:flex;gap:12px;}
     .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;}
