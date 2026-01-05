@@ -55,19 +55,40 @@
       color:var(--muted);display:grid;place-items:center;cursor:pointer;user-select:none;
     }
     .iconBtn:active{transform:scale(.98);opacity:.9;}
-    #viewport{position:relative;height:calc(100vh - (var(--header-h) + var(--safe-top)));}
-   /* YENİ DÜZELTİLMİŞ KOD */
-.view {
-  position: absolute; inset: 0;
-  /* Üst boşluğu (padding-top) artırdık: 80px yaptık */
-  padding: 80px 18px 18px 18px; 
-  padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 18px);
-  overflow: auto;
-  opacity: 0; pointer-events: none;
-  transform: translateY(8px);
-  transition: .25s ease;
-}
-    .view.active{opacity:1; pointer-events:auto; transform:none;}
+     /* -- YENİ SAĞLAM KOD BAŞLANGIÇ -- */
+    #viewport {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - (var(--header-h) + var(--safe-top)));
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .view {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      padding: 80px 18px 0 18px; /* İçerik kenar boşlukları */
+      padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 20px);
+      overflow-y: auto; /* Sadece dikey kaydırma */
+      overflow-x: hidden;
+      
+      background: var(--bg); /* Arka plan rengi şart, yoksa yazılar karışır */
+      
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 10;
+    }
+
+    .view.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+      z-index: 20;
+    }
+    /* -- YENİ SAĞLAM KOD BİTİŞ -- */
+
     .row{display:flex;gap:12px;}
     .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;}
     .muted{color:var(--muted);}
