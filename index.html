@@ -38,16 +38,18 @@
   touch-action: manipulation; /* Çift tıklama zoom'unu engeller */
 }
     body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,system-ui,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;}
-    header{
-      position:sticky; top:0; z-index:20;
-      height:calc(var(--header-h) + var(--safe-top));
-      padding-top:var(--safe-top);
-      display:flex; align-items:center; justify-content:space-between;
-      padding-left:16px; padding-right:16px;
-      background:color-mix(in srgb, var(--bg) 78%, transparent);
-      backdrop-filter: blur(12px);
-      border-bottom:1px solid var(--border);
-    }
+   header {
+  position: fixed; /* Ekrana yapıştırır */
+  top: 0; left: 0; right: 0; /* Sağa sola yaslar */
+  z-index: 100; /* Her şeyin üstünde dursun */
+  height: calc(var(--header-h) + var(--safe-top));
+  padding-top: var(--safe-top);
+  display: flex; align-items: center; justify-content: space-between;
+  padding-left: 16px; padding-right: 16px;
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
     .brand{display:flex;align-items:center;gap:10px;font-weight:950;}
     .logo{width:18px;height:18px;border:2px solid var(--primary);border-radius:6px;transform:rotate(15deg);}
     .iconBtn{
@@ -58,7 +60,8 @@
     #viewport{position:relative;height:calc(100vh - (var(--header-h) + var(--safe-top)));}
     .view{
       position:absolute; inset:0;
-      padding:18px;
+      /* Üstten 85px boşluk bırak ki Header'ın altında kalmasın */
+      padding: 85px 18px 18px 18px;
       padding-bottom:calc(var(--nav-h) + var(--safe-bottom) + 18px);
       overflow:auto;
       opacity:0; pointer-events:none;
@@ -110,7 +113,9 @@
       border:1px solid var(--border);
       transform:translateY(110%);
       transition:.25s ease;
-      max-height:85vh;overflow:auto;
+      max-height: 85dvh; /* dvh: Dinamik yükseklik (Klavye dostu) */
+      height: auto;
+      display: flex; flex-direction: column; /* İçeriği düzgün sırala */
       padding:14px 16px calc(16px + var(--safe-bottom));
     }
     .sheet.open{transform:none;}
