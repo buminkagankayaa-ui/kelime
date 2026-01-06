@@ -50,10 +50,10 @@
       overflow: hidden; /* Sayfanın genel kaymasını engeller */
     }
 
-   header {
+header {
       position: sticky;
       top: 0;
-      z-index: 100; /* DÜZELTME: Sayfaların üstünde kalsın diye artırdık */
+      z-index: 100;
       height: calc(var(--header-h) + var(--safe-top));
       padding-top: var(--safe-top);
       display: flex;
@@ -61,8 +61,8 @@
       justify-content: space-between;
       padding-left: 16px;
       padding-right: 16px;
-      background: color-mix(in srgb, var(--bg) 85%, transparent); /* Biraz daha opak yaptık */
-      backdrop-filter: blur(12px);
+      /* DÜZELTME: Şeffaflığı kaldırdık, tam renk verdik */
+      background: var(--bg); 
       border-bottom: 1px solid var(--border);
     }
 
@@ -111,7 +111,8 @@
     .view {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      padding: 20px 18px 0 18px; /* Üst boşluk headerdan sonra */
+      /* DÜZELTME: Header yüksekliği (60px) + Güvenli alan kadar üstten boşluk bırak */
+      padding: calc(var(--header-h) + var(--safe-top) + 20px) 18px 20px 18px;
       padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 20px);
       overflow-y: auto;
       overflow-x: hidden;
@@ -312,7 +313,6 @@
   </section>
 
   <section class="view" id="review">
-      <div style="height: calc(var(--header-h) + var(--safe-top) + 10px); width:100%;"></div>
     <div style="margin-top:10px;">
       <h2 class="h2" style="margin-bottom:14px;">Tekrar Durumu</h2>
 
@@ -353,7 +353,6 @@
   </section>
 
 <section class="view" id="cards">
-    <div style="height: calc(var(--header-h) + var(--safe-top) + 10px); width:100%;"></div>
     <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
       <h2 class="h2" style="margin:0;">Kart Listesi</h2>
       <button class="btn btnSoft" style="padding:8px 14px; height:40px;" onclick="openManualAdd()">➕ Ekle</button>
