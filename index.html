@@ -51,20 +51,25 @@
     }
 
 header {
+      /* Başlığı en tepeye yapıştırıyoruz */
       position: sticky;
       top: 0;
-      z-index: 100;
-      /* Yükseklik ayarı: İçerik sıkışmasın diye safe-top ekliyoruz ama background bunu kapsayacak */
+      z-index: 999; /* Sayısı yüksek olsun ki her şeyin üstünde dursun */
+      
+      /* Yükseklik ve Güvenli Alan Ayarları */
       height: calc(var(--header-h) + var(--safe-top));
       padding-top: var(--safe-top);
+      
+      /* İçerik Hizalama */
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding-left: 16px;
       padding-right: 16px;
       
-      /* ÖNEMLİ DEĞİŞİKLİK: Şeffaflık yok, bulanıklık yok. Tamamen mat. */
-      background: var(--bg); 
+      /* --- KRİTİK DÜZELTME BURADA --- */
+      background: var(--bg); /* Arka planı TAM RENK yaptık. Asla arkasını göstermez. */
+      backdrop-filter: none; /* Bulanıklığı kapattık ki yazılar parlamasın */
       border-bottom: 1px solid var(--border);
     }
 
