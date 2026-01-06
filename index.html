@@ -311,57 +311,54 @@
 
 <div id="viewport">
   <section class="view active" id="home">
-<div class="secTitle" style="margin-top:0; margin-bottom:8px;">Genel Bakış</div>
     
-    <div class="grid-2" style="margin-top:0; margin-bottom:10px;">
+    <div class="secTitle" style="margin-top:0; margin-bottom:6px; font-size:11px; opacity:0.6;">GENEL BAKIŞ</div>
+    
+    <div class="grid-2" style="margin-top:0; margin-bottom:8px;">
       
-      <div class="card" style="border:1px solid var(--primary); padding:12px; display:flex; flex-direction:column; justify-content:space-between;">
-        <div style="font-weight:bold; color:var(--primary); font-size:12px; margin-bottom:10px;">
-          🇬🇧 İngilizce ➡️ 🇹🇷 Türkçe
-        </div>
-        <div style="display:flex; gap:6px;">
-          <input id="quickTransInput" placeholder="İngilizce..." style="background:var(--bg); font-size:15px; width:100%; border-radius:10px; padding:10px;" onkeydown="if(event.key==='Enter') doQuickTranslate()" />
-          <button class="iconBtn" style="background:var(--primary); color:white; border:none; width:42px; height:42px; border-radius:10px; flex-shrink:0;" onclick="doQuickTranslate()">🔎</button>
+      <div class="card" style="border:1px solid var(--primary); padding:8px; display:flex; flex-direction:column; gap:4px;">
+        <div style="font-weight:bold; color:var(--primary); font-size:10px;">🇬🇧 EN ➡️ 🇹🇷 TR</div>
+        <div style="display:flex; gap:4px;">
+          <input id="quickTransInput" placeholder="Write..." style="background:var(--bg); font-size:13px; width:100%; border-radius:6px; padding:6px;" onkeydown="if(event.key==='Enter') doQuickTranslate()" />
+          <button class="iconBtn" style="background:var(--primary); color:white; border:none; width:32px; height:32px; border-radius:6px; flex-shrink:0;" onclick="doQuickTranslate()">🔎</button>
         </div>
       </div>
 
-      <div class="card" style="border:1px solid var(--warn); padding:12px; display:flex; flex-direction:column; justify-content:space-between;">
-        <div style="font-weight:bold; color:var(--warn); font-size:12px; margin-bottom:10px;">
-          🇹🇷 Türkçe ➡️ 🇬🇧 İngilizce
-        </div>
-        <div style="display:flex; gap:6px;">
-          <input id="quickTransInputTR" placeholder="Türkçe..." style="background:var(--bg); font-size:15px; width:100%; border-radius:10px; padding:10px;" onkeydown="if(event.key==='Enter') doQuickTranslateTR()" />
-          <button class="iconBtn" style="background:var(--warn); color:white; border:none; width:42px; height:42px; border-radius:10px; flex-shrink:0;" onclick="doQuickTranslateTR()">🔎</button>
+      <div class="card" style="border:1px solid var(--warn); padding:8px; display:flex; flex-direction:column; gap:4px;">
+        <div style="font-weight:bold; color:var(--warn); font-size:10px;">🇹🇷 TR ➡️ 🇬🇧 EN</div>
+        <div style="display:flex; gap:4px;">
+          <input id="quickTransInputTR" placeholder="Yaz..." style="background:var(--bg); font-size:13px; width:100%; border-radius:6px; padding:6px;" onkeydown="if(event.key==='Enter') doQuickTranslateTR()" />
+          <button class="iconBtn" style="background:var(--warn); color:white; border:none; width:32px; height:32px; border-radius:6px; flex-shrink:0;" onclick="doQuickTranslateTR()">🔎</button>
         </div>
       </div>
-    
     </div>
 
-    <div class="grid-2" style="margin-top:0;">
-      <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
-        <div class="muted" style="font-weight:980; font-size:13px;">Toplam Kart</div>
-        <div class="big" id="dashTotal" style="margin-top:4px;">0</div>
+    <div class="grid-2" style="margin-bottom:8px; gap:8px;">
+      
+      <div class="card" style="padding:0 12px; height:50px; display:flex; align-items:center; justify-content:space-between;">
+        <span class="muted" style="font-size:12px; font-weight:bold;">Toplam</span>
+        <span style="font-size:22px; font-weight:900;" id="dashTotal">0</span>
       </div>
-      <div class="card" style="border-color:color-mix(in srgb, var(--warn) 45%, var(--border)); display:flex; flex-direction:column; justify-content:center;">
-        <div style="font-weight:980; color:var(--warn); font-size:13px;">Tekrar</div>
-        <div class="big" style="color:var(--warn); margin-top:4px;" id="dashDue">0</div>
+      
+      <div class="card" style="padding:0 12px; height:50px; display:flex; align-items:center; justify-content:space-between; border:1px solid color-mix(in srgb, var(--warn) 30%, transparent);">
+        <span style="font-size:12px; font-weight:bold; color:var(--warn);">Tekrar</span>
+        <span style="font-size:22px; font-weight:900; color:var(--warn);" id="dashDue">0</span>
       </div>
+
     </div>
- <div class="card" style="margin-top:14px;">
-  <div style="font-weight:980;">Hızlı İşlemler</div>
 
-  <div class="grid-2">
-    <button class="btn btnPrimary" onclick="go('review')">🧠 Tekrar</button>
-    <button class="btn btnSoft" onclick="go('cards')">🗂️ Kartlar</button>
-    <button class="btn btnSoft" onclick="openManualAdd()">➕ Elle Ekle</button>
-    <button class="btn btnSoft" onclick="resetTodaysQueue()">🔁 Kuyruğu Yenile</button>
-  </div>
+    <div class="secTitle" style="margin-bottom:6px; font-size:11px; opacity:0.6;">İŞLEMLER</div>
 
-  <div style="margin-top:10px;">
-   <button class="btn btnPrimary" style="width:100%;" onclick="openSheet('grammarSheet')">📘 Hızlı Gramer Kitapçığı</button>
-  </div>
-</div>
-    </div>
+    <div class="grid-2" style="gap:8px; margin-bottom:8px;">
+       <button class="btn btnPrimary" onclick="showView('review')" style="height:44px; font-size:13px;">🧠 Tekrar Başlat</button>
+       <button class="btn btnSoft" onclick="showView('cards')" style="height:44px; font-size:13px;">📂 Kart Listesi</button>
+       <button class="btn btnSoft" onclick="openManualAdd()" style="height:44px; font-size:13px;">➕ Yeni Ekle</button>
+       <button class="btn btnSoft" onclick="refreshQueue()" style="height:44px; font-size:13px;">♻️ Sırayı Yenile</button>
+    </div>
+
+    <button class="btn" onclick="openGrammar()" style="width:100%; height:40px; font-size:13px; background:color-mix(in srgb, var(--primary) 10%, var(--card)); color:var(--primary); border:1px solid var(--primary); font-weight:bold;">
+       📘 Hızlı Gramer Kitapçığı
+    </button>
   </section>
 
   <section class="view" id="review">
