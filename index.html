@@ -230,7 +230,13 @@
     .qChoice { text-align: left; background: var(--card); border: 1px solid var(--border); padding: 14px; border-radius: 16px; cursor: pointer; font-weight: 950; }
     .qChoice.correct { border-color: color-mix(in srgb, var(--ok) 70%, var(--border)); background: color-mix(in srgb, var(--ok) 12%, var(--card)); }
     .qChoice.wrong { border-color: color-mix(in srgb, var(--danger) 70%, var(--border)); background: color-mix(in srgb, var(--danger) 10%, var(--card)); }
-
+/* --- MOBİL İÇİN DÜZENLEYİCİ --- */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Ekranı tam ortadan ikiye böl */
+  gap: 10px; /* Butonlar arası boşluk */
+  margin-top: 12px;
+}
   </style>
 </head>
 
@@ -275,18 +281,19 @@
       </div>
     </div>
 
-    <div class="card" style="margin-top:14px;">
-      <div style="font-weight:980;">Hızlı İşlemler</div>
-      <div class="two" style="margin-top:12px;">
-        <button class="btn btnPrimary btnHalf" onclick="go('review')">🧠 Tekrar</button>
-        <button class="btn btnSoft btnHalf" onclick="go('cards')">🗂️ Kartlar</button>
-      </div>
-      <div class="two" style="margin-top:10px;">
-        <button class="btn btnSoft btnHalf" onclick="openManualAdd()">➕ Elle Kelime Ekle</button>
-        <button class="btn btnSoft btnHalf" onclick="resetTodaysQueue()">🔁 Kuyruğu Yenile</button>
-      </div>
-      <div class="two" style="margin-top:10px;">
-   <button class="btn btnPrimary" style="width:100%;" onclick="openSheet('grammarSheet')">📘 Hızlı Gramer Kitapçığı</button>
+ <div class="card" style="margin-top:14px;">
+  <div style="font-weight:980;">Hızlı İşlemler</div>
+
+  <div class="grid-2">
+    <button class="btn btnPrimary" onclick="go('review')">🧠 Tekrar</button>
+    <button class="btn btnSoft" onclick="go('cards')">🗂️ Kartlar</button>
+    <button class="btn btnSoft" onclick="openManualAdd()">➕ Elle Ekle</button>
+    <button class="btn btnSoft" onclick="resetTodaysQueue()">🔁 Kuyruğu Yenile</button>
+  </div>
+
+  <div style="margin-top:10px;">
+   <button class="btn btnPrimary" style="width:100%;" onclick="openSheet('grammarSheet')">📘 Hızlı Gramer Kitapçığı</button>
+  </div>
 </div>
     </div>
   </section>
