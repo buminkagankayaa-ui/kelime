@@ -229,60 +229,70 @@
     .divider { height: 1px; background: var(--border); margin: 12px 0; }
     .kbd { font-size: 11px; font-weight: 980; border: 1px solid var(--border); padding: 4px 8px; border-radius: 10px; background: var(--card); color: var(--muted); }
 
+    /* --- QUIZ EKRANI OPTİMİZASYONU --- */
     .overlay {
       position: fixed;
-      inset: 0; /* Dört taraftan da ekrana yapış */
-      z-index: 2000; /* En en üstte! Header(999)'ın bile üstünde. */
-      
-      /* Tam mat arka plan rengi. Arkadaki Header/Navigasyon ASLA görünmez. */
-      background: var(--bg); 
-      
+      inset: 0; /* Tam ekran kapla */
+      z-index: 2000; /* En üstte */
+      background: var(--bg);
       transform: translateX(110%);
-      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      
-      /* İçerik düzeni: Dikey olarak esnek yapıda */
+      transition: .25s cubic-bezier(0.4, 0, 0.2, 1); /* Daha yumuşak geçiş */
       display: flex;
       flex-direction: column;
-      
-      /* Güvenli alanları hesaba kat ama ekstra boşluk bırakma */
-      padding-top: var(--safe-top); 
-      padding-bottom: var(--safe-bottom);
-    }
-    .overlay.open { transform: none; }
-    .overlayTop {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 16px calc(14px + var(--safe-top));
-      padding-top: calc(14px + var(--safe-top));
-      border-bottom: 1px solid var(--border);
-      background: color-mix(in srgb, var(--bg) 85%, transparent);
-      backdrop-filter: blur(12px);
-    }
-    .qChoice { text-align: left; background: var(--card); border: 1px solid var(--border); padding: 14px; border-radius: 16px; cursor: pointer; font-weight: 950; }
-    .qChoice.correct { border-color: color-mix(in srgb, var(--ok) 70%, var(--border)); background: color-mix(in srgb, var(--ok) 12%, var(--card)); }
-    .qChoice.wrong { border-color: color-mix(in srgb, var(--danger) 70%, var(--border)); background: color-mix(in srgb, var(--danger) 10%, var(--card)); }
-/* --- MOBİL İÇİN DÜZENLEYİCİ --- */
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Ekranı tam ortadan ikiye böl */
-  gap: 10px; /* Butonlar arası boşluk */
-  margin-top: 12px;
-}
-      /* Quiz Gövdesini Ortalama */
-    #quizBody {
-      flex: 1; /* Tüm boş alanı kapla */
-      display: flex;
-      flex-direction: column;
-      justify-content: center; /* Dikeyde ortala */
-      padding: 16px;
-      overflow-y: auto; /* Küçük ekranlarda taşarsa kaydır */
     }
     
-    /* Quiz Kartının gölgesini ve duruşunu iyileştir */
-    #quizBody .card {
-      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-      border: 1px solid var(--primary);
-      margin-bottom: 20px;
+    .overlay.open { transform: none; }
+
+    .overlayTop {
+      /* Üst Başlık Ayarı */
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+      
+      /* Güvenli alan + 10px boşluk */
+      padding-top: calc(var(--safe-top) + 14px);
+      padding-bottom: 14px;
+      padding-left: 16px;
+      padding-right: 16px;
+      
+      background: var(--bg);
+      /* İSTEDİĞİN ÇİZGİ BURADA: */
+      border-bottom: 1px solid var(--border); 
     }
+
+    #quizBody {
+      flex: 1; /* Kalan alanı kapla */
+      overflow-y: auto; /* İçerik sığmazsa kaydır */
+      padding: 16px; /* Kenarlardan boşluk */
+      display: flex;
+      flex-direction: column;
+      gap: 12px; /* Öğeler arası mesafe */
+    }
+
+    /* Soru Kartını Sıkılaştırıyoruz */
+    .qCard {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px 16px; /* İç boşluğu azalttık */
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2); /* Hafif gölge ekledik */
+    }
+
+    .qChoice { 
+      text-align: left; 
+      background: var(--card2); /* Şıklar biraz daha koyu olsun */
+      border: 1px solid var(--border); 
+      padding: 14px 16px; 
+      border-radius: 14px; 
+      cursor: pointer; 
+      font-weight: 600;
+      font-size: 15px;
+      transition: 0.1s;
+    }
+    .qChoice:active { transform: scale(0.98); }
+    .qChoice.correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 15%, var(--card)); color: var(--ok); }
+    .qChoice.wrong { border-color: var(--danger); background: color-mix(in srgb, var(--danger) 15%, var(--card)); color: var(--danger); }
   </style>
 </head>
 
@@ -711,35 +721,47 @@
   <button class="btn btnSoft" style="width:100%; margin-top:20px; margin-bottom:20px;" onclick="closeSheets()">Kapat</button>
 </div>
   <div class="overlay" id="quizOverlay">
-  <div class="overlayTop">
-    <div style="font-weight:980;">Quiz</div>
-    <button class="iconBtn" onclick="stopQuiz()">×</button>
-  </div>
-  <div id="quizBody" style="padding:18px;">
-    <div class="card" style="padding:12px;">
-      <div class="smallInfo">Kalan: <b id="qRemain">0</b>/<b id="qTotal">0</b> • ✅ <b id="qCorrect">0</b> • ❌ <b id="qWrong">0</b></div>
-      <div style="margin-top:10px; font-size:40px; font-weight:1000; text-align:center;" id="qWord">—</div>
-      <div class="smallInfo" style="text-align:center; margin-top:8px;" id="qMeta">—</div>
-      <div style="text-align:center; font-style:italic; color:var(--primary); margin-top:6px; min-height:20px;" id="qExample"></div>
-    </div>
+  
+  <div class="overlayTop">
+    <div style="font-weight:980; font-size:18px; display:flex; align-items:center; gap:8px;">
+      <span>🧠</span> Quiz
+    </div>
+    <button class="iconBtn" style="border:none; background:var(--card2); width:36px; height:36px;" onclick="stopQuiz()">✖</button>
+  </div>
 
-    <div id="qChoices" style="margin-top:12px; display:flex; flex-direction:column; gap:10px;"></div>
+  <div id="quizBody">
+    
+    <div class="qCard">
+      <div class="smallInfo" style="margin-bottom:10px; display:flex; justify-content:center; gap:12px; font-size:13px;">
+        <span>Kalan: <b id="qRemain" style="color:var(--text);">0</b></span>
+        <span>✅ <b id="qCorrect" style="color:var(--ok);">0</b></span>
+        <span>❌ <b id="qWrong" style="color:var(--danger);">0</b></span>
+      </div>
 
-    <div id="qTyping" style="margin-top:12px; display:none; gap:10px;">
-      <input id="qInput" placeholder="Anlamını yaz..." style="flex:1; font-weight:950;" />
-      <button class="btn btnPrimary" style="padding:12px 14px;" onclick="checkTypingAnswer()">Kontrol</button>
-    </div>
+      <div id="qWord" style="font-size:32px; font-weight:900; line-height:1.2; margin-bottom:8px;">—</div>
+      
+      <div id="qMeta" style="font-size:14px; color:var(--muted); font-weight:600; margin-bottom:6px;">—</div>
+      
+      <div id="qExample" style="font-size:14px; font-style:italic; color:var(--primary); opacity:0.9; min-height:20px;"></div>
+    </div>
 
-    <div class="smallInfo" id="qReveal" style="text-align:center; margin-top:10px; min-height:18px;"></div>
+    <div id="qChoices" style="display:flex; flex-direction:column; gap:10px; margin-top:4px;"></div>
 
-    <div class="two" style="margin-top:12px;">
-      <button class="btn btnSoft btnHalf" onclick="markAsUnknown()">🔴 Bilmiyorum / Sonra</button>
-    </div>
+    <div id="qTyping" style="display:none; gap:10px; margin-top:4px;">
+      <input id="qInput" placeholder="Anlamını yaz..." style="flex:1; font-weight:bold;" />
+      <button class="btn btnPrimary" style="padding:0 20px;" onclick="checkTypingAnswer()">Kontrol</button>
+    </div>
 
-    <div class="smallInfo" style="text-align:center; margin-top:10px;">
-      <span class="kbd">Enter</span> kontrol (yazmalı) • <span class="kbd">Esc</span> çıkış
-    </div>
-  </div>
+    <div id="qReveal" style="text-align:center; min-height:20px; font-weight:bold;"></div>
+
+    <div style="margin-top:auto; padding-top:20px; padding-bottom:30px;">
+      <button class="btn btnSoft" style="width:100%; border-color:var(--danger); color:var(--danger);" onclick="markAsUnknown()">🔴 Bilmiyorum / Pas Geç</button>
+      <div class="smallInfo" style="text-align:center; margin-top:12px; opacity:0.5;">
+        Çıkmak için sağ üstteki çarpıya basabilirsin.
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <script>
