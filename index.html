@@ -316,7 +316,7 @@
     
     <div class="grid-2" style="margin-top:0; margin-bottom:10px;">
       
-      <div class="card" style="border:1px solid var(--primary); padding:10px; display:flex; flex-direction:column; gap:6px;">
+      <div class="card" style="border:1px solid var(--primary); padding:8px; display:flex; flex-direction:column; gap:6px;">
         <div style="font-weight:bold; color:var(--primary); font-size:11px;">🇬🇧 EN ➡️ 🇹🇷 TR</div>
         <div style="display:flex; gap:6px;">
           <input id="quickTransInput" placeholder="Write..." style="background:var(--bg); font-size:14px; width:100%; border-radius:8px; padding:6px;" onkeydown="if(event.key==='Enter') doQuickTranslate()" />
@@ -324,7 +324,7 @@
         </div>
       </div>
 
-      <div class="card" style="border:1px solid var(--warn); padding:10px; display:flex; flex-direction:column; gap:6px;">
+      <div class="card" style="border:1px solid var(--warn); padding:8px; display:flex; flex-direction:column; gap:6px;">
         <div style="font-weight:bold; color:var(--warn); font-size:11px;">🇹🇷 TR ➡️ 🇬🇧 EN</div>
         <div style="display:flex; gap:6px;">
           <input id="quickTransInputTR" placeholder="Yaz..." style="background:var(--bg); font-size:14px; width:100%; border-radius:8px; padding:6px;" onkeydown="if(event.key==='Enter') doQuickTranslateTR()" />
@@ -334,71 +334,33 @@
     
     </div>
 
-    <div class="grid-2" style="margin-bottom:14px;">
+    <div class="grid-2" style="margin-bottom:10px; gap:10px;">
       
-      <div class="card" style="padding:12px; height:60px; display:flex; flex-direction:column; justify-content:center; align-items:center; border:1px solid var(--border);">
-        <div class="muted" style="font-size:11px; font-weight:bold; margin-bottom:2px;">TOPLAM KART</div>
-        <div style="font-size:24px; font-weight:900;" id="dashTotal">0</div>
+      <div class="card" style="padding:5px; height:75px; display:flex; flex-direction:column; justify-content:center; align-items:center; border:1px solid var(--border); text-align:center;">
+        <div class="muted" style="font-size:10px; font-weight:bold; margin-bottom:2px;">TOPLAM</div>
+        <div style="font-size:26px; font-weight:900; line-height:1;" id="dashTotal">0</div>
       </div>
       
-      <div class="card" style="padding:12px; height:60px; display:flex; flex-direction:column; justify-content:center; align-items:center; border:1px solid var(--warn); background:color-mix(in srgb, var(--warn) 5%, var(--card));">
-        <div style="font-size:11px; font-weight:bold; color:var(--warn); margin-bottom:2px;">TEKRAR</div>
-        <div style="font-size:24px; font-weight:900; color:var(--warn);" id="dashDue">0</div>
+      <div class="card" style="padding:5px; height:75px; display:flex; flex-direction:column; justify-content:center; align-items:center; border:1px solid var(--warn); background:color-mix(in srgb, var(--warn) 5%, var(--card)); text-align:center;">
+        <div style="font-size:10px; font-weight:bold; color:var(--warn); margin-bottom:2px;">TEKRAR</div>
+        <div style="font-size:26px; font-weight:900; color:var(--warn); line-height:1;" id="dashDue">0</div>
       </div>
 
     </div>
 
     <div class="secTitle" style="margin-bottom:6px; font-size:11px; opacity:0.6;">İŞLEMLER</div>
 
-    <div class="grid-2" style="gap:10px; margin-bottom:10px;">
-       <button class="btn btnPrimary" onclick="showView('review')" style="height:48px; font-size:13px;">🧠 Tekrar Başlat</button>
-       <button class="btn btnSoft" onclick="showView('cards')" style="height:48px; font-size:13px;">📂 Kart Listesi</button>
-       <button class="btn btnSoft" onclick="openManualAdd()" style="height:48px; font-size:13px;">➕ Yeni Ekle</button>
-       <button class="btn btnSoft" onclick="refreshQueue()" style="height:48px; font-size:13px;">♻️ Sırayı Yenile</button>
+    <div class="grid-2" style="gap:8px; margin-bottom:10px;">
+       <button class="btn btnPrimary" onclick="showView('review')" style="height:45px; font-size:12px; padding:0;">🧠 Tekrar Başlat</button>
+       <button class="btn btnSoft" onclick="showView('cards')" style="height:45px; font-size:12px; padding:0;">📂 Kart Listesi</button>
+       <button class="btn btnSoft" onclick="openManualAdd()" style="height:45px; font-size:12px; padding:0;">➕ Yeni Ekle</button>
+       <button class="btn btnSoft" onclick="refreshQueue()" style="height:45px; font-size:12px; padding:0;">♻️ Sırayı Yenile</button>
     </div>
 
-    <button class="btn" onclick="openGrammar()" style="width:100%; height:40px; font-size:13px; background:color-mix(in srgb, var(--primary) 10%, var(--card)); color:var(--primary); border:1px solid var(--primary); font-weight:bold;">
+    <button class="btn" onclick="openGrammar()" style="width:100%; height:38px; font-size:12px; background:color-mix(in srgb, var(--primary) 10%, var(--card)); color:var(--primary); border:1px solid var(--primary); font-weight:bold;">
        📘 Hızlı Gramer Kitapçığı
     </button>
-  </section>
-    <section class="view" id="review">
-    <div style="margin-top:4px;">
-      <h2 class="h2" style="margin-bottom:14px;">Tekrar Durumu</h2>
 
-      <div class="grid-2">
-        <div class="card" style="display:flex; flex-direction:column; justify-content:center; text-align:center;">
-           <div class="muted" style="font-weight:980; font-size:13px;">Sıradaki</div>
-           <div class="big" id="rvDue" style="margin-top:4px;">0</div>
-        </div>
-        
-        <div class="card" style="display:flex; flex-direction:column; justify-content:center; text-align:center;">
-           <div class="muted" style="font-weight:980; font-size:13px;">Toplam</div>
-           <div class="big" id="rvTotal" style="margin-top:4px;">0</div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:14px;">
-        <div style="font-weight:bold; margin-bottom:12px; text-align:center;">Bugün kaç kart çalışacaksın?</div>
-        
-        <div id="limitContainer" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-          <button class="btn btnSoft" style="flex:1; min-width:50px;" onclick="startReviewQuiz(5, this)">5</button>
-          <button class="btn btnSoft" style="flex:1; min-width:50px;" onclick="startReviewQuiz(10, this)">10</button>
-          <button class="btn btnSoft" style="flex:1; min-width:50px;" onclick="startReviewQuiz(20, this)">20</button>
-          <button class="btn btnSoft" style="flex:1; min-width:60px;" onclick="startReviewQuiz(9999, this)">Hepsi</button>
-        </div>
-
-        <div class="divider"></div>
-        
-        <button class="btn btnPrimary" style="width:100%; margin-top:10px;" onclick="startReviewQuiz()">🚀 Başlat</button>
-        
-        <button class="btn btnSoft" style="width:100%; margin-top:10px;" onclick="toggleQuizMode()">Mod: <span id="quizModeLabel">Seçmeli</span></button>
-      </div>
-
-      <div class="grid-2">
-         <button class="btn btnSoft" onclick="clearProgress()">♻️ SRS Sıfırla</button>
-         <button class="btn btnSoft" onclick="toast('Online AutoFill aktif ✅')">Durum</button>
-      </div>
-    </div>
   </section>
 
 <section class="view" id="cards">
