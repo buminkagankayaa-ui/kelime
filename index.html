@@ -50,27 +50,24 @@
       overflow: hidden; /* Sayfanın genel kaymasını engeller */
     }
 
-header {
-      /* Başlığı en tepeye yapıştırıyoruz */
-      position: sticky;
-      top: 0;
-      z-index: 999; /* Sayısı yüksek olsun ki her şeyin üstünde dursun */
+/* 1. BAŞLIK AYARI: Ekrana çiviliyoruz ve arkasını kapatıyoruz */
+    header {
+      position: fixed; /* Sabitlendi */
+      top: 0; left: 0; right: 0;
+      z-index: 999; /* En üst katmanda duracak */
       
-      /* Yükseklik ve Güvenli Alan Ayarları */
       height: calc(var(--header-h) + var(--safe-top));
       padding-top: var(--safe-top);
       
-      /* İçerik Hizalama */
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding-left: 16px;
       padding-right: 16px;
       
-      /* --- KRİTİK DÜZELTME BURADA --- */
-      background: var(--bg); /* Arka planı TAM RENK yaptık. Asla arkasını göstermez. */
-      backdrop-filter: none; /* Bulanıklığı kapattık ki yazılar parlamasın */
+      background: var(--bg); /* Tam renk (Şeffaflık yok) */
       border-bottom: 1px solid var(--border);
+      backdrop-filter: none; /* Bulanıklık kapalı */
     }
 
     .brand {
@@ -115,12 +112,19 @@ header {
       background: var(--bg);
     }
 
+   /* 2. SAYFA İÇERİK AYARI: Başlığın altından başlatıyoruz */
     .view {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      /* Header boyu neyse boşluk da o kadar olsun, fazlası olmasın */
-      padding: calc(var(--header-h) + var(--safe-top)) 10px 20px 18px;
+      
+      /* KRİTİK KISIM: İçeriği yukarıdan "Header Boyu + 20px" kadar aşağı itiyoruz */
+      padding-top: calc(var(--header-h) + var(--safe-top) + 20px);
+      
+      padding-left: 18px;
+      padding-right: 18px;
+      /* Alttaki menü payı */
       padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 20px);
+      
       overflow-y: auto;
       overflow-x: hidden;
       background: var(--bg);
