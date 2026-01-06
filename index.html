@@ -229,7 +229,20 @@
     .divider { height: 1px; background: var(--border); margin: 12px 0; }
     .kbd { font-size: 11px; font-weight: 980; border: 1px solid var(--border); padding: 4px 8px; border-radius: 10px; background: var(--card); color: var(--muted); }
 
-    .overlay { position: fixed; inset: 0; z-index: 120; background: var(--bg); transform: translateX(110%); transition: .25s ease; display: flex; flex-direction: column; }
+    .overlay {
+      position: fixed;
+      inset: 0; /* Ekranın tamamını kapla */
+      z-index: 2000; /* DÜZELTME: Header (999)'ın üstüne çıkarıyoruz */
+      background: var(--bg);
+      transform: translateX(110%);
+      transition: .25s ease;
+      display: flex;
+      flex-direction: column;
+      
+      /* Güvenli alanları hesaba kat (Çentik ve alt çizgi) */
+      padding-top: var(--safe-top); 
+      padding-bottom: var(--safe-bottom);
+    }
     .overlay.open { transform: none; }
     .overlayTop {
       display: flex; align-items: center; justify-content: space-between;
