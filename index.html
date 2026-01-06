@@ -231,15 +231,20 @@
 
     .overlay {
       position: fixed;
-      inset: 0; /* Ekranın tamamını kapla */
-      z-index: 2000; /* DÜZELTME: Header (999)'ın üstüne çıkarıyoruz */
-      background: var(--bg);
+      inset: 0; /* Dört taraftan da ekrana yapış */
+      z-index: 2000; /* En en üstte! Header(999)'ın bile üstünde. */
+      
+      /* Tam mat arka plan rengi. Arkadaki Header/Navigasyon ASLA görünmez. */
+      background: var(--bg); 
+      
       transform: translateX(110%);
-      transition: .25s ease;
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      
+      /* İçerik düzeni: Dikey olarak esnek yapıda */
       display: flex;
       flex-direction: column;
       
-      /* Güvenli alanları hesaba kat (Çentik ve alt çizgi) */
+      /* Güvenli alanları hesaba kat ama ekstra boşluk bırakma */
       padding-top: var(--safe-top); 
       padding-bottom: var(--safe-bottom);
     }
@@ -262,6 +267,22 @@
   gap: 10px; /* Butonlar arası boşluk */
   margin-top: 12px;
 }
+      /* Quiz Gövdesini Ortalama */
+    #quizBody {
+      flex: 1; /* Tüm boş alanı kapla */
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Dikeyde ortala */
+      padding: 16px;
+      overflow-y: auto; /* Küçük ekranlarda taşarsa kaydır */
+    }
+    
+    /* Quiz Kartının gölgesini ve duruşunu iyileştir */
+    #quizBody .card {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+      border: 1px solid var(--primary);
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 
