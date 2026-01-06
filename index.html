@@ -50,10 +50,10 @@
       overflow: hidden; /* Sayfanın genel kaymasını engeller */
     }
 
-    header {
+   header {
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: 100; /* DÜZELTME: Sayfaların üstünde kalsın diye artırdık */
       height: calc(var(--header-h) + var(--safe-top));
       padding-top: var(--safe-top);
       display: flex;
@@ -61,7 +61,7 @@
       justify-content: space-between;
       padding-left: 16px;
       padding-right: 16px;
-      background: color-mix(in srgb, var(--bg) 78%, transparent);
+      background: color-mix(in srgb, var(--bg) 85%, transparent); /* Biraz daha opak yaptık */
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
     }
@@ -312,83 +312,79 @@
   </section>
 
   <section class="view" id="review">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h2 class="h2">Tekrar</h2>
-      <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" onclick="startReviewQuiz()">Başlat</button>
-    </div>
+    <div style="margin-top:10px;">
+      <h2 class="h2" style="margin-bottom:14px;">Tekrar Durumu</h2>
 
-    <div class="card">
-      <div style="font-weight:980;">Bugün tekrar edilecek kartlar</div>
-      <div class="smallInfo">Zamanı gelen kartlar öncelikli gelir. Yoksa rastgele pratik açılır.</div>
+      <div class="grid-2">
+        <div class="card" style="display:flex; flex-direction:column; justify-content:center; text-align:center;">
+           <div class="muted" style="font-weight:980; font-size:13px;">Sıradaki</div>
+           <div class="big" id="rvDue" style="margin-top:4px;">0</div>
+        </div>
+        
+        <div class="card" style="display:flex; flex-direction:column; justify-content:center; text-align:center;">
+           <div class="muted" style="font-weight:980; font-size:13px;">Toplam</div>
+           <div class="big" id="rvTotal" style="margin-top:4px;">0</div>
+        </div>
+      </div>
 
-      <div style="display:flex; gap:10px; margin-top:12px;">
-        <div class="card" style="flex:1; padding:12px;">
-          <div class="smallInfo">Sıradaki</div>
-          <div class="big" id="rvDue">0</div>
-        </div>
-        <div class="card" style="flex:1; padding:12px;">
-          <div class="smallInfo">Toplam</div>
-          <div class="big" id="rvTotal">0</div>
-        </div>
-      </div>
+      <div class="card" style="margin-top:14px;">
+        <div style="font-weight:bold; margin-bottom:12px; text-align:center;">Bugün kaç kart çalışacaksın?</div>
+        
+        <div id="limitContainer" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+          <button class="btn btnSoft" style="flex:1; min-width:50px;" onclick="startReviewQuiz(5, this)">5</button>
+          <button class="btn btnSoft" style="flex:1; min-width:50px;" onclick="startReviewQuiz(10, this)">10</button>
+          <button class="btn btnSoft" style="flex:1; min-width:50px;" onclick="startReviewQuiz(20, this)">20</button>
+          <button class="btn btnSoft" style="flex:1; min-width:60px;" onclick="startReviewQuiz(9999, this)">Hepsi</button>
+        </div>
 
-      <div style="margin-top:20px; margin-bottom:20px;">
-  
-  <div style="text-align:center; font-weight:bold; color:var(--text); margin-bottom:12px;">
-  Kaç kart çalışacaksın?
-</div>
+        <div class="divider"></div>
+        
+        <button class="btn btnPrimary" style="width:100%; margin-top:10px;" onclick="startReviewQuiz()">🚀 Başlat</button>
+        
+        <button class="btn btnSoft" style="width:100%; margin-top:10px;" onclick="toggleQuizMode()">Mod: <span id="quizModeLabel">Seçmeli</span></button>
+      </div>
 
-<div id="limitContainer" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
-  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(5, this)">5</button>
-  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(10, this)">10</button>
-  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(15, this)">15</button>
-  <button class="btn btnSoft" style="flex:1; min-width:50px; padding:12px 0;" onclick="startReviewQuiz(20, this)">20</button>
-  <button class="btn btnSoft" style="flex:1.5; min-width:70px; padding:12px 0;" onclick="startReviewQuiz(9999, this)">Hepsi</button>
-</div>
-</div>
-        <button class="btn btnSoft btnHalf" onclick="toggleQuizMode()">Mod: <span id="quizModeLabel">Seçmeli</span></button>
-      </div>
+      <div class="grid-2">
+         <button class="btn btnSoft" onclick="clearProgress()">♻️ SRS Sıfırla</button>
+         <button class="btn btnSoft" onclick="toast('Online AutoFill aktif ✅')">Durum</button>
+      </div>
+    </div>
+  </section>
 
-      <div class="divider"></div>
+<section class="view" id="cards">
+    <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 class="h2" style="margin:0;">Kart Listesi</h2>
+      <button class="btn btnSoft" style="padding:8px 14px; height:40px;" onclick="openManualAdd()">➕ Ekle</button>
+    </div>
 
-      <div class="two">
-        <button class="btn btnSoft btnHalf" onclick="clearProgress()">♻️ SRS Sıfırla</button>
-        <button class="btn btnSoft btnHalf" onclick="toast('Online AutoFill aktif ✅')">Durum</button>
-      </div>
-    </div>
-  </section>
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:14px;">
+      
+      <div id="filterBtnNew" class="card" onclick="toggleFilter('new')" 
+           style="padding:10px; border:1px solid var(--border); text-align:center; cursor:pointer; display:flex; flex-direction:column; justify-content:center; height:80px;">
+        <div style="font-size:11px; font-weight:bold; color:var(--muted);">⚪ Yeni</div>
+        <div style="font-size:20px; font-weight:900; margin-top:6px;" id="statNew">0</div>
+      </div>
+      
+      <div id="filterBtnLearn" class="card" onclick="toggleFilter('learning')" 
+           style="padding:10px; border:1px solid var(--warn); text-align:center; background:color-mix(in srgb, var(--warn) 5%, var(--card2)); cursor:pointer; display:flex; flex-direction:column; justify-content:center; height:80px;">
+        <div style="font-size:11px; font-weight:bold; color:var(--warn);">🟡 Öğren</div>
+        <div style="font-size:20px; font-weight:900; color:var(--warn); margin-top:6px;" id="statLearn">0</div>
+      </div>
+      
+      <div id="filterBtnMaster" class="card" onclick="toggleFilter('mastered')" 
+           style="padding:10px; border:1px solid var(--ok); text-align:center; background:color-mix(in srgb, var(--ok) 5%, var(--card2)); cursor:pointer; display:flex; flex-direction:column; justify-content:center; height:80px;">
+        <div style="font-size:11px; font-weight:bold; color:var(--ok);">🟢 Tamam</div>
+        <div style="font-size:20px; font-weight:900; color:var(--ok); margin-top:6px;" id="statMaster">0</div>
+      </div>
+    </div>
 
-  <section class="view" id="cards">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h2 class="h2">Kartlar</h2>
-      <button class="btn btnSoft" style="padding:10px 12px; border-radius:14px;" onclick="openManualAdd()">➕ Ekle</button>
-    </div>
-<div class="row" style="margin-bottom:12px; gap:8px;">
-  <div id="filterBtnNew" class="card" onclick="toggleFilter('new')" 
-       style="flex:1; padding:10px; border:1px solid var(--border); text-align:center; background:var(--card2); cursor:pointer; transition:0.2s;">
-    <div style="font-size:11px; font-weight:bold; color:var(--muted);">⚪ Yeni</div>
-    <div style="font-size:18px; font-weight:900; color:var(--text);" id="statNew">0</div>
-  </div>
-  
-  <div id="filterBtnLearn" class="card" onclick="toggleFilter('learning')" 
-       style="flex:1; padding:10px; border:1px solid var(--warn); text-align:center; background:color-mix(in srgb, var(--warn) 5%, var(--card2)); cursor:pointer; transition:0.2s;">
-    <div style="font-size:11px; font-weight:bold; color:var(--warn);">🟡 Öğreniyorum</div>
-    <div style="font-size:18px; font-weight:900; color:var(--warn);" id="statLearn">0</div>
-  </div>
-  
-  <div id="filterBtnMaster" class="card" onclick="toggleFilter('mastered')" 
-       style="flex:1; padding:10px; border:1px solid var(--ok); text-align:center; background:color-mix(in srgb, var(--ok) 5%, var(--card2)); cursor:pointer; transition:0.2s;">
-    <div style="font-size:11px; font-weight:bold; color:var(--ok);">🟢 Öğrendim</div>
-    <div style="font-size:18px; font-weight:900; color:var(--ok);" id="statMaster">0</div>
-  </div>
-</div>
-    <div class="card" style="margin-bottom:12px;">
-      <input id="search" placeholder="Kart ara (kelime/anlam/tür)..." />
-      <div class="smallInfo" style="margin-top:8px;">Kartı aç → düzenle / sil.</div>
-    </div>
+    <div class="card" style="margin-bottom:12px; padding:12px;">
+      <input id="search" placeholder="Kart ara (kelime/anlam)..." style="background:var(--bg); border:none; padding:0; font-size:16px; width:100%; outline:none;" />
+      <div class="smallInfo" style="margin-top:6px;">Kartı aç → düzenle / sil.</div>
+    </div>
 
-    <div id="cardsList"></div>
-  </section>
+    <div id="cardsList" style="padding-bottom:80px;"></div>
+  </section>
 </div>
 
 <nav>
