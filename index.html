@@ -54,6 +54,7 @@ header {
       position: sticky;
       top: 0;
       z-index: 100;
+      /* Yükseklik ayarı: İçerik sıkışmasın diye safe-top ekliyoruz ama background bunu kapsayacak */
       height: calc(var(--header-h) + var(--safe-top));
       padding-top: var(--safe-top);
       display: flex;
@@ -61,7 +62,8 @@ header {
       justify-content: space-between;
       padding-left: 16px;
       padding-right: 16px;
-      /* DÜZELTME: Şeffaflığı kaldırdık, tam renk verdik */
+      
+      /* ÖNEMLİ DEĞİŞİKLİK: Şeffaflık yok, bulanıklık yok. Tamamen mat. */
       background: var(--bg); 
       border-bottom: 1px solid var(--border);
     }
@@ -111,8 +113,8 @@ header {
     .view {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      /* DÜZELTME: Header yüksekliği (60px) + Güvenli alan kadar üstten boşluk bırak */
-      padding: calc(var(--header-h) + var(--safe-top) + 20px) 18px 20px 18px;
+      /* DÜZELTME: Header'dan sonraki boşluğu 20px'den 10px'e düşürdük */
+      padding: calc(var(--header-h) + var(--safe-top) + 10px) 18px 20px 18px;
       padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 20px);
       overflow-y: auto;
       overflow-x: hidden;
