@@ -1081,16 +1081,12 @@ let activeFilter = "all"; // Hangi filtre seçili? (all, new, learning, mastered
 const searchInput = document.getElementById("search");
 if(searchInput) searchInput.addEventListener("input", renderCards);
 
-// Kutulara tıklayınca çalışır (Filtreyi aç/kapa)
+// DÜZELTME: Tıklayınca çıkan beyaz baloncuk (toast) kodlarını sildik.
 function toggleFilter(type){
   if(activeFilter === type){
-     activeFilter = "all"; // Zaten seçiliyse filtreyi kaldır (Hepsini göster)
-     toast("Tüm kartlar gösteriliyor");
+      activeFilter = "all"; // Zaten seçiliyse filtreyi kaldır
   } else {
-     activeFilter = type; // Yeni filtreyi seç
-     if(type === 'new') toast("Sadece YENİ kartlar");
-     if(type === 'learning') toast("Sadece ÖĞRENİLEN kartlar");
-     if(type === 'mastered') toast("Sadece ÖĞRENİLMİŞ kartlar");
+      activeFilter = type; // Yeni filtreyi seç
   }
   renderCards(); // Listeyi yenile
 }
