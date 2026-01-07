@@ -118,7 +118,7 @@
       top: 0; left: 0; right: 0; bottom: 0;
       
       /* KRİTİK KISIM: İçeriği yukarıdan "Header Boyu + 20px" kadar aşağı itiyoruz */
-      padding-top: calc(var(--header-h) + var(--safe-top) + 0px);
+      padding-top: 18px; /* header zaten viewport dışında */
       
       padding-left: 18px;
       padding-right: 18px;
@@ -2123,6 +2123,102 @@ async function doQuickTranslateTR(){
     toast("Çeviri yapılamadı"); 
   }
 }
+    /* ===========================
+   TR -> EN Translate helper
+=========================== */
+async function translateToEN(lang, term){
+  const key = `${lang}|${norm(term)}|toEN`;
+  if(state.txCache[key]) return state.txCache[key];
+
+  const sl = ({EN:"en", RU:"ru", DE:"de", FR:"fr", ES:"es", TR:"tr"})[lang] || "auto";
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=en&dt=t&dt=bd&q=${encodeURIComponent(term)}`;
+
+  try{
+    const r = await fetch(url);
+    if(!r.ok) throw new Error("fail");
+    const data = await r.json();
+
+    let main = (data?.[0]?.[0]?.[0] || "").trim();
+
+    // Ek anlamlar (varsa)
+    let extra = [];
+    if(data[1]){
+      data[1].forEach(group=>{
+        const pos = group[0];
+        const words = (group[1] || []).slice(0,5).join(", ");
+        if(words) extra.push(`[${pos}]: ${words}`);
+      });
+    }
+
+    let finalResult = main;
+    if(extra.length) finalResult = main + "\n\n(" + extra.join(") \n(") + ")";
+
+    state.txCache[key] = finalResult;
+    DB.set("lm_tx_cache", state.txCache);
+    return finalResult;
+  }catch(e){
+    console.log(e);
+    return "";
+  }
+}
+
+/* ===========================
+   TR -> EN Quick Translate UI
+=========================== */
+let quickTermCacheTR = "";
+
+async function doQuickTranslateTR(){
+  const input = document.getElementById("quickTransInputTR");
+  if(!input) return;
+
+  const term = input.value.trim();
+  if(!term) return toast("Lütfen bir kelime yazın.");
+
+  toast("Çevriliyor... ⏳");
+
+  // TR -> EN (detaylı)
+  const en = await translateToEN("TR", term);
+
+  const content = `
+    <div style="font-size:28px; font-weight:900; color:var(--warn); text-align:center; margin-bottom:10px;">${term}</div>
+    <div style="font-size:16px; line-height:1.5; white-space:pre-wrap; background:var(--card); padding:12px; border-radius:12px; border:1px solid var(--border);">${en}</div>
+    <div class="smallInfo" style="margin-top:10px; text-align:center; opacity:.8;">(İstersen bunu kart olarak kaydedebilirsin.)</div>
+  `;
+
+  document.getElementById("trResContent").innerHTML = content;
+  quickTermCacheTR = term;
+
+  // “Karta ekle” butonu İng->TR akışına göre çalışıyor.
+  // Burada istersen TR kelimeyi kartına TR olarak ekleyebilirsin:
+  // (Aynı butonu kullanacaksan, copyToManualAdd içinde dil seçimini TR yapacağız.)
+  openSheet("transResultSheet");
+  input.value = "";
+}
+
+// copyToManualAdd fonksiyonunu TR akışı için küçük güncelle:
+const _oldCopyToManualAdd = copyToManualAdd;
+copyToManualAdd = function(){
+  closeSheets();
+  openManualAdd();
+
+  // Hangi kutudan geldiyse ona göre doldur
+  if(quickTermCache && quickTermCache.length){
+    document.getElementById("maLang").value = "EN";
+    document.getElementById("maTerm").value = quickTermCache;
+  } else if(quickTermCacheTR && quickTermCacheTR.length){
+    document.getElementById("maLang").value = "TR";
+    document.getElementById("maTerm").value = quickTermCacheTR;
+  }
+
+  autoFillManualFields(true);
+};
+    // İlk açılış
+setTheme(state.settings.theme || "dark");
+syncQuizModeLabels();
+renderDash();
+renderReview();
+renderCards();
+
 </script>
 </body>
 </html>
