@@ -104,10 +104,17 @@
     }
 
     /* --- DÜZELTİLEN VIEWPORT VE VIEW KISMI --- */
-    #viewport {
+   #viewport {
       position: relative;
       width: 100%;
+      
+      /* DÜZELTME BURADA: */
+      /* İçerik kutusunu, Header'ın boyu kadar aşağı itiyoruz */
+      margin-top: calc(var(--header-h) + var(--safe-top));
+      
+      /* Yüksekliği de buna göre ayarlıyoruz (Toplam ekran boyunu geçmesin) */
       height: calc(100vh - (var(--header-h) + var(--safe-top)));
+      
       overflow: hidden;
       background: var(--bg);
     }
