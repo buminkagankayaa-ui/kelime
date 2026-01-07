@@ -197,11 +197,26 @@
     .sheet.open { transform: none; } /* Açılınca ekrana gelir */
 
     .handle { width: 48px; height: 5px; border-radius: 99px; background: var(--border); margin: 6px auto 14px; }
-    .field { margin: 10px 0; }
-    label { display: block; font-size: 12px; font-weight: 980; color: var(--muted); margin-bottom: 6px; }
+    /* DAHA KOMPAKT FORM DÜZENİ */
+    .field { margin: 8px 0; } /* Eskiden 10px idi, düşürdük */
+    
+    label { 
+      display: block; 
+      font-size: 11px; /* Yazıyı biraz küçülttük */
+      font-weight: 980; 
+      color: var(--muted); 
+      margin-bottom: 4px; /* Etiket ile kutu arasını kapattık */
+    }
+    
     input, textarea, select {
-      width: 100%; background: var(--card2); border: 1px solid var(--border); border-radius: 16px;
-      padding: 14px; color: var(--text); font-size: 16px; outline: none;
+      width: 100%; 
+      background: var(--card2); 
+      border: 1px solid var(--border); 
+      border-radius: 12px; /* Köşeleri biraz daha keskinleştirdik */
+      padding: 10px 12px; /* İç boşluğu 14px'den 10px'e indirdik (Daha ince kutular) */
+      color: var(--text); 
+      font-size: 15px; 
+      outline: none;
     }
     textarea { min-height: 92px; resize: none; }
     .two { display: flex; gap: 10px; }
@@ -403,64 +418,64 @@
 <div class="backdrop" id="backdrop" onclick="closeSheets()"></div>
 <div class="toast" id="toast">—</div>
 
-<!-- Manual Add -->
 <div class="sheet" id="manualAddSheet">
-  <div class="handle"></div>
-  <h2 class="h2">Elle Kelime Ekle (Online Otomatik)</h2>
+  <div class="handle"></div>
+  <h2 class="h2" style="margin-bottom:10px; font-size:18px;">Elle Ekle (Otomatik)</h2>
 
-  <div class="field">
-    <label>Dil</label>
-    <select id="maLang">
-      <option value="EN">İngilizce</option>
-      <option value="RU">Rusça</option>
-      <option value="DE">Almanca</option>
-      <option value="ES">İspanyolca</option> <option value="FR">Fransızca</option>
-      <option value="TR">Türkçe</option>
-    </select>
-  </div>
-  <div class="field">
-    <label>Kelime / Terim</label>
-    <input id="maTerm" placeholder="Örn: reinforcement" />
-    <div class="smallInfo" id="maHint">Yazınca otomatik doldurur. İnternet şart.</div>
-  </div>
+  <div class="two">
+    <div class="field" style="flex:1;">
+      <label>Dil</label>
+      <select id="maLang">
+        <option value="EN">🇬🇧 İngilizce</option>
+        <option value="TR">🇹🇷 Türkçe</option>
+        <option value="DE">🇩🇪 Almanca</option>
+        <option value="ES">🇪🇸 İspanyolca</option>
+        <option value="FR">🇫🇷 Fransızca</option>
+        <option value="RU">🇷🇺 Rusça</option>
+      </select>
+    </div>
+    <div class="field" style="flex:1;">
+      <label>Tür</label>
+      <select id="maType">
+        <option value="word">Kelime</option>
+        <option value="phrase">Kalıp</option>
+        <option value="noun">İsim</option>
+        <option value="verb">Fiil</option>
+        <option value="adj">Sıfat</option>
+        <option value="adv">Zarf</option>
+      </select>
+    </div>
+  </div>
 
-  <div class="field">
-    <label>Anlamı (TR) - (Çoklu Anlam)</label>
-    <textarea id="maMeaning" placeholder="Otomatik dolacak (Çoklu anlam)" style="min-height:60px; font-family:inherit; background:var(--card2); border:1px solid var(--border); border-radius:16px; width:100%; padding:14px; color:var(--text);"></textarea>
-  </div>
+  <div class="field">
+    <label>Kelime / Terim</label>
+    <input id="maTerm" placeholder="Örn: reinforcement" />
+    <div class="smallInfo" id="maHint" style="margin-top:2px; font-size:11px;">Yazınca otomatik dolar.</div>
+  </div>
 
-  <div class="field">
-    <label>Tür</label>
-    <select id="maType">
-      <option value="word">Kelime</option>
-      <option value="phrase">Kalıp</option>
-      <option value="idiom">Deyim</option>
-      <option value="phrasal">Phrasal Verb</option>
-      <option value="noun">İsim</option>
-      <option value="verb">Fiil</option>
-      <option value="adj">Sıfat</option>
-      <option value="adv">Zarf</option>
-    </select>
-  </div>
+  <div class="field">
+    <label>Anlamı (TR)</label>
+    <textarea id="maMeaning" placeholder="Otomatik..." style="min-height:50px; height:50px;"></textarea>
+  </div>
 
-  <div class="field">
-    <label>Örnek Cümle</label>
-    <textarea id="maExample" placeholder="Otomatik dolacak"></textarea>
-  </div>
+  <div class="field">
+    <label>Örnek Cümle</label>
+    <textarea id="maExample" placeholder="Otomatik..." style="min-height:50px; height:50px;"></textarea>
+  </div>
 
-  <div class="field">
-    <label>Not (opsiyonel)</label>
-    <input id="maNote" placeholder="İpucu/Not" />
-  </div>
+  <div class="field">
+    <label>Not (Opsiyonel)</label>
+    <input id="maNote" placeholder="Kısa not..." />
+  </div>
 
-  <div class="two" style="margin-top:10px;">
-    <button class="btn btnSoft btnHalf" onclick="closeSheets()">Vazgeç</button>
-    <button class="btn btnSoft btnHalf" onclick="autoFillManualFields(true)">⚡ Doldur</button>
-  </div>
-  <div class="two" style="margin-top:10px;">
-    <button class="btn btnPrimary btnHalf" onclick="saveManualCard()">Kaydet</button>
-    <button class="btn btnDanger btnHalf" onclick="clearManual()">Temizle</button>
-  </div>
+  <div class="two" style="margin-top:12px;">
+    <button class="btn btnSoft btnHalf" style="padding:10px;" onclick="closeSheets()">İptal</button>
+    <button class="btn btnPrimary btnHalf" style="padding:10px;" onclick="saveManualCard()">Kaydet</button>
+  </div>
+  
+  <div style="margin-top:8px;">
+    <button class="btn btnSoft" style="width:100%; padding:6px; font-size:12px; opacity:0.7;" onclick="clearManual()">Temizle</button>
+  </div>
 </div>
 
 <!-- Settings -->
