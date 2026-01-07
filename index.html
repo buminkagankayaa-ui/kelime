@@ -272,6 +272,36 @@
   gap: 10px; /* Butonlar arası boşluk */
   margin-top: 12px;
 }
+    /* --- KOMPAKT QUIZ AYARLARI --- */
+    #quizBody {
+      padding: 12px !important; /* Ekran kenar boşluğunu azalttık */
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start; /* Her şeyi yukarı yasla (yayma) */
+      gap: 10px; /* Elemanlar arası boşluk */
+    }
+
+    .qCard {
+      padding: 16px 12px !important; /* Soru kutusu içini daralttık */
+      margin-bottom: 0 !important;
+      border-radius: 16px !important;
+    }
+
+    #qWord {
+      font-size: 22px !important; /* Yazı boyutu devasa olmasın */
+      line-height: 1.3;
+    }
+
+    .qChoice {
+      padding: 12px 14px !important; /* Şık butonlarını incelttik */
+      font-size: 15px !important;
+      margin-bottom: 0 !important;
+      border-radius: 12px !important;
+    }
+
+    #qChoices {
+      gap: 8px !important; /* Şıklar birbirine yaklaşsın */
+    }
   </style>
 </head>
 
@@ -700,35 +730,46 @@
   <button class="btn btnSoft" style="width:100%; margin-top:20px; margin-bottom:20px;" onclick="closeSheets()">Kapat</button>
 </div>
   <div class="overlay" id="quizOverlay">
-  <div class="overlayTop">
-    <div style="font-weight:980;">Quiz</div>
-    <button class="iconBtn" onclick="stopQuiz()">×</button>
-  </div>
-  <div id="quizBody" style="padding:18px;">
-    <div class="card" style="padding:12px;">
-      <div class="smallInfo">Kalan: <b id="qRemain">0</b>/<b id="qTotal">0</b> • ✅ <b id="qCorrect">0</b> • ❌ <b id="qWrong">0</b></div>
-      <div style="margin-top:10px; font-size:40px; font-weight:1000; text-align:center;" id="qWord">—</div>
-      <div class="smallInfo" style="text-align:center; margin-top:8px;" id="qMeta">—</div>
-      <div style="text-align:center; font-style:italic; color:var(--primary); margin-top:6px; min-height:20px;" id="qExample"></div>
-    </div>
+  <div class="overlayTop" style="padding-top: calc(10px + var(--safe-top)); padding-bottom: 10px;">
+    <div style="font-weight:980; font-size:16px; display:flex; align-items:center; gap:6px;">
+      <span>🧠</span> Quiz
+    </div>
+    <button class="iconBtn" style="border:none; background:transparent; width:32px; height:32px; font-size:20px;" onclick="stopQuiz()">×</button>
+  </div>
 
-    <div id="qChoices" style="margin-top:12px; display:flex; flex-direction:column; gap:10px;"></div>
+  <div id="quizBody">
+    
+    <div class="qCard">
+      <div class="smallInfo" style="margin-bottom:8px; display:flex; justify-content:center; gap:12px; font-size:12px;">
+        <span style="opacity:0.7;">Kalan: <b id="qRemain">0</b></span>
+        <span>✅ <b id="qCorrect" style="color:var(--ok);">0</b></span>
+        <span>❌ <b id="qWrong" style="color:var(--danger);">0</b></span>
+      </div>
 
-    <div id="qTyping" style="margin-top:12px; display:none; gap:10px;">
-      <input id="qInput" placeholder="Anlamını yaz..." style="flex:1; font-weight:950;" />
-      <button class="btn btnPrimary" style="padding:12px 14px;" onclick="checkTypingAnswer()">Kontrol</button>
-    </div>
+      <div id="qWord" style="font-weight:900; margin-bottom:6px;">—</div>
+      
+      <div id="qMeta" style="font-size:13px; color:var(--muted); font-weight:600;">—</div>
+      
+      <div id="qExample" style="font-size:13px; font-style:italic; color:var(--primary); margin-top:4px; min-height:0;"></div>
+      <div id="qReveal" style="font-size:14px; font-weight:bold; margin-top:6px; min-height:0;"></div>
+    </div>
 
-    <div class="smallInfo" id="qReveal" style="text-align:center; margin-top:10px; min-height:18px;"></div>
+    <div id="qChoices" style="display:flex; flex-direction:column;"></div>
 
-    <div class="two" style="margin-top:12px;">
-      <button class="btn btnSoft btnHalf" onclick="markAsUnknown()">🔴 Bilmiyorum / Sonra</button>
-    </div>
+    <div id="qTyping" style="display:none; gap:8px;">
+      <input id="qInput" placeholder="Cevabı yaz..." style="flex:1; font-weight:bold; padding:12px;" />
+      <button class="btn btnPrimary" style="padding:0 16px;" onclick="checkTypingAnswer()">ok</button>
+    </div>
 
-    <div class="smallInfo" style="text-align:center; margin-top:10px;">
-      <span class="kbd">Enter</span> kontrol (yazmalı) • <span class="kbd">Esc</span> çıkış
-    </div>
-  </div>
+    <div style="margin-top:4px;">
+      <button class="btn btnSoft" style="width:100%; border-color:var(--danger); color:var(--danger); height:44px; font-size:13px;" onclick="markAsUnknown()">🔴 Bilmiyorum / Pas Geç</button>
+    </div>
+
+    <div class="smallInfo" style="text-align:center; opacity:0.4; font-size:10px; margin-top:auto;">
+      Çıkmak için sağ üstteki çarpıya bas.
+    </div>
+
+  </div>
 </div>
 
 <script>
