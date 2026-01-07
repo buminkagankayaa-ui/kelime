@@ -103,33 +103,24 @@
       opacity: .9;
     }
 
-    /* --- DÜZELTİLEN VIEWPORT VE VIEW KISMI --- */
-   #viewport {
+#viewport {
       position: relative;
       width: 100%;
-      
-      /* DÜZELTME BURADA: */
-      /* İçerik kutusunu, Header'ın boyu kadar aşağı itiyoruz */
-      margin-top: calc(var(--header-h) + var(--safe-top));
-      
-      /* Yüksekliği de buna göre ayarlıyoruz (Toplam ekran boyunu geçmesin) */
       height: calc(100vh - (var(--header-h) + var(--safe-top)));
-      
       overflow: hidden;
       background: var(--bg);
     }
 
-   /* 2. SAYFA İÇERİK AYARI: Başlığın altından başlatıyoruz */
-    .view {
+.view {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
       
-      /* KRİTİK KISIM: İçeriği yukarıdan "Header Boyu + 20px" kadar aşağı itiyoruz */
-      padding-top: 18px; /* header zaten viewport dışında */
+      /* İŞTE KESİN ÇÖZÜM: */
+      /* Header boyu (60px) + Güvenli Alan + 20px Ekstra boşluk veriyoruz */
+      padding-top: calc(var(--header-h) + var(--safe-top) + 20px);
       
       padding-left: 18px;
       padding-right: 18px;
-      /* Alttaki menü payı */
       padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 20px);
       
       overflow-y: auto;
