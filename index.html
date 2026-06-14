@@ -955,13 +955,42 @@ function splitSentences(text){
   if(buf.trim()) out.push(buf);
   return out.map(function(s){ return s.trim(); }).filter(function(s){ return s.length>0; });
 }
+
+/* ===== STEM MATCHING (Russian inflection-aware) ===== */
+var RU_ENDINGS=['ами','ями','иями','ого','его','ому','ему','ыми','ими',
+'ах','ях','ов','ев','ей','ам','ям','ой','ою','ею','ую','юю','ые','ие',
+'ый','ий','ое','ее','ая','яя','ом','ем','у','ю','а','я','ы','и','о','е','ь','й','ъ'];
+function ruStem(w){
+  w=(w||'').toLowerCase().replace(/[^а-яё]/g,'');
+  if(w.length<=3) return w;
+  var best=w;
+  for(var i=0;i<RU_ENDINGS.length;i++){
+    var e=RU_ENDINGS[i];
+    if(w.length>e.length && w.slice(-e.length)===e && (w.length-e.length)>=3){
+      var cand=w.slice(0,w.length-e.length);
+      if(cand.length<best.length) best=cand;
+    }
+  }
+  return best;
+}
+
 function buildKnownSet(){
   var s={};
   for(var i=0;i<db.cards.length;i++){
-    var key=db.cards[i].ru.toLowerCase().replace(/[^а-яёa-z0-9]/gi,'');
-    if(key) s[key]=1;
+    var raw=db.cards[i].ru.toLowerCase();
+    // each word in the card (cards may be phrases)
+    var words=raw.split(/\s+/);
+    for(var w=0;w<words.length;w++){
+      var key=words[w].replace(/[^а-яёa-z0-9]/gi,'');
+      if(key){ s[key]=1; s['#'+ruStem(key)]=1; }
+    }
   }
   return s;
+}
+function wordKnown(mySet,clean){
+  if(mySet[clean]) return true;
+  if(mySet['#'+ruStem(clean)]) return true;
+  return false;
 }
 function renderReader(text){
   var mySet=buildKnownSet();
@@ -978,7 +1007,7 @@ function renderReader(text){
       if(/^\s+$/.test(w)){ toks+=w; continue; }
       var clean=w.replace(/[^А-Яа-яЁё]/g,'').toLowerCase();
       if(!clean || clean.length<2){ toks+=esc(w); continue; }
-      var known=mySet[clean];
+      var known=wordKnown(mySet,clean);
       toks+='<span class="tok'+(known?'':' new')+'" data-act="tapword" data-w="'+esc(w)+'">'+esc(w)+'</span>';
     }
     html+='<span class="sent-block" data-sent="'+esc(s)+'">'+toks+
@@ -1000,6 +1029,9 @@ function tapWord(el){
     chip.innerHTML='<b>'+esc(clean)+'</b> → '+esc(out||'?')+' ';
     var box=document.createElement('span');
     box.style.cssText='display:flex;gap:6px;margin-top:8px;';
+    var listenBtn=document.createElement('button');
+    listenBtn.className='btn bs bsm'; listenBtn.textContent='🔊 Dinle';
+    listenBtn.addEventListener('click',function(){ speak(clean); });
     var addBtn=document.createElement('button');
     addBtn.className='btn bp bsm'; addBtn.textContent='+ Karta Ekle';
     addBtn.addEventListener('click',function(){
@@ -1008,8 +1040,10 @@ function tapWord(el){
     var closeBtn=document.createElement('button');
     closeBtn.className='btn bs bsm'; closeBtn.textContent='Kapat';
     closeBtn.addEventListener('click',function(){ chip.remove(); });
-    box.appendChild(addBtn); box.appendChild(closeBtn);
+    box.appendChild(listenBtn); box.appendChild(addBtn); box.appendChild(closeBtn);
     chip.appendChild(box);
+    /* auto-speak the word on tap for instant pronunciation */
+    speak(clean);
   });
 }
 function tapSent(btn){
@@ -1026,6 +1060,9 @@ function tapSent(btn){
     chip.innerHTML='<b>Çeviri:</b> '+esc(out||'?')+' ';
     var box=document.createElement('span');
     box.style.cssText='display:flex;gap:6px;margin-top:8px;';
+    var listenBtn=document.createElement('button');
+    listenBtn.className='btn bs bsm'; listenBtn.textContent='🔊 Dinle';
+    listenBtn.addEventListener('click',function(){ speak(s); });
     var addBtn=document.createElement('button');
     addBtn.className='btn bp bsm'; addBtn.textContent='+ Karta Ekle';
     addBtn.addEventListener('click',function(){
@@ -1034,7 +1071,7 @@ function tapSent(btn){
     var closeBtn=document.createElement('button');
     closeBtn.className='btn bs bsm'; closeBtn.textContent='Kapat';
     closeBtn.addEventListener('click',function(){ chip.remove(); });
-    box.appendChild(addBtn); box.appendChild(closeBtn);
+    box.appendChild(listenBtn); box.appendChild(addBtn); box.appendChild(closeBtn);
     chip.appendChild(box);
   });
 }
@@ -1098,7 +1135,7 @@ function renderStoryReader(){
       if(/^\s+$/.test(w)){ toks+=w; continue; }
       var clean=w.replace(/[^А-Яа-яЁё]/g,'').toLowerCase();
       if(!clean || clean.length<2){ toks+=esc(w); continue; }
-      var known=mySet[clean];
+      var known=wordKnown(mySet,clean);
       toks+='<span class="tok'+(known?'':' new')+'" data-act="tapword" data-w="'+esc(w)+'">'+esc(w)+'</span>';
     }
     body+='<span class="sent-block" data-sent="'+esc(s)+'">'+toks+
@@ -1108,12 +1145,18 @@ function renderStoryReader(){
   $('story-reader').innerHTML=
     '<button class="btn bs bsm" style="margin-bottom:12px;" data-act="closestory">← Hikayeler</button>'+
     '<div style="font-size:20px;font-weight:980;margin-bottom:2px;">'+esc(st.title)+'</div>'+
-    '<div class="muted" style="font-size:13px;margin-bottom:12px;">'+esc(st.title_tr)+' · '+esc(st.level)+'</div>'+
+    '<div class="muted" style="font-size:13px;margin-bottom:10px;">'+esc(st.title_tr)+' · '+esc(st.level)+'</div>'+
+    '<div class="row" style="margin-bottom:12px;">'+
+      '<button class="btn bp bh bsm" data-act="speakstory">🔊 Hikayeyi dinle</button>'+
+      '<button class="btn bs bh bsm" data-act="stopspeak">⏹ Durdur</button>'+
+    '</div>'+
     '<div class="card"><div class="reader">'+body+'</div></div>'+
     '<button class="btn bp" style="width:100%;" data-act="toggletr">'+(storyShowTr?'Türkçeyi gizle':'Türkçe çeviriyi göster')+'</button>'+
     trBlock+
     '<div style="height:8px;"></div>';
 }
+function speakStory(){ if(curStory) speak(curStory.ru); }
+function stopSpeak(){ try{ speechSynthesis.cancel(); }catch(e){} }
 function toggleStoryTr(){ storyShowTr=!storyShowTr; renderStoryReader(); }
 
 /* ===== GRAMMAR ===== */
@@ -1218,6 +1261,8 @@ function handleAct(act,node,e){
   else if(act==='openstory'){ openStory(parseInt(node.getAttribute('data-i'),10)); }
   else if(act==='closestory'){ closeStory(); }
   else if(act==='toggletr'){ toggleStoryTr(); }
+  else if(act==='speakstory'){ speakStory(); }
+  else if(act==='stopspeak'){ stopSpeak(); }
   else if(act==='speaktest'){ speak('Доброе утро! Как дела?'); }
   else if(act==='export'){ exportData(); }
   else if(act==='pickimport'){ $('imp-in').click(); }
