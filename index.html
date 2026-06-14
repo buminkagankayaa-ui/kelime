@@ -1,2031 +1,1159 @@
 <!DOCTYPE html>
 <html lang="tr" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content" />
-  <title>Vocabify</title>
-  <meta name="theme-color" content="#0b1220" id="meta-theme">
-  <style>
-    :root {
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-      --safe-top: env(safe-area-inset-top, 0px);
-      --header-h: 60px;
-      --nav-h: 78px;
-      --radius: 18px;
-      --bg: #0b1220;
-      --card: #111b2d;
-      --card2: #0f172a;
-      --border: #25324a;
-      --text: #e5e7eb;
-      --muted: #94a3b8;
-      --primary: #6366f1;
-      --danger: #ef4444;
-      --warn: #f59e0b;
-      --ok: #10b981;
-    }
-
-    [data-theme="light"] {
-      --bg: #f8fafc; --card: #ffffff; --card2: #f1f5f9; --border: #cbd5e1;
-      --text: #0f172a; --muted: #64748b; --primary: #4f46e5;
-      --danger: #dc2626; --warn: #d97706; --ok: #059669;
-    }
-    [data-theme="ocean"] { --bg:#06131f; --card:#0b2236; --card2:#0a1b2a; --border:#245070; --text:#e6f2ff; --muted:#9bb7d3; --primary:#38bdf8; }
-    [data-theme="emerald"] { --bg:#071a14; --card:#0b2a21; --card2:#082018; --border:#1f6b52; --text:#ecfdf5; --muted:#9fe3c7; --primary:#10b981; }
-    [data-theme="sunset"] { --bg:#1b1020; --card:#2a1731; --card2:#1f1225; --border:#6b2a59; --text:#fff7ed; --muted:#fbcfe8; --primary:#fb7185; }
-    [data-theme="rose"] { --bg:#120a10; --card:#1f0f1b; --card2:#160b13; --border:#7f1d1d; --text:#fff1f2; --muted:#fda4af; --primary:#f43f5e; }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      position: fixed;
-      overflow: hidden;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Inter", Roboto, sans-serif;
-      overscroll-behavior: none;
-    }
-
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 999;
-      height: calc(var(--header-h) + var(--safe-top));
-      padding-top: var(--safe-top);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-left: 16px;
-      padding-right: 16px;
-      background: var(--bg);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: none;
-    }
-
-    .brand { display: flex; align-items: center; gap: 10px; font-weight: 950; }
-    .logo { width: 18px; height: 18px; border: 2px solid var(--primary); border-radius: 6px; transform: rotate(15deg); }
-
-    .iconBtn {
-      width: 44px; height: 44px; border-radius: 14px;
-      background: transparent; border: 1px solid var(--border); color: var(--muted);
-      display: grid; place-items: center; cursor: pointer; user-select: none;
-    }
-    .iconBtn:active { transform: scale(.98); opacity: .9; }
-
-    #viewport {
-      position: relative; width: 100%; height: 100vh;
-      overflow: hidden; background: var(--bg);
-    }
-
-    .view {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      padding-top: calc(var(--header-h) + var(--safe-top) + 20px);
-      padding-left: 18px; padding-right: 18px;
-      padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 20px);
-      overflow-y: auto; overflow-x: hidden;
-      background: var(--bg);
-      opacity: 0; pointer-events: none; transform: translateY(10px);
-      transition: opacity 0.25s ease, transform 0.25s ease;
-      z-index: 10;
-    }
-    .view.active { opacity: 1; pointer-events: auto; transform: translateY(0); z-index: 20; }
-
-    .row { display: flex; gap: 12px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
-    .muted { color: var(--muted); }
-    .big { font-size: 34px; font-weight: 980; }
-    .h2 { font-size: 20px; font-weight: 980; margin: 0 0 12px 0; }
-    .secTitle { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 950; margin: 4px 0 10px; }
-
-    .btn { border: 0; cursor: pointer; border-radius: 16px; padding: 14px 16px; font-weight: 980; display: flex; align-items: center; justify-content: center; gap: 10px; user-select: none; }
-    .btn:active { transform: scale(.985); opacity: .92; }
-    .btnPrimary { background: var(--primary); color: white; }
-    .btnSoft { background: var(--card2); color: var(--text); border: 1px solid var(--border); }
-    .btnDanger { background: var(--danger); color: white; }
-    .btnOk { background: var(--ok); color: white; }
-    .btnHalf { flex: 1; }
-
-    nav {
-      position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
-      height: calc(var(--nav-h) + var(--safe-bottom));
-      padding-bottom: var(--safe-bottom);
-      background: var(--card2); border-top: 1px solid var(--border); display: flex;
-    }
-    .navBtn {
-      flex: 1; background: transparent; border: 0; color: var(--muted); cursor: pointer; user-select: none;
-      display: grid; grid-template-rows: 36px 18px; align-items: center; justify-items: center;
-      padding: 6px 0; line-height: 1; min-width: 0;
-    }
-    .navBtn .ico { width: 46px; height: 36px; display: grid; place-items: center; font-size: 20px; line-height: 1; }
-    .navBtn span { font-size: 11.5px; font-weight: 980; line-height: 1; transform: translateY(-1px); white-space: nowrap; }
-    .navBtn.active { color: var(--primary); }
-    .navBtn.active .ico { background: color-mix(in srgb, var(--primary) 15%, transparent); border-radius: 14px; }
-
-    .backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,.55); opacity: 0; pointer-events: none; transition: .2s ease; }
-    .backdrop.open { opacity: 1; pointer-events: auto; }
-
-    .sheet {
-      position: fixed; left: 0; right: 0; z-index: 50;
-      background: var(--card); border-radius: 26px 26px 0 0; border: 1px solid var(--border);
-      transform: translateY(110%); transition: .25s ease;
-      max-height: 85dvh; overflow-y: auto;
-      bottom: 0 !important; top: auto !important;
-      padding: 14px 16px calc(16px + var(--safe-bottom));
-    }
-    .sheet.open { transform: none; }
-
-    .handle { width: 48px; height: 5px; border-radius: 99px; background: var(--border); margin: 6px auto 14px; }
-    .field { margin: 8px 0; }
-
-    label { display: block; font-size: 11px; font-weight: 980; color: var(--muted); margin-bottom: 4px; }
-
-    input, textarea, select {
-      width: 100%; background: var(--card2); border: 1px solid var(--border);
-      border-radius: 12px; padding: 10px 12px; color: var(--text); font-size: 15px; outline: none;
-    }
-    textarea { min-height: 92px; resize: none; }
-    .two { display: flex; gap: 10px; }
-    .smallInfo { font-size: 12px; color: var(--muted); font-weight: 950; margin-top: 6px; }
-
-    .toast {
-      position: fixed; left: 50%; top: calc(14px + var(--safe-top));
-      transform: translate(-50%,-20px);
-      background: var(--text); color: var(--bg);
-      padding: 10px 14px; border-radius: 99px; font-weight: 980;
-      opacity: 0; pointer-events: none; transition: .25s ease; z-index: 200;
-      max-width: calc(100vw - 20px); text-align: center;
-    }
-    .toast.show { opacity: 1; transform: translate(-50%,0); }
-
-    .cardLine { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-    .termBig { font-weight: 980; color: var(--primary); font-size: 20px; }
-    .badge {
-      font-size: 11px; font-weight: 980; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--border);
-      color: var(--muted); background: color-mix(in srgb, var(--card2) 60%, transparent); white-space: nowrap;
-    }
-    .badge.due { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, var(--border)); background: color-mix(in srgb, var(--warn) 10%, transparent); }
-    .divider { height: 1px; background: var(--border); margin: 12px 0; }
-    .kbd { font-size: 11px; font-weight: 980; border: 1px solid var(--border); padding: 4px 8px; border-radius: 10px; background: var(--card); color: var(--muted); }
-
-    .overlay { position: fixed; inset: 0; z-index: 120; background: var(--bg); transform: translateX(110%); transition: .25s ease; display: flex; flex-direction: column; }
-    .overlay.open { transform: none; }
-    .overlayTop {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 16px calc(14px + var(--safe-top));
-      padding-top: calc(14px + var(--safe-top));
-      border-bottom: 1px solid var(--border);
-      background: color-mix(in srgb, var(--bg) 85%, transparent);
-      backdrop-filter: blur(12px);
-    }
-    .qChoice { text-align: left; background: var(--card); border: 1px solid var(--border); padding: 14px; border-radius: 16px; cursor: pointer; font-weight: 950; }
-    .qChoice.correct { border-color: color-mix(in srgb, var(--ok) 70%, var(--border)); background: color-mix(in srgb, var(--ok) 12%, var(--card)); }
-    .qChoice.wrong { border-color: color-mix(in srgb, var(--danger) 70%, var(--border)); background: color-mix(in srgb, var(--danger) 10%, var(--card)); }
-
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-
-    #quizBody {
-      padding: 12px !important;
-      display: flex; flex-direction: column; justify-content: flex-start; gap: 10px;
-    }
-    .qCard { padding: 16px 12px !important; margin-bottom: 0 !important; border-radius: 16px !important; }
-    #qWord { font-size: 22px !important; line-height: 1.3; }
-    .qChoice { padding: 12px 14px !important; font-size: 15px !important; margin-bottom: 0 !important; border-radius: 12px !important; }
-    #qChoices { gap: 8px !important; }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,viewport-fit=cover"/>
+<title>Vocabify · Rusça</title>
+<meta name="theme-color" content="#0c1220">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{--si:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
+--hh:60px;--nh:72px;--r:18px;
+--bg:#0c1220;--card:#131f35;--card2:#0f1929;--brd:#1e3050;
+--txt:#e8edf5;--mut:#7a94b8;
+--pri:#6c63ff;--pri2:#8b5cf6;--dan:#ef4444;--wrn:#f59e0b;--ok:#10b981;--amb:#d97706;}
+[data-theme=light]{--bg:#f0f4ff;--card:#ffffff;--card2:#e8edf8;--brd:#c5d0e8;
+--txt:#0f172a;--mut:#5a6a88;--pri:#4f46e5;--pri2:#7c3aed;--dan:#dc2626;--wrn:#d97706;--ok:#059669;--amb:#b45309;}
+[data-theme=ocean]{--bg:#04111e;--card:#081d33;--card2:#061628;--brd:#0e3a60;
+--txt:#def0ff;--mut:#6ba8cf;--pri:#22d3ee;--pri2:#38bdf8;--amb:#d97706;}
+[data-theme=emerald]{--bg:#06130f;--card:#092118;--card2:#071a13;--brd:#135240;
+--txt:#eafff5;--mut:#5fbc95;--pri:#10b981;--pri2:#34d399;--amb:#d97706;}
+[data-theme=sunset]{--bg:#160d1e;--card:#221330;--card2:#1a0e25;--brd:#4a1d6e;
+--txt:#fff2f8;--mut:#c47aaa;--pri:#e879f9;--pri2:#fb7185;--amb:#d97706;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;width:100%;height:100%;position:fixed;overflow:hidden;
+background:var(--bg);color:var(--txt);
+font-family:-apple-system,BlinkMacSystemFont,"Inter",Roboto,sans-serif;
+overscroll-behavior:none;-webkit-font-smoothing:antialiased;}
+header{position:fixed;top:0;left:0;right:0;z-index:999;
+height:calc(var(--hh) + var(--st));padding-top:var(--st);
+display:flex;align-items:center;justify-content:space-between;padding-left:16px;padding-right:16px;
+background:var(--bg);border-bottom:1px solid var(--brd);}
+.brand{display:flex;align-items:center;gap:9px;}
+.logo-box{width:34px;height:34px;border-radius:11px;
+background:linear-gradient(135deg,var(--pri),var(--pri2));
+display:grid;place-items:center;font-size:18px;font-weight:900;color:#fff;}
+.brand-name{font-size:18px;font-weight:980;letter-spacing:-.03em;}
+.lang-badge{font-size:11px;font-weight:800;background:color-mix(in srgb,var(--pri) 15%,transparent);
+border:1px solid color-mix(in srgb,var(--pri) 40%,transparent);
+color:var(--pri);border-radius:999px;padding:3px 9px;}
+.hdr-btn{width:38px;height:38px;border-radius:12px;background:var(--card2);
+border:1px solid var(--brd);color:var(--mut);display:grid;place-items:center;cursor:pointer;font-size:16px;}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:30;
+height:calc(var(--nh) + var(--si));padding-bottom:var(--si);
+background:var(--card2);border-top:1px solid var(--brd);display:flex;}
+.nb{flex:1;background:transparent;border:0;color:var(--mut);
+display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;
+padding-top:8px;font-size:10px;font-weight:800;}
+.nb .ic{width:44px;height:30px;display:grid;place-items:center;font-size:19px;border-radius:12px;}
+.nb.on{color:var(--pri);}
+.nb.on .ic{background:color-mix(in srgb,var(--pri) 18%,transparent);}
+#vp{position:relative;width:100%;height:100vh;overflow:hidden;background:var(--bg);}
+.view{position:absolute;inset:0;
+padding-top:calc(var(--hh) + var(--st) + 14px);
+padding-bottom:calc(var(--nh) + var(--si) + 10px);
+padding-left:16px;padding-right:16px;
+overflow-y:auto;overflow-x:hidden;background:var(--bg);display:none;}
+.view.on{display:block;}
+.card{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);padding:15px;margin-bottom:12px;}
+.card-sm{padding:11px 13px;}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.stat-box{background:var(--card);border:1px solid var(--brd);border-radius:16px;
+padding:13px 8px;text-align:center;}
+.stat-box .n{font-size:30px;font-weight:980;line-height:1;}
+.stat-box .l{font-size:10px;color:var(--mut);font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
+.stat-box.hi .n{color:var(--pri);}
+.stat-box.ok .n{color:var(--ok);}
+.prog-wrap{background:var(--brd);border-radius:999px;height:5px;margin-bottom:16px;overflow:hidden;}
+.prog-fill{background:linear-gradient(90deg,var(--pri),var(--ok));height:100%;border-radius:999px;transition:width .4s;}
+.sec{font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+color:var(--mut);font-weight:900;margin:14px 0 8px;}
+.btn{border:0;cursor:pointer;border-radius:14px;padding:13px 14px;font-weight:900;
+display:flex;align-items:center;justify-content:center;gap:8px;
+font-size:14px;transition:transform .1s,opacity .1s;user-select:none;}
+.btn:active{transform:scale(.97);opacity:.85;}
+.bp{background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;}
+.bs{background:var(--card2);color:var(--txt);border:1px solid var(--brd);}
+.bd{background:var(--dan);color:#fff;}
+.bo{background:var(--ok);color:#fff;}
+.bh{flex:1;}
+.bsm{padding:7px 11px;border-radius:10px;font-size:12px;font-weight:800;}
+.row{display:flex;gap:9px;}
+input,textarea,select{width:100%;background:var(--card2);border:1px solid var(--brd);
+color:var(--txt);border-radius:13px;padding:12px 13px;font-size:15px;font-family:inherit;outline:none;}
+input:focus,textarea:focus{border-color:var(--pri);}
+textarea{resize:vertical;min-height:80px;line-height:1.5;}
+.fl{display:block;font-size:11px;font-weight:800;color:var(--mut);margin:0 0 5px 2px;
+letter-spacing:.04em;text-transform:uppercase;}
+.seg{display:flex;background:var(--card2);border:1px solid var(--brd);
+border-radius:14px;padding:3px;gap:3px;margin-bottom:12px;}
+.segb{flex:1;border:0;background:transparent;color:var(--mut);border-radius:11px;
+padding:8px 4px;font-size:12px;font-weight:800;cursor:pointer;}
+.segb.on{background:var(--card);color:var(--txt);}
+.tr-widget{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);
+padding:14px;margin-bottom:12px;}
+.dir-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.lang-pill{flex:1;background:var(--card2);border:1px solid var(--brd);border-radius:10px;
+padding:9px 10px;text-align:center;font-size:13px;font-weight:800;color:var(--txt);}
+.swap-btn{width:38px;height:38px;border-radius:12px;background:var(--card2);
+border:1px solid var(--brd);display:grid;place-items:center;cursor:pointer;font-size:18px;flex-shrink:0;}
+.tr-result{background:var(--card2);border-radius:12px;padding:12px;margin-top:10px;
+border-left:3px solid var(--pri);}
+.tr-orig{font-size:14px;color:var(--mut);margin-bottom:4px;}
+.tr-main{font-size:22px;font-weight:980;color:var(--pri);}
+.flip-wrap{perspective:1400px;margin-bottom:12px;cursor:pointer;user-select:none;}
+.flip-inner{transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d;
+position:relative;min-height:210px;}
+.flip-inner.flipped{transform:rotateY(180deg);}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+background:var(--card);border:1px solid var(--brd);border-radius:var(--r);
+display:flex;flex-direction:column;align-items:center;justify-content:center;
+text-align:center;padding:24px 20px;gap:10px;}
+.flip-back{transform:rotateY(180deg);}
+.f-word{font-size:36px;font-weight:980;line-height:1.1;}
+.f-trans{font-size:26px;font-weight:900;color:var(--pri);line-height:1.2;}
+.f-ex{font-size:13px;color:var(--mut);line-height:1.45;max-width:88%;}
+.f-hint{font-size:12px;color:var(--mut);opacity:.6;}
+.rev-progress{height:3px;background:var(--brd);border-radius:999px;margin-bottom:12px;overflow:hidden;}
+.rev-prog-fill{background:linear-gradient(90deg,var(--pri),var(--ok));height:100%;border-radius:999px;transition:width .3s;}
+.item{display:flex;align-items:center;gap:8px;padding:10px 12px;
+border:1px solid var(--brd);border-radius:13px;background:var(--card);margin-bottom:7px;}
+.item .rw{font-weight:900;font-size:15px;flex:1;min-width:0;}
+.item .trw{color:var(--mut);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.boxtag{font-size:10px;font-weight:900;color:var(--pri);
+border:1px solid color-mix(in srgb,var(--pri) 40%,transparent);
+border-radius:7px;padding:2px 6px;flex-shrink:0;}
+.catscroll{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px;}
+.catbtn{background:var(--card2);border:1px solid var(--brd);border-radius:999px;
+padding:5px 11px;font-size:11px;font-weight:800;cursor:pointer;color:var(--mut);white-space:nowrap;flex-shrink:0;}
+.catbtn.on{background:var(--pri);color:#fff;border-color:var(--pri);}
+.vlist{border:1px solid var(--brd);border-radius:13px;overflow:hidden;}
+.vi{display:flex;align-items:center;padding:9px 11px;border-bottom:1px solid var(--brd);gap:8px;}
+.vi:last-child{border-bottom:none;}
+.vi .ru{font-weight:800;font-size:14px;flex:1;min-width:0;}
+.vi .tr{color:var(--mut);font-size:12px;flex:2;min-width:0;}
+.vi .addbtn{width:30px;height:30px;border-radius:9px;border:1px solid var(--brd);
+background:transparent;color:var(--pri);font-size:18px;cursor:pointer;
+display:grid;place-items:center;flex-shrink:0;}
+.vi .addbtn.done{color:var(--ok);border-color:var(--ok);font-size:14px;}
+.reader{line-height:2.1;font-size:17px;word-break:break-word;}
+.tok{cursor:pointer;border-radius:5px;padding:0 2px;}
+.tok.new{color:var(--amb);font-weight:700;
+background:color-mix(in srgb,var(--amb) 12%,transparent);border-radius:5px;}
+.trchip{display:block;background:var(--card2);
+border:1px dashed var(--pri);border-radius:12px;
+padding:11px 13px;margin:5px 0;font-size:13px;line-height:1.55;}
+.trchip b{color:var(--pri);}
+.sentbtn{display:inline-grid;place-items:center;width:18px;height:18px;
+border-radius:5px;border:1px solid var(--brd);background:var(--card2);
+color:var(--pri);font-size:10px;font-weight:900;cursor:pointer;vertical-align:middle;margin:0 3px;}
+.gram-section{margin-bottom:8px;border:1px solid var(--brd);border-radius:14px;overflow:hidden;}
+.gram-hdr{display:flex;justify-content:space-between;align-items:center;
+padding:13px 14px;background:var(--card);cursor:pointer;border:none;width:100%;
+text-align:left;font-size:14px;font-weight:900;color:var(--txt);}
+.gram-hdr .arr{color:var(--mut);font-size:20px;transition:transform .2s;flex-shrink:0;}
+.gram-hdr.open .arr{transform:rotate(90deg);}
+.gram-body{display:none;padding:12px;background:var(--bg);}
+.gram-body.open{display:block;}
+table.gt{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px;}
+table.gt th{background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;
+font-weight:900;padding:7px 9px;text-align:left;font-size:11.5px;}
+table.gt td{padding:7px 9px;border-bottom:1px solid var(--brd);vertical-align:top;line-height:1.4;}
+table.gt tr:last-child td{border-bottom:none;}
+table.gt td b{color:var(--pri);}
+table.gt td i{color:var(--mut);font-size:11px;}
+.gnote{background:var(--card);border:1px solid var(--brd);border-radius:11px;
+padding:11px 13px;font-size:12.5px;line-height:1.6;margin-top:9px;}
+.gnote b{color:var(--pri);}
+.toast{position:fixed;left:50%;transform:translateX(-50%);
+bottom:calc(var(--nh) + var(--si) + 14px);
+background:var(--txt);color:var(--bg);padding:10px 18px;border-radius:999px;
+font-weight:900;font-size:13px;z-index:2000;opacity:0;transition:opacity .18s;pointer-events:none;}
+.toast.show{opacity:1;}
+.spin{width:14px;height:14px;border:2px solid var(--mut);border-top-color:var(--pri);
+border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical-align:middle;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.empty{text-align:center;color:var(--mut);padding:36px 12px;font-size:13px;line-height:1.6;}
+.muted{color:var(--mut);}
+</style>
 </head>
-
 <body>
+
 <header>
   <div class="brand">
-    <div class="logo"></div>
-    <div style="font-size: 19px; letter-spacing: -0.5px;">Vocabify</div>
+    <div class="logo-box">В</div>
+    <span class="brand-name">Vocabify</span>
+    <span class="lang-badge">RU &harr; TR</span>
   </div>
-
-  <div style="display:flex; gap:8px;">
-    <button class="iconBtn" id="btnTheme">🎨</button>
-    <button class="iconBtn" id="btnSettings">⚙️</button>
-  </div>
+  <button class="hdr-btn" data-act="settings">&#9881;&#65039;</button>
 </header>
 
-<div id="viewport">
-  <section class="view active" id="home">
-    <div class="secTitle" style="margin-top:0; margin-bottom:8px;">Genel Bakış</div>
+<div id="vp">
 
-    <div class="grid-2" style="margin-top:0; margin-bottom:10px;">
+<!-- HOME -->
+<section class="view on" id="v-home">
+  <div class="stats-row">
+    <div class="stat-box"><div class="n" id="st-total">0</div><div class="l">Kart</div></div>
+    <div class="stat-box hi"><div class="n" id="st-due">0</div><div class="l">Bug&uuml;n</div></div>
+    <div class="stat-box ok"><div class="n" id="st-ok">0</div><div class="l">&Ouml;&#287;renildi</div></div>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog-bar" style="width:0%"></div></div>
 
-      <div class="card" style="border:1px solid var(--primary); padding:12px; display:flex; flex-direction:column; justify-content:space-between;">
-        <div style="font-weight:bold; color:var(--primary); font-size:12px; margin-bottom:10px;">
-          🇬🇧 İngilizce ➡️ 🇹🇷 Türkçe
-        </div>
-        <div style="display:flex; gap:6px;">
-          <input id="quickTransInput" placeholder="İngilizce..." style="background:var(--bg); font-size:15px; width:100%; border-radius:10px; padding:10px;" onkeydown="if(event.key==='Enter') doQuickTranslate()" />
-          <button class="iconBtn" style="background:var(--primary); color:white; border:none; width:42px; height:42px; border-radius:10px; flex-shrink:0;" onclick="doQuickTranslate()">🔎</button>
-        </div>
-      </div>
-
-      <div class="card" style="border:1px solid var(--warn); padding:12px; display:flex; flex-direction:column; justify-content:space-between;">
-        <div style="font-weight:bold; color:var(--warn); font-size:12px; margin-bottom:10px;">
-          🇹🇷 Türkçe ➡️ 🇬🇧 İngilizce
-        </div>
-        <div style="display:flex; gap:6px;">
-          <input id="quickTransInputTR" placeholder="Türkçe..." style="background:var(--bg); font-size:15px; width:100%; border-radius:10px; padding:10px;" onkeydown="if(event.key==='Enter') doQuickTranslateTR()" />
-          <button class="iconBtn" style="background:var(--warn); color:white; border:none; width:42px; height:42px; border-radius:10px; flex-shrink:0;" onclick="doQuickTranslateTR()">🔎</button>
-        </div>
-      </div>
-
+  <div class="tr-widget">
+    <div class="dir-row">
+      <div class="lang-pill" id="lang-from">&#127479;&#127482; Rus&ccedil;a</div>
+      <button class="swap-btn" data-act="swap">&#8644;</button>
+      <div class="lang-pill" id="lang-to">&#127481;&#127479; T&uuml;rk&ccedil;e</div>
     </div>
+    <input id="q-input" placeholder="Kelime ya da &ouml;bek yaz&hellip;" autocomplete="off">
+    <button class="btn bp" style="width:100%;margin-top:9px;" data-act="translate">
+      <span id="tr-btn-txt">&Ccedil;evir</span>
+    </button>
+    <div id="q-result"></div>
+  </div>
 
-    <div class="grid-2" style="margin-top:0;">
-      <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
-        <div class="muted" style="font-weight:980; font-size:13px;">Toplam Kart</div>
-        <div class="big" id="dashTotal" style="margin-top:4px;">0</div>
-      </div>
-      <div class="card" style="border-color:color-mix(in srgb, var(--warn) 45%, var(--border)); display:flex; flex-direction:column; justify-content:center;">
-        <div style="font-weight:980; color:var(--warn); font-size:13px;">Tekrar</div>
-        <div class="big" style="color:var(--warn); margin-top:4px;" id="dashDue">0</div>
-      </div>
+  <div class="sec">Ba&#351;la</div>
+  <div class="row">
+    <button class="btn bp bh" data-nav="review">&#129504; Tekrara Ba&#351;la</button>
+    <button class="btn bs bh" data-nav="doc">&#128196; Belge Oku</button>
+  </div>
+  <div class="sec">Son Eklenenler</div>
+  <div id="home-recent"></div>
+</section>
+
+<!-- REVIEW -->
+<section class="view" id="v-review">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+    <div style="font-size:18px;font-weight:980;flex:1;">Tekrar</div>
+    <button class="btn bs bsm" data-act="revdir" id="rev-dir-btn">RU &rarr; TR</button>
+  </div>
+  <div class="rev-progress"><div class="rev-prog-fill" id="rev-prog" style="width:0%"></div></div>
+  <div id="rev-wrap"></div>
+</section>
+
+<!-- WORDS -->
+<section class="view" id="v-words">
+  <div class="seg">
+    <button class="segb on" id="sg-mine" data-act="wseg" data-seg="mine">Kartlar&#305;m</button>
+    <button class="segb" id="sg-dict" data-act="wseg" data-seg="dict">Hazine</button>
+    <button class="segb" id="sg-add" data-act="wseg" data-seg="add">Ekle</button>
+  </div>
+  <div id="wp-mine">
+    <input id="mine-search" placeholder="&#128269; Kartlarda ara&hellip;" style="margin-bottom:10px;">
+    <div id="mine-list"></div>
+  </div>
+  <div id="wp-dict" style="display:none;">
+    <input id="dict-search" placeholder="&#128269; Hazinede ara&hellip;" style="margin-bottom:8px;">
+    <div class="catscroll" id="cat-row"></div>
+    <div id="dict-list" class="vlist" style="margin-top:2px;"></div>
+  </div>
+  <div id="wp-add" style="display:none;">
+    <div class="card">
+      <label class="fl">Rus&ccedil;a</label>
+      <input id="m-ru" placeholder="Rus&ccedil;a kelime / &ouml;bek" autocomplete="off">
+      <label class="fl" style="margin-top:10px;">T&uuml;rk&ccedil;e <span class="muted" style="font-weight:400;font-size:11px;">(bo&#351;sa otomatik &ccedil;evrilir)</span></label>
+      <input id="m-tr" placeholder="T&uuml;rk&ccedil;e anlam&#305;" autocomplete="off">
+      <label class="fl" style="margin-top:10px;">&Ouml;rnek c&uuml;mle <span class="muted" style="font-weight:400;font-size:11px;">(opsiyonel)</span></label>
+      <input id="m-ex" placeholder="Rus&ccedil;a &ouml;rnek c&uuml;mle" autocomplete="off">
+      <button class="btn bp" style="margin-top:11px;width:100%;" data-act="manualadd">Kart ekle</button>
     </div>
-    <div class="card" style="margin-top:14px;">
-      <div style="font-weight:980;">Hızlı İşlemler</div>
+  </div>
+</section>
 
-      <div class="grid-2">
-        <button class="btn btnPrimary" onclick="go('review')">🧠 Tekrar</button>
-        <button class="btn btnSoft" onclick="go('cards')">🗂️ Kartlar</button>
-        <button class="btn btnSoft" onclick="openManualAdd()">➕ Elle Ekle</button>
-        <button class="btn btnSoft" onclick="resetTodaysQueue()">🔁 Kuyruğu Yenile</button>
-      </div>
-
-      <div style="margin-top:10px;">
-        <button class="btn btnPrimary" style="width:100%;" onclick="openSheet('grammarSheet')">📘 Hızlı Gramer Kitapçığı</button>
-      </div>
+<!-- DOCUMENT -->
+<section class="view" id="v-doc">
+  <div style="font-size:18px;font-weight:980;margin-bottom:12px;">Belge Okuyucu</div>
+  <div class="card">
+    <p class="muted" style="margin:0 0 10px;font-size:13px;line-height:1.55;">
+      PDF y&uuml;kle ya da metin yap&#305;&#351;t&#305;r. <span style="color:var(--amb);font-weight:800;">Turuncu kelimeler</span> kartlar&#305;nda yok &mdash; dokun, &ccedil;evir, karta ekle.</p>
+    <div class="row">
+      <button class="btn bs bh" data-act="pickpdf">&#128196; PDF y&uuml;kle</button>
+      <button class="btn bs bh" data-act="loadpasted">Metni g&ouml;ster</button>
     </div>
-  </section>
+    <input type="file" id="pdf-in" accept=".pdf" style="display:none">
+    <textarea id="doc-paste" placeholder="&hellip;ya da Rus&ccedil;a metni buraya yap&#305;&#351;t&#305;r" style="margin-top:10px;"></textarea>
+    <div id="pdf-st" class="muted" style="font-size:12px;margin-top:6px;min-height:16px;"></div>
+  </div>
 
-  <section class="view" id="review">
-    <div style="margin-top:4px;">
-      <h2 class="h2" style="margin-bottom:14px;">Tekrar Durumu</h2>
-
-      <div class="grid-2">
-        <div class="card" style="display:flex; flex-direction:column; justify-content:center; text-align:center;">
-           <div class="muted" style="font-weight:980; font-size:13px;">Sıradaki</div>
-           <div class="big" id="rvDue" style="margin-top:4px;">0</div>
-        </div>
-
-        <div class="card" style="display:flex; flex-direction:column; justify-content:center; text-align:center;">
-           <div class="muted" style="font-weight:980; font-size:13px;">Toplam</div>
-           <div class="big" id="rvTotal" style="margin-top:4px;">0</div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:14px;">
-        <div style="font-weight:bold; margin-bottom:12px; text-align:center;">Bugün kaç kart çalışacaksın?</div>
-
-        <div id="limitContainer" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-          <button class="btn btnSoft" style="flex:1; min-width:50px;" onclick="startReviewQuiz(5, this)">5</button>
-          <button class="btn btnSoft" style="flex:1; min-width:50px;" onclick="startReviewQuiz(10, this)">10</button>
-          <button class="btn btnSoft" style="flex:1; min-width:50px;" onclick="startReviewQuiz(20, this)">20</button>
-          <button class="btn btnSoft" style="flex:1; min-width:60px;" onclick="startReviewQuiz(9999, this)">Hepsi</button>
-        </div>
-
-        <div class="divider"></div>
-
-        <button class="btn btnPrimary" style="width:100%; margin-top:10px;" onclick="startReviewQuiz()">🚀 Başlat</button>
-
-        <button class="btn btnSoft" style="width:100%; margin-top:10px;" onclick="toggleQuizMode()">Mod: <span id="quizModeLabel">Seçmeli</span></button>
-      </div>
-
-      <div class="grid-2">
-         <button class="btn btnSoft" onclick="clearProgress()">♻️ SRS Sıfırla</button>
-         <button class="btn btnSoft" onclick="toast('Online AutoFill aktif ✅')">Durum</button>
-      </div>
+  <div class="sec">&Ouml;bek / C&uuml;mle &Ccedil;evir</div>
+  <div class="card">
+    <textarea id="phrase-in" placeholder="Rus&ccedil;a kelime, &ouml;bek ya da c&uuml;mle yaz&hellip;" style="min-height:65px;"></textarea>
+    <div class="row" style="margin-top:8px;">
+      <button class="btn bp bh" data-act="phrasetr" data-sl="ru" data-tl="tr">RU &rarr; TR</button>
+      <button class="btn bs bh" data-act="phrasetr" data-sl="tr" data-tl="ru">TR &rarr; RU</button>
     </div>
-  </section>
+    <div id="phrase-out"></div>
+  </div>
 
-  <section class="view" id="cards">
-    <div style="margin-top:4px; display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-      <h2 class="h2" style="margin:0;">Kart Listesi</h2>
-      <button class="btn btnSoft" style="padding:8px 14px; height:40px;" onclick="openManualAdd()">➕ Ekle</button>
+  <div class="sec">Metin</div>
+  <div class="card"><div id="reader" class="reader"><div class="empty">&#128214; Metin bekleniyor.<br>Yukar&#305;dan PDF y&uuml;kle ya da yap&#305;&#351;t&#305;r.</div></div></div>
+</section>
+
+<!-- GRAMMAR -->
+<section class="view" id="v-gram">
+  <div style="font-size:18px;font-weight:980;margin-bottom:12px;">Rus&ccedil;a Gramer</div>
+  <div id="gram-wrap">
+<div class="gram-section">
+<button class="gram-hdr" data-act="gtog">Kiril Alfabesi <span class="arr">›</span></button>
+<div class="gram-body">
+<table class="gt"><tr><th>Harf</th><th>Ses</th><th>Harf</th><th>Ses</th><th>Harf</th><th>Ses</th></tr>
+<tr><td>А а</td><td>a</td><td>К к</td><td>k</td><td>Х х</td><td>h (gırtlak)</td></tr>
+<tr><td>Б б</td><td>b</td><td>Л л</td><td>l</td><td>Ц ц</td><td>ts</td></tr>
+<tr><td>В в</td><td>v</td><td>М м</td><td>m</td><td>Ч ч</td><td>ç</td></tr>
+<tr><td>Г г</td><td>g</td><td>Н н</td><td>n</td><td>Ш ш</td><td>ş</td></tr>
+<tr><td>Д д</td><td>d</td><td>О о</td><td>o/a*</td><td>Щ щ</td><td>şç (ince)</td></tr>
+<tr><td>Е е</td><td>ye</td><td>П п</td><td>p</td><td>Ъ ъ</td><td>sert işaret</td></tr>
+<tr><td>Ё ё</td><td>yo</td><td>Р р</td><td>r</td><td>Ы ы</td><td>ı</td></tr>
+<tr><td>Ж ж</td><td>j (Fransız)</td><td>С с</td><td>s</td><td>Ь ь</td><td>yumuşatma</td></tr>
+<tr><td>З з</td><td>z</td><td>Т т</td><td>t</td><td>Э э</td><td>e</td></tr>
+<tr><td>И и</td><td>i</td><td>У у</td><td>u</td><td>Ю ю</td><td>yu</td></tr>
+<tr><td>Й й</td><td>y (kısa)</td><td>Ф ф</td><td>f</td><td>Я я</td><td>ya</td></tr>
+</table>
+<div class="gnote"><b>*О:</b> Vurgusuzsa <b>a</b> gibi okunur: хорошо → haraşó &nbsp;|&nbsp; <b>Ы</b> → Türkçe ı'ya yakın &nbsp;|&nbsp; <b>Ь</b> önceki harfi inceltir, kendisi okunmaz</div>
+</div></div>
+
+<div class="gram-section">
+<button class="gram-hdr" data-act="gtog">Cinsiyetler &amp; Tekil / Çoğul <span class="arr">›</span></button>
+<div class="gram-body">
+<table class="gt"><tr><th>Cinsiyet</th><th>Son ek</th><th>Örnek</th><th>Türkçe</th></tr>
+<tr><td><b>Eril</b></td><td>sessiz harf</td><td>стол, врач, день</td><td>masa, doktor, gün</td></tr>
+<tr><td><b>Dişil</b></td><td>-а / -я / -ь</td><td>вода, неделя, ночь</td><td>su, hafta, gece</td></tr>
+<tr><td><b>Nötr</b></td><td>-о / -е</td><td>окно, море, время</td><td>pencere, deniz, zaman</td></tr>
+</table>
+<table class="gt" style="margin-top:8px"><tr><th>Tekil</th><th>Çoğul eki</th><th>Örnekler</th></tr>
+<tr><td>стол (eril)</td><td><b>-ы/-и</b></td><td>столы, врачи, дни</td></tr>
+<tr><td>вода (dişil -а)</td><td><b>-ы/-и</b></td><td>воды, недели</td></tr>
+<tr><td>окно (nötr -о)</td><td><b>-а/-я</b></td><td>окна, поля</td></tr>
+</table>
+<div class="gnote">Cinsiyet ezberlenmelidir — tüm çekim tabloları buna dayanır.</div>
+</div></div>
+
+<div class="gram-section">
+<button class="gram-hdr" data-act="gtog">Şahıs &amp; İyelik Zamirleri <span class="arr">›</span></button>
+<div class="gram-body">
+<table class="gt"><tr><th>Zamir</th><th>Türkçe</th><th>Zamir</th><th>Türkçe</th></tr>
+<tr><td><b>я</b></td><td>ben</td><td><b>мы</b></td><td>biz</td></tr>
+<tr><td><b>ты</b></td><td>sen</td><td><b>вы</b></td><td>siz (resmi/çoğul)</td></tr>
+<tr><td><b>он</b></td><td>o (eril)</td><td rowspan="2"><b>они</b></td><td rowspan="2">onlar</td></tr>
+<tr><td><b>она</b></td><td>o (dişil)</td></tr>
+</table>
+<table class="gt" style="margin-top:8px"><tr><th>İyelik</th><th>Türkçe</th></tr>
+<tr><td>мой / моя / моё / мои</td><td>benim (eril/dişil/nötr/çoğul)</td></tr>
+<tr><td>твой / твоя / твоё / твои</td><td>senin</td></tr>
+<tr><td>наш / наша / наше / наши</td><td>bizim</td></tr>
+<tr><td>ваш / ваша / ваше / ваши</td><td>sizin</td></tr>
+<tr><td>его / её / их</td><td>onun (eril) / onun (dişil) / onların</td></tr>
+</table>
+<div class="gnote"><b>Şimdiki zamanda "olmak" düşer:</b> Я инженер = Ben mühendisim. &nbsp;|&nbsp; <b>У меня есть...</b> = Bende var...</div>
+</div></div>
+
+<div class="gram-section">
+<button class="gram-hdr" data-act="gtog">Padejler — 6 İsim Hali <span class="arr">›</span></button>
+<div class="gram-body">
+<div class="gnote" style="margin:0 0 8px;">Türkçede kelime göreve göre değişir: <b>ev → evi → eve → evde → evden → evin</b>. Rusçada da 6 hal var.</div>
+<table class="gt"><tr><th>Padej</th><th>Soru</th><th>Ne için</th><th>Örnek</th></tr>
+<tr><td><b>Именит.</b></td><td>кто? что?</td><td>Özne</td><td>Вода холодная. <i>(Su soğuk.)</i></td></tr>
+<tr><td><b>Родит.</b></td><td>кого? чего?</td><td>Yokluk / -in / -den</td><td>Нет воды. <i>(Su yok.)</i></td></tr>
+<tr><td><b>Дат.</b></td><td>кому? чему?</td><td>Alıcı: -e/-a</td><td>Дай мне воду. <i>(Bana su ver.)</i></td></tr>
+<tr><td><b>Вин.</b></td><td>кого? что?</td><td>Nesne / Yön</td><td>Хочу воду. <i>(Su istiyorum.)</i></td></tr>
+<tr><td><b>Твор.</b></td><td>кем? чем?</td><td>ile / vasıta</td><td>с водой <i>(su ile)</i></td></tr>
+<tr><td><b>Предл.</b></td><td>о чём? где?</td><td>Yer / hakkında</td><td>на работе <i>(işte)</i></td></tr>
+</table>
+<table class="gt" style="margin-top:10px"><tr><th>Hal</th><th>вода (su, dişil)</th><th>насос (pompa, eril)</th><th>работа (iş, dişil)</th></tr>
+<tr><td>Им.</td><td>вод<b>а</b></td><td>насос</td><td>работ<b>а</b></td></tr>
+<tr><td>Род.</td><td>вод<b>ы</b></td><td>насос<b>а</b></td><td>работ<b>ы</b></td></tr>
+<tr><td>Дат.</td><td>вод<b>е</b></td><td>насос<b>у</b></td><td>работ<b>е</b></td></tr>
+<tr><td>Вин.</td><td>вод<b>у</b></td><td>насос</td><td>работ<b>у</b></td></tr>
+<tr><td>Твор.</td><td>вод<b>ой</b></td><td>насос<b>ом</b></td><td>работ<b>ой</b></td></tr>
+<tr><td>Предл.</td><td>вод<b>е</b></td><td>насос<b>е</b></td><td>работ<b>е</b></td></tr>
+</table>
+<div class="gnote"><b>Altın kural 1:</b> Dişil (-а) kelimeler Винительный'de -у alır: вода→воду.<br>
+<b>Altın kural 2:</b> Eril cansız kelimeler Винит.'de değişmez: насос→насос.<br>
+<b>Önce şunu öğren:</b> Именит. (kim/ne) · Винит. (neyi) · Предл. (nerede)</div>
+</div></div>
+
+<div class="gram-section">
+<button class="gram-hdr" data-act="gtog">Fiil Çekimi — Şimdiki Zaman <span class="arr">›</span></button>
+<div class="gram-body">
+<div class="gnote" style="margin:0 0 8px;">İki ana kalıp: <b>1. tip -ать/-ять</b> ve <b>2. tip -ить/-еть</b>.</div>
+<table class="gt"><tr><th>Zamir</th><th>делать</th><th>говорить</th><th>хотеть</th><th>идти</th></tr>
+<tr><td><b>я</b></td><td>делаю</td><td>говорю</td><td>хочу</td><td>иду</td></tr>
+<tr><td><b>ты</b></td><td>делаешь</td><td>говоришь</td><td>хочешь</td><td>идёшь</td></tr>
+<tr><td><b>он/она</b></td><td>делает</td><td>говорит</td><td>хочет</td><td>идёт</td></tr>
+<tr><td><b>мы</b></td><td>делаем</td><td>говорим</td><td>хотим</td><td>идём</td></tr>
+<tr><td><b>вы</b></td><td>делаете</td><td>говорите</td><td>хотите</td><td>идёте</td></tr>
+<tr><td><b>они</b></td><td>делают</td><td>говорят</td><td>хотят</td><td>идут</td></tr>
+</table>
+<div class="gnote"><b>1. tip (-ать):</b> работать, читать, знать, думать, понимать<br>
+<b>2. tip (-ить):</b> говорить, учить, любить, строить, платить<br>
+<b>Düzensizler:</b> хотеть, идти, быть — ezberle</div>
+</div></div>
+
+<div class="gram-section">
+<button class="gram-hdr" data-act="gtog">Fiil Çekimi — Geçmiş Zaman <span class="arr">›</span></button>
+<div class="gram-body">
+<div class="gnote" style="margin:0 0 8px;">⚡ Geçmiş zaman şahsa değil <b>cinsiyete</b> göre değişir!</div>
+<table class="gt"><tr><th>Özne</th><th>Ek</th><th>работать</th><th>быть</th></tr>
+<tr><td>я/ты/он (eril)</td><td><b>-л</b></td><td>работал</td><td>был</td></tr>
+<tr><td>я/ты/она (dişil)</td><td><b>-ла</b></td><td>работала</td><td>была</td></tr>
+<tr><td>оно (nötr)</td><td><b>-ло</b></td><td>работало</td><td>было</td></tr>
+<tr><td>мы/вы/они</td><td><b>-ли</b></td><td>работали</td><td>были</td></tr>
+</table>
+<div class="gnote">Я работал вчера. <i>(Dün çalıştım — erkek)</i><br>
+Она пришла поздно. <i>(Geç geldi — kadın)</i></div>
+</div></div>
+
+<div class="gram-section">
+<button class="gram-hdr" data-act="gtog">Fiil Çekimi — Gelecek Zaman <span class="arr">›</span></button>
+<div class="gram-body">
+<table class="gt"><tr><th>Yapı</th><th>Kullanım</th><th>Örnek</th></tr>
+<tr><td><b>буду + mastar</b></td><td>Süregelen eylem</td><td>Я буду работать. <i>(Çalışacağım.)</i></td></tr>
+<tr><td><b>Tamamlanmış fiil</b></td><td>Tek seferlik</td><td>Я сделаю отчёт. <i>(Raporu yapacağım.)</i></td></tr>
+</table>
+<table class="gt" style="margin-top:8px"><tr><th colspan="2">быть — gelecek çekim</th></tr>
+<tr><td>я буду</td><td>мы будем</td></tr>
+<tr><td>ты будешь</td><td>вы будете</td></tr>
+<tr><td>он/она будет</td><td>они будут</td></tr>
+</table>
+</div></div>
+
+<div class="gram-section">
+<button class="gram-hdr" data-act="gtog">Olumsuzluk &amp; Yokluk <span class="arr">›</span></button>
+<div class="gram-body">
+<table class="gt"><tr><th>Kalıp</th><th>Örnek</th><th>Türkçe</th></tr>
+<tr><td><b>не + fiil</b></td><td>Я не работаю.</td><td>Çalışmıyorum.</td></tr>
+<tr><td><b>нет + Родит.</b></td><td>Нет воды.</td><td>Su yok.</td></tr>
+<tr><td><b>не + sıfat</b></td><td>Это не опасно.</td><td>Tehlikeli değil.</td></tr>
+<tr><td><b>никогда не</b></td><td>Я никогда не пью.</td><td>Hiç içmiyorum.</td></tr>
+<tr><td><b>никто не</b></td><td>Никто не знает.</td><td>Kimse bilmiyor.</td></tr>
+<tr><td><b>ничего не</b></td><td>Я ничего не понял.</td><td>Hiç anlamadım.</td></tr>
+<tr><td><b>нельзя</b></td><td>Здесь нельзя курить.</td><td>Sigara içilmez.</td></tr>
+<tr><td><b>у меня нет</b></td><td>У меня нет денег.</td><td>Param yok.</td></tr>
+</table>
+</div></div>
+
+<div class="gram-section">
+<button class="gram-hdr" data-act="gtog">Soru Cümleleri <span class="arr">›</span></button>
+<div class="gram-body">
+<table class="gt"><tr><th>Soru Kelimesi</th><th>Türkçe</th><th>Örnek</th></tr>
+<tr><td><b>кто</b></td><td>kim</td><td>Кто это? <i>(Bu kim?)</i></td></tr>
+<tr><td><b>что</b></td><td>ne</td><td>Что случилось? <i>(Ne oldu?)</i></td></tr>
+<tr><td><b>где</b></td><td>nerede</td><td>Где насос? <i>(Pompa nerede?)</i></td></tr>
+<tr><td><b>куда</b></td><td>nereye</td><td>Куда идёшь? <i>(Nereye gidiyorsun?)</i></td></tr>
+<tr><td><b>откуда</b></td><td>nereden</td><td>Откуда ты? <i>(Nerelisin?)</i></td></tr>
+<tr><td><b>когда</b></td><td>ne zaman</td><td>Когда начало? <i>(Başlangıç ne zaman?)</i></td></tr>
+<tr><td><b>почему</b></td><td>neden</td><td>Почему не работает? <i>(Neden çalışmıyor?)</i></td></tr>
+<tr><td><b>как</b></td><td>nasıl</td><td>Как дела? <i>(Nasılsın?)</i></td></tr>
+<tr><td><b>сколько</b></td><td>ne kadar</td><td>Сколько стоит? <i>(Ne kadar?)</i></td></tr>
+<tr><td><b>какой</b></td><td>hangi</td><td>Какой план? <i>(Hangi plan?)</i></td></tr>
+<tr><td><b>чей</b></td><td>kimin</td><td>Чей инструмент? <i>(Kimin aleti?)</i></td></tr>
+</table>
+<div class="gnote"><b>Evet/hayır sorusu:</b> Sadece <b>intonasyonu</b> yükselt: Ты инженер? <i>(Mühendis misin?)</i></div>
+</div></div>
+
+<div class="gram-section">
+<button class="gram-hdr" data-act="gtog">Edatlar ve Aldıkları Haller <span class="arr">›</span></button>
+<div class="gram-body">
+<table class="gt"><tr><th>Edat</th><th>Hal</th><th>Anlam</th><th>Örnek</th></tr>
+<tr><td><b>в</b></td><td>Предл.</td><td>...de/da</td><td>в магазине <i>(markette)</i></td></tr>
+<tr><td><b>в</b></td><td>Вин.</td><td>...e/a (giriş)</td><td>в магазин <i>(markete)</i></td></tr>
+<tr><td><b>на</b></td><td>Предл.</td><td>...de (üstünde)</td><td>на работе <i>(işte)</i></td></tr>
+<tr><td><b>на</b></td><td>Вин.</td><td>...e (üstüne)</td><td>на работу <i>(işe)</i></td></tr>
+<tr><td><b>из / с</b></td><td>Родит.</td><td>...den (çıkış)</td><td>из города / с работы</td></tr>
+<tr><td><b>с</b></td><td>Твор.</td><td>ile</td><td>с другом <i>(arkadaşla)</i></td></tr>
+<tr><td><b>у</b></td><td>Родит.</td><td>yanında / sahiplik</td><td>У меня есть <i>(bende var)</i></td></tr>
+<tr><td><b>о / об</b></td><td>Предл.</td><td>hakkında</td><td>о работе <i>(iş hakkında)</i></td></tr>
+<tr><td><b>для</b></td><td>Родит.</td><td>için</td><td>для тебя <i>(senin için)</i></td></tr>
+<tr><td><b>без</b></td><td>Родит.</td><td>...sız</td><td>без сахара <i>(şekersiz)</i></td></tr>
+<tr><td><b>до / после</b></td><td>Родит.</td><td>...e kadar / sonra</td><td>до работы / после работы</td></tr>
+<tr><td><b>к</b></td><td>Дат.</td><td>...e doğru</td><td>к врачу <i>(doktora)</i></td></tr>
+<tr><td><b>через</b></td><td>Вин.</td><td>...sonra</td><td>через час <i>(bir saat sonra)</i></td></tr>
+<tr><td><b>за/под/над</b></td><td>Твор.</td><td>arkasında/altında/üstünde</td><td>под столом <i>(masa altında)</i></td></tr>
+</table>
+</div></div>
+
+<div class="gram-section">
+<button class="gram-hdr" data-act="gtog">Sayılar, Tarih &amp; Saat <span class="arr">›</span></button>
+<div class="gram-body">
+<table class="gt"><tr><th>Sayı</th><th>Türkçe</th><th>Sayı</th><th>Türkçe</th></tr>
+<tr><td>один</td><td>bir</td><td>одиннадцать</td><td>on bir</td></tr>
+<tr><td>два / две</td><td>iki</td><td>двадцать</td><td>yirmi</td></tr>
+<tr><td>три</td><td>üç</td><td>тридцать</td><td>otuz</td></tr>
+<tr><td>четыре</td><td>dört</td><td>сорок</td><td>kırk</td></tr>
+<tr><td>пять</td><td>beş</td><td>пятьдесят</td><td>elli</td></tr>
+<tr><td>шесть</td><td>altı</td><td>сто</td><td>yüz</td></tr>
+<tr><td>семь</td><td>yedi</td><td>тысяча</td><td>bin</td></tr>
+<tr><td>восемь</td><td>sekiz</td><td>миллион</td><td>milyon</td></tr>
+<tr><td>девять</td><td>dokuz</td><td>первый</td><td>birinci</td></tr>
+<tr><td>десять</td><td>on</td><td>второй</td><td>ikinci</td></tr>
+</table>
+<div class="gnote"><b>Saat:</b> Сейчас три часа. (Saat üç.) | В половине пятого. (Dört buçukta.)<br>
+<b>Tarih:</b> Второе октября. (İkinci Ekim.) | В среду. (Çarşamba.) | В январе. (Ocak'ta.)</div>
+</div></div>
+
+<div class="gram-section">
+<button class="gram-hdr" data-act="gtog">Cümle Örnekleri — Konuya Göre <span class="arr">›</span></button>
+<div class="gram-body">
+<div id="sent-cats" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;"></div>
+<div id="sent-list"></div>
+</div></div>
+</div>
+</section>
+
+<!-- SETTINGS -->
+<section class="view" id="v-settings">
+  <div style="font-size:18px;font-weight:980;margin-bottom:12px;">Ayarlar</div>
+  <div class="sec">Tema</div>
+  <select id="theme-sel">
+    <option value="dark">&#127769; Koyu</option>
+    <option value="light">&#9728;&#65039; A&ccedil;&#305;k</option>
+    <option value="ocean">&#127754; Okyanus</option>
+    <option value="emerald">&#127807; Z&uuml;mr&uuml;t</option>
+    <option value="sunset">&#127749; G&uuml;n Bat&#305;m&#305;</option>
+  </select>
+  <div class="sec">Sesli Okuma Testi</div>
+  <button class="btn bs" data-act="speaktest">&#128266; Rus&ccedil;a Test</button>
+  <div class="sec">Veriler</div>
+  <div class="card">
+    <p class="muted" style="margin:0 0 10px;font-size:13px;line-height:1.5;">Her &#351;ey cihaz&#305;nda saklan&#305;r.<br>Sunucu yok &middot; Hesap yok &middot; Reklam yok</p>
+    <div class="row">
+      <button class="btn bs bh" data-act="export">&#11015;&#65039; Yedek Al</button>
+      <button class="btn bs bh" data-act="pickimport">&#11014;&#65039; Geri Y&uuml;kle</button>
     </div>
+    <input type="file" id="imp-in" accept=".json" style="display:none">
+    <button class="btn bd" style="margin-top:10px;width:100%;" data-act="reset">&#128465;&#65039; T&uuml;m Kartlar&#305; S&#305;f&#305;rla</button>
+  </div>
+  <p class="muted" style="text-align:center;font-size:11px;margin-top:16px;line-height:1.6;">Vocabify &middot; Rus&ccedil;a &harr; T&uuml;rk&ccedil;e<br>v3.0 &middot; &Ccedil;eviri: Google / MyMemory</p>
+</section>
 
-    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:14px;">
-
-      <div id="filterBtnNew" class="card" onclick="toggleFilter('new')"
-           style="padding:10px; border:1px solid var(--border); text-align:center; cursor:pointer; display:flex; flex-direction:column; justify-content:center; height:80px;">
-        <div style="font-size:11px; font-weight:bold; color:var(--muted);">⚪ Yeni</div>
-        <div style="font-size:20px; font-weight:900; margin-top:6px;" id="statNew">0</div>
-      </div>
-
-      <div id="filterBtnLearn" class="card" onclick="toggleFilter('learning')"
-           style="padding:10px; border:1px solid var(--warn); text-align:center; background:color-mix(in srgb, var(--warn) 5%, var(--card2)); cursor:pointer; display:flex; flex-direction:column; justify-content:center; height:80px;">
-        <div style="font-size:11px; font-weight:bold; color:var(--warn);">🟡 Öğren</div>
-        <div style="font-size:20px; font-weight:900; color:var(--warn); margin-top:6px;" id="statLearn">0</div>
-      </div>
-
-      <div id="filterBtnMaster" class="card" onclick="toggleFilter('mastered')"
-           style="padding:10px; border:1px solid var(--ok); text-align:center; background:color-mix(in srgb, var(--ok) 5%, var(--card2)); cursor:pointer; display:flex; flex-direction:column; justify-content:center; height:80px;">
-        <div style="font-size:11px; font-weight:bold; color:var(--ok);">🟢 Tamam</div>
-        <div style="font-size:20px; font-weight:900; color:var(--ok); margin-top:6px;" id="statMaster">0</div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:12px; padding:12px;">
-      <input id="search" placeholder="Kart ara (kelime/anlam)..." style="background:var(--bg); border:none; padding:0; font-size:16px; width:100%; outline:none;" />
-      <div class="smallInfo" style="margin-top:6px;">Kartı aç → düzenle / sil.</div>
-    </div>
-
-    <div id="cardsList" style="padding-bottom:80px;"></div>
-  </section>
 </div>
 
 <nav>
-  <button class="navBtn active" id="navHome" onclick="go('home')"><div class="ico">🏠</div><span>Ana Sayfa</span></button>
-  <button class="navBtn" id="navReview" onclick="go('review')"><div class="ico">🧠</div><span>Tekrar</span></button>
-  <button class="navBtn" id="navCards" onclick="go('cards')"><div class="ico">🗂️</div><span>Kartlar</span></button>
+  <button class="nb on" id="n-home" data-nav="home"><div class="ic">&#127968;</div>Ana</button>
+  <button class="nb" id="n-review" data-nav="review"><div class="ic">&#129504;</div>Tekrar</button>
+  <button class="nb" id="n-words" data-nav="words"><div class="ic">&#128450;&#65039;</div>Kelimeler</button>
+  <button class="nb" id="n-doc" data-nav="doc"><div class="ic">&#128196;</div>Belge</button>
+  <button class="nb" id="n-gram" data-nav="gram"><div class="ic">&#128214;</div>Gramer</button>
 </nav>
-
-<div class="backdrop" id="backdrop" onclick="closeSheets()"></div>
-<div class="toast" id="toast">—</div>
-
-<div class="sheet" id="manualAddSheet">
-  <div class="handle"></div>
-  <h2 class="h2" style="margin-bottom:10px; font-size:18px;">Elle Ekle (Otomatik)</h2>
-
-  <div class="two">
-    <div class="field" style="flex:1;">
-      <label>Dil</label>
-      <select id="maLang">
-        <option value="EN">🇬🇧 İngilizce</option>
-        <option value="TR">🇹🇷 Türkçe</option>
-        <option value="DE">🇩🇪 Almanca</option>
-        <option value="ES">🇪🇸 İspanyolca</option>
-        <option value="FR">🇫🇷 Fransızca</option>
-        <option value="RU">🇷🇺 Rusça</option>
-      </select>
-    </div>
-    <div class="field" style="flex:1;">
-      <label>Tür</label>
-      <select id="maType">
-        <option value="word">Kelime</option>
-        <option value="phrase">Kalıp</option>
-        <option value="noun">İsim</option>
-        <option value="verb">Fiil</option>
-        <option value="adj">Sıfat</option>
-        <option value="adv">Zarf</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="field">
-    <label>Kelime / Terim</label>
-    <input id="maTerm" placeholder="Örn: reinforcement" />
-    <div class="smallInfo" id="maHint" style="margin-top:2px; font-size:11px;">Yazınca otomatik dolar.</div>
-  </div>
-
-  <div class="field">
-    <label>Anlamı (TR)</label>
-    <textarea id="maMeaning" placeholder="Otomatik..." style="min-height:50px; height:50px;"></textarea>
-  </div>
-
-  <div class="field">
-    <label>Örnek Cümle</label>
-    <textarea id="maExample" placeholder="Otomatik..." style="min-height:50px; height:50px;"></textarea>
-  </div>
-
-  <div class="field">
-    <label>Not (Opsiyonel)</label>
-    <input id="maNote" placeholder="Kısa not..." />
-  </div>
-
-  <div class="two" style="margin-top:12px;">
-    <button class="btn btnSoft btnHalf" style="padding:10px;" onclick="closeSheets()">İptal</button>
-    <button class="btn btnPrimary btnHalf" style="padding:10px;" onclick="saveManualCard()">Kaydet</button>
-  </div>
-
-  <div style="margin-top:8px;">
-    <button class="btn btnSoft" style="width:100%; padding:6px; font-size:12px; opacity:0.7;" onclick="clearManual()">Temizle</button>
-  </div>
-</div>
-
-<!-- Settings -->
-<div class="sheet" id="settingsSheet">
-  <div class="handle"></div>
-  <h2 class="h2">Ayarlar</h2>
-
-  <div class="card" style="margin-top:10px;">
-    <div style="font-weight:980;">Tema</div>
-    <div class="two" style="margin-top:10px;">
-      <select id="themeSelect" onchange="applyThemeFromSelect()">
-        <option value="dark">dark</option>
-        <option value="light">light</option>
-        <option value="ocean">ocean</option>
-        <option value="emerald">emerald</option>
-        <option value="sunset">sunset</option>
-        <option value="rose">rose</option>
-      </select>
-      <button class="btn btnSoft" style="padding:12px 12px;" onclick="document.getElementById('btnTheme').click()">Döndür</button>
-    </div>
-  </div>
-
-  <div class="card" style="margin-top:12px;">
-    <div style="font-weight:980;">Quiz Modu</div>
-    <div class="two" style="margin-top:10px;">
-      <button class="btn btnSoft btnHalf" onclick="toggleQuizMode()">Mod: <span id="quizModeLabel2">Seçmeli</span></button>
-      <button class="btn btnSoft btnHalf" onclick="exportAll()">Export</button>
-    </div>
-    <div class="two" style="margin-top:10px;">
-      <button class="btn btnSoft btnHalf" onclick="importAllPrompt()">Import</button>
-      <button class="btn btnDanger btnHalf" onclick="hardReset()">Sıfırla</button>
-    </div>
-  </div>
-
-  <div class="smallInfo" style="margin-top:12px;">Sürüm: online-autofill • dictionary + translate • no level/category</div>
-</div>
-
-<!-- Quiz overlay -->
-  <div class="sheet" id="transResultSheet" style="height:auto; max-height:80vh;">
-  <div class="handle"></div>
-  <h2 class="h2">Çeviri Sonucu</h2>
-
-  <div id="trResContent" style="line-height:1.6;"></div>
-
-  <button class="btn btnPrimary" style="width:100%; margin-top:16px;" onclick="copyToManualAdd()">➕ Bu Kelimeyi Karta Ekle</button>
-  <button class="btn btnSoft" style="width:100%; margin-top:10px;" onclick="closeSheets()">Kapat</button>
-</div>
-  <div class="sheet" id="grammarSheet" style="height:90vh;">
-<div class="handle"></div>
-<h2 class="h2" style="color:var(--primary); text-align:center; padding-bottom:10px; margin-top:0; border-bottom:1px solid var(--border);">📘 İngilizce İpuçları</h2>
-  <div class="card" style="margin-top:14px; margin-bottom:14px; padding:0; overflow:hidden; border:1px solid var(--border);">
-    <div style="background:var(--card2); padding:10px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">👤 Zamirler (Pronouns)</div>
-    <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:center;">
-      <tr style="background:color-mix(in srgb, var(--primary) 15%, transparent); font-weight:bold;">
-        <td style="padding:8px;">Ben</td>
-        <td style="padding:8px;">Beni</td>
-        <td style="padding:8px;">Benim</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold; color:var(--primary);">I</td>
-        <td style="padding:8px;">Me</td>
-        <td style="padding:8px;">My</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold; color:var(--primary);">You</td>
-        <td style="padding:8px;">You</td>
-        <td style="padding:8px;">Your</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold; color:var(--primary);">He/She</td>
-        <td style="padding:8px;">Him/Her</td>
-        <td style="padding:8px;">His/Her</td>
-      </tr>
-      <tr>
-        <td style="padding:8px; font-weight:bold; color:var(--primary);">They</td>
-        <td style="padding:8px;">Them</td>
-        <td style="padding:8px;">Their</td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="card" style="margin-bottom:14px; padding:0; overflow:hidden; border:1px solid var(--border);">
-    <div style="background:var(--card2); padding:10px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">⏳ Zamanlar (Tenses)</div>
-    <table style="width:100%; border-collapse:collapse; font-size:13px;">
-      <tr style="background:color-mix(in srgb, var(--primary) 15%, transparent);">
-        <th style="padding:8px; text-align:left;">Zaman</th>
-        <th style="padding:8px; text-align:left;">İpucu</th>
-        <th style="padding:8px; text-align:left;">Örnek</th>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold;">Genel</td>
-        <td style="padding:8px; color:var(--muted);">Her gün</td>
-        <td style="padding:8px;">I <b style="color:var(--primary)">play</b>.</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold;">Şimdiki</td>
-        <td style="padding:8px; color:var(--muted);">Şu an</td>
-        <td style="padding:8px;">I am <b style="color:var(--primary)">playing</b>.</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold;">Geçmiş</td>
-        <td style="padding:8px; color:var(--muted);">Dün</td>
-        <td style="padding:8px;">I <b style="color:var(--primary)">played</b>.</td>
-      </tr>
-      <tr>
-        <td style="padding:8px; font-weight:bold;">Gelecek</td>
-        <td style="padding:8px; color:var(--muted);">Yarın</td>
-        <td style="padding:8px;">I <b style="color:var(--primary)">will play</b>.</td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="card" style="margin-bottom:14px;">
-    <div style="font-weight:900; color:var(--warn); margin-bottom:10px; text-align:center;">🛠️ Modals (Kip Ekleri)</div>
-
-    <div class="grid-2">
-      <div style="background:var(--bg); padding:10px; border-radius:12px; border:1px solid var(--border); text-align:center;">
-        <div style="font-weight:bold; color:var(--primary); font-size:16px;">CAN</div>
-        <div style="font-size:11px; color:var(--muted);">-ebilmek (Yetenek)</div>
-      </div>
-      <div style="background:var(--bg); padding:10px; border-radius:12px; border:1px solid var(--border); text-align:center;">
-        <div style="font-weight:bold; color:var(--primary); font-size:16px;">SHOULD</div>
-        <div style="font-size:11px; color:var(--muted);">-meli (Tavsiye)</div>
-      </div>
-      <div style="background:var(--bg); padding:10px; border-radius:12px; border:1px solid var(--border); text-align:center;">
-        <div style="font-weight:bold; color:var(--primary); font-size:16px;">MUST</div>
-        <div style="font-size:11px; color:var(--muted);">-meli (Zorunlu)</div>
-      </div>
-      <div style="background:var(--bg); padding:10px; border-radius:12px; border:1px solid var(--border); text-align:center;">
-        <div style="font-weight:bold; color:var(--primary); font-size:16px;">MIGHT</div>
-        <div style="font-size:11px; color:var(--muted);">-ebilir (İhtimal)</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card" style="margin-bottom:14px; padding:0; overflow:hidden; border:1px solid var(--border);">
-    <div style="background:var(--card2); padding:10px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">❓ Soru Kelimeleri (Wh-)</div>
-    <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:center;">
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold; color:var(--primary);">WHO</td>
-        <td style="padding:8px;">Kim?</td>
-        <td style="padding:8px; font-style:italic; color:var(--muted);">Who is he?</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold; color:var(--primary);">WHAT</td>
-        <td style="padding:8px;">Ne?</td>
-        <td style="padding:8px; font-style:italic; color:var(--muted);">What is this?</td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:8px; font-weight:bold; color:var(--primary);">WHERE</td>
-        <td style="padding:8px;">Nerede?</td>
-        <td style="padding:8px; font-style:italic; color:var(--muted);">Where is Ali?</td>
-      </tr>
-      <tr>
-        <td style="padding:8px; font-weight:bold; color:var(--primary);">WHEN</td>
-        <td style="padding:8px;">Ne zaman?</td>
-        <td style="padding:8px; font-style:italic; color:var(--muted);">When to go?</td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="card" style="margin-bottom:14px;">
-    <div style="font-weight:900; color:var(--warn); margin-bottom:10px; text-align:center;">🍎 A - AN - THE Farkı</div>
-    <div class="grid-2">
-      <div style="background:var(--bg); padding:10px; border-radius:12px; border:1px dashed var(--border);">
-        <div style="font-weight:bold; color:var(--primary); font-size:16px;">A / AN</div>
-        <div style="font-size:11px; margin-top:2px; font-weight:bold;">HERHANGİ BİR</div>
-        <div style="font-size:11px; margin-top:4px; color:var(--muted); line-height:1.4;">
-          Bilinmeyen şey.<br>
-          👉 <b>a</b> car<br>
-          👉 <b>an</b> apple
-        </div>
-      </div>
-      <div style="background:var(--bg); padding:10px; border-radius:12px; border:1px dashed var(--border);">
-        <div style="font-weight:bold; color:var(--primary); font-size:16px;">THE</div>
-        <div style="font-size:11px; margin-top:2px; font-weight:bold;">BİLİNEN O</div>
-        <div style="font-size:11px; margin-top:4px; color:var(--muted); line-height:1.4;">
-          Konuşulan şey.<br>
-          👉 <b>the</b> moon<br>
-          👉 <b>the</b> door
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card" style="margin-bottom:14px; padding:0; overflow:hidden; border:1px solid var(--border);">
-    <div style="background:var(--card2); padding:10px; font-weight:900; border-bottom:1px solid var(--border); text-align:center;">📏 Sıfatlar (Karşılaştırma)</div>
-    <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:center;">
-      <tr style="background:color-mix(in srgb, var(--primary) 15%, transparent);">
-        <th style="padding:6px;">Sıfat</th>
-        <th style="padding:6px;">Daha ...</th>
-        <th style="padding:6px;">En ...</th>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:6px;">Big</td>
-        <td style="padding:6px; font-weight:bold;">Big<span style="color:var(--warn)">ger</span></td>
-        <td style="padding:6px; font-weight:bold;">Big<span style="color:var(--warn)">gest</span></td>
-      </tr>
-      <tr style="border-bottom:1px solid var(--border);">
-        <td style="padding:6px;">Good</td>
-        <td style="padding:6px; font-weight:bold; color:var(--ok);">Better</td>
-        <td style="padding:6px; font-weight:bold; color:var(--ok);">Best</td>
-      </tr>
-      <tr>
-        <td style="padding:6px;">Bad</td>
-        <td style="padding:6px; font-weight:bold; color:var(--danger);">Worse</td>
-        <td style="padding:6px; font-weight:bold; color:var(--danger);">Worst</td>
-      </tr>
-    </table>
-  </div>
-
-  <button class="btn btnSoft" style="width:100%; margin-top:20px; margin-bottom:20px;" onclick="closeSheets()">Kapat</button>
-</div>
-<div class="overlay" id="quizOverlay">
-
-  <div class="overlayTop" style="padding-top: calc(10px + var(--safe-top)); padding-bottom: 10px;">
-    <div style="font-weight:980; font-size:16px; display:flex; align-items:center; gap:8px;">
-      <span>🧠 Quiz</span>
-      <span style="font-size:13px; opacity:0.6; font-weight:normal;">(<b id="qRemain">0</b>)</span>
-    </div>
-    <div style="display:flex; gap:8px;">
-      <button class="iconBtn" style="border:none; background:transparent; width:36px; height:36px; font-size:20px; color:var(--muted); display:grid; place-items:center;" onclick="speakQuizWord()">🔊</button>
-      <button class="iconBtn" style="border:none; background:transparent; width:36px; height:36px; font-size:22px; color:var(--muted); display:grid; place-items:center;" onclick="stopQuiz()">✖</button>
-    </div>
-  </div>
-
-  <div id="quizBody">
-
-    <div class="qCard">
-      <div class="smallInfo" style="margin-bottom:8px; display:flex; justify-content:center; gap:12px; font-size:12px;">
-         <span>✅ <b id="qCorrect" style="color:var(--ok);">0</b></span>
-         <span>❌ <b id="qWrong" style="color:var(--danger);">0</b></span>
-      </div>
-
-      <div id="qWord" style="font-weight:900; margin-bottom:6px;">—</div>
-      <div id="qMeta" style="font-size:13px; color:var(--muted); font-weight:600;">—</div>
-
-      <div id="qExample" style="font-size:13px; font-style:italic; color:var(--primary); margin-top:4px; min-height:0;"></div>
-      <div id="qReveal" style="font-size:14px; font-weight:bold; margin-top:6px; min-height:0;"></div>
-    </div>
-
-    <div id="qChoices" style="display:flex; flex-direction:column;"></div>
-
-    <div id="qTyping" style="display:none; gap:8px;">
-      <input id="qInput" placeholder="Cevabı yaz..." style="flex:1; font-weight:bold; padding:12px;" />
-      <button class="btn btnPrimary" style="padding:0 16px;" onclick="checkTypingAnswer()">ok</button>
-    </div>
-
-    <div style="margin-top:4px;">
-      <button class="btn btnSoft" style="width:100%; border-color:var(--danger); color:var(--danger); height:44px; font-size:13px;" onclick="markAsUnknown()">🔴 Bilmiyorum / Pas Geç</button>
-    </div>
-
-    <div class="smallInfo" style="text-align:center; opacity:0.4; font-size:10px; margin-top:auto;">
-      Çıkmak için sağ üstteki çarpıya bas.
-    </div>
-
-  </div>
-</div>
+<div class="toast" id="toast"></div>
 
 <script>
-/* ===========================
-   Storage + helpers
-=========================== */
-const DB = {
-  get(key, fallback){ try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } },
-  set(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
-};
-function toast(msg){
-  const t=document.getElementById("toast");
-  t.textContent=msg;
-  t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"), 2200);
-}
-function now(){ return Date.now(); }
-function norm(s){ return (s||"").toLowerCase().trim(); }
-function uid(){ return "c_" + Math.random().toString(36).slice(2) + "_" + Math.random().toString(36).slice(2); }
-function safeText(s){ return (s ?? "").toString(); }
-/* FIX: regex özel karakterlerini kaçışla (parantezli/sembollü kalıplar RegExp'i kırıyordu) */
-function escapeRegex(s){ return (s ?? "").toString().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
-function termRe(term){ return new RegExp(`\\b${escapeRegex(term)}\\b`, "gi"); }
+var DICT_DATA = {"Zamirler": [["я", "ben"], ["ты", "sen"], ["он", "o (eril)"], ["она", "o (dişil)"], ["оно", "o (nötr)"], ["мы", "biz"], ["вы", "siz (resmi)"], ["они", "onlar"], ["мой", "benim"], ["моя", "benim (dişil)"], ["моё", "benim (nötr)"], ["мои", "benimkiler"], ["твой", "senin"], ["твоя", "senin (dişil)"], ["его", "onun (eril)"], ["её", "onun (dişil)"], ["наш", "bizim"], ["ваш", "sizin"], ["их", "onların"], ["себя", "kendini/kendimi"], ["кто", "kim"], ["что", "ne"], ["этот", "bu (eril)"], ["эта", "bu (dişil)"], ["это", "bu / bu (nötr)"], ["тот", "şu / o"], ["та", "şu (dişil)"], ["кто-то", "biri"], ["что-то", "bir şey"], ["кто-нибудь", "herhangi biri"], ["никто", "hiç kimse"], ["ничего", "hiçbir şey"], ["каждый", "her / herkes"], ["все", "herkes / hepsi"], ["сам", "kendisi / bizzat"], ["другой", "diğer / başka"], ["такой", "böyle"], ["какой", "nasıl / hangi"], ["чей", "kimin"], ["чьи", "kimlerin"]], "Temel / Bağlaçlar": [["да", "evet"], ["нет", "hayır"], ["и", "ve"], ["или", "ya da"], ["но", "ama"], ["не", "değil"], ["ни...ни", "ne...ne"], ["если", "eğer"], ["когда", "ne zaman / zaman ki"], ["потому что", "çünkü"], ["поэтому", "bu yüzden"], ["чтобы", "için / ki"], ["хотя", "her ne kadar"], ["пока", "henüz / sürerken"], ["однако", "ancak / bununla birlikte"], ["так как", "çünkü / madem"], ["либо", "ya da / veya"], ["а", "ama / peki / oysa"], ["же", "ise / peki ya"], ["ведь", "çünkü (zaten biliyorsun)"], ["зато", "karşılığında / ama"], ["тоже", "da / de (ben de)"], ["также", "aynı zamanda / da"], ["даже", "bile"], ["просто", "sadece / basitçe"], ["вообще", "genel olarak / hiç"], ["наконец", "sonunda"], ["кроме", "...dan başka / hariç"], ["после", "sonra"], ["до", "önce / kadar"], ["вместо", "yerine"], ["вдоль", "boyunca"], ["согласно", "göre / uyarınca"]], "Zarflar": [["здесь", "burada"], ["тут", "burada (konuşma dili)"], ["там", "orada"], ["везде", "her yerde"], ["нигде", "hiçbir yerde"], ["куда", "nereye"], ["откуда", "nereden"], ["сейчас", "şimdi"], ["потом", "sonra"], ["затем", "ardından"], ["сначала", "önce"], ["уже", "artık / zaten"], ["ещё", "daha / hâlâ"], ["ещё раз", "bir daha"], ["всегда", "her zaman"], ["иногда", "bazen"], ["часто", "sık sık"], ["редко", "nadiren"], ["никогда", "hiçbir zaman"], ["долго", "uzun süre"], ["быстро", "hızlıca"], ["медленно", "yavaşça"], ["хорошо", "iyi / güzel"], ["плохо", "kötü"], ["очень", "çok"], ["немного", "biraz"], ["почти", "neredeyse"], ["совсем", "tamamen / hiç"], ["только", "sadece"], ["тоже", "da / de"], ["даже", "bile"], ["вдруг", "aniden"], ["наверное", "herhalde"], ["может быть", "belki"], ["точно", "kesinlikle"], ["примерно", "yaklaşık"], ["вместе", "birlikte"], ["отдельно", "ayrı"], ["снова", "yeniden"], ["опять", "yine"], ["наконец", "sonunda"], ["сразу", "hemen"], ["рано", "erken"], ["поздно", "geç"], ["рядом", "yanında / yakında"], ["далеко", "uzakta"], ["близко", "yakın"], ["направо", "sağa"], ["налево", "sola"], ["прямо", "düz / doğruca"], ["назад", "geri"], ["вперёд", "ileri / öne"], ["выше", "yukarıda / daha yüksek"], ["ниже", "aşağıda / daha düşük"], ["слева", "soldan / solda"], ["справа", "sağdan / sağda"], ["посередине", "ortasında"]], "Fiiller — Temel": [["быть", "olmak"], ["мочь", "yapabilmek"], ["хотеть", "istemek"], ["знать", "bilmek"], ["думать", "düşünmek"], ["видеть", "görmek"], ["слышать", "duymak"], ["понимать", "anlamak"], ["чувствовать", "hissetmek"], ["говорить", "konuşmak / söylemek"], ["спрашивать", "sormak"], ["отвечать", "cevap vermek"], ["объяснять", "açıklamak"], ["рассказывать", "anlatmak"], ["переводить", "tercüme etmek / taşımak"], ["читать", "okumak"], ["писать", "yazmak"], ["учить", "öğrenmek / öğretmek"], ["учиться", "öğrenmek (bir şeyde)"], ["помнить", "hatırlamak"], ["забывать", "unutmak"], ["верить", "inanmak"], ["надеяться", "ummak / umut etmek"], ["любить", "sevmek"], ["нравиться", "hoşlanmak / beğenmek"], ["бояться", "korkmak"], ["радоваться", "sevinmek"], ["сердиться", "kızmak"], ["злиться", "sinirlenip kızmak"], ["устать", "yorulmak"], ["отдыхать", "dinlenmek"], ["стараться", "çaba göstermek"], ["успевать", "yetişmek / başarmak"], ["казаться", "görünmek / gibi görünmek"], ["иметь", "sahip olmak"], ["значить", "anlamına gelmek"], ["называться", "adı olmak"], ["считать", "saymak / düşünmek"], ["решать", "karar vermek / çözmek"], ["понравиться", "beğenmek (sonuç)"], ["нужно", "lazım / gerek"]], "Fiiller — Hareket": [["идти", "gitmek (yürüyerek, tek sefer)"], ["ехать", "gitmek (araçla, tek sefer)"], ["ходить", "yürümek (alışkanlık)"], ["ездить", "gitmek (araçla, alışkanlık)"], ["бегать", "koşmak"], ["летать", "uçmak"], ["плыть", "yüzmek / gitmek (suyla)"], ["приходить", "gelmek (yürüyerek)"], ["уходить", "ayrılmak / gitmek"], ["приезжать", "gelmek (araçla)"], ["уезжать", "gitmek (araçla)"], ["возвращаться", "geri dönmek"], ["входить", "girmek"], ["выходить", "çıkmak"], ["подниматься", "yukarı çıkmak"], ["спускаться", "inmek"], ["переходить", "geçmek (karşıya)"], ["доходить", "ulaşmak / varmak"], ["добираться", "ulaşmak (zorlu yol)"], ["подходить", "yaklaşmak"], ["отходить", "uzaklaşmak"], ["проходить", "geçip gitmek / sürmek"], ["нести", "taşımak (elde)"], ["везти", "taşımak (araçla)"], ["тащить", "sürüklemek"]], "Fiiller — Eylem": [["делать", "yapmak"], ["работать", "çalışmak"], ["начинать", "başlamak"], ["заканчивать", "bitirmek"], ["продолжать", "devam etmek"], ["помогать", "yardım etmek"], ["мешать", "engellemek"], ["давать", "vermek"], ["брать", "almak"], ["класть", "koymak (yatay)"], ["ставить", "koymak (dik)"], ["вешать", "asmak"], ["открывать", "açmak"], ["закрывать", "kapamak"], ["включать", "açmak (cihaz)"], ["выключать", "kapatmak (cihaz)"], ["поднимать", "kaldırmak"], ["опускать", "indirmek"], ["толкать", "itmek"], ["тянуть", "çekmek"], ["бросать", "atmak / bırakmak"], ["ловить", "yakalamak"], ["искать", "aramak"], ["находить", "bulmak"], ["терять", "kaybetmek"], ["показывать", "göstermek"], ["получать", "almak (teslim)"], ["отправлять", "göndermek"], ["платить", "ödemek"], ["покупать", "satın almak"], ["продавать", "satmak"], ["заказывать", "sipariş etmek"], ["менять", "değiştirmek"], ["готовить", "hazırlamak / pişirmek"], ["убирать", "temizlemek / toplamak"], ["выбирать", "seçmek"], ["планировать", "planlamak"], ["управлять", "yönetmek"], ["контролировать", "denetlemek / kontrol etmek"], ["ждать", "beklemek"], ["звонить", "aramak (telefon)"], ["смотреть", "bakmak / izlemek"], ["слушать", "dinlemek"], ["играть", "oynamak"], ["петь", "şarkı söylemek"], ["танцевать", "dans etmek"], ["рисовать", "resim yapmak"], ["фотографировать", "fotoğraf çekmek"], ["записывать", "not almak / kaydetmek"], ["повторять", "tekrar etmek"]], "Fiiller — Şantiye / İnşaat": [["строить", "inşa etmek"], ["ремонтировать", "tamir etmek"], ["чинить", "onarmak"], ["копать", "kazmak"], ["резать", "kesmek"], ["мерить", "ölçmek"], ["сваривать", "kaynak yapmak"], ["бетонировать", "betonlamak"], ["армировать", "donatı döşemek"], ["монтировать", "monte etmek"], ["демонтировать", "demonte etmek / sökmek"], ["грузить", "yüklemek"], ["выгружать", "boşaltmak"], ["заливать", "dökmek (beton / sıvı)"], ["уплотнять", "sıkıştırmak"], ["шлифовать", "zımparalamak"], ["красить", "boyamak"], ["штукатурить", "sıvamak"], ["укладывать", "döşemek"], ["устанавливать", "kurmak / yerleştirmek"], ["проверять", "kontrol etmek"], ["останавливать", "durdurmak"], ["запускать", "başlatmak / çalıştırmak"], ["подписывать", "imzalamak"], ["сообщать", "bildirmek / haber vermek"]], "Fiiller — Günlük Yaşam": [["есть", "yemek yemek"], ["пить", "içmek"], ["спать", "uyumak"], ["просыпаться", "uyanmak"], ["вставать", "kalkmak"], ["одеваться", "giyinmek"], ["раздеваться", "soyunmak"], ["мыться", "yıkanmak"], ["умываться", "yüz yıkamak"], ["чистить зубы", "diş fırçalamak"], ["причёсываться", "saç taramak"], ["бриться", "tıraş olmak"], ["готовить еду", "yemek pişirmek"], ["убирать дом", "ev temizlemek"], ["стирать", "çamaşır yıkamak"], ["гладить", "ütülemek"], ["посылать сообщение", "mesaj göndermek"], ["звонить по телефону", "telefon açmak"], ["ходить в магазин", "markete gitmek"], ["путешествовать", "seyahat etmek"], ["заниматься спортом", "spor yapmak"], ["гулять", "gezmek / yürüyüş yapmak"], ["встречаться", "buluşmak"], ["ложиться спать", "uyumaya yatmak"], ["просматривать телефон", "telefona bakmak"], ["читать новости", "haber okumak"]], "Sıfatlar — Boyut / Şekil": [["большой", "büyük"], ["маленький", "küçük"], ["огромный", "devasa / çok büyük"], ["крошечный", "minicik"], ["средний", "orta / ortalama"], ["высокий", "uzun / yüksek"], ["низкий", "kısa / alçak"], ["длинный", "uzun (nesne)"], ["короткий", "kısa (nesne)"], ["широкий", "geniş"], ["узкий", "dar"], ["тонкий", "ince"], ["толстый", "kalın / şişman"], ["тяжёлый", "ağır"], ["лёгкий", "hafif / kolay"], ["прямой", "düz"], ["кривой", "eğri / bükük"], ["круглый", "yuvarlak"], ["квадратный", "kare şeklinde"], ["острый", "keskin / sivri"], ["тупой", "künt / donuk"], ["плоский", "düz / yassı"], ["глубокий", "derin"], ["мелкий", "sığ / küçük"]], "Sıfatlar — Nitelik": [["хороший", "iyi"], ["плохой", "kötü"], ["отличный", "mükemmel"], ["ужасный", "korkunç / berbat"], ["нормальный", "normal"], ["новый", "yeni"], ["старый", "eski / yaşlı"], ["чистый", "temiz"], ["грязный", "kirli"], ["красивый", "güzel"], ["некрасивый", "çirkin"], ["умный", "akıllı"], ["глупый", "aptal"], ["сильный", "güçlü"], ["слабый", "zayıf"], ["быстрый", "hızlı"], ["медленный", "yavaş"], ["добрый", "iyi kalpli / nazik"], ["злой", "kötü / öfkeli"], ["весёлый", "neşeli / şen"], ["грустный", "üzgün"], ["спокойный", "sakin"], ["нервный", "sinirli / gergin"], ["важный", "önemli"], ["интересный", "ilginç"], ["скучный", "sıkıcı"], ["трудный", "zor"], ["простой", "basit / sade"], ["сложный", "karmaşık"], ["правильный", "doğru"], ["неправильный", "yanlış"], ["точный", "kesin / dakik"], ["примерный", "yaklaşık / örnek"], ["целый", "tam / bütün"], ["пустой", "boş"], ["полный", "dolu"], ["свежий", "taze"], ["готовый", "hazır"], ["опасный", "tehlikeli"], ["безопасный", "güvenli"], ["срочный", "acil"], ["нужный", "gerekli / lazım"], ["достаточный", "yeterli"], ["бесплатный", "ücretsiz"], ["дорогой", "pahalı / sevgili"], ["дешёвый", "ucuz"], ["современный", "modern / güncel"], ["официальный", "resmi"]], "Sıfatlar — Duygu / Hal": [["счастливый", "mutlu"], ["несчастный", "mutsuz"], ["довольный", "memnun"], ["недовольный", "memnun olmayan"], ["уставший", "yorgun"], ["бодрый", "dinç / canlı"], ["больной", "hasta"], ["здоровый", "sağlıklı"], ["голодный", "aç"], ["сытый", "tok"], ["занятый", "meşgul"], ["свободный", "serbest / boş"], ["удивлённый", "şaşırmış"], ["испуганный", "korkmuş"], ["обиженный", "alınmış / gücenmiş"], ["смущённый", "utanmış / mahçup"], ["влюблённый", "âşık"], ["одинокий", "yalnız"], ["раздражённый", "sinirlenmiş"], ["расстроенный", "üzülmüş / bozulmuş"]], "Sıfatlar — Renk": [["красный", "kırmızı"], ["синий", "mavi (koyu)"], ["голубой", "açık mavi / gök mavisi"], ["зелёный", "yeşil"], ["жёлтый", "sarı"], ["белый", "beyaz"], ["чёрный", "siyah"], ["серый", "gri"], ["коричневый", "kahverengi"], ["оранжевый", "turuncu"], ["розовый", "pembe"], ["фиолетовый", "mor"], ["золотой", "altın rengi"], ["серебряный", "gümüş rengi"], ["тёмный", "koyu / karanlık"], ["светлый", "açık / aydınlık"], ["яркий", "parlak / canlı"], ["бледный", "soluk / solgun"], ["прозрачный", "saydam / şeffaf"]], "İsimler — Ev / Yaşam": [["дом", "ev"], ["квартира", "daire"], ["комната", "oda"], ["кухня", "mutfak"], ["ванная", "banyo"], ["туалет", "tuvalet"], ["спальня", "yatak odası"], ["гостиная", "oturma odası"], ["балкон", "balkon"], ["подъезд", "apartman girişi"], ["лифт", "asansör"], ["лестница", "merdiven"], ["этаж", "kat"], ["крыша", "çatı"], ["подвал", "bodrum"], ["дверь", "kapı"], ["окно", "pencere"], ["пол", "zemin"], ["потолок", "tavan"], ["стена", "duvar"], ["стол", "masa"], ["стул", "sandalye"], ["кровать", "yatak"], ["диван", "kanepe"], ["шкаф", "dolap"], ["полка", "raf"], ["ковёр", "halı"], ["лампа", "lamba"], ["зеркало", "ayna"], ["холодильник", "buzdolabı"], ["плита", "ocak"], ["микроволновка", "mikrodalga"], ["стиральная машина", "çamaşır makinesi"], ["пылесос", "elektrik süpürgesi"], ["утюг", "ütü"], ["кран", "musluk"], ["душ", "duş"], ["посуда", "mutfak eşyası"], ["ложка", "kaşık"], ["вилка", "çatal"], ["нож", "bıçak"], ["тарелка", "tabak"], ["кастрюля", "tencere"]], "İsimler — Teknoloji": [["телефон", "telefon"], ["смартфон", "akıllı telefon"], ["компьютер", "bilgisayar"], ["ноутбук", "laptop / dizüstü bilgisayar"], ["планшет", "tablet"], ["телевизор", "televizyon"], ["наушники", "kulaklık"], ["зарядник", "şarj aleti"], ["батарея", "pil / batarya"], ["интернет", "internet"], ["Wi-Fi", "Wi-Fi"], ["приложение", "uygulama"], ["сайт", "web sitesi"], ["электронная почта", "e-posta"], ["сообщение", "mesaj"], ["звонок", "arama / zil sesi"], ["фотография", "fotoğraf"], ["видео", "video"], ["камера", "kamera"], ["принтер", "yazıcı"], ["флешка", "flash bellek"], ["провод", "kablo / tel"], ["экран", "ekran"], ["клавиатура", "klavye"], ["мышь", "fare (bilgisayar)"]], "İsimler — Ulaşım": [["машина", "araba"], ["автобус", "otobüs"], ["такси", "taksi"], ["метро", "metro"], ["трамвай", "tramvay"], ["поезд", "tren"], ["самолёт", "uçak"], ["корабль", "gemi"], ["велосипед", "bisiklet"], ["мотоцикл", "motosiklet"], ["грузовик", "kamyon"], ["дорога", "yol"], ["улица", "sokak / cadde"], ["проспект", "bulvar / ana cadde"], ["перекрёсток", "kavşak"], ["светофор", "trafik lambası"], ["парковка", "park yeri"], ["заправка", "benzin istasyonu"], ["остановка", "durak"], ["вокзал", "gar / tren istasyonu"], ["аэропорт", "havalimanı"], ["мост", "köprü"], ["тоннель", "tünel"], ["шоссе", "karayolu / otoyol"], ["тротуар", "kaldırım"], ["билет", "bilet"], ["маршрут", "güzergah"]], "İsimler — Gıda / İçecek": [["вода", "su"], ["чай", "çay"], ["кофе", "kahve"], ["молоко", "süt"], ["сок", "meyve suyu"], ["пиво", "bira"], ["вино", "şarap"], ["водка", "votka"], ["хлеб", "ekmek"], ["мясо", "et"], ["говядина", "sığır eti"], ["свинина", "domuz eti"], ["баранина", "kuzu eti"], ["курица", "tavuk"], ["рыба", "balık"], ["колбаса", "sosis / salam"], ["яйцо", "yumurta"], ["масло", "tereyağı / yağ"], ["сыр", "peynir"], ["йогурт", "yoğurt"], ["сметана", "ekşi krema"], ["соль", "tuz"], ["сахар", "şeker"], ["перец", "karabiber"], ["чеснок", "sarımsak"], ["лук", "soğan"], ["помидор", "domates"], ["огурец", "salatalık"], ["картофель", "patates"], ["морковь", "havuç"], ["капуста", "lahana"], ["перец (овощ)", "biber (sebze)"], ["баклажан", "patlıcan"], ["рис", "pirinç"], ["макароны", "makarna"], ["мука", "un"], ["суп", "çorba"], ["борщ", "borş çorbası"], ["пельмени", "Rus mantısı"], ["салат", "salata"], ["шашлык", "şiş kebap"], ["торт", "pasta"], ["мороженое", "dondurma"], ["шоколад", "çikolata"], ["конфеты", "şeker / bonbon"], ["яблоко", "elma"], ["банан", "muz"], ["апельсин", "portakal"], ["лимон", "limon"], ["виноград", "üzüm"], ["арбуз", "karpuz"], ["клубника", "çilek"], ["груша", "armut"], ["завтрак", "kahvaltı"], ["обед", "öğle yemeği"], ["ужин", "akşam yemeği"], ["десерт", "tatlı"], ["меню", "menü"], ["порция", "porsiyon"], ["вкус", "tat / lezzet"]], "İsimler — Giyim": [["одежда", "giysi / kıyafet"], ["куртка", "mont / ceket"], ["пальто", "palto"], ["пуховик", "şişme mont"], ["пиджак", "takım ceketi"], ["свитер", "kazak"], ["рубашка", "gömlek"], ["футболка", "tişört"], ["майка", "atlet"], ["брюки", "pantolon"], ["джинсы", "kot pantolon"], ["шорты", "şort"], ["юбка", "etek"], ["платье", "elbise"], ["костюм", "takım elbise"], ["шарф", "atkı / eşarp"], ["шапка", "bere / şapka"], ["кепка", "şapka (siperli)"], ["перчатки", "eldiven"], ["носки", "çorap"], ["нижнее бельё", "iç çamaşırı"], ["обувь", "ayakkabı"], ["ботинки", "bot / yarım çizme"], ["кроссовки", "spor ayakkabı"], ["сапоги", "çizme"], ["туфли", "topuklu ayakkabı"], ["сандали", "sandalet"], ["ремень", "kemer"], ["карман", "cep"], ["молния", "fermuar"], ["пуговица", "düğme"]], "İsimler — İnsanlar / Aile": [["человек", "insan"], ["мужчина", "erkek"], ["женщина", "kadın"], ["ребёнок", "çocuk"], ["мальчик", "erkek çocuk"], ["девочка", "kız çocuk"], ["взрослый", "yetişkin"], ["молодёжь", "gençlik"], ["старик", "yaşlı adam"], ["мама", "anne"], ["папа", "baba"], ["сын", "oğul"], ["дочь", "kız evlat"], ["брат", "erkek kardeş"], ["сестра", "kız kardeş"], ["муж", "koca / eş (erkek)"], ["жена", "eş (kadın)"], ["бабушка", "büyükanne"], ["дедушка", "büyükbaba"], ["дядя", "amca / dayı / enişte"], ["тётя", "hala / teyze / yenge"], ["внук", "erkek torun"], ["внучка", "kız torun"], ["племянник", "yeğen (erkek)"], ["племянница", "yeğen (kız)"], ["друг", "erkek arkadaş"], ["подруга", "kız arkadaş"], ["знакомый", "tanıdık"], ["сосед", "komşu"], ["коллега", "iş arkadaşı"], ["начальник", "amir / patron"], ["подчинённый", "ast"], ["клиент", "müşteri"], ["гость", "misafir"], ["пассажир", "yolcu"], ["покупатель", "alıcı / müşteri"]], "İsimler — Meslekler": [["врач", "doktor"], ["хирург", "cerrah"], ["медсестра", "hemşire"], ["учитель", "öğretmen"], ["профессор", "profesör"], ["студент", "öğrenci"], ["инженер", "mühendis"], ["архитектор", "mimar"], ["строитель", "inşaatçı"], ["рабочий", "işçi"], ["водитель", "şoför"], ["продавец", "satıcı"], ["официант", "garson"], ["повар", "aşçı"], ["полицейский", "polis"], ["пожарный", "itfaiyeci"], ["солдат", "asker"], ["переводчик", "tercüman"], ["программист", "programcı"], ["бухгалтер", "muhasebeci"], ["менеджер", "yönetici"], ["директор", "müdür / direktör"], ["адвокат", "avukat"], ["журналист", "gazeteci"], ["охранник", "güvenlik görevlisi"], ["фотограф", "fotoğrafçı"]], "İsimler — Yer / Mekân": [["город", "şehir"], ["деревня", "köy"], ["страна", "ülke"], ["столица", "başkent"], ["площадь", "meydan"], ["парк", "park"], ["лес", "orman"], ["река", "nehir"], ["море", "deniz"], ["озеро", "göl"], ["гора", "dağ"], ["пляж", "plaj"], ["центр", "merkez"], ["район", "bölge / semt"], ["посёлок", "kasaba / yerleşim"], ["граница", "sınır"], ["территория", "alan / bölge"], ["больница", "hastane"], ["аптека", "eczane"], ["школа", "okul"], ["университет", "üniversite"], ["офис", "ofis"], ["гостиница", "otel"], ["ресторан", "restoran"], ["кафе", "kafe"], ["магазин", "mağaza / dükkan"], ["рынок", "pazar"], ["банк", "banka"], ["банкомат", "ATM"], ["почта", "postane"], ["библиотека", "kütüphane"], ["музей", "müze"], ["театр", "tiyatro"], ["стадион", "stadyum"], ["церковь", "kilise"], ["мечеть", "cami"], ["Россия", "Rusya"], ["Турция", "Türkiye"], ["Казахстан", "Kazakistan"], ["Москва", "Moskova"], ["Алматы", "Almatı"], ["Астана", "Astana"], ["Европа", "Avrupa"], ["Азия", "Asya"]], "İsimler — Doğa / Çevre": [["солнце", "güneş"], ["луна", "ay (gök cismi)"], ["звезда", "yıldız"], ["небо", "gökyüzü"], ["облако", "bulut"], ["дождь", "yağmur"], ["снег", "kar"], ["ветер", "rüzgar"], ["гром", "gök gürültüsü"], ["молния", "şimşek / yıldırım"], ["туман", "sis"], ["лёд", "buz"], ["жара", "sıcak hava / sıcaklık"], ["мороз", "dondurucu soğuk"], ["гроза", "fırtına"], ["огонь", "ateş"], ["воздух", "hava"], ["земля", "toprak / yeryüzü"], ["камень", "taş"], ["песок", "kum"], ["трава", "çimen / ot"], ["цветок", "çiçek"], ["дерево", "ağaç"], ["лист", "yaprak"], ["корень", "kök"], ["животное", "hayvan"], ["собака", "köpek"], ["кошка", "kedi"], ["лошадь", "at"], ["корова", "inek"], ["птица", "kuş"], ["рыба (животное)", "balık (hayvan)"], ["климат", "iklim"], ["природа", "doğa"], ["окружающая среда", "çevre"]], "Zaman / Sayılar": [["ноль", "sıfır"], ["один", "bir"], ["два", "iki"], ["три", "üç"], ["четыре", "dört"], ["пять", "beş"], ["шесть", "altı"], ["семь", "yedi"], ["восемь", "sekiz"], ["девять", "dokuz"], ["десять", "on"], ["одиннадцать", "on bir"], ["двенадцать", "on iki"], ["тринадцать", "on üç"], ["пятнадцать", "on beş"], ["двадцать", "yirmi"], ["тридцать", "otuz"], ["сорок", "kırk"], ["пятьдесят", "elli"], ["шестьдесят", "altmış"], ["семьдесят", "yetmiş"], ["восемьдесят", "seksen"], ["девяносто", "doksan"], ["сто", "yüz"], ["двести", "iki yüz"], ["пятьсот", "beş yüz"], ["тысяча", "bin"], ["миллион", "milyon"], ["первый", "birinci / ilk"], ["второй", "ikinci"], ["третий", "üçüncü"], ["четвёртый", "dördüncü"], ["пятый", "beşinci"], ["последний", "son / sonuncu"], ["следующий", "sonraki / bir sonraki"], ["минута", "dakika"], ["час", "saat (süre)"], ["день", "gün"], ["ночь", "gece"], ["утро", "sabah"], ["вечер", "akşam / öğleden sonra"], ["неделя", "hafta"], ["месяц", "ay (takvim)"], ["год", "yıl"], ["век", "yüzyıl"], ["понедельник", "Pazartesi"], ["вторник", "Salı"], ["среда", "Çarşamba"], ["четверг", "Perşembe"], ["пятница", "Cuma"], ["суббота", "Cumartesi"], ["воскресенье", "Pazar"], ["январь", "Ocak"], ["февраль", "Şubat"], ["март", "Mart"], ["апрель", "Nisan"], ["май", "Mayıs"], ["июнь", "Haziran"], ["июль", "Temmuz"], ["август", "Ağustos"], ["сентябрь", "Eylül"], ["октябрь", "Ekim"], ["ноябрь", "Kasım"], ["декабрь", "Aralık"], ["весна", "ilkbahar"], ["лето", "yaz"], ["осень", "sonbahar"], ["зима", "kış"]], "Şantiye / Maden / İnşaat": [["работа", "iş"], ["предприятие", "işletme"], ["компания", "şirket"], ["завод", "fabrika"], ["шахта", "maden ocağı / şaft"], ["карьер", "açık ocak"], ["рудник", "maden"], ["объект", "saha / tesis"], ["стройплощадка", "şantiye"], ["бригада", "ekip / taburcu"], ["смена", "vardiya"], ["прораб", "şantiye şefi"], ["бригадир", "ekip başı"], ["мастер", "usta"], ["оператор", "operatör"], ["экскаватор", "ekskavatör"], ["бульдозер", "buldozer"], ["погрузчик", "yükleyici"], ["кран", "vinç"], ["автокран", "mobil vinç"], ["самосвал", "damperli kamyon"], ["бетономешалка", "beton mikseri"], ["насос", "pompa"], ["водяной насос", "su pompası"], ["генератор", "jeneratör"], ["компрессор", "kompresör"], ["электричество", "elektrik"], ["кабель", "kablo"], ["труба", "boru"], ["шланг", "hortum"], ["бетон", "beton"], ["цемент", "çimento"], ["раствор", "harç / çözelti"], ["арматура", "demir donatı"], ["щебень", "mıcır"], ["кирпич", "tuğla"], ["блок", "blok"], ["доска", "tahta"], ["металл", "metal"], ["сталь", "çelik"], ["болт", "cıvata"], ["гайка", "somun"], ["гвоздь", "çivi"], ["сварка", "kaynak"], ["сварщик", "kaynakçı"], ["молоток", "çekiç"], ["лопата", "kürek"], ["ведро", "kova"], ["рулетка", "şerit metre"], ["уровень", "su terazisi / seviye"], ["дрель", "matkap"], ["болгарка", "taşlama makinesi"], ["перфоратор", "kırıcı matkap"], ["каска", "baret"], ["жилет", "yelek"], ["леса", "iskele"], ["опалубка", "kalıp"], ["фундамент", "temel"], ["колонна", "kolon / sütun"], ["балка", "kiriş"], ["плита", "döşeme / levha"], ["кровля", "çatı"], ["гидроизоляция", "su yalıtımı"], ["безопасность", "güvenlik"], ["опасность", "tehlike"], ["авария", "kaza / arıza"], ["пожар", "yangın"], ["охрана труда", "iş güvenliği"], ["инструктаж", "brifing / güvenlik eğitimi"], ["отчёт", "rapor"], ["план", "plan"], ["чертёж", "teknik çizim"], ["смета", "keşif / bütçe"], ["контракт", "sözleşme"], ["материал", "malzeme"], ["оборудование", "ekipman / donanım"], ["инструмент", "alet"], ["документ", "belge"], ["качество", "kalite"], ["брак", "kusur / ıskarta"], ["контроль", "kontrol"], ["срок", "süre / vade / son tarih"], ["проект", "proje"], ["ремонт", "tamir / tadilat"], ["руда", "cevher"], ["золото", "altın"], ["концентрат", "konsantre"], ["проба", "numune / ayar"], ["флотация", "flotasyon"], ["реагент", "reaktif"]], "Sağlık / Vücut": [["голова", "baş"], ["волосы", "saç"], ["лицо", "yüz"], ["лоб", "alın"], ["глаз", "göz"], ["ухо", "kulak"], ["нос", "burun"], ["рот", "ağız"], ["губы", "dudaklar"], ["зуб", "diş"], ["язык", "dil (organ)"], ["шея", "boyun"], ["плечо", "omuz"], ["рука", "el / kol"], ["локоть", "dirsek"], ["запястье", "bilek"], ["палец", "parmak"], ["ноготь", "tırnak"], ["грудь", "göğüs"], ["живот", "karın / mide"], ["спина", "sırt"], ["бедро", "kalça / uyluk"], ["нога", "ayak / bacak"], ["колено", "diz"], ["щиколотка", "ayak bileği"], ["пятка", "topuk"], ["сердце", "kalp"], ["лёгкие", "akciğer"], ["печень", "karaciğer"], ["почки", "böbrekler"], ["желудок", "mide"], ["кровь", "kan"], ["кость", "kemik"], ["кожа", "deri"], ["мышца", "kas"], ["боль", "ağrı"], ["температура", "ateş"], ["давление", "tansiyon"], ["таблетка", "hap / tablet"], ["укол", "iğne (enjeksiyon)"], ["операция", "ameliyat"], ["рецепт", "reçete"], ["здоровье", "sağlık"], ["болезнь", "hastalık"], ["грипп", "grip"], ["простуда", "nezle / soğuk algınlığı"], ["аллергия", "alerji"], ["рана", "yara"], ["ожог", "yanık"], ["перелом", "kırık"], ["скорая помощь", "ambulans"], ["лечение", "tedavi"], ["симптом", "belirti"]], "Duygular / Psikoloji": [["счастье", "mutluluk"], ["грусть", "üzüntü"], ["страх", "korku"], ["радость", "sevinç"], ["злость", "öfke"], ["любовь", "aşk / sevgi"], ["ненависть", "nefret"], ["удивление", "şaşırma"], ["усталость", "yorgunluk"], ["скука", "sıkıntı / can sıkıntısı"], ["беспокойство", "endişe"], ["надежда", "umut"], ["гордость", "gurur"], ["стыд", "utanç"], ["вина", "suçluluk"], ["уверенность", "güven / özgüven"], ["доверие", "güven"], ["зависть", "kıskançlık"], ["одиночество", "yalnızlık"], ["спокойствие", "huzur / sakinlik"], ["настроение", "ruh hali / keyif"], ["тревога", "kaygı / anksiyete"], ["обида", "kırgınlık / alınma"], ["восторг", "coşku / heyecan"], ["разочарование", "hayal kırıklığı"]], "Eğitim / Kültür": [["слово", "kelime"], ["язык", "dil / lisan"], ["предложение", "cümle"], ["текст", "metin"], ["абзац", "paragraf"], ["глава", "bölüm"], ["книга", "kitap"], ["газета", "gazete"], ["журнал", "dergi"], ["история", "tarih / hikaye"], ["культура", "kültür"], ["наука", "bilim"], ["технология", "teknoloji"], ["искусство", "sanat"], ["музыка", "müzik"], ["кино", "sinema / film"], ["театр", "tiyatro"], ["выставка", "sergi"], ["школа", "okul"], ["урок", "ders"], ["экзамен", "sınav"], ["оценка", "not"], ["ошибка", "hata"], ["пример", "örnek"], ["знание", "bilgi / bilme"], ["образование", "eğitim / öğrenim"]], "Ekonomi / Para": [["деньги", "para"], ["рубль", "ruble"], ["тенге", "tenge"], ["лира", "lira"], ["евро", "euro"], ["доллар", "dolar"], ["цена", "fiyat"], ["стоимость", "değer / maliyet"], ["скидка", "indirim"], ["налог", "vergi"], ["зарплата", "maaş"], ["банк", "banka"], ["счёт", "hesap / fatura"], ["платёж", "ödeme"], ["кредит", "kredi"], ["долг", "borç"], ["прибыль", "kâr"], ["убыток", "zarar / kayıp"], ["бюджет", "bütçe"], ["расходы", "harcamalar / giderler"], ["доходы", "gelir / kazanç"], ["товар", "mal / ürün"], ["контракт", "sözleşme / kontrat"], ["инвестиция", "yatırım"]], "Spor / Hobi": [["спорт", "spor"], ["футбол", "futbol"], ["баскетбол", "basketbol"], ["теннис", "tenis"], ["плавание", "yüzme"], ["бег", "koşu"], ["велосипед", "bisiklet"], ["путешествие", "seyahat"], ["туризм", "turizm"], ["поход", "yürüyüş / kamp"], ["рыбалка", "balık tutma / olta"], ["охота", "av / avcılık"], ["чтение", "okuma"], ["рисование", "çizim / resim yapma"], ["игра", "oyun"], ["победа", "zafer / galibiyet"], ["поражение", "yenilgi"], ["команда", "takım"], ["тренировка", "antrenman"], ["соревнование", "yarışma"], ["чемпионат", "şampiyonluk / şampiyona"], ["рекорд", "rekor"]], "İletişim / Medya": [["сообщение", "mesaj"], ["письмо", "mektup"], ["почта", "posta / postane"], ["социальные сети", "sosyal medya"], ["новость", "haber"], ["реклама", "reklam"], ["видеозвонок", "video arama"], ["конференция", "konferans"], ["совещание", "toplantı"], ["переписка", "yazışma"], ["комментарий", "yorum"], ["объявление", "ilan / duyuru"], ["заявление", "beyan / dilekçe"], ["подтверждение", "onay / teyit"], ["отказ", "ret / reddetme"], ["переговоры", "müzakere / görüşme"], ["контакт", "iletişim / kişi"], ["номер телефона", "telefon numarası"], ["адрес", "adres"], ["подпись", "imza"]], "Yön / Konum / Pozisyon": [["север", "kuzey"], ["юг", "güney"], ["восток", "doğu"], ["запад", "batı"], ["центр", "merkez"], ["угол", "köşe"], ["край", "kenar / kıyı"], ["граница", "sınır"], ["верх", "üst"], ["низ", "alt"], ["начало", "başlangıç"], ["конец", "son / uç"], ["правый", "sağ"], ["левый", "sol"], ["передний", "ön"], ["задний", "arka"], ["внутри", "içinde"], ["снаружи", "dışında"], ["напротив", "karşısında"], ["рядом", "yanında"], ["вокруг", "etrafında"], ["между", "arasında"], ["перед", "önünde"], ["за", "arkasında / ötesinde"]]};
+var SENTS_DATA = [["Как тебя зовут?", "Adın ne?", "Tanışma"], ["Меня зовут Каан.", "Adım Kaan.", "Tanışma"], ["Откуда ты?", "Nerelisin?", "Tanışma"], ["Я из Турции.", "Türkiye'denim.", "Tanışma"], ["Сколько тебе лет?", "Kaç yaşındasın?", "Tanışma"], ["Мне тридцать лет.", "Otuz yaşındayım.", "Tanışma"], ["Кем ты работаешь?", "Ne iş yapıyorsun?", "Tanışma"], ["Я инженер-строитель.", "İnşaat mühendisiyim.", "Tanışma"], ["Приятно познакомиться.", "Memnun oldum.", "Tanışma"], ["Давно вы в Казахстане?", "Kazakistan'dasınız uzun süredir mi?", "Tanışma"], ["Я здесь уже полгода.", "Burada zaten yarım yıldır.", "Tanışma"], ["Вы говорите по-турецки?", "Türkçe biliyor musunuz?", "Tanışma"], ["Нет, только по-русски.", "Hayır, sadece Rusça.", "Tanışma"], ["Я учу русский язык.", "Rusça öğreniyorum.", "Tanışma"], ["Вы живёте на объекте?", "Sahada mı yaşıyorsunuz?", "Tanışma"], ["Рад(а) познакомиться.", "Tanıştığıma memnunum.", "Tanışma"], ["Как вас зовут?", "Adınız ne? (resmi)", "Tanışma"], ["Вы женаты / замужем?", "Evli misiniz?", "Tanışma"], ["У вас есть дети?", "Çocuğunuz var mı?", "Tanışma"], ["Как дела?", "Nasılsın?", "Günlük"], ["Хорошо, спасибо. А ты?", "İyiyim, teşekkürler. Ya sen?", "Günlük"], ["Всё нормально.", "Her şey normal.", "Günlük"], ["Я немного устал.", "Biraz yorgunum.", "Günlük"], ["Всё в порядке.", "Her şey yolunda.", "Günlük"], ["Я не понимаю.", "Anlamıyorum.", "Günlük"], ["Я понимаю.", "Anlıyorum.", "Günlük"], ["Говорите медленнее, пожалуйста.", "Lütfen daha yavaş konuşun.", "Günlük"], ["Повторите, пожалуйста.", "Lütfen tekrar edin.", "Günlük"], ["Что это значит?", "Bu ne anlama geliyor?", "Günlük"], ["Как это по-русски?", "Bu Rusçada nasıl denir?", "Günlük"], ["Переведите, пожалуйста.", "Lütfen çevirin.", "Günlük"], ["Не беспокойся.", "Endişelenme.", "Günlük"], ["Всё будет хорошо.", "Her şey yoluna girecek.", "Günlük"], ["Молодец!", "Aferin! / Bravo!", "Günlük"], ["Хорошая работа!", "Güzel iş!", "Günlük"], ["Договорились.", "Anlaştık.", "Günlük"], ["Конечно.", "Tabii ki.", "Günlük"], ["Может быть.", "Belki.", "Günlük"], ["Не знаю.", "Bilmiyorum.", "Günlük"], ["Посмотрим.", "Görürüz.", "Günlük"], ["Подождите минуту.", "Bir dakika bekleyin.", "Günlük"], ["Спокойной ночи.", "İyi geceler.", "Günlük"], ["Увидимся завтра.", "Yarın görüşürüz.", "Günlük"], ["Пока!", "Görüşürüz!", "Günlük"], ["Счастливого пути!", "İyi yolculuklar!", "Günlük"], ["Удачи!", "İyi şanslar!", "Günlük"], ["Будьте здоровы!", "Sağlıklı olun!", "Günlük"], ["Где находится туалет?", "Tuvalet nerede?", "Yer Sorma"], ["Где ближайшая аптека?", "En yakın eczane nerede?", "Yer Sorma"], ["Как пройти к вокзалу?", "Gara nasıl giderim?", "Yer Sorma"], ["Идите прямо.", "Düz gidin.", "Yer Sorma"], ["Поверните направо.", "Sağa dönün.", "Yer Sorma"], ["Поверните налево.", "Sola dönün.", "Yer Sorma"], ["Это далеко?", "Uzak mı?", "Yer Sorma"], ["Это близко, пять минут пешком.", "Yakın, beş dakika yürüyüş.", "Yer Sorma"], ["На каком этаже?", "Kaçıncı katta?", "Yer Sorma"], ["На третьем этаже, слева.", "Üçüncü katta, solda.", "Yer Sorma"], ["Где остановка автобуса?", "Otobüs durağı nerede?", "Yer Sorma"], ["Это рядом с банком.", "Bu bankanın yanında.", "Yer Sorma"], ["Где здесь банкомат?", "Burada ATM nerede?", "Yer Sorma"], ["Сколько стоит это?", "Bu ne kadar?", "Market"], ["Это очень дорого.", "Bu çok pahalı.", "Market"], ["Есть что-нибудь дешевле?", "Daha ucuz bir şey var mı?", "Market"], ["Дайте мне килограмм яблок.", "Bana bir kilo elma verin.", "Market"], ["У вас есть свежее молоко?", "Taze sütünüz var mı?", "Market"], ["Это не свежее.", "Bu taze değil.", "Market"], ["Я возьму это.", "Bunu alacağım.", "Market"], ["Сколько с меня?", "Benden ne kadar?", "Market"], ["Можно платить картой?", "Kartla ödeyebilir miyim?", "Market"], ["Дайте, пожалуйста, пакет.", "Bir poşet verin lütfen.", "Market"], ["Есть скидка?", "İndirim var mı?", "Market"], ["Покажите, пожалуйста.", "Gösterin lütfen.", "Market"], ["Дайте сдачу.", "Para üstü verin.", "Market"], ["Вот ваш чек.", "İşte fişiniz.", "Market"], ["Мне нужна вода и хлеб.", "Su ve ekmek lazım.", "Market"], ["Полкило сыра, пожалуйста.", "Yarım kilo peynir lütfen.", "Market"], ["Где молочный отдел?", "Süt ürünleri reyonu nerede?", "Market"], ["У вас есть без свинины?", "Domuzsuz var mı?", "Market"], ["Это по акции?", "Bu kampanyada mı?", "Market"], ["Нет, спасибо, это всё.", "Hayır teşekkürler, hepsi bu.", "Market"], ["Столик на двоих, пожалуйста.", "İki kişilik masa lütfen.", "Kafe/Restoran"], ["Что вы посоветуете?", "Ne tavsiye edersiniz?", "Kafe/Restoran"], ["Принесите меню, пожалуйста.", "Menüyü getirin lütfen.", "Kafe/Restoran"], ["Я буду кофе с молоком.", "Sütlü kahve alacağım.", "Kafe/Restoran"], ["Без сахара, пожалуйста.", "Şekersiz lütfen.", "Kafe/Restoran"], ["Мне, пожалуйста, суп и мясо.", "Bana çorba ve et lütfen.", "Kafe/Restoran"], ["Можно без свинины?", "Domuzsuz olur mu?", "Kafe/Restoran"], ["Ещё воды, пожалуйста.", "Biraz daha su lütfen.", "Kafe/Restoran"], ["Счёт, пожалуйста.", "Hesabı getirin lütfen.", "Kafe/Restoran"], ["Всё было очень вкусно.", "Her şey çok lezzetliydi.", "Kafe/Restoran"], ["Здесь есть Wi-Fi?", "Burada Wi-Fi var mı?", "Kafe/Restoran"], ["Какой пароль от Wi-Fi?", "Wi-Fi şifresi ne?", "Kafe/Restoran"], ["Мне можно заплатить картой?", "Kartla ödeyebilir miyim?", "Kafe/Restoran"], ["Это блюдо острое?", "Bu yemek acı mı?", "Kafe/Restoran"], ["Есть ли у вас десерт?", "Tatlınız var mı?", "Kafe/Restoran"], ["Принесите вилку и нож.", "Çatal ve bıçak getirin.", "Kafe/Restoran"], ["Один капучино и чай.", "Bir cappuccino ve çay.", "Kafe/Restoran"], ["Это для меня.", "Bu benim için.", "Kafe/Restoran"], ["Спасибо за обслуживание.", "Servis için teşekkürler.", "Kafe/Restoran"], ["Порция достаточно большая?", "Porsiyon yeterince büyük mü?", "Kafe/Restoran"], ["Вызовите такси, пожалуйста.", "Taksi çağırın lütfen.", "Ulaşım"], ["Отвезите меня на объект.", "Beni sahaya götürün.", "Ulaşım"], ["Сколько стоит до центра?", "Merkeze kaç para?", "Ulaşım"], ["Остановите здесь.", "Burada durun.", "Ulaşım"], ["Мне нужно в аэропорт.", "Havalimanına gitmem gerekiyor.", "Ulaşım"], ["Как долго ехать?", "Kaç dakika sürer?", "Ulaşım"], ["На каком автобусе ехать?", "Hangi otobüsle gideyim?", "Ulaşım"], ["Следующая остановка — моя.", "Bir sonraki durak benimki.", "Ulaşım"], ["Где купить билет?", "Nereden bilet alınır?", "Ulaşım"], ["В котором часу отправляется поезд?", "Tren saat kaçta kalkıyor?", "Ulaşım"], ["Этот автобус идёт до центра?", "Bu otobüs merkeze gidiyor mu?", "Ulaşım"], ["Можно мне выйти здесь?", "Burada inebilir miyim?", "Ulaşım"], ["У меня есть бронь.", "Rezervasyonum var.", "Otel"], ["Мне нужен номер на одного.", "Tek kişilik oda istiyorum.", "Otel"], ["Завтрак включён?", "Kahvaltı dahil mi?", "Otel"], ["Во сколько выезд?", "Çıkış kaçta?", "Otel"], ["Дайте ключ от номера.", "Oda anahtarını verin.", "Otel"], ["В номере нет горячей воды.", "Odada sıcak su yok.", "Otel"], ["Мне нужно разбудить в 6 утра.", "Sabah 6'da uyandırılmam gerekiyor.", "Otel"], ["Можно поменять номер?", "Oda değiştirebilir miyim?", "Otel"], ["Где можно поужинать рядом?", "Yakında akşam yemeği yiyebileceğim yer?", "Otel"], ["Мне нужен врач.", "Doktora ihtiyacım var.", "Doktor/Sağlık"], ["Вызовите скорую!", "Ambulans çağırın!", "Doktor/Sağlık"], ["У меня болит голова.", "Başım ağrıyor.", "Doktor/Sağlık"], ["У меня болит живот.", "Karnım ağrıyor.", "Doktor/Sağlık"], ["У меня высокая температура.", "Ateşim yüksek.", "Doktor/Sağlık"], ["Я поранился.", "Yaralandım.", "Doktor/Sağlık"], ["У меня аллергия на пыль.", "Toza alerjim var.", "Doktor/Sağlık"], ["Где ближайшая больница?", "En yakın hastane nerede?", "Doktor/Sağlık"], ["Дайте обезболивающее.", "Ağrı kesici verin.", "Doktor/Sağlık"], ["Я чувствую себя плохо.", "Kendimi kötü hissediyorum.", "Doktor/Sağlık"], ["Мне нужен рецепт.", "Reçete lazım.", "Doktor/Sağlık"], ["У меня сломана рука.", "Kolum kırık.", "Doktor/Sağlık"], ["Позвоните в скорую помощь.", "Ambulans çağırın.", "Doktor/Sağlık"], ["Доброе утро! Все на месте?", "Günaydın! Herkes yerinde mi?", "Şantiye"], ["Сегодня заливаем бетон.", "Bugün beton dökeceğiz.", "Şantiye"], ["Где экскаватор?", "Ekskavatör nerede?", "Şantiye"], ["Кран не работает.", "Vinç çalışmıyor.", "Şantiye"], ["Насос сломан.", "Pompa bozuk.", "Şantiye"], ["Нет электричества.", "Elektrik yok.", "Şantiye"], ["Генератор сломался.", "Jeneratör bozuldu.", "Şantiye"], ["Это нужно починить срочно.", "Bu acil tamir edilmeli.", "Şantiye"], ["Надень каску.", "Baret tak.", "Şantiye"], ["Здесь опасно, отойди.", "Burası tehlikeli, çekil.", "Şantiye"], ["Сколько материала нужно?", "Ne kadar malzeme lazım?", "Şantiye"], ["Принеси инструменты.", "Aletleri getir.", "Şantiye"], ["Начинаем работу в восемь.", "Sekizde işe başlıyoruz.", "Şantiye"], ["Перерыв на обед в час.", "Öğle molası saat birde.", "Şantiye"], ["Конец смены в шесть вечера.", "Vardiya akşam altıda bitiyor.", "Şantiye"], ["Вызови электрика.", "Elektrikçi çağır.", "Şantiye"], ["Где бригадир?", "Ekip başı nerede?", "Şantiye"], ["Нужен новый насос.", "Yeni pompa lazım.", "Şantiye"], ["Проверь давление воды.", "Su basıncını kontrol et.", "Şantiye"], ["Составь отчёт к вечеру.", "Akşama raporu hazırla.", "Şantiye"], ["Машина застряла в грязи.", "Araç çamura battı.", "Şantiye"], ["Подпиши документы.", "Belgeleri imzala.", "Şantiye"], ["Кто отвечает за сварку?", "Kaynaktan kim sorumlu?", "Şantiye"], ["Проверь качество бетона.", "Beton kalitesini kontrol et.", "Şantiye"], ["Сколько осталось арматуры?", "Ne kadar donatı kaldı?", "Şantiye"], ["Вода попала в шахту.", "Suya maden ocağına doldu.", "Şantiye"], ["Включи компрессор.", "Kompresörü aç.", "Şantiye"], ["Выключи генератор.", "Jeneratörü kapat.", "Şantiye"], ["Это не по чертежу.", "Bu çizime göre değil.", "Şantiye"], ["Нарушение техники безопасности.", "İş güvenliği ihlali.", "Şantiye"], ["Срочно нужен сварщик.", "Acil kaynakçı lazım.", "Şantiye"], ["Замени шланг.", "Hortumu değiştir.", "Şantiye"], ["Смени смену, ты устал.", "Vardiyayı bırak, yoruldun.", "Şantiye"], ["Сделай замер.", "Ölçüm al.", "Şantiye"], ["Привязь надета?", "Emniyet kemeri takılı mı?", "Şantiye"], ["Сегодня приезжает проверка.", "Bugün denetim geliyor.", "Şantiye"], ["Готовьте документацию.", "Belgeleri hazırlayın.", "Şantiye"], ["Бетон застыл.", "Beton dondu / sertleşti.", "Şantiye"], ["Нужна лебёдка.", "Vinç halatı lazım.", "Şantiye"], ["Перчатки обязательны.", "Eldiven zorunlu.", "Şantiye"], ["Работаем до темноты.", "Karanlığa kadar çalışıyoruz.", "Şantiye"], ["Объект сдаётся в сентябре.", "Saha Eylül'de teslim ediliyor.", "Şantiye"], ["Заказали щебень.", "Mıcır sipariş ettik.", "Şantiye"], ["Труба лопнула.", "Boru patladı.", "Şantiye"], ["Всем надеть жилеты.", "Herkes yelek takacak.", "Şantiye"], ["Который час?", "Saat kaç?", "Zaman"], ["Сейчас три часа.", "Şu an saat üç.", "Zaman"], ["В котором часу встреча?", "Toplantı saat kaçta?", "Zaman"], ["Завтра у нас собрание.", "Yarın toplantımız var.", "Zaman"], ["На следующей неделе.", "Gelecek hafta.", "Zaman"], ["Какой сегодня день?", "Bugün haftanın hangi günü?", "Zaman"], ["Сегодня понедельник, второе октября.", "Bugün Pazartesi, ikinci Ekim.", "Zaman"], ["Когда начинается смена?", "Vardiya ne zaman başlıyor?", "Zaman"], ["Смена начинается в восемь.", "Vardiya sekizde başlıyor.", "Zaman"], ["Сколько тебе нужно времени?", "Ne kadar zamana ihtiyacın var?", "Zaman"], ["Через час.", "Bir saat sonra.", "Zaman"], ["Уже поздно.", "Artık geç.", "Zaman"], ["Ещё рано.", "Daha erken.", "Zaman"], ["Он опоздал на полчаса.", "Yarım saat geç kaldı.", "Zaman"], ["Какая сегодня погода?", "Bugün hava nasıl?", "Hava Durumu"], ["Сегодня очень жарко.", "Bugün çok sıcak.", "Hava Durumu"], ["На улице холодно.", "Dışarısı soğuk.", "Hava Durumu"], ["Идёт дождь.", "Yağmur yağıyor.", "Hava Durumu"], ["Идёт снег.", "Kar yağıyor.", "Hava Durumu"], ["Сильный ветер.", "Rüzgar güçlü.", "Hava Durumu"], ["Туман на дороге.", "Yolda sis var.", "Hava Durumu"], ["Завтра будет ясно.", "Yarın hava açık olacak.", "Hava Durumu"], ["Сколько градусов?", "Kaç derece?", "Hava Durumu"], ["Минус двадцать градусов.", "Eksi yirmi derece.", "Hava Durumu"], ["Надень куртку, холодно.", "Montunu giy, soğuk.", "Hava Durumu"], ["Гроза будет вечером.", "Akşam fırtına olacak.", "Hava Durumu"], ["Позвоните мне.", "Beni arayın.", "İletişim"], ["Ваш номер телефона?", "Telefon numaranız nedir?", "İletişim"], ["Напишите мне сообщение.", "Bana mesaj yazın.", "İletişim"], ["Я не слышу вас.", "Sizi duyamıyorum.", "İletişim"], ["Говорите громче.", "Daha yüksek sesle konuşun.", "İletişim"], ["Связь плохая.", "Bağlantı kötü.", "İletişim"], ["Отправьте мне файл.", "Dosyayı bana gönderin.", "İletişim"], ["Я перезвоню.", "Geri arayacağım.", "İletişim"], ["Он недоступен.", "O anda ulaşılamıyor.", "İletişim"], ["Оставьте сообщение.", "Mesaj bırakın.", "İletişim"], ["Я первый раз в Казахстане.", "Kazakistan'a ilk gelişim.", "Seyahat"], ["Мне нужна виза?", "Vize lazım mı?", "Seyahat"], ["Где обменять валюту?", "Döviz nerede bozulur?", "Seyahat"], ["Мой паспорт у вас?", "Pasaportum sizde mi?", "Seyahat"], ["Как добраться до города?", "Şehre nasıl gidilir?", "Seyahat"], ["Мне нужен переводчик.", "Tercüman lazım.", "Seyahat"], ["Этот автобус идёт в центр?", "Bu otobüs merkeze gidiyor mu?", "Seyahat"], ["Когда следующий рейс?", "Bir sonraki sefer ne zaman?", "Seyahat"], ["У меня потерялся багаж.", "Bagajım kayboldu.", "Seyahat"], ["Мне нужна помощь.", "Yardıma ihtiyacım var.", "Seyahat"], ["Я с тобой согласен.", "Seninle aynı fikirdeyim.", "Duygu/Fikir"], ["Я не согласен.", "Katılmıyorum.", "Duygu/Fikir"], ["Это хорошая идея.", "Bu iyi bir fikir.", "Duygu/Fikir"], ["Мне кажется, это неправильно.", "Bana yanlış gibi geliyor.", "Duygu/Fikir"], ["Я доволен результатом.", "Sonuçtan memnunum.", "Duygu/Fikir"], ["Мне это не нравится.", "Bundan hoşlanmıyorum.", "Duygu/Fikir"], ["Я рад(а) тебя видеть.", "Seni görmekten memnunum.", "Duygu/Fikir"], ["Мне очень жаль.", "Çok üzgünüm.", "Duygu/Fikir"], ["Это не моя вина.", "Bu benim hatam değil.", "Duygu/Fikir"], ["Я так не думаю.", "Ben öyle düşünmüyorum.", "Duygu/Fikir"], ["Ты уверен?", "Emin misin?", "Duygu/Fikir"], ["Я не уверен.", "Emin değilim.", "Duygu/Fikir"], ["Осторожно!", "Dikkat!", "Acil"], ["Пожар!", "Yangın!", "Acil"], ["На помощь!", "İmdat!", "Acil"], ["Стоп! Остановись!", "Dur! Dur!", "Acil"], ["Вызовите полицию.", "Polis çağırın.", "Acil"], ["Я заблудился.", "Kayboldum.", "Acil"], ["Мне плохо.", "Kendimi kötü hissediyorum.", "Acil"], ["Несчастный случай на работе.", "İş kazası.", "Acil"], ["Человек упал в шахту.", "Adam maden ocağına düştü.", "Acil"], ["Немедленно эвакуируйте всех.", "Herkesi hemen tahliye edin.", "Acil"], ["Можно?", "Olur mu? / Mümkün mü?", "Genel"], ["Пожалуйста.", "Lütfen / Rica ederim.", "Genel"], ["Спасибо большое.", "Çok teşekkürler.", "Genel"], ["Не за что.", "Rica ederim / Bir şey değil.", "Genel"], ["Извините.", "Affedersiniz / Özür dilerim.", "Genel"], ["Ничего страшного.", "Önemli değil.", "Genel"], ["Хватит.", "Yeter.", "Genel"], ["Хорошо, понял(а).", "Tamam, anladım.", "Genel"], ["Это правда?", "Bu doğru mu?", "Genel"], ["Это неправда.", "Bu doğru değil.", "Genel"], ["У меня нет денег.", "Param yok.", "Genel"], ["Это бесплатно?", "Bu ücretsiz mi?", "Genel"], ["Можно сфотографировать?", "Fotoğraf çekebilir miyim?", "Genel"], ["Где здесь Wi-Fi?", "Burada Wi-Fi nerede?", "Genel"], ["Напишите это, пожалуйста.", "Lütfen bunu yazın.", "Genel"], ["Рад(а) помочь.", "Yardımcı olmaktan mutluluk duyarım.", "Genel"]];
+/* ===== DATA (injected) ===== */
+/* DICT_DATA and SENTS_DATA defined above this block */
 
-/* ===========================
-   State
-=========================== */
-const themes=["dark","light","ocean","emerald","sunset","rose"];
-const state = {
-  settings: DB.get("lm_settings", { theme:"dark", quizMode:"choice" }), // choice|typing
-  cards: DB.get("lm_cards", []),
-  txCache: DB.get("lm_tx_cache", {}),        // cache for translations
-  dictCache: DB.get("lm_dict_cache", {}),    // cache for dictionary results (EN)
-  reviewQueue: DB.get("lm_review_queue", [])
-};
-function saveAll(){
-  DB.set("lm_settings", state.settings);
-  DB.set("lm_cards", state.cards);
-  DB.set("lm_tx_cache", state.txCache);
-  DB.set("lm_dict_cache", state.dictCache);
-  DB.set("lm_review_queue", state.reviewQueue);
+/* ===== DB ===== */
+var LS='vru_db', LSS='vru_set';
+var db = lsGet(LS, {cards:[]});
+var cfg = lsGet(LSS, {theme:'dark'});
+
+function lsGet(k,def){
+  try{ var v=localStorage.getItem(k); return v?JSON.parse(v):def; }catch(e){ return def; }
+}
+function lsSave(){
+  try{ localStorage.setItem(LS,JSON.stringify(db)); localStorage.setItem(LSS,JSON.stringify(cfg)); }catch(e){}
+}
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function esc(s){
+  return (s||'').replace(/[&<>"]/g,function(m){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];
+  });
+}
+function $(id){ return document.getElementById(id); }
+function val(id){ return ($(id).value||'').trim(); }
+
+/* ===== TOAST ===== */
+var _tt;
+function toast(m){
+  var t=$('toast'); t.textContent=m; t.classList.add('show');
+  clearTimeout(_tt); _tt=setTimeout(function(){ t.classList.remove('show'); },1900);
 }
 
-/* ===========================
-   Theme
-=========================== */
-function setTheme(name){
-  document.documentElement.setAttribute("data-theme", name);
-  state.settings.theme = name;
-  DB.set("lm_settings", state.settings);
-  const meta=document.getElementById("meta-theme");
-  meta.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#0b1220");
-  const sel=document.getElementById("themeSelect"); if(sel) sel.value=name;
-}
-function applyThemeFromSelect(){ setTheme(document.getElementById("themeSelect").value); toast("Tema güncellendi"); }
-document.getElementById("btnTheme").onclick=()=>{
-  const idx=(themes.indexOf(state.settings.theme)+1)%themes.length;
-  setTheme(themes[idx]); toast("Tema: " + themes[idx]);
-};
-document.getElementById("btnSettings").onclick=()=>{
-  document.getElementById("themeSelect").value = state.settings.theme;
-  syncQuizModeLabels();
-  openSheet("settingsSheet");
-};
-
-/* ===========================
-   Router
-=========================== */
-function go(id){
-  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  document.querySelectorAll(".navBtn").forEach(b=>b.classList.remove("active"));
-  if(id==="home") document.getElementById("navHome").classList.add("active");
-  if(id==="review") document.getElementById("navReview").classList.add("active");
-  if(id==="cards") document.getElementById("navCards").classList.add("active");
-  if(id==="home") renderDash();
-  if(id==="review") renderReview();
-  if(id==="cards") renderCards();
+/* ===== NAV ===== */
+function go(v){
+  var views=document.querySelectorAll('.view');
+  for(var i=0;i<views.length;i++) views[i].classList.remove('on');
+  $('v-'+v).classList.add('on');
+  var nbs=document.querySelectorAll('.nb');
+  for(var j=0;j<nbs.length;j++) nbs[j].classList.remove('on');
+  var nb=$('n-'+v); if(nb) nb.classList.add('on');
+  if(v==='home') renderHome();
+  if(v==='review') startReview();
+  if(v==='words'){ renderMine(); buildDictCats(); }
+  if(v==='gram') initSents();
+  if(v==='settings') $('theme-sel').value=cfg.theme||'dark';
 }
 
-/* ===========================
-   Sheets
-=========================== */
-const backdrop=document.getElementById("backdrop");
-function openSheet(id){ backdrop.classList.add("open"); document.getElementById(id).classList.add("open"); }
-function closeSheets(){ backdrop.classList.remove("open"); document.querySelectorAll(".sheet").forEach(s=>s.classList.remove("open")); }
-window.addEventListener("keydown",(e)=>{
-  if(e.key==="Escape"){
-    if(document.getElementById("quizOverlay").classList.contains("open")) stopQuiz();
-    else closeSheets();
+/* ===== TRANSLATION ===== */
+var TC={};
+var _dir='rutr';
+function swapDir(){
+  _dir = _dir==='rutr' ? 'trru' : 'rutr';
+  $('lang-from').textContent = _dir==='rutr' ? '🇷🇺 Rusça' : '🇹🇷 Türkçe';
+  $('lang-to').textContent = _dir==='rutr' ? '🇹🇷 Türkçe' : '🇷🇺 Rusça';
+  $('q-result').innerHTML='';
+}
+function tmo(p,ms){
+  return Promise.race([p, new Promise(function(_,r){ setTimeout(function(){ r('tmo'); },ms); })]);
+}
+function trGtx(t,sl,tl){
+  var u='https://translate.googleapis.com/translate_a/single?client=gtx&sl='+sl+'&tl='+tl+'&dt=t&q='+encodeURIComponent(t);
+  return tmo(fetch(u),6000).then(function(r){ return r.json(); }).then(function(j){
+    return (j[0]||[]).map(function(x){ return x[0]; }).join('').trim();
+  }).catch(function(){ return ''; });
+}
+function trMm(t,sl,tl){
+  var u='https://api.mymemory.translated.net/get?q='+encodeURIComponent(t)+'&langpair='+sl+'|'+tl;
+  return tmo(fetch(u),7000).then(function(r){ return r.json(); }).then(function(j){
+    return (j.responseData && j.responseData.translatedText || '').trim();
+  }).catch(function(){ return ''; });
+}
+function translate(text,sl,tl){
+  text=(text||'').trim();
+  if(!text) return Promise.resolve('');
+  var k=sl+'|'+tl+'|'+text;
+  if(TC[k]) return Promise.resolve(TC[k]);
+  return trGtx(text,sl,tl).then(function(r){
+    if(r) return r;
+    return trMm(text,sl,tl);
+  }).then(function(r){
+    if(r) TC[k]=r;
+    return r||'';
+  });
+}
+function doTranslate(){
+  var inp=$('q-input'), res=$('q-result');
+  var txt=(inp.value||'').trim();
+  if(!txt){ inp.focus(); return; }
+  var btn=$('tr-btn-txt');
+  btn.innerHTML='<span class="spin"></span>';
+  var sl=_dir==='rutr'?'ru':'tr', tl=_dir==='rutr'?'tr':'ru';
+  translate(txt,sl,tl).then(function(out){
+    btn.textContent='Çevir';
+    if(!out){ res.innerHTML='<div class="muted" style="padding:8px 0;font-size:13px;">Çeviri alınamadı.</div>'; return; }
+    var ruT=sl==='ru'?txt:out, trT=sl==='ru'?out:txt;
+    res.innerHTML='';
+    var wrap=document.createElement('div');
+    wrap.className='tr-result';
+    wrap.innerHTML='<div class="tr-orig">'+esc(txt)+'</div><div class="tr-main">'+esc(out)+'</div>';
+    var b=document.createElement('button');
+    b.className='btn bp bsm'; b.style.marginTop='10px'; b.style.width='100%';
+    b.textContent='+ Karta Ekle';
+    b.addEventListener('click',function(){
+      if(addCard(ruT,trT,'')){ b.textContent='✓ Eklendi'; b.disabled=true; b.className='btn bo bsm'; b.style.width='100%'; }
+    });
+    wrap.appendChild(b);
+    res.appendChild(wrap);
+  });
+}
+
+/* ===== CARDS ===== */
+var LBOX=[0,1,2,4,8,16];
+function addCard(ru,trW,ex){
+  ru=(ru||'').trim();
+  if(!ru) return false;
+  for(var i=0;i<db.cards.length;i++){
+    if(db.cards[i].ru.toLowerCase()===ru.toLowerCase()){ toast('Bu kart zaten var'); return false; }
   }
-});
-
-/* ===========================
-   ONLINE: Translate (meaning TR)
-=========================== */
-async function translateToTR(lang, term){
-  const key = `${lang}|${norm(term)}`;
-  if(state.txCache[key]) return state.txCache[key];
-
-  const sl = ({EN:"en", RU:"ru", DE:"de", FR:"fr", ES:"es", TR:"tr"})[lang] || "auto";
-  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=tr&dt=t&dt=bd&q=${encodeURIComponent(term)}`;
-
-  try{
-    const r = await fetch(url);
-    if(!r.ok) throw new Error("fail");
-    const data = await r.json();
-
-    let mainMean = (data?.[0]?.[0]?.[0] || "").trim();
-
-    let extraMeans = [];
-    if(data[1]){
-      data[1].forEach(group => {
-        const pos = group[0];
-        const words = group[1].slice(0, 5).join(", ");
-        extraMeans.push(`[${pos}]: ${words}`);
-      });
-    }
-
-    let finalResult = mainMean;
-    if(extraMeans.length > 0){
-      finalResult = mainMean + "\n\n(" + extraMeans.join(") \n(") + ")";
-    }
-
-    state.txCache[key] = finalResult;
-    DB.set("lm_tx_cache", state.txCache);
-    return finalResult;
-
-  }catch(e){
-    console.log(e);
-    return "";
-  }
+  db.cards.unshift({ id:uid(), ru:ru, tr:(trW||'').trim(), ex:(ex||'').trim(), box:0, due:Date.now(), cr:Date.now() });
+  lsSave(); toast('Karta eklendi ✓'); renderHome();
+  return true;
 }
-
-/* ===========================
-   HIZLI ÇEVİRİ (EN -> TR)
-=========================== */
-let quickTermCache = "";    // EN aramasından gelen kelime
-let quickTermCacheTR = "";  // TR aramasından gelen kelime
-
-async function doQuickTranslate(){
-  const input = document.getElementById("quickTransInput");
-  if(!input) return;
-
-  const term = input.value.trim();
-  if(!term) return toast("Lütfen bir kelime yazın.");
-
-  toast("Çevriliyor... ⏳");
-
-  const meaning = await translateToTR("EN", term);
-
-  let dictInfo = "";
-  if(term.match(/^[a-zA-Z\s]+$/)){
-     const dict = await lookupEN(term);
-     if(dict){
-       dictInfo = `
-       <div style="margin-top:15px; padding:12px; background:var(--card2); border-radius:12px; border:1px solid var(--border);">
-         <div style="font-weight:bold; color:var(--muted); margin-bottom:4px;">🇬🇧 İngilizce Sözlük:</div>
-         <div style="font-style:italic;">${dict.type}</div>
-         <div style="margin-top:4px;">${dict.definitionEN}</div>
-         <div style="color:var(--primary); margin-top:6px; font-weight:500;">"${dict.exampleEN}"</div>
-       </div>`;
-     }
-  }
-
-  const content = `
-    <div style="font-size:28px; font-weight:900; color:var(--primary); text-align:center; margin-bottom:10px;">${term}</div>
-    <div style="font-size:16px; line-height:1.5; white-space:pre-wrap; background:var(--card); padding:12px; border-radius:12px; border:1px solid var(--border);">${meaning}</div>
-    ${dictInfo}
-  `;
-
-  document.getElementById("trResContent").innerHTML = content;
-  quickTermCache = term;
-  quickTermCacheTR = "";   // FIX: TR cache'ini temizle ki karta ekleme yanlış kelimeyi almasın
-  openSheet("transResultSheet");
-  input.value = "";
+function delCard(id){
+  if(!confirm('Bu kartı sil?')) return;
+  db.cards=db.cards.filter(function(c){ return c.id!==id; });
+  lsSave(); renderMine(); renderHome();
 }
-
-// "Bu Kelimeyi Karta Ekle"
-function copyToManualAdd(){
-  closeSheets();
-  openManualAdd();
-
-  if(quickTermCache && quickTermCache.length){
-    document.getElementById("maLang").value = "EN";
-    document.getElementById("maTerm").value = quickTermCache;
-  } else if(quickTermCacheTR && quickTermCacheTR.length){
-    document.getElementById("maLang").value = "TR";
-    document.getElementById("maTerm").value = quickTermCacheTR;
-  }
-
-  autoFillManualFields(true);
-}
-
-/* ===========================
-   ONLINE: Dictionary (EN only)
-=========================== */
-function mapPosToType(pos){
-  const p=(pos||"").toLowerCase();
-  if(p==="noun") return "noun";
-  if(p==="verb") return "verb";
-  if(p==="adjective") return "adj";
-  if(p==="adverb") return "adv";
-  if(p==="phrasal verb") return "phrasal";
-  if(p==="idiom") return "idiom";
-  return "word";
-}
-
-async function lookupEN(term){
-  const k = norm(term);
-  if(!k) return null;
-  if(state.dictCache[k]) return state.dictCache[k];
-
-  const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(k)}`;
-  try{
-    const r = await fetch(url);
-    if(!r.ok) throw new Error("dict_fail");
-    const data = await r.json();
-
-    let pos="", def="", ex="";
-    const meanings = data?.[0]?.meanings || [];
-    for(const m of meanings){
-      if(!pos && m.partOfSpeech) pos = m.partOfSpeech;
-      const defs = m.definitions || [];
-      for(const d of defs){
-        if(!def && d.definition) def = d.definition;
-        if(!ex && d.example) ex = d.example;
-        if(def && ex) break;
-      }
-      if(def && ex) break;
-    }
-
-    const result = {
-      pos: pos || "",
-      type: mapPosToType(pos),
-      definitionEN: def || "",
-      exampleEN: ex || ""
-    };
-    state.dictCache[k] = result;
-    DB.set("lm_dict_cache", state.dictCache);
-    return result;
-  }catch(e){
-    return null;
+function manualAdd(){
+  var ru=val('m-ru'), trW=val('m-tr'), ex=val('m-ex');
+  if(!ru){ $('m-ru').focus(); return; }
+  if(!trW){
+    toast('çevriliyor…');
+    translate(ru,'ru','tr').then(function(t){
+      if(addCard(ru,t,ex)){ $('m-ru').value=''; $('m-tr').value=''; $('m-ex').value=''; renderMine(); }
+    });
+  } else {
+    if(addCard(ru,trW,ex)){ $('m-ru').value=''; $('m-tr').value=''; $('m-ex').value=''; renderMine(); }
   }
 }
 
-/* ===========================
-   Example generator (fallback)
-=========================== */
-function genExample(term, lang, type){
-  const t = term.trim();
-  if(!t) return "";
-  if(lang==="EN"){
-    if(type==="verb") return `Workers ${t} the elements according to the drawing.`;
-    if(type==="noun") return `The ${t} was checked during inspection.`;
-    if(type==="adj") return `The structure remained ${t} under the design load.`;
-    if(type==="adv") return `The crew worked ${t} to finish before sunset.`;
-    if(type==="phrase") return `We reviewed "${t}" before starting the work.`;
-    return `We used "${t}" in the daily site report.`;
+/* ===== HOME ===== */
+function renderHome(){
+  var now=Date.now();
+  var tot=db.cards.length;
+  var due=db.cards.filter(function(c){ return c.due<=now; }).length;
+  var ok=db.cards.filter(function(c){ return c.box>=4; }).length;
+  $('st-total').textContent=tot;
+  $('st-due').textContent=due;
+  $('st-ok').textContent=ok;
+  $('prog-bar').style.width = tot ? Math.round(ok/tot*100)+'%' : '0%';
+  var rc=$('home-recent');
+  var recent=db.cards.slice(0,6);
+  if(!recent.length){
+    rc.innerHTML='<div class="empty">Henüz kart yok.<br>Hazineden ekle ya da Belge bölümüne geç.</div>';
+    return;
   }
-  return `(${lang}) ${t} — örnek cümle (istersen düzenle).`;
+  rc.innerHTML=recent.map(function(c){
+    return '<div class="item card-sm"><div style="min-width:0;flex:1;"><div class="rw">'+esc(c.ru)+
+      '</div><div class="trw">'+esc(c.tr||'—')+'</div></div><span class="boxtag">B'+c.box+'</span></div>';
+  }).join('');
 }
 
-function inferTypeBasic(term){
-  if(term.includes(" ")) return "phrase";
-  return "word";
+/* ===== MINE ===== */
+function renderMine(){
+  var q=(($('mine-search').value)||'').toLowerCase();
+  var list=db.cards.filter(function(c){
+    return !q || c.ru.toLowerCase().indexOf(q)>=0 || (c.tr||'').toLowerCase().indexOf(q)>=0;
+  });
+  var el=$('mine-list');
+  if(!list.length){ el.innerHTML='<div class="empty">Kart bulunamadı.</div>'; return; }
+  el.innerHTML=list.map(function(c){
+    return '<div class="item"><div style="min-width:0;flex:1;"><div class="rw">'+esc(c.ru)+
+      '</div><div class="trw">'+esc(c.tr||'—')+'</div></div><span class="boxtag">B'+c.box+'</span>'+
+      '<button class="btn bs bsm" style="padding:7px;width:32px;height:32px;" data-act="speak" data-w="'+esc(c.ru)+'">🔊</button>'+
+      '<button class="btn bs bsm" style="padding:7px;width:32px;height:32px;" data-act="del" data-id="'+c.id+'">🗑️</button></div>';
+  }).join('');
 }
 
-/* ===========================
-   SRS (SM-2 style, 3 seviye)
-=========================== */
-function srsCalc(card, quality){
-  let s = card.srs || { interval:0, reps:0, ef:2.5 };
-  let { interval, reps, ef } = s;
-
-  if(quality === 0){
-     reps = 0;
-     interval = 0;
-     ef = Math.max(1.3, ef - 0.2);
+/* ===== DICT ===== */
+var _dcat='', _dsearch='';
+function buildDictCats(){
+  var row=$('cat-row');
+  if(row.getAttribute('data-built')) { renderDict(); return; }
+  row.setAttribute('data-built','1');
+  var cats=Object.keys(DICT_DATA);
+  var h='<button class="catbtn on" data-act="dcat" data-cat="">Tümü</button>';
+  for(var i=0;i<cats.length;i++){
+    h+='<button class="catbtn" data-act="dcat" data-cat="'+esc(cats[i])+'">'+esc(cats[i])+'</button>';
   }
+  row.innerHTML=h;
+  renderDict();
+}
+function setDCat(c,btn){
+  _dcat=c;
+  var btns=document.querySelectorAll('#cat-row .catbtn');
+  for(var i=0;i<btns.length;i++) btns[i].classList.remove('on');
+  btn.classList.add('on');
+  renderDict();
+}
+function filterDict(){ _dsearch=($('dict-search').value||'').toLowerCase(); renderDict(); }
+function renderDict(){
+  var mySet={};
+  for(var i=0;i<db.cards.length;i++) mySet[db.cards[i].ru.toLowerCase()]=1;
+  var items=[];
+  if(_dcat && DICT_DATA[_dcat]) items=DICT_DATA[_dcat].slice();
   else {
-     if(reps === 0) interval = 1;
-     else if(reps === 1) interval = 6;
-     else interval = Math.round(interval * ef);
-
-     if(quality === 5) interval = Math.round(interval * 1.3);
-
-     reps++;
-
-     ef = ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
-     if(ef < 1.3) ef = 1.3;
+    var keys=Object.keys(DICT_DATA);
+    for(var k=0;k<keys.length;k++) items=items.concat(DICT_DATA[keys[k]]);
   }
-
-  return { due: Date.now() + (interval * 24 * 60 * 60 * 1000), srs:{interval,reps,ef} };
-}
-
-/* ===========================
-   Dash + Review
-=========================== */
-function renderDash(){
-  document.getElementById("dashTotal").textContent = state.cards.length;
-  document.getElementById("dashDue").textContent = state.cards.filter(c => (c.due||0) <= now()).length;
-}
-function getDueCards(){ return state.cards.filter(c => (c.due||0) <= now()); }
-function renderReview(){
-  document.getElementById("rvTotal").textContent = state.cards.length;
-  document.getElementById("rvDue").textContent = getDueCards().length;
-  syncQuizModeLabels();
-}
-function resetTodaysQueue(){
-  let due = getDueCards();
-  let q = [];
-
-  if(due.length > 0) {
-    q = due.sort(() => Math.random() - 0.5).map(c => c.id);
-  } else {
-    q = [...state.cards]
-        .sort(() => Math.random() - 0.5)
-        .slice(0, Math.min(30, state.cards.length))
-        .map(c => c.id);
+  if(_dsearch){
+    items=items.filter(function(pair){
+      return pair[0].toLowerCase().indexOf(_dsearch)>=0 || pair[1].toLowerCase().indexOf(_dsearch)>=0;
+    });
   }
-
-  state.reviewQueue = q;
-  DB.set("lm_review_queue", state.reviewQueue);
-
-  toast("Kuyruk karıştırıldı 🔀");
-  renderReview();
-}
-function clearProgress(){
-  if(!confirm("SRS sıfırlansın mı? (Kartlar silinmez)")) return;
-  state.cards = state.cards.map(c=>({...c,due:now(),srs:{interval:0,reps:0,ef:2.5},updatedAt:now()}));
-  DB.set("lm_cards", state.cards);
-  toast("SRS sıfırlandı ✅");
-  renderDash(); renderReview(); renderCards();
+  var el=$('dict-list');
+  if(!items.length){ el.innerHTML='<div class="empty">Kelime bulunamadı.</div>'; return; }
+  var show=items.slice(0,300);
+  el.innerHTML=show.map(function(pair){
+    var r=pair[0], t=pair[1];
+    var has=mySet[r.toLowerCase()];
+    return '<div class="vi"><span class="ru">'+esc(r)+'</span><span class="tr">'+esc(t)+'</span>'+
+      '<button class="addbtn'+(has?' done':'')+'" data-act="dadd" data-ru="'+esc(r)+'" data-tr="'+esc(t)+'">'+(has?'✓':'+')+'</button></div>';
+  }).join('') + (items.length>300 ? '<div class="muted" style="text-align:center;padding:8px;font-size:12px;">'+(items.length-300)+' daha…</div>' : '');
 }
 
-/* ===========================
-   Kart listeleme + filtre
-=========================== */
-let activeFilter = "all";
-
-const searchInput = document.getElementById("search");
-if(searchInput) searchInput.addEventListener("input", renderCards);
-
-function toggleFilter(type){
-  if(activeFilter === type){
-      activeFilter = "all";
-  } else {
-      activeFilter = type;
+/* ===== SEGMENT ===== */
+function wSeg(s){
+  var keys=['mine','dict','add'];
+  for(var i=0;i<keys.length;i++){
+    $('wp-'+keys[i]).style.display='none';
+    $('sg-'+keys[i]).classList.remove('on');
   }
-  renderCards();
+  $('wp-'+s).style.display='block';
+  $('sg-'+s).classList.add('on');
+  if(s==='mine') renderMine();
+  if(s==='dict') buildDictCats();
 }
 
-function renderCards(){
-  const searchEl = document.getElementById("search");
-  const q = searchEl ? norm(searchEl.value) : "";
-
-  const list = document.getElementById("cardsList");
-  if(!list) return;
-
-  list.innerHTML="";
-
-  let countNew = 0;
-  let countLearning = 0;
-  let countMastered = 0;
-
-  if(state.cards){
-      state.cards.forEach(c => {
-          const r = c.srs ? c.srs.reps : 0;
-          if(r === 0) countNew++;
-          else if(r < 5) countLearning++;
-          else countMastered++;
-      });
+/* ===== REVIEW ===== */
+var queue=[], cur=null, flipped=false, revDir='rutr', revTotal=0;
+function toggleRevDir(){
+  revDir = revDir==='rutr' ? 'trru' : 'rutr';
+  $('rev-dir-btn').textContent = revDir==='rutr' ? 'RU → TR' : 'TR → RU';
+  startReview();
+}
+function startReview(){
+  var now=Date.now();
+  queue=db.cards.filter(function(c){ return c.due<=now; });
+  if(!queue.length){
+    queue=db.cards.slice().sort(function(){ return Math.random()-0.5; }).slice(0,Math.min(20,db.cards.length));
   }
-
-  if(document.getElementById("statNew")) document.getElementById("statNew").textContent = countNew;
-  if(document.getElementById("statLearn")) document.getElementById("statLearn").textContent = countLearning;
-  if(document.getElementById("statMaster")) document.getElementById("statMaster").textContent = countMastered;
-
-  const btnNew = document.getElementById("filterBtnNew");
-  const btnLearn = document.getElementById("filterBtnLearn");
-  const btnMaster = document.getElementById("filterBtnMaster");
-
-  if(btnNew) btnNew.style.opacity = (activeFilter === 'all' || activeFilter === 'new') ? "1" : "0.4";
-  if(btnLearn) btnLearn.style.opacity = (activeFilter === 'all' || activeFilter === 'learning') ? "1" : "0.4";
-  if(btnMaster) btnMaster.style.opacity = (activeFilter === 'all' || activeFilter === 'mastered') ? "1" : "0.4";
-
-  if(btnNew) btnNew.style.borderWidth = (activeFilter === 'new') ? "2px" : "1px";
-  if(btnLearn) btnLearn.style.borderWidth = (activeFilter === 'learning') ? "2px" : "1px";
-  if(btnMaster) btnMaster.style.borderWidth = (activeFilter === 'mastered') ? "2px" : "1px";
-
-  const items = state.cards
-    .filter(c => {
-      const matchesSearch = !q || (norm(c.term).includes(q) || norm(c.meaning).includes(q) || norm(c.type).includes(q));
-
-      const r = c.srs ? c.srs.reps : 0;
-      let matchesStatus = true;
-
-      if(activeFilter === 'new') matchesStatus = (r === 0);
-      else if(activeFilter === 'learning') matchesStatus = (r > 0 && r < 5);
-      else if(activeFilter === 'mastered') matchesStatus = (r >= 5);
-
-      return matchesSearch && matchesStatus;
-    })
-    .sort((a,b)=> (a.term||"").localeCompare((b.term||""), "en"));
-
-  if(!items.length){
-    let msg = "Kart bulunamadı.";
-    if(activeFilter === 'new') msg = "Henüz YENİ kart yok.";
-    if(activeFilter === 'learning') msg = "Şu an ÖĞRENİLEN kart yok.";
-    if(activeFilter === 'mastered') msg = "Henüz tamamlanan kart yok.";
-
-    list.innerHTML=`<div class="card" style="text-align:center; padding:20px; color:var(--muted);">${msg}</div>`;
+  queue=queue.slice().sort(function(){ return Math.random()-0.5; });
+  revTotal=queue.length; flipped=false; showCard();
+}
+function showCard(){
+  var w=$('rev-wrap'), prog=$('rev-prog');
+  if(!queue.length){
+    w.innerHTML='<div class="empty">🎉 Harika! Bugünlük tekrar bitti.<br>Yeni kelime için Kelimeler → Hazine bölümüne geç.</div>';
+    prog.style.width='100%';
     return;
   }
-
-  items.forEach(c=>{
-    const isDue = (c.due||0) <= Date.now();
-    const reps = c.srs ? c.srs.reps : 0;
-
-    let statusBadge = "";
-    if(reps === 0) statusBadge = `<span class="badge" style="border:1px solid var(--border);">Yeni</span>`;
-    else if(reps < 5) statusBadge = `<span class="badge" style="color:var(--warn); border-color:var(--warn);">Öğreniliyor</span>`;
-    else statusBadge = `<span class="badge" style="color:var(--ok); border-color:var(--ok); background:color-mix(in srgb, var(--ok) 10%, transparent);">Öğrenildi</span>`;
-
-    const dueBadge = isDue ? `<span class="badge due" style="margin-left:4px;">Tekrar</span>` : ``;
-
-    const el=document.createElement("div");
-    el.className="card";
-    el.style.marginTop="12px";
-    el.innerHTML=`
-      <div class="cardLine">
-        <div class="termBig">${safeText(c.term)}</div>
-        <div style="display:flex;">${statusBadge} ${dueBadge}</div>
-      </div>
-      <div class="smallInfo">${safeText(c.lang)} • ${safeText(c.meaning)}</div>
-      <div class="smallInfo" style="margin-top:6px;">Tür: ${safeText(c.type||'-')}</div>
-      <div class="smallInfo" style="margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:0.7;">
-        ${safeText(c.example||'')}
-      </div>
-      <div class="two" style="margin-top:10px;">
-        <button class="btn btnSoft btnHalf" data-edit="${c.id}">Düzenle</button>
-        <button class="btn btnDanger btnHalf" data-del="${c.id}">Sil</button>
-      </div>
-    `;
-    el.querySelector(`[data-edit="${c.id}"]`).onclick=()=>openEditPrompt(c.id);
-    el.querySelector(`[data-del="${c.id}"]`).onclick=()=>deleteCard(c.id);
-    list.appendChild(el);
-  });
+  var pct=revTotal ? Math.round((revTotal-queue.length)/revTotal*100) : 0;
+  prog.style.width=pct+'%';
+  cur=queue[0]; flipped=false;
+  var front=revDir==='rutr'?cur.ru:cur.tr;
+  var back=revDir==='rutr'?cur.tr:cur.ru;
+  w.innerHTML=
+    '<div class="flip-wrap" data-act="flip">'+
+      '<div class="flip-inner" id="fi">'+
+        '<div class="flip-face">'+
+          '<div class="f-word">'+esc(front)+'</div>'+
+          '<button class="btn bs bsm" style="padding:7px 11px;margin-top:4px;" data-act="speakcard" data-w="'+esc(cur.ru)+'">🔊</button>'+
+          '<div class="f-hint">Dokunarak cevabı gör</div>'+
+        '</div>'+
+        '<div class="flip-face flip-back">'+
+          '<div class="f-word" style="font-size:22px;">'+esc(front)+'</div>'+
+          '<div class="f-trans">'+esc(back)+'</div>'+
+          (cur.ex?'<div class="f-ex">'+esc(cur.ex)+'</div>':'')+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="row" id="rev-btns" style="display:none;margin-top:4px;">'+
+      '<button class="btn bd bh" data-act="grade" data-ok="0">✗ Bilmiyorum</button>'+
+      '<button class="btn bo bh" data-act="grade" data-ok="1">✓ Biliyorum</button>'+
+    '</div>'+
+    '<div class="muted" style="text-align:center;margin-top:10px;font-size:12px;">Kalan: '+queue.length+' kart &nbsp;·&nbsp; Kutu: B'+cur.box+'</div>';
+}
+function flipCard(){
+  if(flipped) return;
+  flipped=true;
+  $('fi').classList.add('flipped');
+  setTimeout(function(){ var b=$('rev-btns'); if(b) b.style.display='flex'; },220);
+}
+function grade(ok){
+  if(ok) cur.box=Math.min(5,cur.box+1); else cur.box=0;
+  cur.due=Date.now()+LBOX[cur.box]*86400000;
+  lsSave(); queue.shift(); showCard();
 }
 
-/* ===========================
-   Manual Add (ONLINE AUTOFILL)
-=========================== */
-let autoTimer=null;
-function openManualAdd(){
-  clearManual();
-  openSheet("manualAddSheet");
-}
-function clearManual(){
-  document.getElementById("maLang").value="EN";
-  document.getElementById("maTerm").value="";
-  document.getElementById("maMeaning").value="";
-  document.getElementById("maType").value="word";
-  document.getElementById("maExample").value="";
-  document.getElementById("maNote").value="";
-  document.getElementById("maHint").textContent="Yazınca otomatik doldurur. İnternet şart.";
-}
-document.getElementById("maTerm").addEventListener("input", ()=>{
-  clearTimeout(autoTimer);
-  autoTimer=setTimeout(()=>autoFillManualFields(false), 450);
-});
-document.getElementById("maLang").addEventListener("change", ()=>{
-  clearTimeout(autoTimer);
-  autoTimer=setTimeout(()=>autoFillManualFields(false), 250);
-});
-document.getElementById("maTerm").addEventListener("keydown",(e)=>{
-  if(e.key==="Enter"){
-    e.preventDefault();
-    autoFillManualFields(true);
-  }
-});
-
-async function autoFillManualFields(force){
-  const lang=document.getElementById("maLang").value;
-  const term=document.getElementById("maTerm").value.trim();
-  if(!term) return;
-
-  document.getElementById("maHint").textContent="Dolduruluyor…";
-
-  let type = document.getElementById("maType").value;
-  let example = document.getElementById("maExample").value.trim();
-  let meaning = document.getElementById("maMeaning").value.trim();
-
-  if(lang==="EN"){
-    const dict = await lookupEN(term);
-    if(dict){
-      if((!type || type==="word" || force) && dict.type) type = dict.type;
-      if((!example || force) && dict.exampleEN) example = dict.exampleEN;
-      if((!example || force) && !dict.exampleEN) example = genExample(term, lang, type);
-    }else{
-      if((!type || type==="word") && (force || !type)) type = inferTypeBasic(term);
-      if((!example || force) && !example) example = genExample(term, lang, type);
+/* ===== TTS ===== */
+function speak(t){
+  try{
+    var u=new SpeechSynthesisUtterance(t);
+    u.lang='ru-RU';
+    var voices=speechSynthesis.getVoices();
+    for(var i=0;i<voices.length;i++){
+      if(voices[i].lang && voices[i].lang.indexOf('ru')===0){ u.voice=voices[i]; break; }
     }
-  }else{
-    if((!type || type==="word" || force)) type = inferTypeBasic(term);
-    if((!example || force)) example = genExample(term, lang, type);
-  }
-
-  if((!meaning || force)){
-    const tr = await translateToTR(lang, term);
-    if(tr) meaning = tr;
-  }
-
-  document.getElementById("maType").value = type || "word";
-  document.getElementById("maExample").value = example || "";
-  document.getElementById("maMeaning").value = meaning || "";
-
-  if(!meaning){
-    document.getElementById("maHint").textContent="Anlam alınamadı (internet/translate engeli olabilir).";
-  }else{
-    document.getElementById("maHint").textContent="Otomatik dolduruldu ✅ (istersen düzenle)";
-  }
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }catch(e){}
 }
 
-function saveManualCard(){
-  const lang=document.getElementById("maLang").value;
-  const term=document.getElementById("maTerm").value.trim();
-  const meaning=document.getElementById("maMeaning").value.trim();
-  const type=document.getElementById("maType").value;
-  const example=document.getElementById("maExample").value.trim();
-  const note=document.getElementById("maNote").value.trim();
-
-  if(!term) return toast("Kelime boş olamaz.");
-  if(!meaning) return toast("Anlam boş olamaz (doldur/manuel gir).");
-
-  const dupe = state.cards.find(c => norm(c.term)===norm(term) && (c.lang||"EN")===lang);
-  if(dupe){
-    if(confirm("Bu kelime zaten var. Güncellensin mi?")){
-      dupe.meaning=meaning;
-      dupe.type=type;
-      dupe.example=example;
-      dupe.note=note;
-      dupe.updatedAt=now();
-      DB.set("lm_cards", state.cards);
-      toast("Güncellendi ✅");
-      closeSheets(); renderDash(); renderReview(); renderCards();
-    }
-    return;
-  }
-
-  state.cards.push({
-    id:uid(),
-    lang, term, meaning, type, example, note,
-    due: now(),
-    srs:{interval:0,reps:0,ef:2.5},
-    createdAt: now(),
-    updatedAt: now()
-  });
-  DB.set("lm_cards", state.cards);
-  toast("Eklendi ✅");
-  closeSheets(); renderDash(); renderReview(); renderCards();
+/* ===== DOCUMENT READER ===== */
+function loadPasted(){
+  var t=($('doc-paste').value||'').trim();
+  if(!t){ toast('Önce metin yapıştır'); return; }
+  renderReader(t);
 }
-
-function deleteCard(id){
-  if(!confirm("Silinsin mi?")) return;
-  state.cards = state.cards.filter(c=>c.id!==id);
-  DB.set("lm_cards", state.cards);
-  state.reviewQueue = (state.reviewQueue||[]).filter(x=>x!==id);
-  DB.set("lm_review_queue", state.reviewQueue);
-  toast("Silindi");
-  renderDash(); renderReview(); renderCards();
-}
-
-function openEditPrompt(id){
-  const c = state.cards.find(x=>x.id===id);
-  if(!c) return;
-  const newMeaning = prompt("Anlam (TR):", c.meaning || "");
-  if(newMeaning===null) return;
-  const newType = prompt("Tür (noun/verb/adj/adv/phrase/word…):", c.type || "word");
-  if(newType===null) return;
-  const newExample = prompt("Örnek cümle:", c.example || "");
-  if(newExample===null) return;
-
-  c.meaning = newMeaning.trim();
-  c.type = (newType||"word").trim();
-  c.example = (newExample||"").trim();
-  c.updatedAt = now();
-  DB.set("lm_cards", state.cards);
-  toast("Güncellendi ✅");
-  renderCards();
-}
-
-/* ===========================
-   Quiz
-=========================== */
-function getQuizMode(){ return state.settings.quizMode || "choice"; }
-function syncQuizModeLabels(){
-  const label=(getQuizMode()==="typing")?"Yazmalı":"Seçmeli";
-  document.getElementById("quizModeLabel").textContent=label;
-  document.getElementById("quizModeLabel2").textContent=label;
-}
-function toggleQuizMode(){
-  state.settings.quizMode = (getQuizMode()==="choice") ? "typing" : "choice";
-  DB.set("lm_settings", state.settings);
-  syncQuizModeLabels();
-  toast("Quiz modu: " + ((getQuizMode()==="typing")?"Yazmalı":"Seçmeli"));
-}
-let quizCurrent=null;
-let correctCount=0, wrongCount=0;
-
-function startReviewQuiz(limit = 9999, btnElement = null){
-  if(btnElement){
-     const container = document.getElementById("limitContainer");
-     if(container){
-        container.querySelectorAll(".btn").forEach(b => {
-           b.classList.remove("btnPrimary");
-           b.classList.add("btnSoft");
-        });
-     }
-     btnElement.classList.remove("btnSoft");
-     btnElement.classList.add("btnPrimary");
-  }
-
-  try {
-    if(!state || !state.cards) return toast("Kart verisi yok!");
-    if(typeof closeSheets === "function") closeSheets();
-
-    const t = Date.now();
-    let dueCards = state.cards.filter(c => (c.due || 0) <= t);
-
-    if(dueCards.length > 0){
-       dueCards.sort(() => Math.random() - 0.5);
-    } else {
-       dueCards = [...state.cards].sort(() => Math.random() - 0.5);
-    }
-
-    if(dueCards.length > limit){
-       dueCards = dueCards.slice(0, limit);
-    }
-
-    state.reviewQueue = dueCards.map(c => c.id);
-    DB.set("lm_review_queue", state.reviewQueue);
-
-    if(state.reviewQueue.length === 0) return toast("Çalışılacak kart yok!");
-
-    correctCount = 0; wrongCount = 0;
-    document.getElementById("qCorrect").textContent = "0";
-    document.getElementById("qWrong").textContent = "0";
-
-    const overlay = document.getElementById("quizOverlay");
-    if(overlay) {
-        overlay.classList.remove("active");
-        overlay.classList.add("open");
-    }
-
-    if(typeof nextQuiz === "function") nextQuiz();
-
-  } catch(err) {
-    alert("Hata: " + err.message);
-  }
-}
-function openQuizOverlay(){
-  document.getElementById("quizOverlay").classList.add("open");
-  document.getElementById("qInput").onkeydown=(e)=>{
-    if(e.key==="Enter"){ e.preventDefault(); checkTypingAnswer(); }
-  };
-}
-function stopQuiz(){
-  if(quizCurrent && quizCurrent.id){
-     state.reviewQueue.unshift(quizCurrent.id);
-     DB.set("lm_review_queue", state.reviewQueue);
-  }
-
-  document.getElementById("quizOverlay").classList.remove("open");
-  quizCurrent=null;
-  renderDash(); renderReview();
-}
-function updateQuizRemain(){
-  document.getElementById("qRemain").textContent=String(state.reviewQueue.length);
-}
-
-function nextQuiz(){
-  if(!state.reviewQueue.length){
-    toast("Tebrikler! Oturum bitti 🎉");
-    stopQuiz();
-    return;
-  }
-  updateQuizRemain();
-
-  const id = state.reviewQueue.shift();
-  DB.set("lm_review_queue", state.reviewQueue);
-
-  const card = state.cards.find(c => c.id === id);
-  if(!card) return nextQuiz();
-
-  quizCurrent = card;
-
-  const qWordEl = document.getElementById("qWord");
-  const choicesBox = document.getElementById("qChoices");
-  const typingBox = document.getElementById("qTyping");
-
-  /* ===== FIX: YAZMALI (TYPING) MOD ===== */
-  /* Daha önce nextQuiz modu hiç kontrol etmiyordu; typing kutusu hiç açılmıyordu. */
-  if(getQuizMode()==="typing"){
-     qWordEl.innerHTML = `<div style="font-size:26px;">${safeText(card.meaning)}</div>
-       <div style="margin-top:14px; font-size:14px; color:var(--muted);">🇬🇧 İngilizce karşılığını yaz</div>`;
-     qWordEl.style.fontSize = "26px";
-     document.getElementById("qMeta").textContent = "Kelimenin İngilizcesi?";
-     document.getElementById("qExample").textContent = "";
-     document.getElementById("qReveal").innerHTML = "";
-
-     choicesBox.innerHTML = "";
-     choicesBox.style.display = "none";
-     typingBox.style.display = "flex";
-
-     const inp = document.getElementById("qInput");
-     inp.value = "";
-     inp.onkeydown = (e)=>{ if(e.key==="Enter"){ e.preventDefault(); checkTypingAnswer(); } };
-     setTimeout(()=>{ try{ inp.focus(); }catch(e){} }, 60);
-     return;
-  }
-  /* ===== /FIX ===== */
-
-  // --- SEÇMELİ MOD ---
-  let isContextMode = false;
-  let questionHtml = "";
-  let hintText = "";
-  let explanationHtml = "";
-
-  if(card.example && card.example.length > 5) {
-     const blankStyle = `<span style='color:var(--primary); border-bottom:3px solid var(--primary); font-weight:bold;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
-     const hiddenExample = card.example.replace(termRe(card.term), blankStyle);
-
-     if(hiddenExample !== card.example){
-        isContextMode = true;
-        questionHtml = hiddenExample;
-        hintText = "Boşluğa hangisi gelmeli?";
-        explanationHtml = `<div style="margin-top:20px; font-size:16px; color:var(--muted); font-style:italic;">🇹🇷 İpucu: "${card.meaning}"</div>`;
-     }
-  }
-
-  if(!isContextMode) {
-     questionHtml = `<span style="font-size:36px; color:var(--primary);">${safeText(card.term)}</span>`;
-     hintText = "Bu kelimenin anlamı nedir?";
-     if(card.example && card.example.length > 5){
-        const hiddenInExample = card.example.replace(termRe(card.term), "___");
-        explanationHtml = `<div style="margin-top:20px; font-size:16px; color:var(--text); opacity:0.8;">🇬🇧 Örnek: "${hiddenInExample}"</div>`;
-     } else {
-        explanationHtml = `<div style="margin-top:20px; font-size:14px; color:var(--muted);">(Örnek cümle yok)</div>`;
-     }
-  }
-
-  qWordEl.innerHTML = `<div>${questionHtml}</div>${explanationHtml}`;
-
-  if(qWordEl.innerText.length > 80) qWordEl.style.fontSize = "20px";
-  else if(!isContextMode) qWordEl.style.fontSize = "28px";
-  else qWordEl.style.fontSize = "24px";
-
-  document.getElementById("qMeta").textContent = hintText;
-  document.getElementById("qExample").textContent = "";
-  document.getElementById("qReveal").innerHTML = "";
-
-  choicesBox.innerHTML = "";
-  typingBox.style.display = "none";
-  choicesBox.style.display = "flex";
-
-  let options = [];
-  let correctVal = isContextMode ? card.term : card.meaning;
-
-  const distractors = state.cards
-      .filter(c => c.id !== card.id)
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 3)
-      .map(x => isContextMode ? x.term : x.meaning);
-
-  options = [...distractors, correctVal].sort(() => Math.random() - 0.5);
-
-  options.forEach(opt => {
-      const b = document.createElement("button");
-      b.className = "qChoice";
-      b.textContent = opt;
-      b.onclick = () => {
-        document.querySelectorAll(".qChoice").forEach(x => x.disabled = true);
-
-        if(opt === correctVal){
-          b.classList.add("correct");
-
-          if(isContextMode){
-             const completedHtml = card.example.replace(termRe(card.term), `<span style='color:var(--ok); font-weight:900;'>${safeText(card.term)}</span>`);
-             qWordEl.innerHTML = `<div>${completedHtml}</div>${explanationHtml}`;
-          }
-
-          document.getElementById("qReveal").innerHTML = `
-            <div style="font-weight:bold; color:var(--ok); margin-bottom:8px;">✅ Doğru! Ne kadar rahattın?</div>
-            <div style="display:flex; gap:10px;">
-              <button class="btn btnSoft btnHalf" onclick="grade(state.cards.find(c=>c.id=='${card.id}'), 3, true)">🟡 Öğreniyorum</button>
-              <button class="btn btnOk btnHalf" onclick="grade(state.cards.find(c=>c.id=='${card.id}'), 5, true)">🟢 Tam Öğrendim</button>
-            </div>
-          `;
-        } else {
-          b.classList.add("wrong");
-          document.querySelectorAll(".qChoice").forEach(btn => { if(btn.textContent === correctVal) btn.classList.add("correct"); });
-
-          if(isContextMode) document.getElementById("qExample").textContent = `Doğrusu: ${card.term}`;
-
-          grade(card, 0, false);
-        }
+var _pdfjs=null;
+function loadPdf(ev){
+  var f=ev.target.files[0];
+  if(!f) return;
+  var st=$('pdf-st');
+  st.innerHTML='<span class="spin"></span> PDF okunuyor…';
+  var loadLib=Promise.resolve();
+  if(!_pdfjs){
+    loadLib=new Promise(function(res,rej){
+      var s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      s.onload=function(){
+        _pdfjs=window.pdfjsLib;
+        _pdfjs.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        res();
       };
-      choicesBox.appendChild(b);
-  });
-}
-function normalizeAnswer(a){
-  return norm(a).replace(/[.,!?;:"(){}\[\]<>]/g,"").replace(/\s+/g," ").trim();
-}
-function checkTypingAnswer(){
-  if(!quizCurrent) return;
-  const typed = normalizeAnswer(document.getElementById("qInput").value);
-  if(!typed) return toast("Bir cevap yazın.");
-
-  const correct = normalizeAnswer(quizCurrent.term);
-
-  const ok = (typed === correct);
-
-  if(ok){
-    document.getElementById("qReveal").textContent = "✅ Doğru!";
-    document.getElementById("qExample").textContent = quizCurrent.example;
-    grade(quizCurrent, 5, true);
-  } else {
-    document.getElementById("qReveal").textContent = `❌ Doğrusu: ${quizCurrent.term}`;
-    document.getElementById("qExample").textContent = quizCurrent.example;
-    grade(quizCurrent, 0, false);   // FIX: yanlış yazım da "Bilmiyorum" gibi sıfırlasın (eskiden 2 = ilerletiyordu)
+      s.onerror=rej;
+      document.head.appendChild(s);
+    });
   }
-}
-function grade(card, quality, isCorrect){
-  if(isCorrect){
-      correctCount++;
-      document.getElementById("qCorrect").textContent=String(correctCount);
-  } else {
-      wrongCount++;
-      document.getElementById("qWrong").textContent=String(wrongCount);
-  }
-
-  const upd = srsCalc(card, quality);
-  card.due = upd.due;
-  card.srs = upd.srs;
-  card.updatedAt = Date.now();
-  DB.set("lm_cards", state.cards);
-
-  /* FIX: bilinmeyen kart aynı oturumda geri gelsin (kuyruğun sonuna ekle) */
-  if(quality === 0){
-     state.reviewQueue.push(card.id);
-     DB.set("lm_review_queue", state.reviewQueue);
-  }
-
-  setTimeout(()=>{
-      quizCurrent=null;
-      nextQuiz();
-  }, 550);
-}
-
-function markAsUnknown(){
-  if(!quizCurrent) return;
-  grade(quizCurrent, 0, false);
-}
-function skipQuestion(){
-  if(!quizCurrent) return;
-  state.reviewQueue.push(quizCurrent.id);
-  DB.set("lm_review_queue", state.reviewQueue);
-  toast("Soru sona atıldı");
-  quizCurrent=null;
-  nextQuiz();
-}
-
-/* Speak */
-function speakText(txt, lang){
-  if(!txt) return;
-  const u=new SpeechSynthesisUtterance(txt);
-  const map={EN:"en-US", RU:"ru-RU", DE:"de-DE", FR:"fr-FR", ES:"es-ES", TR:"tr-TR"};
-  u.lang=map[lang] || "en-US";
-  u.rate=0.9;
-  speechSynthesis.cancel();
-  speechSynthesis.speak(u);
-}
-function speakQuizWord(){
-  if(!quizCurrent) return;
-  speakText(quizCurrent.term, quizCurrent.lang || "EN");
-}
-
-/* ===========================
-   Export/Import/Reset
-=========================== */
-function exportAll(){
-  const data = JSON.stringify({ settings:state.settings, cards:state.cards }, null, 2);
-  prompt("Kopyala (Export JSON):", data);
-}
-function importAllPrompt(){
-  const txt = prompt("Import JSON yapıştır:");
-  if(!txt) return;
-  try{
-    const obj=JSON.parse(txt);
-    if(obj.settings) state.settings=obj.settings;
-    if(obj.cards) state.cards=obj.cards;
-    saveAll();
-    setTheme(state.settings.theme || "dark");
-    syncQuizModeLabels();
-    toast("Import ✅");
-    renderDash(); renderReview(); renderCards();
-  }catch(e){
-    toast("Import hata");
-  }
-}
-function hardReset(){
-  if(!confirm("Her şeyi sıfırlamak istiyor musun?")) return;
-  localStorage.clear();
-  location.reload();
-}
-
-/* ===========================
-   TOP İNGİLİZCE KELİME PAKETİ (Veritabanı boşsa yüklenir)
-=========================== */
-if (state.cards.length === 0) {
-  const starterPack = [
-    { t: "achieve", m: "başarmak, elde etmek", y: "verb", e: "She worked hard to achieve her goals." },
-    { t: "admit", m: "kabul etmek, itiraf etmek", y: "verb", e: "He admitted that he made a mistake." },
-    { t: "affect", m: "etkilemek", y: "verb", e: "The weather can affect your mood." },
-    { t: "afford", m: "gücü yetmek (maddi)", y: "verb", e: "I can't afford a new car right now." },
-    { t: "allow", m: "izin vermek", y: "verb", e: "Smoking is not allowed here." },
-    { t: "appear", m: "görünmek, ortaya çıkmak", y: "verb", e: "He appears to be tired." },
-    { t: "appreciate", m: "takdir etmek, değerini bilmek", y: "verb", e: "I appreciate your help." },
-    { t: "argue", m: "tartışmak, iddia etmek", y: "verb", e: "They argue about money all the time." },
-    { t: "avoid", m: "kaçınmak", y: "verb", e: "You should avoid eating too much sugar." },
-    { t: "become", m: "olmak, haline gelmek", y: "verb", e: "The caterpillar becomes a butterfly." },
-    { t: "believe", m: "inanmak", y: "verb", e: "I believe in you." },
-    { t: "borrow", m: "ödünç almak", y: "verb", e: "Can I borrow your pen?" },
-    { t: "complain", m: "şikayet etmek", y: "verb", e: "He is always complaining about the noise." },
-    { t: "consider", m: "göz önünde bulundurmak, düşünmek", y: "verb", e: "Please consider my offer." },
-    { t: "contain", m: "içermek", y: "verb", e: "This box contains old photos." },
-    { t: "convince", m: "ikna etmek", y: "verb", e: "I couldn't convince him to stay." },
-    { t: "create", m: "yaratmak, oluşturmak", y: "verb", e: "The software creates a backup automatically." },
-    { t: "decide", m: "karar vermek", y: "verb", e: "Have you decided what to wear?" },
-    { t: "describe", m: "tarif etmek, tanımlamak", y: "verb", e: "Can you describe the thief?" },
-    { t: "develop", m: "geliştirmek", y: "verb", e: "They are developing a new drug." },
-    { t: "disappear", m: "gözden kaybolmak", y: "verb", e: "The sun disappeared behind the clouds." },
-    { t: "discover", m: "keşfetmek", y: "verb", e: "Columbus discovered America." },
-    { t: "encourage", m: "cesaretlendirmek, teşvik etmek", y: "verb", e: "My teacher encouraged me to study art." },
-    { t: "establish", m: "kurmak, tesis etmek", y: "verb", e: "The company was established in 1990." },
-    { t: "exist", m: "var olmak", y: "verb", e: "Does life exist on other planets?" },
-    { t: "expect", m: "ummak, beklemek", y: "verb", e: "I expect him to be late." },
-    { t: "explain", m: "açıklamak", y: "verb", e: "Can you explain this rule to me?" },
-    { t: "explore", m: "keşfe çıkmak, incelemek", y: "verb", e: "We explored the old city." },
-    { t: "improve", m: "geliştirmek, iyileştirmek", y: "verb", e: "You need to improve your English." },
-    { t: "increase", m: "artmak, arttırmak", y: "verb", e: "Sales increased by 10% this year." },
-    { t: "indicate", m: "göstermek, işaret etmek", y: "verb", e: "The map indicates where the treasure is." },
-    { t: "insist", m: "ısrar etmek", y: "verb", e: "She insisted on paying for dinner." },
-    { t: "involve", m: "içermek, kapsamak", y: "verb", e: "The job involves a lot of travel." },
-    { t: "mention", m: "bahsetmek", y: "verb", e: "Did he mention my name?" },
-    { t: "obtain", m: "elde etmek, edinmek", y: "verb", e: "Where can I obtain a visa?" },
-    { t: "occur", m: "meydana gelmek", y: "verb", e: "The accident occurred at night." },
-    { t: "offer", m: "teklif etmek, sunmak", y: "verb", e: "He offered me a job." },
-    { t: "participate", m: "katılmak", y: "verb", e: "All students must participate in the event." },
-    { t: "perform", m: "sahnelemek, performans göstermek", y: "verb", e: "The band performed live." },
-    { t: "persuade", m: "ikna etmek", y: "verb", e: "Try to persuade him to come." },
-    { t: "predict", m: "tahmin etmek, öngörmek", y: "verb", e: "It is hard to predict the weather." },
-    { t: "prepare", m: "hazırlamak", y: "verb", e: "I need to prepare for the exam." },
-    { t: "prevent", m: "önlemek, engel olmak", y: "verb", e: "Seatbelts prevent injuries." },
-    { t: "produce", m: "üretmek", y: "verb", e: "This factory produces cars." },
-    { t: "protect", m: "korumak", y: "verb", e: "Sunglasses protect your eyes from the sun." },
-    { t: "prove", m: "kanıtlamak", y: "verb", e: "Can you prove your theory?" },
-    { t: "provide", m: "sağlamak, temin etmek", y: "verb", e: "The hotel provides free Wi-Fi." },
-    { t: "realize", m: "farkına varmak", y: "verb", e: "I realized I left my keys at home." },
-    { t: "recognize", m: "tanımak (birini/bir şeyi)", y: "verb", e: "I didn't recognize him with a beard." },
-    { t: "reduce", m: "azaltmak", y: "verb", e: "We need to reduce costs." },
-    { t: "refuse", m: "reddetmek", y: "verb", e: "He refused to answer the question." },
-    { t: "regret", m: "pişman olmak", y: "verb", e: "I regret saying that." },
-    { t: "relate", m: "ilişkilendirmek", y: "verb", e: "How does this relate to the problem?" },
-    { t: "remain", m: "kalmak (durumunu korumak)", y: "verb", e: "Please remain seated." },
-    { t: "remember", m: "hatırlamak", y: "verb", e: "Do you remember me?" },
-    { t: "remind", m: "hatırlatmak", y: "verb", e: "Please remind me to call her." },
-    { t: "replace", m: "yerini almak, değiştirmek", y: "verb", e: "Robots might replace workers." },
-    { t: "require", m: "gerektirmek", y: "verb", e: "Plants require water to grow." },
-    { t: "reveal", m: "açığa çıkarmak", y: "verb", e: "The investigation revealed the truth." },
-    { t: "seem", m: "gibi görünmek", y: "verb", e: "It seems like a good idea." },
-    { t: "solve", m: "çözmek", y: "verb", e: "I can't solve this puzzle." },
-    { t: "suffer", m: "acı çekmek, katlanmak", y: "verb", e: "She suffers from migraines." },
-    { t: "suggest", m: "önermek", y: "verb", e: "I suggest you take a taxi." },
-    { t: "supply", m: "tedarik etmek", y: "verb", e: "They supply us with paper." },
-    { t: "suppose", m: "varsaymak, zannetmek", y: "verb", e: "I suppose you are right." },
-    { t: "survive", m: "hayatta kalmak", y: "verb", e: "Only a few survived the crash." },
-    { t: "tend", m: "eğiliminde olmak", y: "verb", e: "Prices tend to go up in winter." },
-    { t: "threaten", m: "tehdit etmek", y: "verb", e: "He threatened to call the police." },
-    { t: "understand", m: "anlamak", y: "verb", e: "I don't understand French." },
-    { t: "wonder", m: "merak etmek", y: "verb", e: "I wonder what happened." },
-
-    { t: "ability", m: "yetenek", y: "noun", e: "He has the ability to learn quickly." },
-    { t: "access", m: "erişim", y: "noun", e: "Do you have internet access?" },
-    { t: "accident", m: "kaza", y: "noun", e: "He had a car accident." },
-    { t: "account", m: "hesap", y: "noun", e: "I opened a bank account." },
-    { t: "advantage", m: "avantaj", y: "noun", e: "Speed is a big advantage." },
-    { t: "advice", m: "tavsiye", y: "noun", e: "Can you give me some advice?" },
-    { t: "amount", m: "miktar", y: "noun", e: "A large amount of money." },
-    { t: "attitude", m: "tavır, tutum", y: "noun", e: "She has a positive attitude." },
-    { t: "audience", m: "seyirci kitlesi", y: "noun", e: "The audience clapped loudly." },
-    { t: "behavior", m: "davranış", y: "noun", e: "His behavior was unacceptable." },
-    { t: "benefit", m: "fayda, yarar", y: "noun", e: "The benefits of exercise are many." },
-    { t: "career", m: "kariyer", y: "noun", e: "She wants a career in medicine." },
-    { t: "challenge", m: "zorluk, meydan okuma", y: "noun", e: "This game is a real challenge." },
-    { t: "choice", m: "seçim", y: "noun", e: "It was a difficult choice." },
-    { t: "circumstance", m: "koşul, durum", y: "noun", e: "Under normal circumstances, I would agree." },
-    { t: "community", m: "topluluk", y: "noun", e: "We have a strong community." },
-    { t: "competition", m: "yarışma, rekabet", y: "noun", e: "There is a lot of competition." },
-    { t: "complaint", m: "şikayet", y: "noun", e: "I have a complaint about the food." },
-    { t: "conclusion", m: "sonuç", y: "noun", e: "What is your conclusion?" },
-    { t: "condition", m: "durum, şart", y: "noun", e: "The car is in good condition." },
-    { t: "consequence", m: "sonuç (genelde kötü)", y: "noun", e: "You must face the consequences." },
-    { t: "contribution", m: "katkı", y: "noun", e: "Thank you for your contribution." },
-    { t: "courage", m: "cesaret", y: "noun", e: "It takes courage to speak up." },
-    { t: "culture", m: "kültür", y: "noun", e: "I love learning about other cultures." },
-    { t: "damage", m: "hasar", y: "noun", e: "The storm caused a lot of damage." },
-    { t: "decision", m: "karar", y: "noun", e: "It was a tough decision." },
-    { t: "demand", m: "talep", y: "noun", e: "Supply and demand." },
-    { t: "development", m: "gelişim", y: "noun", e: "Economic development is slow." },
-    { t: "difference", m: "fark", y: "noun", e: "What is the difference?" },
-    { t: "direction", m: "yön", y: "noun", e: "Which direction did he go?" },
-    { t: "disease", m: "hastalık", y: "noun", e: "Heart disease is common." },
-    { t: "doubt", m: "şüphe", y: "noun", e: "I have no doubt about it." },
-    { t: "economy", m: "ekonomi", y: "noun", e: "The global economy is recovering." },
-    { t: "education", m: "eğitim", y: "noun", e: "Education is very important." },
-    { t: "effect", m: "etki", y: "noun", e: "The special effects were amazing." },
-    { t: "effort", m: "çaba", y: "noun", e: "He put a lot of effort into this." },
-    { t: "election", m: "seçim (siyasi)", y: "noun", e: "The election is next month." },
-    { t: "emotion", m: "duygu", y: "noun", e: "Fear is a strong emotion." },
-    { t: "emphasis", m: "vurgu", y: "noun", e: "The emphasis is on quality." },
-    { t: "energy", m: "enerji", y: "noun", e: "I don't have enough energy." },
-    { t: "environment", m: "çevre", y: "noun", e: "We must protect the environment." },
-    { t: "equipment", m: "ekipman", y: "noun", e: "We need camping equipment." },
-    { t: "evidence", m: "kanıt", y: "noun", e: "There is no evidence of a crime." },
-    { t: "experience", m: "tecrübe, deneyim", y: "noun", e: "She has 5 years of experience." },
-    { t: "explanation", m: "açıklama", y: "noun", e: "I need an explanation." },
-    { t: "fact", m: "gerçek", y: "noun", e: "It is a scientific fact." },
-    { t: "failure", m: "başarısızlık", y: "noun", e: "Failure is part of learning." },
-    { t: "feature", m: "özellik", y: "noun", e: "This phone has many new features." },
-    { t: "feeling", m: "his", y: "noun", e: "I have a bad feeling about this." },
-    { t: "freedom", m: "özgürlük", y: "noun", e: "Freedom of speech." },
-    { t: "goal", m: "hedef, amaç", y: "noun", e: "My goal is to learn English." },
-    { t: "government", m: "hükümet", y: "noun", e: "The government lowered taxes." },
-    { t: "growth", m: "büyüme", y: "noun", e: "Population growth is rapid." },
-    { t: "habit", m: "alışkanlık", y: "noun", e: "Smoking is a bad habit." },
-    { t: "health", m: "sağlık", y: "noun", e: "Health is wealth." },
-    { t: "history", m: "tarih", y: "noun", e: "History repeats itself." },
-    { t: "idea", m: "fikir", y: "noun", e: "I have a great idea." },
-    { t: "importance", m: "önem", y: "noun", e: "I understand the importance of time." },
-    { t: "income", m: "gelir", y: "noun", e: "His income has increased." },
-    { t: "industry", m: "sanayi, endüstri", y: "noun", e: "The car industry." },
-    { t: "information", m: "bilgi", y: "noun", e: "For more information, visit our website." },
-    { t: "injury", m: "yaralanma", y: "noun", e: "Luckily, it was a minor injury." },
-    { t: "knowledge", m: "bilgi (birikim)", y: "noun", e: "Knowledge is power." },
-
-    { t: "able", m: "yapabilir, muktedir", y: "adj", e: "Will you be able to come?" },
-    { t: "actual", m: "gerçek, asıl", y: "adj", e: "What is the actual cost?" },
-    { t: "afraid", m: "korkmuş", y: "adj", e: "Are you afraid of spiders?" },
-    { t: "alone", m: "yalnız", y: "adj", e: "I am home alone." },
-    { t: "amazing", m: "şaşırtıcı, harika", y: "adj", e: "The view was amazing." },
-    { t: "angry", m: "kızgın", y: "adj", e: "Why are you angry?" },
-    { t: "available", m: "müsait, mevcut", y: "adj", e: "Is this seat available?" },
-    { t: "basic", m: "temel", y: "adj", e: "Basic human rights." },
-    { t: "beautiful", m: "güzel", y: "adj", e: "A beautiful garden." },
-    { t: "best", m: "en iyi", y: "adj", e: "She is my best friend." },
-    { t: "better", m: "daha iyi", y: "adj", e: "I feel better today." },
-    { t: "big", m: "büyük", y: "adj", e: "It's a big house." },
-    { t: "boring", m: "sıkıcı", y: "adj", e: "The movie was boring." },
-    { t: "brave", m: "cesur", y: "adj", e: "He was a brave soldier." },
-    { t: "bright", m: "parlak, zeki", y: "adj", e: "A bright future." },
-    { t: "busy", m: "meşgul", y: "adj", e: "I am very busy right now." },
-    { t: "careful", m: "dikkatli", y: "adj", e: "Be careful driving." },
-    { t: "cheap", m: "ucuz", y: "adj", e: "This shirt was very cheap." },
-    { t: "clean", m: "temiz", y: "adj", e: "Keep your room clean." },
-    { t: "clear", m: "açık, net", y: "adj", e: "The instructions are clear." },
-    { t: "common", m: "yaygın, ortak", y: "adj", e: "It is a common mistake." },
-    { t: "complex", m: "karmaşık", y: "adj", e: "It is a complex problem." },
-    { t: "concerned", m: "endişeli", y: "adj", e: "I am concerned about his health." },
-    { t: "confident", m: "kendine güvenen", y: "adj", e: "She is confident she will win." },
-    { t: "confused", m: "kafası karışmış", y: "adj", e: "I am totally confused." },
-    { t: "conscious", m: "bilinçli", y: "adj", e: "He is conscious of his faults." },
-    { t: "consistent", m: "tutarlı", y: "adj", e: "We need consistent results." },
-    { t: "constant", m: "sürekli", y: "adj", e: "Constant noise makes me crazy." },
-    { t: "crazy", m: "çılgın, deli", y: "adj", e: "Are you crazy?" },
-    { t: "creative", m: "yaratıcı", y: "adj", e: "She is very creative." },
-    { t: "critical", m: "eleştirel, kritik", y: "adj", e: "It is a critical moment." },
-    { t: "curious", m: "meraklı", y: "adj", e: "I was curious to see it." },
-    { t: "dangerous", m: "tehlikeli", y: "adj", e: "It is dangerous to swim here." },
-    { t: "dark", m: "karanlık", y: "adj", e: "It gets dark early in winter." },
-    { t: "deep", m: "derin", y: "adj", e: "The ocean is deep." },
-    { t: "different", m: "farklı", y: "adj", e: "We have different opinions." },
-    { t: "difficult", m: "zor", y: "adj", e: "Math is difficult for me." },
-    { t: "dirty", m: "kirli", y: "adj", e: "Your shoes are dirty." },
-    { t: "disappointed", m: "hayal kırıklığına uğramış", y: "adj", e: "I was disappointed with the service." },
-    { t: "distinct", m: "belirgin, farklı", y: "adj", e: "There is a distinct smell." },
-    { t: "dramatic", m: "dramatik, çarpıcı", y: "adj", e: "A dramatic change." },
-    { t: "early", m: "erken", y: "adj", e: "I woke up early." },
-    { t: "easy", m: "kolay", y: "adj", e: "The test was easy." },
-    { t: "effective", m: "etkili", y: "adj", e: "This medicine is effective." },
-    { t: "efficient", m: "verimli", y: "adj", e: "He is an efficient worker." },
-    { t: "embarrassed", m: "utanmış", y: "adj", e: "I felt embarrassed." },
-    { t: "empty", m: "boş", y: "adj", e: "The glass is empty." },
-    { t: "environmental", m: "çevresel", y: "adj", e: "Environmental issues." },
-    { t: "equal", m: "eşit", y: "adj", e: "All men are created equal." },
-    { t: "essential", m: "temel, elzem", y: "adj", e: "Water is essential for life." },
-    { t: "exact", m: "tam, kesin", y: "adj", e: "Tell me the exact time." },
-    { t: "excellent", m: "mükemmel", y: "adj", e: "Excellent work!" },
-    { t: "excited", m: "heyecanlı", y: "adj", e: "I am excited about the trip." },
-    { t: "expensive", m: "pahalı", y: "adj", e: "Cars are expensive." },
-    { t: "external", m: "harici", y: "adj", e: "External hard drive." },
-    { t: "extreme", m: "aşırı", y: "adj", e: "Extreme weather." },
-    { t: "famous", m: "ünlü", y: "adj", e: "He is a famous actor." },
-    { t: "fast", m: "hızlı", y: "adj", e: "A fast car." },
-    { t: "financial", m: "finansal", y: "adj", e: "Financial problems." },
-    { t: "foreign", m: "yabancı", y: "adj", e: "Foreign language." },
-    { t: "formal", m: "resmi", y: "adj", e: "Formal dress code." },
-    { t: "free", m: "özgür, bedava", y: "adj", e: "Are you free tonight?" },
-    { t: "frequent", m: "sık", y: "adj", e: "Frequent flyer." },
-    { t: "friendly", m: "arkadaş canlısı", y: "adj", e: "A friendly dog." },
-    { t: "full", m: "dolu, tok", y: "adj", e: "I am full." },
-    { t: "funny", m: "komik", y: "adj", e: "He is very funny." },
-    { t: "general", m: "genel", y: "adj", e: "In general, I agree." },
-    { t: "global", m: "küresel", y: "adj", e: "Global warming." },
-    { t: "good", m: "iyi", y: "adj", e: "Have a good day." },
-    { t: "great", m: "harika, büyük", y: "adj", e: "It was a great party." },
-    { t: "guilty", m: "suçlu", y: "adj", e: "He feels guilty." },
-    { t: "happy", m: "mutlu", y: "adj", e: "A happy family." },
-    { t: "hard", m: "zor, sert", y: "adj", e: "The ground is hard." },
-    { t: "healthy", m: "sağlıklı", y: "adj", e: "Healthy food." },
-    { t: "heavy", m: "ağır", y: "adj", e: "This bag is heavy." },
-    { t: "helpful", m: "yardımsever", y: "adj", e: "The staff was helpful." },
-    { t: "historical", m: "tarihi", y: "adj", e: "A historical building." },
-    { t: "honest", m: "dürüst", y: "adj", e: "Be honest with me." },
-    { t: "hot", m: "sıcak", y: "adj", e: "It is hot today." },
-    { t: "huge", m: "kocaman", y: "adj", e: "A huge mistake." },
-    { t: "human", m: "insani", y: "adj", e: "Human rights." },
-    { t: "hungry", m: "aç", y: "adj", e: "I am hungry." },
-    { t: "illegal", m: "yasadışı", y: "adj", e: "It is illegal to park here." },
-    { t: "important", m: "önemli", y: "adj", e: "This is very important." },
-    { t: "impossible", m: "imkansız", y: "adj", e: "Nothing is impossible." }
-  ];
-
-  state.cards = starterPack.map(w => ({
-    id: uid(),
-    lang: "EN",
-    term: w.t,
-    meaning: w.m,
-    type: w.y,
-    example: w.e,
-    note: "Başlangıç Paketi",
-    due: now(),
-    srs: { interval: 0, reps: 0, ef: 2.5 },
-    createdAt: now(),
-    updatedAt: now()
-  }));
-
-  saveAll();
-  console.log("Başlangıç paketi yüklendi.");
-}
-
-/* ===========================
-   Init
-=========================== */
-setTheme(state.settings.theme || "dark");
-syncQuizModeLabels();
-renderDash(); renderReview(); renderCards();
-if(!state.reviewQueue) state.reviewQueue=[];
-
-/* ===========================
-   EKSTRA KELİME PAKETİ (olmayanları ekler)
-   FIX: tekilleştirme term + type'a göre yapılıyor -> eş sesli kelimeler (change/fiil, change/isim) korunur
-=========================== */
-(function addExtraWords() {
-  const extraPack = [
-    { t: "apply", m: "başvurmak, uygulamak", y: "verb", e: "I applied for the job." },
-    { t: "break", m: "kırmak, bozmak", y: "verb", e: "Don't break the glass." },
-    { t: "build", m: "inşa etmek", y: "verb", e: "They are building a new house." },
-    { t: "buy", m: "satın almak", y: "verb", e: "I want to buy a car." },
-    { t: "care", m: "önemsemek, ilgilenmek", y: "verb", e: "I don't care about money." },
-    { t: "catch", m: "yakalamak", y: "verb", e: "Catch the ball!" },
-    { t: "change", m: "değiştirmek", y: "verb", e: "You haven't changed at all." },
-    { t: "check", m: "kontrol etmek", y: "verb", e: "Please check your answers." },
-    { t: "choose", m: "seçmek", y: "verb", e: "Choose a color." },
-    { t: "close", m: "kapatmak", y: "verb", e: "Close the door, please." },
-    { t: "communicate", m: "iletişim kurmak", y: "verb", e: "We communicate by email." },
-    { t: "complete", m: "tamamlamak", y: "verb", e: "Complete the sentence." },
-    { t: "connect", m: "bağlamak, bağlanmak", y: "verb", e: "Connect to the internet." },
-    { t: "control", m: "kontrol etmek, yönetmek", y: "verb", e: "He can't control his anger." },
-    { t: "cook", m: "pişirmek", y: "verb", e: "My mom cooks delicious food." },
-    { t: "cost", m: "mal olmak (fiyat)", y: "verb", e: "How much does it cost?" },
-    { t: "count", m: "saymak", y: "verb", e: "Can you count to ten?" },
-    { t: "cover", m: "örtmek, kaplamak", y: "verb", e: "Snow covered the ground." },
-    { t: "cry", m: "ağlamak", y: "verb", e: "Don't cry, be happy." },
-    { t: "cut", m: "kesmek", y: "verb", e: "Cut the paper." },
-    { t: "dance", m: "dans etmek", y: "verb", e: "Do you like to dance?" },
-    { t: "deal", m: "uğraşmak, anlaşmak", y: "verb", e: "I can't deal with this problem." },
-    { t: "depend", m: "bağlı olmak", y: "verb", e: "It depends on the weather." },
-    { t: "design", m: "tasarlamak", y: "verb", e: "Who designed this building?" },
-    { t: "destroy", m: "yok etmek", y: "verb", e: "Fire destroyed the house." },
-
-    { t: "action", m: "eylem, aksiyon", y: "noun", e: "Take action now." },
-    { t: "activity", m: "aktivite", y: "noun", e: "Outdoor activities." },
-    { t: "age", m: "yaş, çağ", y: "noun", e: "What is your age?" },
-    { t: "air", m: "hava", y: "noun", e: "Fresh air." },
-    { t: "answer", m: "cevap", y: "noun", e: "I need an answer." },
-    { t: "area", m: "alan, bölge", y: "noun", e: "This is a restricted area." },
-    { t: "art", m: "sanat", y: "noun", e: "Modern art." },
-    { t: "bed", m: "yatak", y: "noun", e: "Time to go to bed." },
-    { t: "blood", m: "kan", y: "noun", e: "Blood type." },
-    { t: "body", m: "vücut", y: "noun", e: "Human body." },
-    { t: "book", m: "kitap", y: "noun", e: "Read a book." },
-    { t: "box", m: "kutu", y: "noun", e: "What is in the box?" },
-    { t: "boy", m: "erkek çocuk", y: "noun", e: "He is a good boy." },
-    { t: "business", m: "iş, işletme", y: "noun", e: "Business trip." },
-    { t: "car", m: "araba", y: "noun", e: "A fast car." },
-    { t: "case", m: "durum, vaka", y: "noun", e: "In that case, I agree." },
-    { t: "center", m: "merkez", y: "noun", e: "City center." },
-    { t: "change", m: "değişim, para üstü", y: "noun", e: "Keep the change." },
-    { t: "city", m: "şehir", y: "noun", e: "New York is a big city." },
-    { t: "class", m: "sınıf, ders", y: "noun", e: "History class." },
-    { t: "color", m: "renk", y: "noun", e: "What is your favorite color?" },
-    { t: "company", m: "şirket", y: "noun", e: "A tech company." },
-    { t: "country", m: "ülke", y: "noun", e: "Which country are you from?" },
-    { t: "day", m: "gün", y: "noun", e: "Have a nice day." },
-    { t: "death", m: "ölüm", y: "noun", e: "Life and death." },
-
-    { t: "bad", m: "kötü", y: "adj", e: "Bad weather." },
-    { t: "black", m: "siyah", y: "adj", e: "Black coffee." },
-    { t: "blue", m: "mavi", y: "adj", e: "Blue sky." },
-    { t: "certain", m: "kesin, belirli", y: "adj", e: "Are you certain?" },
-    { t: "cold", m: "soğuk", y: "adj", e: "It is cold outside." },
-    { t: "cool", m: "serin, havalı", y: "adj", e: "He is a cool guy." },
-    { t: "current", m: "şu anki, mevcut", y: "adj", e: "Current situation." },
-    { t: "dead", m: "ölü", y: "adj", e: "A dead tree." },
-    { t: "dry", m: "kuru", y: "adj", e: "My throat is dry." },
-    { t: "fair", m: "adil", y: "adj", e: "That's not fair." },
-    { t: "false", m: "yanlış, sahte", y: "adj", e: "False information." },
-    { t: "final", m: "son, nihai", y: "adj", e: "Final exam." },
-    { t: "fine", m: "iyi, ince", y: "adj", e: "I am fine, thanks." },
-    { t: "future", m: "gelecek", y: "adj", e: "Future plans." },
-    { t: "green", m: "yeşil", y: "adj", e: "Green grass." },
-    { t: "high", m: "yüksek", y: "adj", e: "High prices." },
-    { t: "kind", m: "kibar", y: "adj", e: "Be kind to others." },
-    { t: "large", m: "geniş, büyük", y: "adj", e: "A large pizza." },
-    { t: "late", m: "geç", y: "adj", e: "Don't be late." },
-    { t: "left", m: "sol", y: "adj", e: "Turn left." }
-  ];
-
-  let addedCount = 0;
-  extraPack.forEach(w => {
-    const exists = state.cards.some(c =>
-      c.term.toLowerCase().trim() === w.t.toLowerCase().trim() &&
-      (c.type || "") === (w.y || "")
-    );
-
-    if (!exists) {
-      state.cards.push({
-        id: uid(),
-        lang: "EN",
-        term: w.t,
-        meaning: w.m,
-        type: w.y,
-        example: w.e,
-        note: "Ekstra Paket",
-        due: now(),
-        srs: { interval: 0, reps: 0, ef: 2.5 },
-        createdAt: now(),
-        updatedAt: now()
-      });
-      addedCount++;
-    }
-  });
-
-  if (addedCount > 0) {
-    saveAll();
-    console.log(addedCount + " adet yeni kelime eklendi.");
-    renderDash(); renderReview(); renderCards();
-    toast(addedCount + " yeni kelime eklendi! 🚀");
-  }
-})();
-
-/* ===========================
-   TR -> EN Translate helper
-=========================== */
-async function translateToEN(lang, term){
-  const key = `${lang}|${norm(term)}|toEN`;
-  if(state.txCache[key]) return state.txCache[key];
-
-  const sl = ({EN:"en", RU:"ru", DE:"de", FR:"fr", ES:"es", TR:"tr"})[lang] || "auto";
-  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=en&dt=t&dt=bd&q=${encodeURIComponent(term)}`;
-
-  try{
-    const r = await fetch(url);
-    if(!r.ok) throw new Error("fail");
-    const data = await r.json();
-
-    let main = (data?.[0]?.[0]?.[0] || "").trim();
-
-    let extra = [];
-    if(data[1]){
-      data[1].forEach(group=>{
-        const pos = group[0];
-        const words = (group[1] || []).slice(0,5).join(", ");
-        if(words) extra.push(`[${pos}]: ${words}`);
+  loadLib.then(function(){
+    return f.arrayBuffer();
+  }).then(function(buf){
+    return _pdfjs.getDocument({data:buf}).promise;
+  }).then(function(pdf){
+    var txt='';
+    var chain=Promise.resolve();
+    var pageCount=pdf.numPages;
+    function readPage(p){
+      return pdf.getPage(p).then(function(pg){
+        return pg.getTextContent();
+      }).then(function(c){
+        txt+=c.items.map(function(it){ return it.str; }).join(' ')+'\n\n';
+        st.textContent='⏳ '+p+'/'+pageCount+' sayfa okundu…';
       });
     }
-
-    let finalResult = main;
-    if(extra.length) finalResult = main + "\n\n(" + extra.join(") \n(") + ")";
-
-    state.txCache[key] = finalResult;
-    DB.set("lm_tx_cache", state.txCache);
-    return finalResult;
-  }catch(e){
-    console.log(e);
-    return "";
+    for(var p=1;p<=pageCount;p++){
+      (function(pp){ chain=chain.then(function(){ return readPage(pp); }); })(p);
+    }
+    return chain.then(function(){
+      $('doc-paste').value=txt.trim();
+      st.textContent='✅ '+pageCount+' sayfa yüklendi.';
+      renderReader(txt);
+    });
+  }).catch(function(){
+    st.textContent='❌ PDF okunamadı — metni manuel yapıştır.';
+  });
+  ev.target.value='';
+}
+function splitSentences(text){
+  var cleaned=text.replace(/[ \t]+/g,' ');
+  var out=[], buf='';
+  for(var i=0;i<cleaned.length;i++){
+    var ch=cleaned[i];
+    buf+=ch;
+    if(ch==='.'||ch==='!'||ch==='?'||ch==='\n'||ch==='\u2026'){
+      out.push(buf); buf='';
+    }
   }
+  if(buf.trim()) out.push(buf);
+  return out.map(function(s){ return s.trim(); }).filter(function(s){ return s.length>0; });
+}
+function renderReader(text){
+  var mySet={};
+  for(var i=0;i<db.cards.length;i++){
+    var key=db.cards[i].ru.toLowerCase().replace(/[^а-яёa-z0-9]/gi,'');
+    mySet[key]=1;
+  }
+  var el=$('reader');
+  var sents=splitSentences(text);
+  if(!sents.length){ el.innerHTML='<div class="empty">Metin boş.</div>'; return; }
+  var html='';
+  for(var si=0;si<sents.length;si++){
+    var s=sents[si];
+    var parts=s.split(/(\s+)/);
+    var toks='';
+    for(var p=0;p<parts.length;p++){
+      var w=parts[p];
+      if(/^\s+$/.test(w)){ toks+=w; continue; }
+      var clean=w.replace(/[^А-Яа-яЁё]/g,'').toLowerCase();
+      if(!clean || clean.length<2){ toks+=esc(w); continue; }
+      var known=mySet[clean];
+      toks+='<span class="tok'+(known?'':' new')+'" data-act="tapword" data-w="'+esc(w)+'">'+esc(w)+'</span>';
+    }
+    html+='<span class="sent-block" data-sent="'+esc(s)+'">'+toks+
+      '<span class="sentbtn" data-act="tapsent" data-s="'+esc(s)+'">↦</span></span> ';
+  }
+  el.innerHTML=html;
+}
+function tapWord(el){
+  var w=el.getAttribute('data-w');
+  if(!w) return;
+  var clean=w.replace(/[^А-Яа-яЁё]/g,'');
+  var existing=el.nextElementSibling;
+  if(existing && existing.className==='trchip'){ existing.remove(); return; }
+  var chip=document.createElement('span');
+  chip.className='trchip';
+  chip.innerHTML='<span class="spin"></span> çevriliyor…';
+  el.insertAdjacentElement('afterend',chip);
+  translate(clean,'ru','tr').then(function(out){
+    chip.innerHTML='<b>'+esc(clean)+'</b> → '+esc(out||'?')+' ';
+    var box=document.createElement('span');
+    box.style.cssText='display:flex;gap:6px;margin-top:8px;';
+    var addBtn=document.createElement('button');
+    addBtn.className='btn bp bsm'; addBtn.textContent='+ Karta Ekle';
+    addBtn.addEventListener('click',function(){
+      if(addCard(clean,out||'','')){ addBtn.textContent='✓ Eklendi'; addBtn.disabled=true; addBtn.className='btn bo bsm'; }
+    });
+    var closeBtn=document.createElement('button');
+    closeBtn.className='btn bs bsm'; closeBtn.textContent='Kapat';
+    closeBtn.addEventListener('click',function(){ chip.remove(); });
+    box.appendChild(addBtn); box.appendChild(closeBtn);
+    chip.appendChild(box);
+  });
+}
+function tapSent(btn){
+  var s=btn.getAttribute('data-s');
+  if(!s) return;
+  var block=btn.parentElement;
+  var existing=block.nextElementSibling;
+  if(existing && existing.className==='trchip'){ existing.remove(); return; }
+  var chip=document.createElement('span');
+  chip.className='trchip';
+  chip.innerHTML='<span class="spin"></span> cümle çevriliyor…';
+  block.insertAdjacentElement('afterend',chip);
+  translate(s,'ru','tr').then(function(out){
+    chip.innerHTML='<b>Çeviri:</b> '+esc(out||'?')+' ';
+    var box=document.createElement('span');
+    box.style.cssText='display:flex;gap:6px;margin-top:8px;';
+    var addBtn=document.createElement('button');
+    addBtn.className='btn bp bsm'; addBtn.textContent='+ Karta Ekle';
+    addBtn.addEventListener('click',function(){
+      if(addCard(s,out||'','')){ addBtn.textContent='✓ Eklendi'; addBtn.disabled=true; addBtn.className='btn bo bsm'; }
+    });
+    var closeBtn=document.createElement('button');
+    closeBtn.className='btn bs bsm'; closeBtn.textContent='Kapat';
+    closeBtn.addEventListener('click',function(){ chip.remove(); });
+    box.appendChild(addBtn); box.appendChild(closeBtn);
+    chip.appendChild(box);
+  });
+}
+function phraseTranslate(sl,tl){
+  var t=val('phrase-in'), out=$('phrase-out');
+  if(!t) return;
+  out.innerHTML='<div class="trchip"><span class="spin"></span> çevriliyor…</div>';
+  translate(t,sl,tl).then(function(res){
+    var ru=sl==='ru'?t:res, tr2=sl==='ru'?res:t;
+    out.innerHTML='';
+    var chip=document.createElement('div');
+    chip.className='trchip';
+    chip.innerHTML='<b>'+esc(t)+'</b><br>→ '+esc(res||'?')+'<br>';
+    var addBtn=document.createElement('button');
+    addBtn.className='btn bp bsm'; addBtn.style.marginTop='8px'; addBtn.textContent='+ Karta Ekle';
+    addBtn.addEventListener('click',function(){
+      if(addCard(ru,tr2,'')){ addBtn.textContent='✓ Eklendi'; addBtn.disabled=true; addBtn.className='btn bo bsm'; }
+    });
+    chip.appendChild(addBtn);
+    out.appendChild(chip);
+  });
 }
 
-/* ===========================
-   TR -> EN Quick Translate UI
-=========================== */
-async function doQuickTranslateTR(){
-  const input = document.getElementById("quickTransInputTR");
-  if(!input) return;
-
-  const term = input.value.trim();
-  if(!term) return toast("Lütfen bir kelime yazın.");
-
-  toast("Çevriliyor... ⏳");
-
-  const en = await translateToEN("TR", term);
-
-  const content = `
-    <div style="font-size:28px; font-weight:900; color:var(--warn); text-align:center; margin-bottom:10px;">${term}</div>
-    <div style="font-size:16px; line-height:1.5; white-space:pre-wrap; background:var(--card); padding:12px; border-radius:12px; border:1px solid var(--border);">${en}</div>
-    <div class="smallInfo" style="margin-top:10px; text-align:center; opacity:.8;">(İstersen bunu kart olarak kaydedebilirsin.)</div>
-  `;
-
-  document.getElementById("trResContent").innerHTML = content;
-  quickTermCacheTR = term;
-  quickTermCache = "";   // FIX: EN cache'ini temizle ki karta ekleme doğru kelimeyi alsın
-  openSheet("transResultSheet");
-  input.value = "";
+/* ===== GRAMMAR ===== */
+function gtog(btn){
+  var body=btn.nextElementSibling;
+  body.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+function initSents(){
+  var el=$('sent-cats');
+  if(!el || el.getAttribute('data-done')) return;
+  el.setAttribute('data-done','1');
+  var seen={}, cats=['Tümü'];
+  for(var i=0;i<SENTS_DATA.length;i++){
+    var c=SENTS_DATA[i][2];
+    if(!seen[c]){ seen[c]=1; cats.push(c); }
+  }
+  el.innerHTML=cats.map(function(c){
+    return '<button class="catbtn'+(c==='Tümü'?' on':'')+'" data-act="scat" data-cat="'+esc(c)+'">'+esc(c)+'</button>';
+  }).join('');
+  renderSents('Tümü');
+}
+function filSents(cat,btn){
+  var btns=document.querySelectorAll('#sent-cats .catbtn');
+  for(var i=0;i<btns.length;i++) btns[i].classList.remove('on');
+  btn.classList.add('on');
+  renderSents(cat);
+}
+function renderSents(cat){
+  var f = cat==='Tümü' ? SENTS_DATA : SENTS_DATA.filter(function(s){ return s[2]===cat; });
+  $('sent-list').innerHTML=f.map(function(pair){
+    return '<div style="padding:8px 0;border-bottom:1px solid var(--brd);">'+
+      '<div style="font-weight:800;font-size:14px;">'+esc(pair[0])+
+      ' <button class="sentbtn" data-act="speak" data-w="'+esc(pair[0])+'">🔊</button></div>'+
+      '<div style="color:var(--mut);font-size:13px;">'+esc(pair[1])+'</div></div>';
+  }).join('');
 }
 
-/* ===========================
-   İlk açılış (init)
-=========================== */
-setTheme(state.settings.theme || "dark");
-syncQuizModeLabels();
-renderDash();
-renderReview();
-renderCards();
+/* ===== SETTINGS ===== */
+function setTheme(t){ cfg.theme=t; document.documentElement.setAttribute('data-theme',t); lsSave(); }
+function exportData(){
+  var blob=new Blob([JSON.stringify({cards:db.cards,cfg:cfg,v:3},null,2)],{type:'application/json'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='vocabify-ru-yedek.json';
+  a.click();
+}
+function importData(ev){
+  var f=ev.target.files[0];
+  if(!f) return;
+  var rd=new FileReader();
+  rd.onload=function(){
+    try{
+      var d=JSON.parse(rd.result);
+      if(d.cards && d.cards.length!==undefined){
+        db.cards=d.cards;
+        if(d.cfg){ cfg=d.cfg; setTheme(cfg.theme||'dark'); }
+        lsSave(); toast('İçe aktarıldı ✓'); renderHome(); renderMine();
+      } else toast('Geçersiz dosya');
+    }catch(e){ toast('Dosya okunamadı'); }
+  };
+  rd.readAsText(f);
+  ev.target.value='';
+}
+function resetAll(){
+  if(!confirm('Tüm kartlar silinsin mi? Bu geri alınamaz.')) return;
+  db.cards=[]; lsSave(); toast('Sıfırlandı'); renderHome(); renderMine();
+}
+
+/* ===== EVENT DELEGATION (single listener for everything) ===== */
+document.addEventListener('click', function(e){
+  var t=e.target;
+  // climb up to find an element with data-act or data-nav
+  var node=t;
+  while(node && node!==document.body){
+    var act=node.getAttribute && node.getAttribute('data-act');
+    var nav=node.getAttribute && node.getAttribute('data-nav');
+    if(nav){ go(nav); return; }
+    if(act){
+      handleAct(act,node,e);
+      return;
+    }
+    node=node.parentElement;
+  }
+});
+function handleAct(act,node,e){
+  if(act==='go'){ go(node.getAttribute('data-view')); }
+  else if(act==='swap'){ swapDir(); }
+  else if(act==='translate'){ doTranslate(); }
+  else if(act==='wseg'){ wSeg(node.getAttribute('data-seg')); }
+  else if(act==='manualadd'){ manualAdd(); }
+  else if(act==='dcat'){ setDCat(node.getAttribute('data-cat'),node); }
+  else if(act==='dadd'){
+    var ru=node.getAttribute('data-ru'), tr2=node.getAttribute('data-tr');
+    if(addCard(ru,tr2,'')){ node.textContent='✓'; node.className='addbtn done'; renderDict(); }
+  }
+  else if(act==='del'){ delCard(node.getAttribute('data-id')); }
+  else if(act==='speak' || act==='speakcard'){ e.stopPropagation(); speak(node.getAttribute('data-w')); }
+  else if(act==='startreview'){ go('review'); }
+  else if(act==='revdir'){ toggleRevDir(); }
+  else if(act==='flip'){ flipCard(); }
+  else if(act==='grade'){ grade(node.getAttribute('data-ok')==='1'); }
+  else if(act==='loadpasted'){ loadPasted(); }
+  else if(act==='pickpdf'){ $('pdf-in').click(); }
+  else if(act==='tapword'){ tapWord(node); }
+  else if(act==='tapsent'){ e.stopPropagation(); tapSent(node); }
+  else if(act==='phrasetr'){ phraseTranslate(node.getAttribute('data-sl'),node.getAttribute('data-tl')); }
+  else if(act==='gtog'){ gtog(node); }
+  else if(act==='scat'){ filSents(node.getAttribute('data-cat'),node); }
+  else if(act==='speaktest'){ speak('Доброе утро! Как дела?'); }
+  else if(act==='export'){ exportData(); }
+  else if(act==='pickimport'){ $('imp-in').click(); }
+  else if(act==='reset'){ resetAll(); }
+  else if(act==='settings'){ go('settings'); }
+}
+
+/* keydown for enter in translate input */
+document.addEventListener('keydown', function(e){
+  if(e.key==='Enter' && e.target && e.target.id==='q-input'){ doTranslate(); }
+});
+
+/* file inputs */
+function bindInputs(){
+  var pdfIn=$('pdf-in'); if(pdfIn) pdfIn.addEventListener('change',loadPdf);
+  var impIn=$('imp-in'); if(impIn) impIn.addEventListener('change',importData);
+  var themeSel=$('theme-sel'); if(themeSel) themeSel.addEventListener('change',function(){ setTheme(this.value); });
+  var ms=$('mine-search'); if(ms) ms.addEventListener('input',renderMine);
+  var ds=$('dict-search'); if(ds) ds.addEventListener('input',filterDict);
+  var qi=$('q-input'); if(qi) qi.addEventListener('input',function(){ $('q-result').innerHTML=''; });
+}
+
+/* ===== INIT ===== */
+document.documentElement.setAttribute('data-theme', cfg.theme||'dark');
+if('speechSynthesis' in window){ speechSynthesis.onvoiceschanged=function(){}; }
+bindInputs();
+renderHome();
 
 </script>
 </body>
