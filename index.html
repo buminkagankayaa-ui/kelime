@@ -47,15 +47,16 @@ background:var(--card2);border-top:1px solid var(--brd);display:flex;}
 .nb{flex:1;background:transparent;border:0;color:var(--mut);
 display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;
 padding-top:8px;font-size:10px;font-weight:800;}
-.nb .ic{width:44px;height:30px;display:grid;place-items:center;font-size:19px;border-radius:12px;}
+.nb .ic{width:40px;height:28px;display:grid;place-items:center;font-size:18px;border-radius:11px;}
+.nb{font-size:9.5px;}
 .nb.on{color:var(--pri);}
 .nb.on .ic{background:color-mix(in srgb,var(--pri) 18%,transparent);}
 #vp{position:relative;width:100%;height:100vh;overflow:hidden;background:var(--bg);}
 .view{position:absolute;inset:0;
 padding-top:calc(var(--hh) + var(--st) + 14px);
-padding-bottom:calc(var(--nh) + var(--si) + 10px);
+padding-bottom:calc(var(--nh) + var(--si) + 40px);
 padding-left:16px;padding-right:16px;
-overflow-y:auto;overflow-x:hidden;background:var(--bg);display:none;}
+overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--bg);display:none;}
 .view.on{display:block;}
 .card{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);padding:15px;margin-bottom:12px;}
 .card-sm{padding:11px 13px;}
@@ -177,6 +178,19 @@ border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical
 @keyframes sp{to{transform:rotate(360deg);}}
 .empty{text-align:center;color:var(--mut);padding:36px 12px;font-size:13px;line-height:1.6;}
 .muted{color:var(--mut);}
+
+.rev-menu-card{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);
+padding:18px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:14px;}
+.rev-menu-card .icon{font-size:34px;}
+.rev-menu-card .info{flex:1;min-width:0;}
+.rev-menu-card .info .t{font-size:17px;font-weight:980;}
+.rev-menu-card .info .d{font-size:12px;color:var(--mut);margin-top:2px;}
+.rev-menu-card .cnt{font-size:32px;font-weight:980;}
+.rev-menu-card.unknown{border-left:4px solid var(--amb);}
+.rev-menu-card.unknown .cnt{color:var(--amb);}
+.rev-menu-card.known{border-left:4px solid var(--ok);}
+.rev-menu-card.known .cnt{color:var(--ok);}
+.f-ex{font-size:14px;color:var(--mut);line-height:1.5;max-width:92%;font-style:italic;}
 </style>
 </head>
 <body>
@@ -216,8 +230,8 @@ border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical
 
   <div class="sec">Ba&#351;la</div>
   <div class="row">
-    <button class="btn bp bh" data-nav="review">&#129504; Tekrara Ba&#351;la</button>
-    <button class="btn bs bh" data-nav="doc">&#128196; Belge Oku</button>
+    <button class="btn bp bh" data-nav="review">&#129504; Tekrar</button>
+    <button class="btn bs bh" data-nav="stories">&#128218; Hikayeler</button>
   </div>
   <div class="sec">Son Eklenenler</div>
   <div id="home-recent"></div>
@@ -225,29 +239,45 @@ border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical
 
 <!-- REVIEW -->
 <section class="view" id="v-review">
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-    <div style="font-size:18px;font-weight:980;flex:1;">Tekrar</div>
-    <button class="btn bs bsm" data-act="revdir" id="rev-dir-btn">RU &rarr; TR</button>
+  <div id="rev-home">
+    <div style="font-size:18px;font-weight:980;margin-bottom:14px;">Tekrar</div>
+    <div class="rev-menu-card unknown" data-act="revstart" data-mode="unknown">
+      <div class="icon">&#128218;</div>
+      <div class="info"><div class="t">Bilmediklerim</div><div class="d">&Ouml;&#287;renmem gereken kelimeler</div></div>
+      <div class="cnt" id="rev-unknown-count">0</div>
+    </div>
+    <div class="rev-menu-card known" data-act="revstart" data-mode="known">
+      <div class="icon">&#9989;</div>
+      <div class="info"><div class="t">Bildiklerim</div><div class="d">Pekiştirmek i&ccedil;in tekrar et</div></div>
+      <div class="cnt" id="rev-known-count">0</div>
+    </div>
+    <div class="muted" style="font-size:12px;line-height:1.6;margin-top:8px;padding:0 4px;">
+      Bir kelimeyi 3 kez do&#287;ru bilince &laquo;Bildiklerim&raquo; listesine ge&ccedil;er. Yanl&#305;&#351; bilince geri d&uuml;&#351;er.</div>
   </div>
-  <div class="rev-progress"><div class="rev-prog-fill" id="rev-prog" style="width:0%"></div></div>
-  <div id="rev-wrap"></div>
+
+  <div id="rev-session" style="display:none;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <button class="btn bs bsm" data-act="endsession">&larr;</button>
+      <div style="font-size:16px;font-weight:980;flex:1;" id="rev-mode-label">Tekrar</div>
+      <button class="btn bs bsm" data-act="revdir" id="rev-dir-btn">RU &rarr; TR</button>
+    </div>
+    <div class="rev-progress"><div class="rev-prog-fill" id="rev-prog" style="width:0%"></div></div>
+    <div id="rev-wrap"></div>
+  </div>
 </section>
 
 <!-- WORDS -->
 <section class="view" id="v-words">
   <div class="seg">
     <button class="segb on" id="sg-mine" data-act="wseg" data-seg="mine">Kartlar&#305;m</button>
-    <button class="segb" id="sg-dict" data-act="wseg" data-seg="dict">Hazine</button>
-    <button class="segb" id="sg-add" data-act="wseg" data-seg="add">Ekle</button>
+    <button class="segb" id="sg-add" data-act="wseg" data-seg="add">Kelime Ekle</button>
   </div>
   <div id="wp-mine">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <span class="muted" style="font-size:12px;font-weight:800;" id="mine-count">0 kelime</span>
+    </div>
     <input id="mine-search" placeholder="&#128269; Kartlarda ara&hellip;" style="margin-bottom:10px;">
     <div id="mine-list"></div>
-  </div>
-  <div id="wp-dict" style="display:none;">
-    <input id="dict-search" placeholder="&#128269; Hazinede ara&hellip;" style="margin-bottom:8px;">
-    <div class="catscroll" id="cat-row"></div>
-    <div id="dict-list" class="vlist" style="margin-top:2px;"></div>
   </div>
   <div id="wp-add" style="display:none;">
     <div class="card">
@@ -276,7 +306,6 @@ border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical
     <textarea id="doc-paste" placeholder="&hellip;ya da Rus&ccedil;a metni buraya yap&#305;&#351;t&#305;r" style="margin-top:10px;"></textarea>
     <div id="pdf-st" class="muted" style="font-size:12px;margin-top:6px;min-height:16px;"></div>
   </div>
-
   <div class="sec">&Ouml;bek / C&uuml;mle &Ccedil;evir</div>
   <div class="card">
     <textarea id="phrase-in" placeholder="Rus&ccedil;a kelime, &ouml;bek ya da c&uuml;mle yaz&hellip;" style="min-height:65px;"></textarea>
@@ -286,9 +315,16 @@ border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical
     </div>
     <div id="phrase-out"></div>
   </div>
-
   <div class="sec">Metin</div>
   <div class="card"><div id="reader" class="reader"><div class="empty">&#128214; Metin bekleniyor.<br>Yukar&#305;dan PDF y&uuml;kle ya da yap&#305;&#351;t&#305;r.</div></div></div>
+</section>
+
+<!-- STORIES -->
+<section class="view" id="v-stories">
+  <div style="font-size:18px;font-weight:980;margin-bottom:4px;">Rus&ccedil;a Hikayeler</div>
+  <div class="muted" style="font-size:13px;margin-bottom:14px;">Okuma prati&#287;i &middot; turuncu kelimelere dokunup &ccedil;evir &middot; &harr; ile c&uuml;mle &ccedil;evir</div>
+  <div id="story-list"></div>
+  <div id="story-reader" style="display:none;"></div>
 </section>
 
 <!-- GRAMMAR -->
@@ -523,9 +559,9 @@ border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical
       <button class="btn bs bh" data-act="pickimport">&#11014;&#65039; Geri Y&uuml;kle</button>
     </div>
     <input type="file" id="imp-in" accept=".json" style="display:none">
-    <button class="btn bd" style="margin-top:10px;width:100%;" data-act="reset">&#128465;&#65039; T&uuml;m Kartlar&#305; S&#305;f&#305;rla</button>
+    <button class="btn bd" style="margin-top:10px;width:100%;" data-act="reset">&#128260; S&#305;f&#305;rla &amp; S&ouml;zl&uuml;&#287;&uuml; Yeniden Y&uuml;kle</button>
   </div>
-  <p class="muted" style="text-align:center;font-size:11px;margin-top:16px;line-height:1.6;">Vocabify &middot; Rus&ccedil;a &harr; T&uuml;rk&ccedil;e<br>v3.0 &middot; &Ccedil;eviri: Google / MyMemory</p>
+  <p class="muted" style="text-align:center;font-size:11px;margin-top:16px;line-height:1.6;">Vocabify &middot; Rus&ccedil;a &harr; T&uuml;rk&ccedil;e<br>v4.0 &middot; &Ccedil;eviri: Google / MyMemory</p>
 </section>
 
 </div>
@@ -534,6 +570,7 @@ border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical
   <button class="nb on" id="n-home" data-nav="home"><div class="ic">&#127968;</div>Ana</button>
   <button class="nb" id="n-review" data-nav="review"><div class="ic">&#129504;</div>Tekrar</button>
   <button class="nb" id="n-words" data-nav="words"><div class="ic">&#128450;&#65039;</div>Kelimeler</button>
+  <button class="nb" id="n-stories" data-nav="stories"><div class="ic">&#128218;</div>Hikaye</button>
   <button class="nb" id="n-doc" data-nav="doc"><div class="ic">&#128196;</div>Belge</button>
   <button class="nb" id="n-gram" data-nav="gram"><div class="ic">&#128214;</div>Gramer</button>
 </nav>
@@ -542,13 +579,39 @@ border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical
 <script>
 var DICT_DATA = {"Zamirler": [["я", "ben"], ["ты", "sen"], ["он", "o (eril)"], ["она", "o (dişil)"], ["оно", "o (nötr)"], ["мы", "biz"], ["вы", "siz (resmi)"], ["они", "onlar"], ["мой", "benim"], ["моя", "benim (dişil)"], ["моё", "benim (nötr)"], ["мои", "benimkiler"], ["твой", "senin"], ["твоя", "senin (dişil)"], ["его", "onun (eril)"], ["её", "onun (dişil)"], ["наш", "bizim"], ["ваш", "sizin"], ["их", "onların"], ["себя", "kendini/kendimi"], ["кто", "kim"], ["что", "ne"], ["этот", "bu (eril)"], ["эта", "bu (dişil)"], ["это", "bu / bu (nötr)"], ["тот", "şu / o"], ["та", "şu (dişil)"], ["кто-то", "biri"], ["что-то", "bir şey"], ["кто-нибудь", "herhangi biri"], ["никто", "hiç kimse"], ["ничего", "hiçbir şey"], ["каждый", "her / herkes"], ["все", "herkes / hepsi"], ["сам", "kendisi / bizzat"], ["другой", "diğer / başka"], ["такой", "böyle"], ["какой", "nasıl / hangi"], ["чей", "kimin"], ["чьи", "kimlerin"]], "Temel / Bağlaçlar": [["да", "evet"], ["нет", "hayır"], ["и", "ve"], ["или", "ya da"], ["но", "ama"], ["не", "değil"], ["ни...ни", "ne...ne"], ["если", "eğer"], ["когда", "ne zaman / zaman ki"], ["потому что", "çünkü"], ["поэтому", "bu yüzden"], ["чтобы", "için / ki"], ["хотя", "her ne kadar"], ["пока", "henüz / sürerken"], ["однако", "ancak / bununla birlikte"], ["так как", "çünkü / madem"], ["либо", "ya da / veya"], ["а", "ama / peki / oysa"], ["же", "ise / peki ya"], ["ведь", "çünkü (zaten biliyorsun)"], ["зато", "karşılığında / ama"], ["тоже", "da / de (ben de)"], ["также", "aynı zamanda / da"], ["даже", "bile"], ["просто", "sadece / basitçe"], ["вообще", "genel olarak / hiç"], ["наконец", "sonunda"], ["кроме", "...dan başka / hariç"], ["после", "sonra"], ["до", "önce / kadar"], ["вместо", "yerine"], ["вдоль", "boyunca"], ["согласно", "göre / uyarınca"]], "Zarflar": [["здесь", "burada"], ["тут", "burada (konuşma dili)"], ["там", "orada"], ["везде", "her yerde"], ["нигде", "hiçbir yerde"], ["куда", "nereye"], ["откуда", "nereden"], ["сейчас", "şimdi"], ["потом", "sonra"], ["затем", "ardından"], ["сначала", "önce"], ["уже", "artık / zaten"], ["ещё", "daha / hâlâ"], ["ещё раз", "bir daha"], ["всегда", "her zaman"], ["иногда", "bazen"], ["часто", "sık sık"], ["редко", "nadiren"], ["никогда", "hiçbir zaman"], ["долго", "uzun süre"], ["быстро", "hızlıca"], ["медленно", "yavaşça"], ["хорошо", "iyi / güzel"], ["плохо", "kötü"], ["очень", "çok"], ["немного", "biraz"], ["почти", "neredeyse"], ["совсем", "tamamen / hiç"], ["только", "sadece"], ["тоже", "da / de"], ["даже", "bile"], ["вдруг", "aniden"], ["наверное", "herhalde"], ["может быть", "belki"], ["точно", "kesinlikle"], ["примерно", "yaklaşık"], ["вместе", "birlikte"], ["отдельно", "ayrı"], ["снова", "yeniden"], ["опять", "yine"], ["наконец", "sonunda"], ["сразу", "hemen"], ["рано", "erken"], ["поздно", "geç"], ["рядом", "yanında / yakında"], ["далеко", "uzakta"], ["близко", "yakın"], ["направо", "sağa"], ["налево", "sola"], ["прямо", "düz / doğruca"], ["назад", "geri"], ["вперёд", "ileri / öne"], ["выше", "yukarıda / daha yüksek"], ["ниже", "aşağıda / daha düşük"], ["слева", "soldan / solda"], ["справа", "sağdan / sağda"], ["посередине", "ortasında"]], "Fiiller — Temel": [["быть", "olmak"], ["мочь", "yapabilmek"], ["хотеть", "istemek"], ["знать", "bilmek"], ["думать", "düşünmek"], ["видеть", "görmek"], ["слышать", "duymak"], ["понимать", "anlamak"], ["чувствовать", "hissetmek"], ["говорить", "konuşmak / söylemek"], ["спрашивать", "sormak"], ["отвечать", "cevap vermek"], ["объяснять", "açıklamak"], ["рассказывать", "anlatmak"], ["переводить", "tercüme etmek / taşımak"], ["читать", "okumak"], ["писать", "yazmak"], ["учить", "öğrenmek / öğretmek"], ["учиться", "öğrenmek (bir şeyde)"], ["помнить", "hatırlamak"], ["забывать", "unutmak"], ["верить", "inanmak"], ["надеяться", "ummak / umut etmek"], ["любить", "sevmek"], ["нравиться", "hoşlanmak / beğenmek"], ["бояться", "korkmak"], ["радоваться", "sevinmek"], ["сердиться", "kızmak"], ["злиться", "sinirlenip kızmak"], ["устать", "yorulmak"], ["отдыхать", "dinlenmek"], ["стараться", "çaba göstermek"], ["успевать", "yetişmek / başarmak"], ["казаться", "görünmek / gibi görünmek"], ["иметь", "sahip olmak"], ["значить", "anlamına gelmek"], ["называться", "adı olmak"], ["считать", "saymak / düşünmek"], ["решать", "karar vermek / çözmek"], ["понравиться", "beğenmek (sonuç)"], ["нужно", "lazım / gerek"]], "Fiiller — Hareket": [["идти", "gitmek (yürüyerek, tek sefer)"], ["ехать", "gitmek (araçla, tek sefer)"], ["ходить", "yürümek (alışkanlık)"], ["ездить", "gitmek (araçla, alışkanlık)"], ["бегать", "koşmak"], ["летать", "uçmak"], ["плыть", "yüzmek / gitmek (suyla)"], ["приходить", "gelmek (yürüyerek)"], ["уходить", "ayrılmak / gitmek"], ["приезжать", "gelmek (araçla)"], ["уезжать", "gitmek (araçla)"], ["возвращаться", "geri dönmek"], ["входить", "girmek"], ["выходить", "çıkmak"], ["подниматься", "yukarı çıkmak"], ["спускаться", "inmek"], ["переходить", "geçmek (karşıya)"], ["доходить", "ulaşmak / varmak"], ["добираться", "ulaşmak (zorlu yol)"], ["подходить", "yaklaşmak"], ["отходить", "uzaklaşmak"], ["проходить", "geçip gitmek / sürmek"], ["нести", "taşımak (elde)"], ["везти", "taşımak (araçla)"], ["тащить", "sürüklemek"]], "Fiiller — Eylem": [["делать", "yapmak"], ["работать", "çalışmak"], ["начинать", "başlamak"], ["заканчивать", "bitirmek"], ["продолжать", "devam etmek"], ["помогать", "yardım etmek"], ["мешать", "engellemek"], ["давать", "vermek"], ["брать", "almak"], ["класть", "koymak (yatay)"], ["ставить", "koymak (dik)"], ["вешать", "asmak"], ["открывать", "açmak"], ["закрывать", "kapamak"], ["включать", "açmak (cihaz)"], ["выключать", "kapatmak (cihaz)"], ["поднимать", "kaldırmak"], ["опускать", "indirmek"], ["толкать", "itmek"], ["тянуть", "çekmek"], ["бросать", "atmak / bırakmak"], ["ловить", "yakalamak"], ["искать", "aramak"], ["находить", "bulmak"], ["терять", "kaybetmek"], ["показывать", "göstermek"], ["получать", "almak (teslim)"], ["отправлять", "göndermek"], ["платить", "ödemek"], ["покупать", "satın almak"], ["продавать", "satmak"], ["заказывать", "sipariş etmek"], ["менять", "değiştirmek"], ["готовить", "hazırlamak / pişirmek"], ["убирать", "temizlemek / toplamak"], ["выбирать", "seçmek"], ["планировать", "planlamak"], ["управлять", "yönetmek"], ["контролировать", "denetlemek / kontrol etmek"], ["ждать", "beklemek"], ["звонить", "aramak (telefon)"], ["смотреть", "bakmak / izlemek"], ["слушать", "dinlemek"], ["играть", "oynamak"], ["петь", "şarkı söylemek"], ["танцевать", "dans etmek"], ["рисовать", "resim yapmak"], ["фотографировать", "fotoğraf çekmek"], ["записывать", "not almak / kaydetmek"], ["повторять", "tekrar etmek"]], "Fiiller — Şantiye / İnşaat": [["строить", "inşa etmek"], ["ремонтировать", "tamir etmek"], ["чинить", "onarmak"], ["копать", "kazmak"], ["резать", "kesmek"], ["мерить", "ölçmek"], ["сваривать", "kaynak yapmak"], ["бетонировать", "betonlamak"], ["армировать", "donatı döşemek"], ["монтировать", "monte etmek"], ["демонтировать", "demonte etmek / sökmek"], ["грузить", "yüklemek"], ["выгружать", "boşaltmak"], ["заливать", "dökmek (beton / sıvı)"], ["уплотнять", "sıkıştırmak"], ["шлифовать", "zımparalamak"], ["красить", "boyamak"], ["штукатурить", "sıvamak"], ["укладывать", "döşemek"], ["устанавливать", "kurmak / yerleştirmek"], ["проверять", "kontrol etmek"], ["останавливать", "durdurmak"], ["запускать", "başlatmak / çalıştırmak"], ["подписывать", "imzalamak"], ["сообщать", "bildirmek / haber vermek"]], "Fiiller — Günlük Yaşam": [["есть", "yemek yemek"], ["пить", "içmek"], ["спать", "uyumak"], ["просыпаться", "uyanmak"], ["вставать", "kalkmak"], ["одеваться", "giyinmek"], ["раздеваться", "soyunmak"], ["мыться", "yıkanmak"], ["умываться", "yüz yıkamak"], ["чистить зубы", "diş fırçalamak"], ["причёсываться", "saç taramak"], ["бриться", "tıraş olmak"], ["готовить еду", "yemek pişirmek"], ["убирать дом", "ev temizlemek"], ["стирать", "çamaşır yıkamak"], ["гладить", "ütülemek"], ["посылать сообщение", "mesaj göndermek"], ["звонить по телефону", "telefon açmak"], ["ходить в магазин", "markete gitmek"], ["путешествовать", "seyahat etmek"], ["заниматься спортом", "spor yapmak"], ["гулять", "gezmek / yürüyüş yapmak"], ["встречаться", "buluşmak"], ["ложиться спать", "uyumaya yatmak"], ["просматривать телефон", "telefona bakmak"], ["читать новости", "haber okumak"]], "Sıfatlar — Boyut / Şekil": [["большой", "büyük"], ["маленький", "küçük"], ["огромный", "devasa / çok büyük"], ["крошечный", "minicik"], ["средний", "orta / ortalama"], ["высокий", "uzun / yüksek"], ["низкий", "kısa / alçak"], ["длинный", "uzun (nesne)"], ["короткий", "kısa (nesne)"], ["широкий", "geniş"], ["узкий", "dar"], ["тонкий", "ince"], ["толстый", "kalın / şişman"], ["тяжёлый", "ağır"], ["лёгкий", "hafif / kolay"], ["прямой", "düz"], ["кривой", "eğri / bükük"], ["круглый", "yuvarlak"], ["квадратный", "kare şeklinde"], ["острый", "keskin / sivri"], ["тупой", "künt / donuk"], ["плоский", "düz / yassı"], ["глубокий", "derin"], ["мелкий", "sığ / küçük"]], "Sıfatlar — Nitelik": [["хороший", "iyi"], ["плохой", "kötü"], ["отличный", "mükemmel"], ["ужасный", "korkunç / berbat"], ["нормальный", "normal"], ["новый", "yeni"], ["старый", "eski / yaşlı"], ["чистый", "temiz"], ["грязный", "kirli"], ["красивый", "güzel"], ["некрасивый", "çirkin"], ["умный", "akıllı"], ["глупый", "aptal"], ["сильный", "güçlü"], ["слабый", "zayıf"], ["быстрый", "hızlı"], ["медленный", "yavaş"], ["добрый", "iyi kalpli / nazik"], ["злой", "kötü / öfkeli"], ["весёлый", "neşeli / şen"], ["грустный", "üzgün"], ["спокойный", "sakin"], ["нервный", "sinirli / gergin"], ["важный", "önemli"], ["интересный", "ilginç"], ["скучный", "sıkıcı"], ["трудный", "zor"], ["простой", "basit / sade"], ["сложный", "karmaşık"], ["правильный", "doğru"], ["неправильный", "yanlış"], ["точный", "kesin / dakik"], ["примерный", "yaklaşık / örnek"], ["целый", "tam / bütün"], ["пустой", "boş"], ["полный", "dolu"], ["свежий", "taze"], ["готовый", "hazır"], ["опасный", "tehlikeli"], ["безопасный", "güvenli"], ["срочный", "acil"], ["нужный", "gerekli / lazım"], ["достаточный", "yeterli"], ["бесплатный", "ücretsiz"], ["дорогой", "pahalı / sevgili"], ["дешёвый", "ucuz"], ["современный", "modern / güncel"], ["официальный", "resmi"]], "Sıfatlar — Duygu / Hal": [["счастливый", "mutlu"], ["несчастный", "mutsuz"], ["довольный", "memnun"], ["недовольный", "memnun olmayan"], ["уставший", "yorgun"], ["бодрый", "dinç / canlı"], ["больной", "hasta"], ["здоровый", "sağlıklı"], ["голодный", "aç"], ["сытый", "tok"], ["занятый", "meşgul"], ["свободный", "serbest / boş"], ["удивлённый", "şaşırmış"], ["испуганный", "korkmuş"], ["обиженный", "alınmış / gücenmiş"], ["смущённый", "utanmış / mahçup"], ["влюблённый", "âşık"], ["одинокий", "yalnız"], ["раздражённый", "sinirlenmiş"], ["расстроенный", "üzülmüş / bozulmuş"]], "Sıfatlar — Renk": [["красный", "kırmızı"], ["синий", "mavi (koyu)"], ["голубой", "açık mavi / gök mavisi"], ["зелёный", "yeşil"], ["жёлтый", "sarı"], ["белый", "beyaz"], ["чёрный", "siyah"], ["серый", "gri"], ["коричневый", "kahverengi"], ["оранжевый", "turuncu"], ["розовый", "pembe"], ["фиолетовый", "mor"], ["золотой", "altın rengi"], ["серебряный", "gümüş rengi"], ["тёмный", "koyu / karanlık"], ["светлый", "açık / aydınlık"], ["яркий", "parlak / canlı"], ["бледный", "soluk / solgun"], ["прозрачный", "saydam / şeffaf"]], "İsimler — Ev / Yaşam": [["дом", "ev"], ["квартира", "daire"], ["комната", "oda"], ["кухня", "mutfak"], ["ванная", "banyo"], ["туалет", "tuvalet"], ["спальня", "yatak odası"], ["гостиная", "oturma odası"], ["балкон", "balkon"], ["подъезд", "apartman girişi"], ["лифт", "asansör"], ["лестница", "merdiven"], ["этаж", "kat"], ["крыша", "çatı"], ["подвал", "bodrum"], ["дверь", "kapı"], ["окно", "pencere"], ["пол", "zemin"], ["потолок", "tavan"], ["стена", "duvar"], ["стол", "masa"], ["стул", "sandalye"], ["кровать", "yatak"], ["диван", "kanepe"], ["шкаф", "dolap"], ["полка", "raf"], ["ковёр", "halı"], ["лампа", "lamba"], ["зеркало", "ayna"], ["холодильник", "buzdolabı"], ["плита", "ocak"], ["микроволновка", "mikrodalga"], ["стиральная машина", "çamaşır makinesi"], ["пылесос", "elektrik süpürgesi"], ["утюг", "ütü"], ["кран", "musluk"], ["душ", "duş"], ["посуда", "mutfak eşyası"], ["ложка", "kaşık"], ["вилка", "çatal"], ["нож", "bıçak"], ["тарелка", "tabak"], ["кастрюля", "tencere"]], "İsimler — Teknoloji": [["телефон", "telefon"], ["смартфон", "akıllı telefon"], ["компьютер", "bilgisayar"], ["ноутбук", "laptop / dizüstü bilgisayar"], ["планшет", "tablet"], ["телевизор", "televizyon"], ["наушники", "kulaklık"], ["зарядник", "şarj aleti"], ["батарея", "pil / batarya"], ["интернет", "internet"], ["Wi-Fi", "Wi-Fi"], ["приложение", "uygulama"], ["сайт", "web sitesi"], ["электронная почта", "e-posta"], ["сообщение", "mesaj"], ["звонок", "arama / zil sesi"], ["фотография", "fotoğraf"], ["видео", "video"], ["камера", "kamera"], ["принтер", "yazıcı"], ["флешка", "flash bellek"], ["провод", "kablo / tel"], ["экран", "ekran"], ["клавиатура", "klavye"], ["мышь", "fare (bilgisayar)"]], "İsimler — Ulaşım": [["машина", "araba"], ["автобус", "otobüs"], ["такси", "taksi"], ["метро", "metro"], ["трамвай", "tramvay"], ["поезд", "tren"], ["самолёт", "uçak"], ["корабль", "gemi"], ["велосипед", "bisiklet"], ["мотоцикл", "motosiklet"], ["грузовик", "kamyon"], ["дорога", "yol"], ["улица", "sokak / cadde"], ["проспект", "bulvar / ana cadde"], ["перекрёсток", "kavşak"], ["светофор", "trafik lambası"], ["парковка", "park yeri"], ["заправка", "benzin istasyonu"], ["остановка", "durak"], ["вокзал", "gar / tren istasyonu"], ["аэропорт", "havalimanı"], ["мост", "köprü"], ["тоннель", "tünel"], ["шоссе", "karayolu / otoyol"], ["тротуар", "kaldırım"], ["билет", "bilet"], ["маршрут", "güzergah"]], "İsimler — Gıda / İçecek": [["вода", "su"], ["чай", "çay"], ["кофе", "kahve"], ["молоко", "süt"], ["сок", "meyve suyu"], ["пиво", "bira"], ["вино", "şarap"], ["водка", "votka"], ["хлеб", "ekmek"], ["мясо", "et"], ["говядина", "sığır eti"], ["свинина", "domuz eti"], ["баранина", "kuzu eti"], ["курица", "tavuk"], ["рыба", "balık"], ["колбаса", "sosis / salam"], ["яйцо", "yumurta"], ["масло", "tereyağı / yağ"], ["сыр", "peynir"], ["йогурт", "yoğurt"], ["сметана", "ekşi krema"], ["соль", "tuz"], ["сахар", "şeker"], ["перец", "karabiber"], ["чеснок", "sarımsak"], ["лук", "soğan"], ["помидор", "domates"], ["огурец", "salatalık"], ["картофель", "patates"], ["морковь", "havuç"], ["капуста", "lahana"], ["перец (овощ)", "biber (sebze)"], ["баклажан", "patlıcan"], ["рис", "pirinç"], ["макароны", "makarna"], ["мука", "un"], ["суп", "çorba"], ["борщ", "borş çorbası"], ["пельмени", "Rus mantısı"], ["салат", "salata"], ["шашлык", "şiş kebap"], ["торт", "pasta"], ["мороженое", "dondurma"], ["шоколад", "çikolata"], ["конфеты", "şeker / bonbon"], ["яблоко", "elma"], ["банан", "muz"], ["апельсин", "portakal"], ["лимон", "limon"], ["виноград", "üzüm"], ["арбуз", "karpuz"], ["клубника", "çilek"], ["груша", "armut"], ["завтрак", "kahvaltı"], ["обед", "öğle yemeği"], ["ужин", "akşam yemeği"], ["десерт", "tatlı"], ["меню", "menü"], ["порция", "porsiyon"], ["вкус", "tat / lezzet"]], "İsimler — Giyim": [["одежда", "giysi / kıyafet"], ["куртка", "mont / ceket"], ["пальто", "palto"], ["пуховик", "şişme mont"], ["пиджак", "takım ceketi"], ["свитер", "kazak"], ["рубашка", "gömlek"], ["футболка", "tişört"], ["майка", "atlet"], ["брюки", "pantolon"], ["джинсы", "kot pantolon"], ["шорты", "şort"], ["юбка", "etek"], ["платье", "elbise"], ["костюм", "takım elbise"], ["шарф", "atkı / eşarp"], ["шапка", "bere / şapka"], ["кепка", "şapka (siperli)"], ["перчатки", "eldiven"], ["носки", "çorap"], ["нижнее бельё", "iç çamaşırı"], ["обувь", "ayakkabı"], ["ботинки", "bot / yarım çizme"], ["кроссовки", "spor ayakkabı"], ["сапоги", "çizme"], ["туфли", "topuklu ayakkabı"], ["сандали", "sandalet"], ["ремень", "kemer"], ["карман", "cep"], ["молния", "fermuar"], ["пуговица", "düğme"]], "İsimler — İnsanlar / Aile": [["человек", "insan"], ["мужчина", "erkek"], ["женщина", "kadın"], ["ребёнок", "çocuk"], ["мальчик", "erkek çocuk"], ["девочка", "kız çocuk"], ["взрослый", "yetişkin"], ["молодёжь", "gençlik"], ["старик", "yaşlı adam"], ["мама", "anne"], ["папа", "baba"], ["сын", "oğul"], ["дочь", "kız evlat"], ["брат", "erkek kardeş"], ["сестра", "kız kardeş"], ["муж", "koca / eş (erkek)"], ["жена", "eş (kadın)"], ["бабушка", "büyükanne"], ["дедушка", "büyükbaba"], ["дядя", "amca / dayı / enişte"], ["тётя", "hala / teyze / yenge"], ["внук", "erkek torun"], ["внучка", "kız torun"], ["племянник", "yeğen (erkek)"], ["племянница", "yeğen (kız)"], ["друг", "erkek arkadaş"], ["подруга", "kız arkadaş"], ["знакомый", "tanıdık"], ["сосед", "komşu"], ["коллега", "iş arkadaşı"], ["начальник", "amir / patron"], ["подчинённый", "ast"], ["клиент", "müşteri"], ["гость", "misafir"], ["пассажир", "yolcu"], ["покупатель", "alıcı / müşteri"]], "İsimler — Meslekler": [["врач", "doktor"], ["хирург", "cerrah"], ["медсестра", "hemşire"], ["учитель", "öğretmen"], ["профессор", "profesör"], ["студент", "öğrenci"], ["инженер", "mühendis"], ["архитектор", "mimar"], ["строитель", "inşaatçı"], ["рабочий", "işçi"], ["водитель", "şoför"], ["продавец", "satıcı"], ["официант", "garson"], ["повар", "aşçı"], ["полицейский", "polis"], ["пожарный", "itfaiyeci"], ["солдат", "asker"], ["переводчик", "tercüman"], ["программист", "programcı"], ["бухгалтер", "muhasebeci"], ["менеджер", "yönetici"], ["директор", "müdür / direktör"], ["адвокат", "avukat"], ["журналист", "gazeteci"], ["охранник", "güvenlik görevlisi"], ["фотограф", "fotoğrafçı"]], "İsimler — Yer / Mekân": [["город", "şehir"], ["деревня", "köy"], ["страна", "ülke"], ["столица", "başkent"], ["площадь", "meydan"], ["парк", "park"], ["лес", "orman"], ["река", "nehir"], ["море", "deniz"], ["озеро", "göl"], ["гора", "dağ"], ["пляж", "plaj"], ["центр", "merkez"], ["район", "bölge / semt"], ["посёлок", "kasaba / yerleşim"], ["граница", "sınır"], ["территория", "alan / bölge"], ["больница", "hastane"], ["аптека", "eczane"], ["школа", "okul"], ["университет", "üniversite"], ["офис", "ofis"], ["гостиница", "otel"], ["ресторан", "restoran"], ["кафе", "kafe"], ["магазин", "mağaza / dükkan"], ["рынок", "pazar"], ["банк", "banka"], ["банкомат", "ATM"], ["почта", "postane"], ["библиотека", "kütüphane"], ["музей", "müze"], ["театр", "tiyatro"], ["стадион", "stadyum"], ["церковь", "kilise"], ["мечеть", "cami"], ["Россия", "Rusya"], ["Турция", "Türkiye"], ["Казахстан", "Kazakistan"], ["Москва", "Moskova"], ["Алматы", "Almatı"], ["Астана", "Astana"], ["Европа", "Avrupa"], ["Азия", "Asya"]], "İsimler — Doğa / Çevre": [["солнце", "güneş"], ["луна", "ay (gök cismi)"], ["звезда", "yıldız"], ["небо", "gökyüzü"], ["облако", "bulut"], ["дождь", "yağmur"], ["снег", "kar"], ["ветер", "rüzgar"], ["гром", "gök gürültüsü"], ["молния", "şimşek / yıldırım"], ["туман", "sis"], ["лёд", "buz"], ["жара", "sıcak hava / sıcaklık"], ["мороз", "dondurucu soğuk"], ["гроза", "fırtına"], ["огонь", "ateş"], ["воздух", "hava"], ["земля", "toprak / yeryüzü"], ["камень", "taş"], ["песок", "kum"], ["трава", "çimen / ot"], ["цветок", "çiçek"], ["дерево", "ağaç"], ["лист", "yaprak"], ["корень", "kök"], ["животное", "hayvan"], ["собака", "köpek"], ["кошка", "kedi"], ["лошадь", "at"], ["корова", "inek"], ["птица", "kuş"], ["рыба (животное)", "balık (hayvan)"], ["климат", "iklim"], ["природа", "doğa"], ["окружающая среда", "çevre"]], "Zaman / Sayılar": [["ноль", "sıfır"], ["один", "bir"], ["два", "iki"], ["три", "üç"], ["четыре", "dört"], ["пять", "beş"], ["шесть", "altı"], ["семь", "yedi"], ["восемь", "sekiz"], ["девять", "dokuz"], ["десять", "on"], ["одиннадцать", "on bir"], ["двенадцать", "on iki"], ["тринадцать", "on üç"], ["пятнадцать", "on beş"], ["двадцать", "yirmi"], ["тридцать", "otuz"], ["сорок", "kırk"], ["пятьдесят", "elli"], ["шестьдесят", "altmış"], ["семьдесят", "yetmiş"], ["восемьдесят", "seksen"], ["девяносто", "doksan"], ["сто", "yüz"], ["двести", "iki yüz"], ["пятьсот", "beş yüz"], ["тысяча", "bin"], ["миллион", "milyon"], ["первый", "birinci / ilk"], ["второй", "ikinci"], ["третий", "üçüncü"], ["четвёртый", "dördüncü"], ["пятый", "beşinci"], ["последний", "son / sonuncu"], ["следующий", "sonraki / bir sonraki"], ["минута", "dakika"], ["час", "saat (süre)"], ["день", "gün"], ["ночь", "gece"], ["утро", "sabah"], ["вечер", "akşam / öğleden sonra"], ["неделя", "hafta"], ["месяц", "ay (takvim)"], ["год", "yıl"], ["век", "yüzyıl"], ["понедельник", "Pazartesi"], ["вторник", "Salı"], ["среда", "Çarşamba"], ["четверг", "Perşembe"], ["пятница", "Cuma"], ["суббота", "Cumartesi"], ["воскресенье", "Pazar"], ["январь", "Ocak"], ["февраль", "Şubat"], ["март", "Mart"], ["апрель", "Nisan"], ["май", "Mayıs"], ["июнь", "Haziran"], ["июль", "Temmuz"], ["август", "Ağustos"], ["сентябрь", "Eylül"], ["октябрь", "Ekim"], ["ноябрь", "Kasım"], ["декабрь", "Aralık"], ["весна", "ilkbahar"], ["лето", "yaz"], ["осень", "sonbahar"], ["зима", "kış"]], "Şantiye / Maden / İnşaat": [["работа", "iş"], ["предприятие", "işletme"], ["компания", "şirket"], ["завод", "fabrika"], ["шахта", "maden ocağı / şaft"], ["карьер", "açık ocak"], ["рудник", "maden"], ["объект", "saha / tesis"], ["стройплощадка", "şantiye"], ["бригада", "ekip / taburcu"], ["смена", "vardiya"], ["прораб", "şantiye şefi"], ["бригадир", "ekip başı"], ["мастер", "usta"], ["оператор", "operatör"], ["экскаватор", "ekskavatör"], ["бульдозер", "buldozer"], ["погрузчик", "yükleyici"], ["кран", "vinç"], ["автокран", "mobil vinç"], ["самосвал", "damperli kamyon"], ["бетономешалка", "beton mikseri"], ["насос", "pompa"], ["водяной насос", "su pompası"], ["генератор", "jeneratör"], ["компрессор", "kompresör"], ["электричество", "elektrik"], ["кабель", "kablo"], ["труба", "boru"], ["шланг", "hortum"], ["бетон", "beton"], ["цемент", "çimento"], ["раствор", "harç / çözelti"], ["арматура", "demir donatı"], ["щебень", "mıcır"], ["кирпич", "tuğla"], ["блок", "blok"], ["доска", "tahta"], ["металл", "metal"], ["сталь", "çelik"], ["болт", "cıvata"], ["гайка", "somun"], ["гвоздь", "çivi"], ["сварка", "kaynak"], ["сварщик", "kaynakçı"], ["молоток", "çekiç"], ["лопата", "kürek"], ["ведро", "kova"], ["рулетка", "şerit metre"], ["уровень", "su terazisi / seviye"], ["дрель", "matkap"], ["болгарка", "taşlama makinesi"], ["перфоратор", "kırıcı matkap"], ["каска", "baret"], ["жилет", "yelek"], ["леса", "iskele"], ["опалубка", "kalıp"], ["фундамент", "temel"], ["колонна", "kolon / sütun"], ["балка", "kiriş"], ["плита", "döşeme / levha"], ["кровля", "çatı"], ["гидроизоляция", "su yalıtımı"], ["безопасность", "güvenlik"], ["опасность", "tehlike"], ["авария", "kaza / arıza"], ["пожар", "yangın"], ["охрана труда", "iş güvenliği"], ["инструктаж", "brifing / güvenlik eğitimi"], ["отчёт", "rapor"], ["план", "plan"], ["чертёж", "teknik çizim"], ["смета", "keşif / bütçe"], ["контракт", "sözleşme"], ["материал", "malzeme"], ["оборудование", "ekipman / donanım"], ["инструмент", "alet"], ["документ", "belge"], ["качество", "kalite"], ["брак", "kusur / ıskarta"], ["контроль", "kontrol"], ["срок", "süre / vade / son tarih"], ["проект", "proje"], ["ремонт", "tamir / tadilat"], ["руда", "cevher"], ["золото", "altın"], ["концентрат", "konsantre"], ["проба", "numune / ayar"], ["флотация", "flotasyon"], ["реагент", "reaktif"]], "Sağlık / Vücut": [["голова", "baş"], ["волосы", "saç"], ["лицо", "yüz"], ["лоб", "alın"], ["глаз", "göz"], ["ухо", "kulak"], ["нос", "burun"], ["рот", "ağız"], ["губы", "dudaklar"], ["зуб", "diş"], ["язык", "dil (organ)"], ["шея", "boyun"], ["плечо", "omuz"], ["рука", "el / kol"], ["локоть", "dirsek"], ["запястье", "bilek"], ["палец", "parmak"], ["ноготь", "tırnak"], ["грудь", "göğüs"], ["живот", "karın / mide"], ["спина", "sırt"], ["бедро", "kalça / uyluk"], ["нога", "ayak / bacak"], ["колено", "diz"], ["щиколотка", "ayak bileği"], ["пятка", "topuk"], ["сердце", "kalp"], ["лёгкие", "akciğer"], ["печень", "karaciğer"], ["почки", "böbrekler"], ["желудок", "mide"], ["кровь", "kan"], ["кость", "kemik"], ["кожа", "deri"], ["мышца", "kas"], ["боль", "ağrı"], ["температура", "ateş"], ["давление", "tansiyon"], ["таблетка", "hap / tablet"], ["укол", "iğne (enjeksiyon)"], ["операция", "ameliyat"], ["рецепт", "reçete"], ["здоровье", "sağlık"], ["болезнь", "hastalık"], ["грипп", "grip"], ["простуда", "nezle / soğuk algınlığı"], ["аллергия", "alerji"], ["рана", "yara"], ["ожог", "yanık"], ["перелом", "kırık"], ["скорая помощь", "ambulans"], ["лечение", "tedavi"], ["симптом", "belirti"]], "Duygular / Psikoloji": [["счастье", "mutluluk"], ["грусть", "üzüntü"], ["страх", "korku"], ["радость", "sevinç"], ["злость", "öfke"], ["любовь", "aşk / sevgi"], ["ненависть", "nefret"], ["удивление", "şaşırma"], ["усталость", "yorgunluk"], ["скука", "sıkıntı / can sıkıntısı"], ["беспокойство", "endişe"], ["надежда", "umut"], ["гордость", "gurur"], ["стыд", "utanç"], ["вина", "suçluluk"], ["уверенность", "güven / özgüven"], ["доверие", "güven"], ["зависть", "kıskançlık"], ["одиночество", "yalnızlık"], ["спокойствие", "huzur / sakinlik"], ["настроение", "ruh hali / keyif"], ["тревога", "kaygı / anksiyete"], ["обида", "kırgınlık / alınma"], ["восторг", "coşku / heyecan"], ["разочарование", "hayal kırıklığı"]], "Eğitim / Kültür": [["слово", "kelime"], ["язык", "dil / lisan"], ["предложение", "cümle"], ["текст", "metin"], ["абзац", "paragraf"], ["глава", "bölüm"], ["книга", "kitap"], ["газета", "gazete"], ["журнал", "dergi"], ["история", "tarih / hikaye"], ["культура", "kültür"], ["наука", "bilim"], ["технология", "teknoloji"], ["искусство", "sanat"], ["музыка", "müzik"], ["кино", "sinema / film"], ["театр", "tiyatro"], ["выставка", "sergi"], ["школа", "okul"], ["урок", "ders"], ["экзамен", "sınav"], ["оценка", "not"], ["ошибка", "hata"], ["пример", "örnek"], ["знание", "bilgi / bilme"], ["образование", "eğitim / öğrenim"]], "Ekonomi / Para": [["деньги", "para"], ["рубль", "ruble"], ["тенге", "tenge"], ["лира", "lira"], ["евро", "euro"], ["доллар", "dolar"], ["цена", "fiyat"], ["стоимость", "değer / maliyet"], ["скидка", "indirim"], ["налог", "vergi"], ["зарплата", "maaş"], ["банк", "banka"], ["счёт", "hesap / fatura"], ["платёж", "ödeme"], ["кредит", "kredi"], ["долг", "borç"], ["прибыль", "kâr"], ["убыток", "zarar / kayıp"], ["бюджет", "bütçe"], ["расходы", "harcamalar / giderler"], ["доходы", "gelir / kazanç"], ["товар", "mal / ürün"], ["контракт", "sözleşme / kontrat"], ["инвестиция", "yatırım"]], "Spor / Hobi": [["спорт", "spor"], ["футбол", "futbol"], ["баскетбол", "basketbol"], ["теннис", "tenis"], ["плавание", "yüzme"], ["бег", "koşu"], ["велосипед", "bisiklet"], ["путешествие", "seyahat"], ["туризм", "turizm"], ["поход", "yürüyüş / kamp"], ["рыбалка", "balık tutma / olta"], ["охота", "av / avcılık"], ["чтение", "okuma"], ["рисование", "çizim / resim yapma"], ["игра", "oyun"], ["победа", "zafer / galibiyet"], ["поражение", "yenilgi"], ["команда", "takım"], ["тренировка", "antrenman"], ["соревнование", "yarışma"], ["чемпионат", "şampiyonluk / şampiyona"], ["рекорд", "rekor"]], "İletişim / Medya": [["сообщение", "mesaj"], ["письмо", "mektup"], ["почта", "posta / postane"], ["социальные сети", "sosyal medya"], ["новость", "haber"], ["реклама", "reklam"], ["видеозвонок", "video arama"], ["конференция", "konferans"], ["совещание", "toplantı"], ["переписка", "yazışma"], ["комментарий", "yorum"], ["объявление", "ilan / duyuru"], ["заявление", "beyan / dilekçe"], ["подтверждение", "onay / teyit"], ["отказ", "ret / reddetme"], ["переговоры", "müzakere / görüşme"], ["контакт", "iletişim / kişi"], ["номер телефона", "telefon numarası"], ["адрес", "adres"], ["подпись", "imza"]], "Yön / Konum / Pozisyon": [["север", "kuzey"], ["юг", "güney"], ["восток", "doğu"], ["запад", "batı"], ["центр", "merkez"], ["угол", "köşe"], ["край", "kenar / kıyı"], ["граница", "sınır"], ["верх", "üst"], ["низ", "alt"], ["начало", "başlangıç"], ["конец", "son / uç"], ["правый", "sağ"], ["левый", "sol"], ["передний", "ön"], ["задний", "arka"], ["внутри", "içinde"], ["снаружи", "dışında"], ["напротив", "karşısında"], ["рядом", "yanında"], ["вокруг", "etrafında"], ["между", "arasında"], ["перед", "önünde"], ["за", "arkasında / ötesinde"]]};
 var SENTS_DATA = [["Как тебя зовут?", "Adın ne?", "Tanışma"], ["Меня зовут Каан.", "Adım Kaan.", "Tanışma"], ["Откуда ты?", "Nerelisin?", "Tanışma"], ["Я из Турции.", "Türkiye'denim.", "Tanışma"], ["Сколько тебе лет?", "Kaç yaşındasın?", "Tanışma"], ["Мне тридцать лет.", "Otuz yaşındayım.", "Tanışma"], ["Кем ты работаешь?", "Ne iş yapıyorsun?", "Tanışma"], ["Я инженер-строитель.", "İnşaat mühendisiyim.", "Tanışma"], ["Приятно познакомиться.", "Memnun oldum.", "Tanışma"], ["Давно вы в Казахстане?", "Kazakistan'dasınız uzun süredir mi?", "Tanışma"], ["Я здесь уже полгода.", "Burada zaten yarım yıldır.", "Tanışma"], ["Вы говорите по-турецки?", "Türkçe biliyor musunuz?", "Tanışma"], ["Нет, только по-русски.", "Hayır, sadece Rusça.", "Tanışma"], ["Я учу русский язык.", "Rusça öğreniyorum.", "Tanışma"], ["Вы живёте на объекте?", "Sahada mı yaşıyorsunuz?", "Tanışma"], ["Рад(а) познакомиться.", "Tanıştığıma memnunum.", "Tanışma"], ["Как вас зовут?", "Adınız ne? (resmi)", "Tanışma"], ["Вы женаты / замужем?", "Evli misiniz?", "Tanışma"], ["У вас есть дети?", "Çocuğunuz var mı?", "Tanışma"], ["Как дела?", "Nasılsın?", "Günlük"], ["Хорошо, спасибо. А ты?", "İyiyim, teşekkürler. Ya sen?", "Günlük"], ["Всё нормально.", "Her şey normal.", "Günlük"], ["Я немного устал.", "Biraz yorgunum.", "Günlük"], ["Всё в порядке.", "Her şey yolunda.", "Günlük"], ["Я не понимаю.", "Anlamıyorum.", "Günlük"], ["Я понимаю.", "Anlıyorum.", "Günlük"], ["Говорите медленнее, пожалуйста.", "Lütfen daha yavaş konuşun.", "Günlük"], ["Повторите, пожалуйста.", "Lütfen tekrar edin.", "Günlük"], ["Что это значит?", "Bu ne anlama geliyor?", "Günlük"], ["Как это по-русски?", "Bu Rusçada nasıl denir?", "Günlük"], ["Переведите, пожалуйста.", "Lütfen çevirin.", "Günlük"], ["Не беспокойся.", "Endişelenme.", "Günlük"], ["Всё будет хорошо.", "Her şey yoluna girecek.", "Günlük"], ["Молодец!", "Aferin! / Bravo!", "Günlük"], ["Хорошая работа!", "Güzel iş!", "Günlük"], ["Договорились.", "Anlaştık.", "Günlük"], ["Конечно.", "Tabii ki.", "Günlük"], ["Может быть.", "Belki.", "Günlük"], ["Не знаю.", "Bilmiyorum.", "Günlük"], ["Посмотрим.", "Görürüz.", "Günlük"], ["Подождите минуту.", "Bir dakika bekleyin.", "Günlük"], ["Спокойной ночи.", "İyi geceler.", "Günlük"], ["Увидимся завтра.", "Yarın görüşürüz.", "Günlük"], ["Пока!", "Görüşürüz!", "Günlük"], ["Счастливого пути!", "İyi yolculuklar!", "Günlük"], ["Удачи!", "İyi şanslar!", "Günlük"], ["Будьте здоровы!", "Sağlıklı olun!", "Günlük"], ["Где находится туалет?", "Tuvalet nerede?", "Yer Sorma"], ["Где ближайшая аптека?", "En yakın eczane nerede?", "Yer Sorma"], ["Как пройти к вокзалу?", "Gara nasıl giderim?", "Yer Sorma"], ["Идите прямо.", "Düz gidin.", "Yer Sorma"], ["Поверните направо.", "Sağa dönün.", "Yer Sorma"], ["Поверните налево.", "Sola dönün.", "Yer Sorma"], ["Это далеко?", "Uzak mı?", "Yer Sorma"], ["Это близко, пять минут пешком.", "Yakın, beş dakika yürüyüş.", "Yer Sorma"], ["На каком этаже?", "Kaçıncı katta?", "Yer Sorma"], ["На третьем этаже, слева.", "Üçüncü katta, solda.", "Yer Sorma"], ["Где остановка автобуса?", "Otobüs durağı nerede?", "Yer Sorma"], ["Это рядом с банком.", "Bu bankanın yanında.", "Yer Sorma"], ["Где здесь банкомат?", "Burada ATM nerede?", "Yer Sorma"], ["Сколько стоит это?", "Bu ne kadar?", "Market"], ["Это очень дорого.", "Bu çok pahalı.", "Market"], ["Есть что-нибудь дешевле?", "Daha ucuz bir şey var mı?", "Market"], ["Дайте мне килограмм яблок.", "Bana bir kilo elma verin.", "Market"], ["У вас есть свежее молоко?", "Taze sütünüz var mı?", "Market"], ["Это не свежее.", "Bu taze değil.", "Market"], ["Я возьму это.", "Bunu alacağım.", "Market"], ["Сколько с меня?", "Benden ne kadar?", "Market"], ["Можно платить картой?", "Kartla ödeyebilir miyim?", "Market"], ["Дайте, пожалуйста, пакет.", "Bir poşet verin lütfen.", "Market"], ["Есть скидка?", "İndirim var mı?", "Market"], ["Покажите, пожалуйста.", "Gösterin lütfen.", "Market"], ["Дайте сдачу.", "Para üstü verin.", "Market"], ["Вот ваш чек.", "İşte fişiniz.", "Market"], ["Мне нужна вода и хлеб.", "Su ve ekmek lazım.", "Market"], ["Полкило сыра, пожалуйста.", "Yarım kilo peynir lütfen.", "Market"], ["Где молочный отдел?", "Süt ürünleri reyonu nerede?", "Market"], ["У вас есть без свинины?", "Domuzsuz var mı?", "Market"], ["Это по акции?", "Bu kampanyada mı?", "Market"], ["Нет, спасибо, это всё.", "Hayır teşekkürler, hepsi bu.", "Market"], ["Столик на двоих, пожалуйста.", "İki kişilik masa lütfen.", "Kafe/Restoran"], ["Что вы посоветуете?", "Ne tavsiye edersiniz?", "Kafe/Restoran"], ["Принесите меню, пожалуйста.", "Menüyü getirin lütfen.", "Kafe/Restoran"], ["Я буду кофе с молоком.", "Sütlü kahve alacağım.", "Kafe/Restoran"], ["Без сахара, пожалуйста.", "Şekersiz lütfen.", "Kafe/Restoran"], ["Мне, пожалуйста, суп и мясо.", "Bana çorba ve et lütfen.", "Kafe/Restoran"], ["Можно без свинины?", "Domuzsuz olur mu?", "Kafe/Restoran"], ["Ещё воды, пожалуйста.", "Biraz daha su lütfen.", "Kafe/Restoran"], ["Счёт, пожалуйста.", "Hesabı getirin lütfen.", "Kafe/Restoran"], ["Всё было очень вкусно.", "Her şey çok lezzetliydi.", "Kafe/Restoran"], ["Здесь есть Wi-Fi?", "Burada Wi-Fi var mı?", "Kafe/Restoran"], ["Какой пароль от Wi-Fi?", "Wi-Fi şifresi ne?", "Kafe/Restoran"], ["Мне можно заплатить картой?", "Kartla ödeyebilir miyim?", "Kafe/Restoran"], ["Это блюдо острое?", "Bu yemek acı mı?", "Kafe/Restoran"], ["Есть ли у вас десерт?", "Tatlınız var mı?", "Kafe/Restoran"], ["Принесите вилку и нож.", "Çatal ve bıçak getirin.", "Kafe/Restoran"], ["Один капучино и чай.", "Bir cappuccino ve çay.", "Kafe/Restoran"], ["Это для меня.", "Bu benim için.", "Kafe/Restoran"], ["Спасибо за обслуживание.", "Servis için teşekkürler.", "Kafe/Restoran"], ["Порция достаточно большая?", "Porsiyon yeterince büyük mü?", "Kafe/Restoran"], ["Вызовите такси, пожалуйста.", "Taksi çağırın lütfen.", "Ulaşım"], ["Отвезите меня на объект.", "Beni sahaya götürün.", "Ulaşım"], ["Сколько стоит до центра?", "Merkeze kaç para?", "Ulaşım"], ["Остановите здесь.", "Burada durun.", "Ulaşım"], ["Мне нужно в аэропорт.", "Havalimanına gitmem gerekiyor.", "Ulaşım"], ["Как долго ехать?", "Kaç dakika sürer?", "Ulaşım"], ["На каком автобусе ехать?", "Hangi otobüsle gideyim?", "Ulaşım"], ["Следующая остановка — моя.", "Bir sonraki durak benimki.", "Ulaşım"], ["Где купить билет?", "Nereden bilet alınır?", "Ulaşım"], ["В котором часу отправляется поезд?", "Tren saat kaçta kalkıyor?", "Ulaşım"], ["Этот автобус идёт до центра?", "Bu otobüs merkeze gidiyor mu?", "Ulaşım"], ["Можно мне выйти здесь?", "Burada inebilir miyim?", "Ulaşım"], ["У меня есть бронь.", "Rezervasyonum var.", "Otel"], ["Мне нужен номер на одного.", "Tek kişilik oda istiyorum.", "Otel"], ["Завтрак включён?", "Kahvaltı dahil mi?", "Otel"], ["Во сколько выезд?", "Çıkış kaçta?", "Otel"], ["Дайте ключ от номера.", "Oda anahtarını verin.", "Otel"], ["В номере нет горячей воды.", "Odada sıcak su yok.", "Otel"], ["Мне нужно разбудить в 6 утра.", "Sabah 6'da uyandırılmam gerekiyor.", "Otel"], ["Можно поменять номер?", "Oda değiştirebilir miyim?", "Otel"], ["Где можно поужинать рядом?", "Yakında akşam yemeği yiyebileceğim yer?", "Otel"], ["Мне нужен врач.", "Doktora ihtiyacım var.", "Doktor/Sağlık"], ["Вызовите скорую!", "Ambulans çağırın!", "Doktor/Sağlık"], ["У меня болит голова.", "Başım ağrıyor.", "Doktor/Sağlık"], ["У меня болит живот.", "Karnım ağrıyor.", "Doktor/Sağlık"], ["У меня высокая температура.", "Ateşim yüksek.", "Doktor/Sağlık"], ["Я поранился.", "Yaralandım.", "Doktor/Sağlık"], ["У меня аллергия на пыль.", "Toza alerjim var.", "Doktor/Sağlık"], ["Где ближайшая больница?", "En yakın hastane nerede?", "Doktor/Sağlık"], ["Дайте обезболивающее.", "Ağrı kesici verin.", "Doktor/Sağlık"], ["Я чувствую себя плохо.", "Kendimi kötü hissediyorum.", "Doktor/Sağlık"], ["Мне нужен рецепт.", "Reçete lazım.", "Doktor/Sağlık"], ["У меня сломана рука.", "Kolum kırık.", "Doktor/Sağlık"], ["Позвоните в скорую помощь.", "Ambulans çağırın.", "Doktor/Sağlık"], ["Доброе утро! Все на месте?", "Günaydın! Herkes yerinde mi?", "Şantiye"], ["Сегодня заливаем бетон.", "Bugün beton dökeceğiz.", "Şantiye"], ["Где экскаватор?", "Ekskavatör nerede?", "Şantiye"], ["Кран не работает.", "Vinç çalışmıyor.", "Şantiye"], ["Насос сломан.", "Pompa bozuk.", "Şantiye"], ["Нет электричества.", "Elektrik yok.", "Şantiye"], ["Генератор сломался.", "Jeneratör bozuldu.", "Şantiye"], ["Это нужно починить срочно.", "Bu acil tamir edilmeli.", "Şantiye"], ["Надень каску.", "Baret tak.", "Şantiye"], ["Здесь опасно, отойди.", "Burası tehlikeli, çekil.", "Şantiye"], ["Сколько материала нужно?", "Ne kadar malzeme lazım?", "Şantiye"], ["Принеси инструменты.", "Aletleri getir.", "Şantiye"], ["Начинаем работу в восемь.", "Sekizde işe başlıyoruz.", "Şantiye"], ["Перерыв на обед в час.", "Öğle molası saat birde.", "Şantiye"], ["Конец смены в шесть вечера.", "Vardiya akşam altıda bitiyor.", "Şantiye"], ["Вызови электрика.", "Elektrikçi çağır.", "Şantiye"], ["Где бригадир?", "Ekip başı nerede?", "Şantiye"], ["Нужен новый насос.", "Yeni pompa lazım.", "Şantiye"], ["Проверь давление воды.", "Su basıncını kontrol et.", "Şantiye"], ["Составь отчёт к вечеру.", "Akşama raporu hazırla.", "Şantiye"], ["Машина застряла в грязи.", "Araç çamura battı.", "Şantiye"], ["Подпиши документы.", "Belgeleri imzala.", "Şantiye"], ["Кто отвечает за сварку?", "Kaynaktan kim sorumlu?", "Şantiye"], ["Проверь качество бетона.", "Beton kalitesini kontrol et.", "Şantiye"], ["Сколько осталось арматуры?", "Ne kadar donatı kaldı?", "Şantiye"], ["Вода попала в шахту.", "Suya maden ocağına doldu.", "Şantiye"], ["Включи компрессор.", "Kompresörü aç.", "Şantiye"], ["Выключи генератор.", "Jeneratörü kapat.", "Şantiye"], ["Это не по чертежу.", "Bu çizime göre değil.", "Şantiye"], ["Нарушение техники безопасности.", "İş güvenliği ihlali.", "Şantiye"], ["Срочно нужен сварщик.", "Acil kaynakçı lazım.", "Şantiye"], ["Замени шланг.", "Hortumu değiştir.", "Şantiye"], ["Смени смену, ты устал.", "Vardiyayı bırak, yoruldun.", "Şantiye"], ["Сделай замер.", "Ölçüm al.", "Şantiye"], ["Привязь надета?", "Emniyet kemeri takılı mı?", "Şantiye"], ["Сегодня приезжает проверка.", "Bugün denetim geliyor.", "Şantiye"], ["Готовьте документацию.", "Belgeleri hazırlayın.", "Şantiye"], ["Бетон застыл.", "Beton dondu / sertleşti.", "Şantiye"], ["Нужна лебёдка.", "Vinç halatı lazım.", "Şantiye"], ["Перчатки обязательны.", "Eldiven zorunlu.", "Şantiye"], ["Работаем до темноты.", "Karanlığa kadar çalışıyoruz.", "Şantiye"], ["Объект сдаётся в сентябре.", "Saha Eylül'de teslim ediliyor.", "Şantiye"], ["Заказали щебень.", "Mıcır sipariş ettik.", "Şantiye"], ["Труба лопнула.", "Boru patladı.", "Şantiye"], ["Всем надеть жилеты.", "Herkes yelek takacak.", "Şantiye"], ["Который час?", "Saat kaç?", "Zaman"], ["Сейчас три часа.", "Şu an saat üç.", "Zaman"], ["В котором часу встреча?", "Toplantı saat kaçta?", "Zaman"], ["Завтра у нас собрание.", "Yarın toplantımız var.", "Zaman"], ["На следующей неделе.", "Gelecek hafta.", "Zaman"], ["Какой сегодня день?", "Bugün haftanın hangi günü?", "Zaman"], ["Сегодня понедельник, второе октября.", "Bugün Pazartesi, ikinci Ekim.", "Zaman"], ["Когда начинается смена?", "Vardiya ne zaman başlıyor?", "Zaman"], ["Смена начинается в восемь.", "Vardiya sekizde başlıyor.", "Zaman"], ["Сколько тебе нужно времени?", "Ne kadar zamana ihtiyacın var?", "Zaman"], ["Через час.", "Bir saat sonra.", "Zaman"], ["Уже поздно.", "Artık geç.", "Zaman"], ["Ещё рано.", "Daha erken.", "Zaman"], ["Он опоздал на полчаса.", "Yarım saat geç kaldı.", "Zaman"], ["Какая сегодня погода?", "Bugün hava nasıl?", "Hava Durumu"], ["Сегодня очень жарко.", "Bugün çok sıcak.", "Hava Durumu"], ["На улице холодно.", "Dışarısı soğuk.", "Hava Durumu"], ["Идёт дождь.", "Yağmur yağıyor.", "Hava Durumu"], ["Идёт снег.", "Kar yağıyor.", "Hava Durumu"], ["Сильный ветер.", "Rüzgar güçlü.", "Hava Durumu"], ["Туман на дороге.", "Yolda sis var.", "Hava Durumu"], ["Завтра будет ясно.", "Yarın hava açık olacak.", "Hava Durumu"], ["Сколько градусов?", "Kaç derece?", "Hava Durumu"], ["Минус двадцать градусов.", "Eksi yirmi derece.", "Hava Durumu"], ["Надень куртку, холодно.", "Montunu giy, soğuk.", "Hava Durumu"], ["Гроза будет вечером.", "Akşam fırtına olacak.", "Hava Durumu"], ["Позвоните мне.", "Beni arayın.", "İletişim"], ["Ваш номер телефона?", "Telefon numaranız nedir?", "İletişim"], ["Напишите мне сообщение.", "Bana mesaj yazın.", "İletişim"], ["Я не слышу вас.", "Sizi duyamıyorum.", "İletişim"], ["Говорите громче.", "Daha yüksek sesle konuşun.", "İletişim"], ["Связь плохая.", "Bağlantı kötü.", "İletişim"], ["Отправьте мне файл.", "Dosyayı bana gönderin.", "İletişim"], ["Я перезвоню.", "Geri arayacağım.", "İletişim"], ["Он недоступен.", "O anda ulaşılamıyor.", "İletişim"], ["Оставьте сообщение.", "Mesaj bırakın.", "İletişim"], ["Я первый раз в Казахстане.", "Kazakistan'a ilk gelişim.", "Seyahat"], ["Мне нужна виза?", "Vize lazım mı?", "Seyahat"], ["Где обменять валюту?", "Döviz nerede bozulur?", "Seyahat"], ["Мой паспорт у вас?", "Pasaportum sizde mi?", "Seyahat"], ["Как добраться до города?", "Şehre nasıl gidilir?", "Seyahat"], ["Мне нужен переводчик.", "Tercüman lazım.", "Seyahat"], ["Этот автобус идёт в центр?", "Bu otobüs merkeze gidiyor mu?", "Seyahat"], ["Когда следующий рейс?", "Bir sonraki sefer ne zaman?", "Seyahat"], ["У меня потерялся багаж.", "Bagajım kayboldu.", "Seyahat"], ["Мне нужна помощь.", "Yardıma ihtiyacım var.", "Seyahat"], ["Я с тобой согласен.", "Seninle aynı fikirdeyim.", "Duygu/Fikir"], ["Я не согласен.", "Katılmıyorum.", "Duygu/Fikir"], ["Это хорошая идея.", "Bu iyi bir fikir.", "Duygu/Fikir"], ["Мне кажется, это неправильно.", "Bana yanlış gibi geliyor.", "Duygu/Fikir"], ["Я доволен результатом.", "Sonuçtan memnunum.", "Duygu/Fikir"], ["Мне это не нравится.", "Bundan hoşlanmıyorum.", "Duygu/Fikir"], ["Я рад(а) тебя видеть.", "Seni görmekten memnunum.", "Duygu/Fikir"], ["Мне очень жаль.", "Çok üzgünüm.", "Duygu/Fikir"], ["Это не моя вина.", "Bu benim hatam değil.", "Duygu/Fikir"], ["Я так не думаю.", "Ben öyle düşünmüyorum.", "Duygu/Fikir"], ["Ты уверен?", "Emin misin?", "Duygu/Fikir"], ["Я не уверен.", "Emin değilim.", "Duygu/Fikir"], ["Осторожно!", "Dikkat!", "Acil"], ["Пожар!", "Yangın!", "Acil"], ["На помощь!", "İmdat!", "Acil"], ["Стоп! Остановись!", "Dur! Dur!", "Acil"], ["Вызовите полицию.", "Polis çağırın.", "Acil"], ["Я заблудился.", "Kayboldum.", "Acil"], ["Мне плохо.", "Kendimi kötü hissediyorum.", "Acil"], ["Несчастный случай на работе.", "İş kazası.", "Acil"], ["Человек упал в шахту.", "Adam maden ocağına düştü.", "Acil"], ["Немедленно эвакуируйте всех.", "Herkesi hemen tahliye edin.", "Acil"], ["Можно?", "Olur mu? / Mümkün mü?", "Genel"], ["Пожалуйста.", "Lütfen / Rica ederim.", "Genel"], ["Спасибо большое.", "Çok teşekkürler.", "Genel"], ["Не за что.", "Rica ederim / Bir şey değil.", "Genel"], ["Извините.", "Affedersiniz / Özür dilerim.", "Genel"], ["Ничего страшного.", "Önemli değil.", "Genel"], ["Хватит.", "Yeter.", "Genel"], ["Хорошо, понял(а).", "Tamam, anladım.", "Genel"], ["Это правда?", "Bu doğru mu?", "Genel"], ["Это неправда.", "Bu doğru değil.", "Genel"], ["У меня нет денег.", "Param yok.", "Genel"], ["Это бесплатно?", "Bu ücretsiz mi?", "Genel"], ["Можно сфотографировать?", "Fotoğraf çekebilir miyim?", "Genel"], ["Где здесь Wi-Fi?", "Burada Wi-Fi nerede?", "Genel"], ["Напишите это, пожалуйста.", "Lütfen bunu yazın.", "Genel"], ["Рад(а) помочь.", "Yardımcı olmaktan mutluluk duyarım.", "Genel"]];
-/* ===== DATA (injected) ===== */
-/* DICT_DATA and SENTS_DATA defined above this block */
+var EXAMPLES_DATA = {"вода": "Дай мне стакан воды.", "хлеб": "Я купил свежий хлеб.", "работа": "Моя работа очень трудная.", "насос": "Насос не работает сегодня.", "спасибо": "Спасибо за помощь!", "здравствуйте": "Здравствуйте, как дела?", "сколько": "Сколько это стоит?", "сегодня": "Сегодня хорошая погода.", "опасно": "Здесь очень опасно.", "хорошо": "Всё хорошо, спасибо.", "деньги": "У меня нет денег.", "время": "У меня нет времени.", "дом": "Я иду домой.", "вечер": "Добрый вечер!", "утро": "Доброе утро!", "друг": "Это мой хороший друг.", "город": "Это большой город.", "машина": "Моя машина старая.", "человек": "Он хороший человек.", "день": "Какой сегодня день?", "ночь": "Спокойной ночи!", "мама": "Моя мама готовит ужин.", "папа": "Мой папа работает много.", "вода ": "Вода очень холодная.", "чай": "Хочешь чай или кофе?", "кофе": "Я пью кофе утром.", "молоко": "Купи молоко в магазине.", "магазин": "Магазин закрыт сейчас.", "рынок": "На рынке всё дешевле.", "больница": "Где ближайшая больница?", "врач": "Мне нужен врач.", "работать": "Я работаю каждый день.", "идти": "Я иду на работу.", "ехать": "Мы едем в город.", "говорить": "Я не говорю по-русски.", "знать": "Я не знаю это слово.", "хотеть": "Я хочу есть.", "видеть": "Я вижу гору.", "делать": "Что ты делаешь?", "читать": "Я люблю читать книги.", "писать": "Он пишет отчёт.", "понимать": "Я понимаю немного.", "любить": "Я люблю свою работу.", "есть": "Я хочу есть.", "пить": "Хочешь пить?", "спать": "Я хочу спать.", "купить": "Я хочу купить хлеб.", "помогать": "Помоги мне, пожалуйста.", "ждать": "Подожди меня здесь.", "большой": "Это очень большой дом.", "маленький": "У меня маленькая комната.", "новый": "Это мой новый телефон.", "старый": "Это старая машина.", "хороший": "Он хороший человек.", "плохой": "Это плохая идея.", "быстрый": "Это быстрый поезд.", "красивый": "Какой красивый город!", "опасный": "Это опасная работа.", "важный": "Это очень важный документ.", "трудный": "Русский язык трудный.", "горячий": "Кофе очень горячий.", "холодный": "Вода холодная.", "дорогой": "Это слишком дорого.", "дешёвый": "Это дешёвый магазин.", "мужчина": "Этот мужчина — инженер.", "женщина": "Эта женщина — врач.", "ребёнок": "Ребёнок спит.", "завод": "Я работаю на заводе.", "шахта": "В шахте темно.", "бетон": "Бетон ещё не застыл.", "кран": "Кран поднимает груз.", "электричество": "Нет электричества.", "труба": "Труба лопнула.", "безопасность": "Безопасность — это важно.", "авария": "На дороге была авария.", "отчёт": "Я пишу отчёт.", "план": "Какой у нас план?", "материал": "Нужен новый материал.", "инструмент": "Где мои инструменты?", "документ": "Подпиши документ.", "проект": "Это большой проект.", "голова": "У меня болит голова.", "рука": "Я поранил руку.", "нога": "У меня болит нога.", "сердце": "Сердце бьётся быстро.", "боль": "У меня сильная боль.", "здоровье": "Здоровье важнее денег.", "телефон": "Где мой телефон?", "компьютер": "Компьютер не работает.", "интернет": "Нет интернета.", "автобус": "Я еду на автобусе.", "поезд": "Поезд опоздал.", "самолёт": "Самолёт улетел.", "дорога": "Дорога очень длинная.", "улица": "Я живу на этой улице.", "мясо": "Я не ем мясо.", "рыба": "Рыба очень свежая.", "яйцо": "Дай два яйца.", "соль": "Передай соль, пожалуйста.", "сахар": "Кофе без сахара.", "яблоко": "Я ем яблоко каждый день.", "завтрак": "Завтрак готов.", "обед": "Обед в час дня.", "ужин": "Ужин будет поздно.", "книга": "Это интересная книга.", "язык": "Русский язык трудный.", "слово": "Я не знаю это слово.", "урок": "У нас урок русского.", "ошибка": "Это моя ошибка.", "счастье": "Счастье в мелочах.", "страх": "У него большой страх.", "любовь": "Любовь — это всё.", "надежда": "Есть ещё надежда.", "один": "У меня один брат.", "два": "Дай мне два билета.", "три": "Три часа дня.", "сто": "Это стоит сто рублей.", "первый": "Это мой первый день.", "последний": "Это последний автобус.", "минута": "Подожди одну минуту.", "час": "Через час встреча.", "неделя": "На следующей неделе.", "месяц": "Прошёл целый месяц.", "год": "С Новым годом!", "солнце": "Солнце светит ярко.", "дождь": "Идёт сильный дождь.", "снег": "На улице снег.", "ветер": "Дует холодный ветер.", "огонь": "Осторожно, огонь!", "собака": "У меня есть собака.", "кошка": "Кошка спит на диване.", "дерево": "Высокое дерево в парке.", "цветок": "Красивый цветок.", "деньги ": "Где мои деньги?", "цена": "Какая цена?", "банк": "Где ближайший банк?", "зарплата": "Зарплата маленькая.", "спорт": "Я люблю спорт.", "футбол": "Мы смотрим футбол.", "игра": "Это интересная игра.", "команда": "Наша команда выиграла.", "север": "Идём на север.", "юг": "Юг тёплый.", "правый": "Поверни на правую сторону.", "левый": "Левая рука болит.", "я": "Я из Турции.", "ты": "Откуда ты?", "он": "Он опоздал на полчаса.", "вы": "Давно вы в Казахстане?", "мой": "Мой паспорт у вас?", "моя": "Следующая остановка — моя.", "ваш": "Вот ваш чек.", "себя": "Я чувствую себя плохо.", "кто": "Кто отвечает за сварку?", "что": "Что это значит?", "этот": "Этот автобус идёт до центра?", "это": "Что это значит?", "ничего": "Ничего страшного.", "все": "Доброе утро! Все на месте?", "какой": "Какой пароль от Wi-Fi?", "нет": "Нет, только по-русски.", "и": "Мне нужна вода и хлеб.", "не": "Я не понимаю.", "когда": "Когда начинается смена?", "так как": "Я так не думаю.", "а": "Рад(а) познакомиться.", "до": "Сколько стоит до центра?", "здесь": "Я здесь уже полгода.", "откуда": "Откуда ты?", "сейчас": "Сейчас три часа.", "уже": "Я здесь уже полгода.", "ещё": "Ещё воды, пожалуйста.", "ещё раз": "Ещё воды, пожалуйста.", "долго": "Как долго ехать?", "плохо": "Я чувствую себя плохо.", "очень": "Это очень дорого.", "немного": "Я немного устал.", "только": "Нет, только по-русски.", "может быть": "Может быть.", "рано": "Ещё рано.", "поздно": "Уже поздно.", "рядом": "Это рядом с банком.", "далеко": "Это далеко?", "близко": "Это близко, пять минут пешком.", "направо": "Поверните направо.", "налево": "Поверните налево.", "прямо": "Идите прямо.", "слева": "На третьем этаже, слева.", "быть": "Может быть.", "нужно": "Мне нужно в аэропорт.", "платить": "Можно платить картой?", "сильный": "Сильный ветер.", "несчастный": "Несчастный случай на работе.", "туалет": "Где находится туалет?", "нож": "Принесите вилку и нож.", "сообщение": "Напишите мне сообщение.", "такси": "Вызовите такси, пожалуйста.", "остановка": "Где остановка автобуса?", "аэропорт": "Мне нужно в аэропорт.", "билет": "Где купить билет?", "суп": "Мне, пожалуйста, суп и мясо.", "десерт": "Есть ли у вас десерт?", "меню": "Принесите меню, пожалуйста.", "порция": "Порция достаточно большая?", "перчатки": "Перчатки обязательны.", "инженер": "Я инженер-строитель.", "строитель": "Я инженер-строитель.", "переводчик": "Мне нужен переводчик.", "центр": "Этот автобус идёт в центр?", "аптека": "Где ближайшая аптека?", "банкомат": "Где здесь банкомат?", "туман": "Туман на дороге.", "гроза": "Гроза будет вечером.", "пять": "Это близко, пять минут пешком.", "шесть": "Конец смены в шесть вечера.", "восемь": "Начинаем работу в восемь.", "двадцать": "Минус двадцать градусов.", "тридцать": "Мне тридцать лет.", "следующий": "Когда следующий рейс?", "понедельник": "Сегодня понедельник, второе октября.", "объект": "Отвезите меня на объект.", "смена": "Когда начинается смена?", "бригадир": "Где бригадир?", "экскаватор": "Где экскаватор?", "генератор": "Генератор сломался.", "компрессор": "Включи компрессор.", "шланг": "Замени шланг.", "щебень": "Заказали щебень.", "сварщик": "Срочно нужен сварщик.", "качество": "Проверь качество бетона.", "живот": "У меня болит живот.", "температура": "У меня высокая температура.", "давление": "Проверь давление воды.", "рецепт": "Мне нужен рецепт.", "аллергия": "У меня аллергия на пыль.", "вина": "Это не моя вина.", "скидка": "Есть скидка?", "счёт": "Счёт, пожалуйста.", "номер телефона": "Мне нужен номер на одного.", "конец": "Конец смены в шесть вечера.", "за": "Спасибо за обслуживание."};
+var STORIES_DATA = [{"title": "Первый день на работе", "title_tr": "İşteki İlk Gün", "level": "A1-A2", "ru": "Меня зовут Каан. Я инженер из Турции. Сегодня мой первый день на объекте в Казахстане. Утром я встал рано. Было очень холодно. Я выпил кофе и пошёл на работу. На объекте я встретил бригадира. Он сказал: «Доброе утро! Надень каску.» Я надел каску и жилет. Потом мы пошли смотреть насос. Насос не работал. Бригадир сказал: «Это опасно. Нужно починить.» Мы работали весь день. Вечером я очень устал, но был доволен. Это был хороший первый день.", "tr": "Adım Kaan. Türkiye'den bir mühendisim. Bugün Kazakistan'daki sahada ilk günüm. Sabah erken kalktım. Hava çok soğuktu. Bir kahve içtim ve işe gittim. Sahada ekip başıyla tanıştım. «Günaydın! Baret tak» dedi. Bareti ve yeleği taktım. Sonra pompayı görmeye gittik. Pompa çalışmıyordu. Ekip başı «Bu tehlikeli. Tamir edilmeli» dedi. Bütün gün çalıştık. Akşam çok yorgundum ama memnundum. Güzel bir ilk gündü."}, {"title": "В магазине", "title_tr": "Markette", "level": "A1", "ru": "После работы я пошёл в магазин. Мне нужны были хлеб, вода и молоко. В магазине было много людей. Я взял хлеб и молоко. Потом я искал воду. Я спросил продавца: «Извините, где вода?» Она ответила: «Вода там, справа.» Я взял пять литров воды. На кассе я спросил: «Сколько с меня?» Продавец сказала: «Тысяча тенге.» Я заплатил картой и сказал спасибо. Это было легко!", "tr": "İşten sonra markete gittim. Ekmek, su ve süt lazımdı. Markette çok insan vardı. Ekmek ve süt aldım. Sonra su aradım. Satıcıya sordum: «Affedersiniz, su nerede?» «Su orada, sağda» diye cevap verdi. Beş litre su aldım. Kasada sordum: «Benden ne kadar?» Satıcı «Bin tenge» dedi. Kartla ödedim ve teşekkür ettim. Kolaydı!"}, {"title": "Авария на объекте", "title_tr": "Sahada Kaza", "level": "A2", "ru": "Однажды на объекте произошла авария. Большая труба лопнула, и вода пошла в шахту. Бригадир крикнул: «Все наверх! Быстро!» Все рабочие поднялись. Никто не пострадал. Это было очень опасно. Мы выключили насос и генератор. Потом мы ждали инженера. Я позвонил начальнику и рассказал о проблеме. Он сказал: «Хорошо, что все живы. Машины можно починить, людей — нет.» Через два часа мы починили трубу. Работа продолжилась. Я понял: безопасность — это самое важное.", "tr": "Bir gün sahada bir kaza oldu. Büyük bir boru patladı ve su maden ocağına doldu. Ekip başı bağırdı: «Herkes yukarı! Çabuk!» Tüm işçiler yukarı çıktı. Kimse zarar görmedi. Çok tehlikeliydi. Pompayı ve jeneratörü kapattık. Sonra mühendisi bekledik. Patronu aradım ve sorunu anlattım. «İyi ki herkes sağ. Makineler tamir edilir, insanlar edilmez» dedi. İki saat sonra boruyu tamir ettik. İş devam etti. Anladım ki: güvenlik en önemli şey."}, {"title": "Изучаю русский язык", "title_tr": "Rusça Öğreniyorum", "level": "A2", "ru": "Я живу в Казахстане, но не говорю по-русски хорошо. Это большая проблема. На работе все говорят по-русски. Поэтому я решил учить язык. Каждый вечер я учу новые слова. Сначала было очень трудно. Русские буквы — другие. Но теперь я знаю алфавит. Я знаю уже много слов: вода, работа, насос, спасибо. Я могу сказать простые предложения. Мой друг сказал: «Ты делаешь успехи!» Я был рад. Через несколько месяцев я хочу говорить свободно. Я думаю, что всё возможно, если стараться.", "tr": "Kazakistan'da yaşıyorum ama Rusçayı iyi konuşamıyorum. Bu büyük bir sorun. İşte herkes Rusça konuşuyor. Bu yüzden dili öğrenmeye karar verdim. Her akşam yeni kelimeler öğreniyorum. Önce çok zordu. Rus harfleri farklı. Ama artık alfabeyi biliyorum. Şimdiden çok kelime biliyorum: su, iş, pompa, teşekkür. Basit cümleler söyleyebiliyorum. Arkadaşım «İlerleme kaydediyorsun!» dedi. Sevindim. Birkaç ay sonra akıcı konuşmak istiyorum. Çabalarsan her şeyin mümkün olduğunu düşünüyorum."}, {"title": "Выходной день", "title_tr": "İzin Günü", "level": "A2-B1", "ru": "В субботу у меня был выходной. Я не работал. Утром я долго спал. Потом я выпил кофе и читал книгу. Погода была хорошая, и я решил гулять. Я пошёл в центр города. Там был большой рынок. Я купил фрукты: яблоки, виноград и апельсины. Потом я сидел в кафе и пил чай. Рядом сидел один русский мужчина. Мы немного поговорили. Он спросил, откуда я. Я ответил, что из Турции. Он сказал: «Добро пожаловать в Казахстан!» Это был приятный день. Иногда нужно отдыхать, не только работать.", "tr": "Cumartesi izin günümdü. Çalışmadım. Sabah uzun uyudum. Sonra kahve içtim ve kitap okudum. Hava güzeldi ve gezmeye karar verdim. Şehrin merkezine gittim. Orada büyük bir pazar vardı. Meyve aldım: elma, üzüm ve portakal. Sonra bir kafede oturup çay içtim. Yanımda bir Rus adam oturuyordu. Biraz konuştuk. Nereli olduğumu sordu. Türkiye'den olduğumu söyledim. «Kazakistan'a hoş geldin!» dedi. Hoş bir gündü. Bazen sadece çalışmak değil, dinlenmek de gerek."}];
+/* ===== DATA (injected): DICT_DATA, SENTS_DATA, EXAMPLES_DATA, STORIES_DATA ===== */
 
 /* ===== DB ===== */
 var LS='vru_db', LSS='vru_set';
-var db = lsGet(LS, {cards:[]});
+var db = lsGet(LS, null);
 var cfg = lsGet(LSS, {theme:'dark'});
+
+/* First run: seed ALL dictionary words as cards */
+if(!db || !db.cards){
+  db = { cards:[], seeded:false };
+}
+if(!db.seeded){
+  seedCards();
+}
+function seedCards(){
+  var existing={};
+  for(var i=0;i<db.cards.length;i++) existing[db.cards[i].ru.toLowerCase()]=1;
+  var keys=Object.keys(DICT_DATA);
+  for(var k=0;k<keys.length;k++){
+    var arr=DICT_DATA[keys[k]];
+    for(var j=0;j<arr.length;j++){
+      var ru=arr[j][0], tr=arr[j][1];
+      if(existing[ru.toLowerCase()]) continue;
+      existing[ru.toLowerCase()]=1;
+      var ex = EXAMPLES_DATA[ru] || '';
+      db.cards.push({ id:uid(), ru:ru, tr:tr, ex:ex, cat:keys[k], box:0, due:Date.now(), cr:Date.now() });
+    }
+  }
+  db.seeded=true;
+  lsSave();
+}
 
 function lsGet(k,def){
   try{ var v=localStorage.getItem(k); return v?JSON.parse(v):def; }catch(e){ return def; }
@@ -556,7 +619,8 @@ function lsGet(k,def){
 function lsSave(){
   try{ localStorage.setItem(LS,JSON.stringify(db)); localStorage.setItem(LSS,JSON.stringify(cfg)); }catch(e){}
 }
-function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6)+(_uidc++); }
+var _uidc=0;
 function esc(s){
   return (s||'').replace(/[&<>"]/g,function(m){
     return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];
@@ -580,10 +644,13 @@ function go(v){
   var nbs=document.querySelectorAll('.nb');
   for(var j=0;j<nbs.length;j++) nbs[j].classList.remove('on');
   var nb=$('n-'+v); if(nb) nb.classList.add('on');
+  // scroll active view to top
+  var av=$('v-'+v); if(av) av.scrollTop=0;
   if(v==='home') renderHome();
-  if(v==='review') startReview();
-  if(v==='words'){ renderMine(); buildDictCats(); }
+  if(v==='review') renderReviewHome();
+  if(v==='words'){ renderMine(); }
   if(v==='gram') initSents();
+  if(v==='stories') renderStoryList();
   if(v==='settings') $('theme-sel').value=cfg.theme||'dark';
 }
 
@@ -652,13 +719,14 @@ function doTranslate(){
 
 /* ===== CARDS ===== */
 var LBOX=[0,1,2,4,8,16];
+var KNOWN_BOX=3; /* box >= 3 considered "known/learned" */
 function addCard(ru,trW,ex){
   ru=(ru||'').trim();
   if(!ru) return false;
   for(var i=0;i<db.cards.length;i++){
     if(db.cards[i].ru.toLowerCase()===ru.toLowerCase()){ toast('Bu kart zaten var'); return false; }
   }
-  db.cards.unshift({ id:uid(), ru:ru, tr:(trW||'').trim(), ex:(ex||'').trim(), box:0, due:Date.now(), cr:Date.now() });
+  db.cards.unshift({ id:uid(), ru:ru, tr:(trW||'').trim(), ex:(ex||'').trim(), cat:'Eklenenler', box:0, due:Date.now(), cr:Date.now() });
   lsSave(); toast('Karta eklendi ✓'); renderHome();
   return true;
 }
@@ -685,7 +753,7 @@ function renderHome(){
   var now=Date.now();
   var tot=db.cards.length;
   var due=db.cards.filter(function(c){ return c.due<=now; }).length;
-  var ok=db.cards.filter(function(c){ return c.box>=4; }).length;
+  var ok=db.cards.filter(function(c){ return c.box>=KNOWN_BOX; }).length;
   $('st-total').textContent=tot;
   $('st-due').textContent=due;
   $('st-ok').textContent=ok;
@@ -693,7 +761,7 @@ function renderHome(){
   var rc=$('home-recent');
   var recent=db.cards.slice(0,6);
   if(!recent.length){
-    rc.innerHTML='<div class="empty">Henüz kart yok.<br>Hazineden ekle ya da Belge bölümüne geç.</div>';
+    rc.innerHTML='<div class="empty">Henüz kart yok.</div>';
     return;
   }
   rc.innerHTML=recent.map(function(c){
@@ -702,102 +770,64 @@ function renderHome(){
   }).join('');
 }
 
-/* ===== MINE ===== */
+/* ===== MINE (Kartlarım) ===== */
 function renderMine(){
   var q=(($('mine-search').value)||'').toLowerCase();
   var list=db.cards.filter(function(c){
     return !q || c.ru.toLowerCase().indexOf(q)>=0 || (c.tr||'').toLowerCase().indexOf(q)>=0;
   });
   var el=$('mine-list');
+  var cnt=$('mine-count');
+  if(cnt) cnt.textContent=db.cards.length+' kelime';
   if(!list.length){ el.innerHTML='<div class="empty">Kart bulunamadı.</div>'; return; }
-  el.innerHTML=list.map(function(c){
+  var show=list.slice(0,400);
+  el.innerHTML=show.map(function(c){
     return '<div class="item"><div style="min-width:0;flex:1;"><div class="rw">'+esc(c.ru)+
       '</div><div class="trw">'+esc(c.tr||'—')+'</div></div><span class="boxtag">B'+c.box+'</span>'+
       '<button class="btn bs bsm" style="padding:7px;width:32px;height:32px;" data-act="speak" data-w="'+esc(c.ru)+'">🔊</button>'+
       '<button class="btn bs bsm" style="padding:7px;width:32px;height:32px;" data-act="del" data-id="'+c.id+'">🗑️</button></div>';
-  }).join('');
+  }).join('') + (list.length>400 ? '<div class="muted" style="text-align:center;padding:10px;font-size:12px;">'+(list.length-400)+' kelime daha… (aramayı kullan)</div>':'');
 }
 
-/* ===== DICT ===== */
-var _dcat='', _dsearch='';
-function buildDictCats(){
-  var row=$('cat-row');
-  if(row.getAttribute('data-built')) { renderDict(); return; }
-  row.setAttribute('data-built','1');
-  var cats=Object.keys(DICT_DATA);
-  var h='<button class="catbtn on" data-act="dcat" data-cat="">Tümü</button>';
-  for(var i=0;i<cats.length;i++){
-    h+='<button class="catbtn" data-act="dcat" data-cat="'+esc(cats[i])+'">'+esc(cats[i])+'</button>';
-  }
-  row.innerHTML=h;
-  renderDict();
-}
-function setDCat(c,btn){
-  _dcat=c;
-  var btns=document.querySelectorAll('#cat-row .catbtn');
-  for(var i=0;i<btns.length;i++) btns[i].classList.remove('on');
-  btn.classList.add('on');
-  renderDict();
-}
-function filterDict(){ _dsearch=($('dict-search').value||'').toLowerCase(); renderDict(); }
-function renderDict(){
-  var mySet={};
-  for(var i=0;i<db.cards.length;i++) mySet[db.cards[i].ru.toLowerCase()]=1;
-  var items=[];
-  if(_dcat && DICT_DATA[_dcat]) items=DICT_DATA[_dcat].slice();
-  else {
-    var keys=Object.keys(DICT_DATA);
-    for(var k=0;k<keys.length;k++) items=items.concat(DICT_DATA[keys[k]]);
-  }
-  if(_dsearch){
-    items=items.filter(function(pair){
-      return pair[0].toLowerCase().indexOf(_dsearch)>=0 || pair[1].toLowerCase().indexOf(_dsearch)>=0;
-    });
-  }
-  var el=$('dict-list');
-  if(!items.length){ el.innerHTML='<div class="empty">Kelime bulunamadı.</div>'; return; }
-  var show=items.slice(0,300);
-  el.innerHTML=show.map(function(pair){
-    var r=pair[0], t=pair[1];
-    var has=mySet[r.toLowerCase()];
-    return '<div class="vi"><span class="ru">'+esc(r)+'</span><span class="tr">'+esc(t)+'</span>'+
-      '<button class="addbtn'+(has?' done':'')+'" data-act="dadd" data-ru="'+esc(r)+'" data-tr="'+esc(t)+'">'+(has?'✓':'+')+'</button></div>';
-  }).join('') + (items.length>300 ? '<div class="muted" style="text-align:center;padding:8px;font-size:12px;">'+(items.length-300)+' daha…</div>' : '');
+/* ===== REVIEW HOME (known/unknown split) ===== */
+function renderReviewHome(){
+  var unknown=db.cards.filter(function(c){ return c.box<KNOWN_BOX; });
+  var known=db.cards.filter(function(c){ return c.box>=KNOWN_BOX; });
+  $('rev-unknown-count').textContent=unknown.length;
+  $('rev-known-count').textContent=known.length;
 }
 
-/* ===== SEGMENT ===== */
-function wSeg(s){
-  var keys=['mine','dict','add'];
-  for(var i=0;i<keys.length;i++){
-    $('wp-'+keys[i]).style.display='none';
-    $('sg-'+keys[i]).classList.remove('on');
-  }
-  $('wp-'+s).style.display='block';
-  $('sg-'+s).classList.add('on');
-  if(s==='mine') renderMine();
-  if(s==='dict') buildDictCats();
-}
-
-/* ===== REVIEW ===== */
-var queue=[], cur=null, flipped=false, revDir='rutr', revTotal=0;
+/* ===== REVIEW SESSION ===== */
+var queue=[], cur=null, flipped=false, revDir='rutr', revTotal=0, revMode='unknown';
 function toggleRevDir(){
   revDir = revDir==='rutr' ? 'trru' : 'rutr';
   $('rev-dir-btn').textContent = revDir==='rutr' ? 'RU → TR' : 'TR → RU';
-  startReview();
 }
-function startReview(){
-  var now=Date.now();
-  queue=db.cards.filter(function(c){ return c.due<=now; });
-  if(!queue.length){
-    queue=db.cards.slice().sort(function(){ return Math.random()-0.5; }).slice(0,Math.min(20,db.cards.length));
+function startReview(mode){
+  revMode=mode;
+  var pool;
+  if(mode==='known') pool=db.cards.filter(function(c){ return c.box>=KNOWN_BOX; });
+  else pool=db.cards.filter(function(c){ return c.box<KNOWN_BOX; });
+  if(!pool.length){
+    toast(mode==='known'?'Henüz öğrenilmiş kelime yok':'Bilinmeyen kelime kalmadı 🎉');
+    return;
   }
-  queue=queue.slice().sort(function(){ return Math.random()-0.5; });
-  revTotal=queue.length; flipped=false; showCard();
+  queue=pool.slice().sort(function(){ return Math.random()-0.5; });
+  revTotal=queue.length; flipped=false;
+  $('rev-home').style.display='none';
+  $('rev-session').style.display='block';
+  $('rev-mode-label').textContent = mode==='known' ? 'Bildiklerim' : 'Bilmediklerim';
+  showCard();
+}
+function endSession(){
+  $('rev-session').style.display='none';
+  $('rev-home').style.display='block';
+  renderReviewHome();
 }
 function showCard(){
   var w=$('rev-wrap'), prog=$('rev-prog');
   if(!queue.length){
-    w.innerHTML='<div class="empty">🎉 Harika! Bugünlük tekrar bitti.<br>Yeni kelime için Kelimeler → Hazine bölümüne geç.</div>';
+    w.innerHTML='<div class="empty">🎉 Bu liste bitti!<br><button class="btn bp" style="margin-top:14px;display:inline-flex;" data-act="endsession">← Tekrar menüsüne dön</button></div>';
     prog.style.width='100%';
     return;
   }
@@ -806,18 +836,22 @@ function showCard(){
   cur=queue[0]; flipped=false;
   var front=revDir==='rutr'?cur.ru:cur.tr;
   var back=revDir==='rutr'?cur.tr:cur.ru;
+  /* example sentence shown under the RUSSIAN word on both faces for reading practice */
+  var exHtml = cur.ex ? '<div class="f-ex">📖 '+esc(cur.ex)+'</div>' : '';
   w.innerHTML=
     '<div class="flip-wrap" data-act="flip">'+
       '<div class="flip-inner" id="fi">'+
         '<div class="flip-face">'+
           '<div class="f-word">'+esc(front)+'</div>'+
-          '<button class="btn bs bsm" style="padding:7px 11px;margin-top:4px;" data-act="speakcard" data-w="'+esc(cur.ru)+'">🔊</button>'+
+          (revDir==='rutr' && cur.ex ? '<div class="f-ex">📖 '+esc(cur.ex)+'</div>' : '')+
+          '<button class="btn bs bsm" style="padding:7px 11px;margin-top:6px;" data-act="speakcard" data-w="'+esc(cur.ru)+'">🔊</button>'+
           '<div class="f-hint">Dokunarak cevabı gör</div>'+
         '</div>'+
         '<div class="flip-face flip-back">'+
-          '<div class="f-word" style="font-size:22px;">'+esc(front)+'</div>'+
-          '<div class="f-trans">'+esc(back)+'</div>'+
-          (cur.ex?'<div class="f-ex">'+esc(cur.ex)+'</div>':'')+
+          '<div class="f-word" style="font-size:24px;">'+esc(cur.ru)+'</div>'+
+          '<div class="f-trans">'+esc(cur.tr)+'</div>'+
+          exHtml+
+          '<button class="btn bs bsm" style="padding:6px 10px;margin-top:4px;" data-act="speakcard" data-w="'+esc(cur.ru)+'">🔊 Dinle</button>'+
         '</div>'+
       '</div>'+
     '</div>'+
@@ -825,7 +859,7 @@ function showCard(){
       '<button class="btn bd bh" data-act="grade" data-ok="0">✗ Bilmiyorum</button>'+
       '<button class="btn bo bh" data-act="grade" data-ok="1">✓ Biliyorum</button>'+
     '</div>'+
-    '<div class="muted" style="text-align:center;margin-top:10px;font-size:12px;">Kalan: '+queue.length+' kart &nbsp;·&nbsp; Kutu: B'+cur.box+'</div>';
+    '<div class="muted" style="text-align:center;margin-top:10px;font-size:12px;">Kalan: '+queue.length+' &nbsp;·&nbsp; Kutu: B'+cur.box+'</div>';
 }
 function flipCard(){
   if(flipped) return;
@@ -834,7 +868,7 @@ function flipCard(){
   setTimeout(function(){ var b=$('rev-btns'); if(b) b.style.display='flex'; },220);
 }
 function grade(ok){
-  if(ok) cur.box=Math.min(5,cur.box+1); else cur.box=0;
+  if(ok) cur.box=Math.min(5,cur.box+1); else cur.box=Math.max(0,cur.box-1);
   cur.due=Date.now()+LBOX[cur.box]*86400000;
   lsSave(); queue.shift(); showCard();
 }
@@ -921,12 +955,16 @@ function splitSentences(text){
   if(buf.trim()) out.push(buf);
   return out.map(function(s){ return s.trim(); }).filter(function(s){ return s.length>0; });
 }
-function renderReader(text){
-  var mySet={};
+function buildKnownSet(){
+  var s={};
   for(var i=0;i<db.cards.length;i++){
     var key=db.cards[i].ru.toLowerCase().replace(/[^а-яёa-z0-9]/gi,'');
-    mySet[key]=1;
+    if(key) s[key]=1;
   }
+  return s;
+}
+function renderReader(text){
+  var mySet=buildKnownSet();
   var el=$('reader');
   var sents=splitSentences(text);
   if(!sents.length){ el.innerHTML='<div class="empty">Metin boş.</div>'; return; }
@@ -1020,6 +1058,64 @@ function phraseTranslate(sl,tl){
   });
 }
 
+/* ===== STORIES ===== */
+var curStory=null, storyShowTr=false;
+function renderStoryList(){
+  if($('story-reader').style.display==='block') return; /* don't reset if reading */
+  var el=$('story-list');
+  el.innerHTML=STORIES_DATA.map(function(st,i){
+    return '<div class="card" data-act="openstory" data-i="'+i+'" style="cursor:pointer;">'+
+      '<div style="display:flex;align-items:center;gap:8px;">'+
+      '<div style="font-size:26px;">📖</div>'+
+      '<div style="flex:1;min-width:0;"><div style="font-weight:900;font-size:15px;">'+esc(st.title)+'</div>'+
+      '<div class="muted" style="font-size:12px;margin-top:2px;">'+esc(st.title_tr)+'</div></div>'+
+      '<span class="boxtag">'+esc(st.level)+'</span></div></div>';
+  }).join('');
+}
+function openStory(i){
+  curStory=STORIES_DATA[i];
+  storyShowTr=false;
+  $('story-list').style.display='none';
+  $('story-reader').style.display='block';
+  renderStoryReader();
+}
+function closeStory(){
+  $('story-reader').style.display='none';
+  $('story-list').style.display='block';
+  curStory=null;
+}
+function renderStoryReader(){
+  var mySet=buildKnownSet();
+  var st=curStory;
+  var sents=splitSentences(st.ru);
+  var body='';
+  for(var si=0;si<sents.length;si++){
+    var s=sents[si];
+    var parts=s.split(/(\s+)/);
+    var toks='';
+    for(var p=0;p<parts.length;p++){
+      var w=parts[p];
+      if(/^\s+$/.test(w)){ toks+=w; continue; }
+      var clean=w.replace(/[^А-Яа-яЁё]/g,'').toLowerCase();
+      if(!clean || clean.length<2){ toks+=esc(w); continue; }
+      var known=mySet[clean];
+      toks+='<span class="tok'+(known?'':' new')+'" data-act="tapword" data-w="'+esc(w)+'">'+esc(w)+'</span>';
+    }
+    body+='<span class="sent-block" data-sent="'+esc(s)+'">'+toks+
+      '<span class="sentbtn" data-act="tapsent" data-s="'+esc(s)+'">↦</span></span> ';
+  }
+  var trBlock = storyShowTr ? '<div class="card" style="margin-top:12px;border-left:3px solid var(--pri);"><div class="sec" style="margin-top:0;">Türkçe Çeviri</div><div style="line-height:1.7;font-size:14px;">'+esc(st.tr)+'</div></div>' : '';
+  $('story-reader').innerHTML=
+    '<button class="btn bs bsm" style="margin-bottom:12px;" data-act="closestory">← Hikayeler</button>'+
+    '<div style="font-size:20px;font-weight:980;margin-bottom:2px;">'+esc(st.title)+'</div>'+
+    '<div class="muted" style="font-size:13px;margin-bottom:12px;">'+esc(st.title_tr)+' · '+esc(st.level)+'</div>'+
+    '<div class="card"><div class="reader">'+body+'</div></div>'+
+    '<button class="btn bp" style="width:100%;" data-act="toggletr">'+(storyShowTr?'Türkçeyi gizle':'Türkçe çeviriyi göster')+'</button>'+
+    trBlock+
+    '<div style="height:8px;"></div>';
+}
+function toggleStoryTr(){ storyShowTr=!storyShowTr; renderStoryReader(); }
+
 /* ===== GRAMMAR ===== */
 function gtog(btn){
   var body=btn.nextElementSibling;
@@ -1059,7 +1155,7 @@ function renderSents(cat){
 /* ===== SETTINGS ===== */
 function setTheme(t){ cfg.theme=t; document.documentElement.setAttribute('data-theme',t); lsSave(); }
 function exportData(){
-  var blob=new Blob([JSON.stringify({cards:db.cards,cfg:cfg,v:3},null,2)],{type:'application/json'});
+  var blob=new Blob([JSON.stringify({cards:db.cards,seeded:db.seeded,cfg:cfg,v:4},null,2)],{type:'application/json'});
   var a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   a.download='vocabify-ru-yedek.json';
@@ -1073,7 +1169,7 @@ function importData(ev){
     try{
       var d=JSON.parse(rd.result);
       if(d.cards && d.cards.length!==undefined){
-        db.cards=d.cards;
+        db.cards=d.cards; db.seeded=true;
         if(d.cfg){ cfg=d.cfg; setTheme(cfg.theme||'dark'); }
         lsSave(); toast('İçe aktarıldı ✓'); renderHome(); renderMine();
       } else toast('Geçersiz dosya');
@@ -1083,41 +1179,33 @@ function importData(ev){
   ev.target.value='';
 }
 function resetAll(){
-  if(!confirm('Tüm kartlar silinsin mi? Bu geri alınamaz.')) return;
-  db.cards=[]; lsSave(); toast('Sıfırlandı'); renderHome(); renderMine();
+  if(!confirm('Tüm kartlar silinip sözlük baştan yüklensin mi?')) return;
+  db={ cards:[], seeded:false };
+  seedCards();
+  toast('Sıfırlandı'); renderHome(); renderMine();
 }
 
-/* ===== EVENT DELEGATION (single listener for everything) ===== */
+/* ===== EVENT DELEGATION ===== */
 document.addEventListener('click', function(e){
-  var t=e.target;
-  // climb up to find an element with data-act or data-nav
-  var node=t;
+  var node=e.target;
   while(node && node!==document.body){
     var act=node.getAttribute && node.getAttribute('data-act');
     var nav=node.getAttribute && node.getAttribute('data-nav');
     if(nav){ go(nav); return; }
-    if(act){
-      handleAct(act,node,e);
-      return;
-    }
+    if(act){ handleAct(act,node,e); return; }
     node=node.parentElement;
   }
 });
 function handleAct(act,node,e){
-  if(act==='go'){ go(node.getAttribute('data-view')); }
-  else if(act==='swap'){ swapDir(); }
+  if(act==='swap'){ swapDir(); }
   else if(act==='translate'){ doTranslate(); }
   else if(act==='wseg'){ wSeg(node.getAttribute('data-seg')); }
   else if(act==='manualadd'){ manualAdd(); }
-  else if(act==='dcat'){ setDCat(node.getAttribute('data-cat'),node); }
-  else if(act==='dadd'){
-    var ru=node.getAttribute('data-ru'), tr2=node.getAttribute('data-tr');
-    if(addCard(ru,tr2,'')){ node.textContent='✓'; node.className='addbtn done'; renderDict(); }
-  }
   else if(act==='del'){ delCard(node.getAttribute('data-id')); }
   else if(act==='speak' || act==='speakcard'){ e.stopPropagation(); speak(node.getAttribute('data-w')); }
-  else if(act==='startreview'){ go('review'); }
+  else if(act==='revstart'){ startReview(node.getAttribute('data-mode')); }
   else if(act==='revdir'){ toggleRevDir(); }
+  else if(act==='endsession'){ endSession(); }
   else if(act==='flip'){ flipCard(); }
   else if(act==='grade'){ grade(node.getAttribute('data-ok')==='1'); }
   else if(act==='loadpasted'){ loadPasted(); }
@@ -1127,25 +1215,35 @@ function handleAct(act,node,e){
   else if(act==='phrasetr'){ phraseTranslate(node.getAttribute('data-sl'),node.getAttribute('data-tl')); }
   else if(act==='gtog'){ gtog(node); }
   else if(act==='scat'){ filSents(node.getAttribute('data-cat'),node); }
+  else if(act==='openstory'){ openStory(parseInt(node.getAttribute('data-i'),10)); }
+  else if(act==='closestory'){ closeStory(); }
+  else if(act==='toggletr'){ toggleStoryTr(); }
   else if(act==='speaktest'){ speak('Доброе утро! Как дела?'); }
   else if(act==='export'){ exportData(); }
   else if(act==='pickimport'){ $('imp-in').click(); }
   else if(act==='reset'){ resetAll(); }
   else if(act==='settings'){ go('settings'); }
 }
+function wSeg(s){
+  var keys=['mine','add'];
+  for(var i=0;i<keys.length;i++){
+    $('wp-'+keys[i]).style.display='none';
+    $('sg-'+keys[i]).classList.remove('on');
+  }
+  $('wp-'+s).style.display='block';
+  $('sg-'+s).classList.add('on');
+  if(s==='mine') renderMine();
+}
 
-/* keydown for enter in translate input */
 document.addEventListener('keydown', function(e){
   if(e.key==='Enter' && e.target && e.target.id==='q-input'){ doTranslate(); }
 });
 
-/* file inputs */
 function bindInputs(){
   var pdfIn=$('pdf-in'); if(pdfIn) pdfIn.addEventListener('change',loadPdf);
   var impIn=$('imp-in'); if(impIn) impIn.addEventListener('change',importData);
   var themeSel=$('theme-sel'); if(themeSel) themeSel.addEventListener('change',function(){ setTheme(this.value); });
   var ms=$('mine-search'); if(ms) ms.addEventListener('input',renderMine);
-  var ds=$('dict-search'); if(ds) ds.addEventListener('input',filterDict);
   var qi=$('q-input'); if(qi) qi.addEventListener('input',function(){ $('q-result').innerHTML=''; });
 }
 
