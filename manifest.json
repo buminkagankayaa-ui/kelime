@@ -1,0 +1,36 @@
+{
+  "name": "Vocabify Rusça",
+  "short_name": "Vocabify",
+  "description": "Rusça kelime öğrenme uygulaması",
+  "start_url": "/kelime/",
+  "scope": "/kelime/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0c1220",
+  "theme_color": "#6c63ff",
+  "lang": "tr",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Günlük Yaz",
+      "url": "/kelime/?tab=journal"
+    },
+    {
+      "name": "Tekrar Et",
+      "url": "/kelime/?tab=review"
+    }
+  ]
+}
