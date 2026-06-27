@@ -7,6 +7,11 @@
 <meta name="theme-color" content="#0c1220">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Vocabify">
 <style>
 :root{--si:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
 --hh:58px;--nh:68px;
@@ -62,7 +67,7 @@ transition:transform .1s,opacity .1s;}
 .bh{flex:1;}.bsm{padding:7px 10px;border-radius:10px;font-size:11px;font-weight:800;}
 .row{display:flex;gap:8px;}
 input,textarea,select{width:100%;background:var(--card2);border:1px solid var(--brd);
-color:var(--txt);border-radius:12px;padding:11px 12px;font-size:14px;font-family:inherit;outline:none;}
+color:var(--txt);border-radius:12px;padding:11px 12px;font-size:16px;font-family:inherit;outline:none;}
 input:focus,textarea:focus{border-color:var(--pri);}
 textarea{resize:vertical;min-height:120px;line-height:1.6;}
 .fl{display:block;font-size:10px;font-weight:800;color:var(--mut);margin:0 0 4px 2px;
@@ -623,18 +628,28 @@ function beginSession(){
   showQuestion();
 }
 
-/* Build question list — rotate types, no repetition of same type consecutively */
+/* Build question list — smart type selection */
 function buildQueue(cards,qt){
-  var hasJ=(db.journals||[]).some(function(j){return j.ru&&j.ru.length>30;});
+  var journals=(db.journals||[]).filter(function(j){return j.ru&&j.ru.length>30;});
+  var hasJ=journals.length>0;
   return cards.map(function(card,i){
     var type=qt;
     if(qt==='mix'){
-      var opts=hasJ?['kelime','bosluk','paragraf']:['kelime','bosluk','kelime'];
-      type=opts[i%opts.length];
+      /* Rotate: kelime → bosluk → paragraf, but only if feasible */
+      var cycle=i%3;
+      if(cycle===0) type='kelime';
+      else if(cycle===1) type='bosluk';
+      else type='paragraf';
     }
-    if(type==='paragraf'&&!(db.journals||[]).length) type='kelime';
-    if(type==='bosluk'){var q=buildBosluk(card);return q;}
-    if(type==='paragraf') return buildParagraf(card);
+    if(type==='bosluk'){
+      var q=buildBosluk(card);
+      /* buildBosluk returns kelime if no sentence found — that's ok */
+      return q;
+    }
+    if(type==='paragraf'){
+      /* Use journal if available, otherwise use story */
+      return buildParagraf(card,hasJ);
+    }
     return buildKelime(card);
   });
 }
@@ -697,6 +712,22 @@ function buildBosluk(card){
       if(mi2>0&&mi2<words2.length-1){sentence=s2;break;}
     }
   }
+  /* Try to build a template sentence based on word type */
+  if(!sentence){
+    var templates={
+      'fiil': ['Я '+card.ru+' каждый день.','Он '+card.ru+' на стройке.','Мы '+card.ru+' вместе.'],
+      'isim': ['Это '+card.ru+'.','Там есть '+card.ru+'.'],
+      'sıfat': ['Это очень '+card.ru+'.','Погода была '+card.ru+'.'],
+      'zarf': ['Я работаю '+card.ru+'.','Он говорит '+card.ru+'.'],
+    };
+    var tlist=templates[card.tip]||[];
+    /* only use template if word fits (min 4 words, word in middle) */
+    for(var ti=0;ti<tlist.length;ti++){
+      var tw=tlist[ti].split(/\s+/);
+      var mi=findMatchIdx(tw,stem);
+      if(mi>0&&mi<tw.length-1){sentence=tlist[ti];break;}
+    }
+  }
   if(!sentence) return buildKelime(card);
   var blanked=blankWord(sentence,card.ru,stem);
   if(blanked===sentence) return buildKelime(card);
@@ -735,22 +766,67 @@ function shuffleChoices(correct,wrongs){
   return shuffled;
 }
 
-function buildParagraf(card){
+function buildParagraf(card,hasJ){
   var journals=(db.journals||[]).filter(function(j){return j.ru&&j.ru.length>30;});
-  if(!journals.length) return buildKelime(card);
-  var j=journals[Math.floor(Math.random()*journals.length)];
-  var sents=j.ru.split(/[.!?]+/).map(function(s){return s.trim();}).filter(function(s){return s.length>10;});
-  var para=sents.slice(0,Math.min(3,sents.length)).join('. ')+'.';
-  /* date question with real wrong dates from other journals */
-  var wrongDates=journals.filter(function(x){return x.id!==j.id;}).map(function(x){return x.date;});
-  while(wrongDates.length<3)wrongDates.push(['01.07.2026','15.07.2026','03.08.2026'][wrongDates.length]||'---');
+
+  /* If journals exist, use them */
+  if(journals.length>0){
+    var j=journals[Math.floor(Math.random()*journals.length)];
+    var sents=j.ru.split(/[.!?]+/).map(function(s){return s.trim();}).filter(function(s){return s.length>10;});
+    var para=sents.slice(0,Math.min(3,sents.length)).join('. ')+'.';
+    var wrongDates=journals.filter(function(x){return x.id!==j.id;}).map(function(x){return x.date;});
+    while(wrongDates.length<3){
+      var fallbacks=['01.07.2026','15.07.2026','03.08.2026','25.06.2026'];
+      wrongDates.push(fallbacks[wrongDates.length]||'01.08.2026');
+    }
+    return {
+      type:'paragraf',card:card,
+      q:'Paragrafı oku — soruyu cevapla:',
+      para:para,
+      sentence:'Bu günlük hangi tarihte yazıldı?',
+      choices:shuffleChoices(j.date,wrongDates.slice(0,3)),
+      correct:j.date
+    };
+  }
+
+  /* No journals — use a story for reading comprehension */
+  var st=STORIES_DATA[Math.floor(Math.random()*STORIES_DATA.length)];
+  var sents2=st.ru.split(/[.!?]+/).map(function(s){return s.trim();}).filter(function(s){return s.length>8;});
+  var para2=sents2.slice(0,3).join('. ')+'.';
+
+  /* Build a comprehension question about the story content */
+  /* Find a sentence containing the card's word */
+  var stem=ruStem(card.ru);
+  var targetSent='';
+  for(var si=0;si<sents2.length;si++){
+    if(ruStemMatch(sents2[si],stem)){targetSent=sents2[si];break;}
+  }
+
+  /* If card word appears in story, ask what it means */
+  if(targetSent){
+    var wrongs=getDistractors(card,'tr',3);
+    while(wrongs.length<3)wrongs.push('—');
+    return {
+      type:'paragraf',card:card,
+      q:'Hikayeyi oku — altı çizili kelimenin anlamı nedir?',
+      para:para2+' → '+card.ru,
+      sentence:'"'+card.ru+'" kelimesinin Türkçesi nedir?',
+      choices:shuffleChoices(card.tr,wrongs),
+      correct:card.tr
+    };
+  }
+
+  /* Fallback: story title question */
+  var wrongTitles=STORIES_DATA.filter(function(x){return x.title!==st.title;})
+    .map(function(x){return x.title_tr;}).slice(0,3);
+  while(wrongTitles.length<3)wrongTitles.push('—');
   return {
     type:'paragraf',card:card,
-    q:'Paragrafı oku — soruyu cevapla:',
-    para:para,
-    sentence:'Bu günlük hangi tarihte yazıldı?',
-    choices:shuffleChoices(j.date,wrongDates.slice(0,3)),
-    correct:j.date
+    q:'Hikayeyi oku — soruyu cevapla:',
+    para:para2,
+    sentence:'Bu hikayenin Türkçe adı nedir?',
+    choices:shuffleChoices(st.title_tr,wrongTitles),
+    correct:st.title_tr
   };
 }
 
@@ -1142,6 +1218,26 @@ if('speechSynthesis' in window)speechSynthesis.onvoiceschanged=function(){};
 bindInputs();
 go('journal');
 
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('/sw.js').then(function(reg){
+      console.log('SW registered:', reg.scope);
+    }).catch(function(err){
+      console.log('SW failed:', err);
+    });
+  });
+}
+/* Handle ?tab= shortcuts */
+(function(){
+  var tab = new URLSearchParams(window.location.search).get('tab');
+  if(tab) window.addEventListener('DOMContentLoaded', function(){ 
+    var el = document.querySelector('[data-nav="'+tab+'"]');
+    if(el) el.click();
+  });
+})();
 </script>
 </body>
 </html>
