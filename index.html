@@ -16,7 +16,7 @@
 [data-theme=light]{--bg:#f0f4ff;--card:#fff;--card2:#e8edf8;--brd:#c5d0e8;--txt:#0f172a;--mut:#5a6a88;--pri:#4f46e5;--pri2:#7c3aed;--dan:#dc2626;--ok:#059669;--amb:#d97706;}
 [data-theme=ocean]{--bg:#04111e;--card:#081d33;--card2:#061628;--brd:#0e3a60;--txt:#def0ff;--mut:#6ba8cf;--pri:#22d3ee;--pri2:#38bdf8;}
 [data-theme=emerald]{--bg:#06130f;--card:#092118;--card2:#071a13;--brd:#135240;--txt:#eafff5;--mut:#5fbc95;--pri:#10b981;--pri2:#34d399;}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 html,body{margin:0;padding:0;width:100%;height:100%;position:fixed;overflow:hidden;
 background:var(--bg);color:var(--txt);
 font-family:-apple-system,BlinkMacSystemFont,'Inter',Roboto,sans-serif;
@@ -136,6 +136,10 @@ border-radius:50%;animation:sp .7s linear infinite;display:inline-block;vertical
 .rev-meta{font-size:10px;color:var(--mut);font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
 .rev-q{font-size:13px;color:var(--mut);margin-top:6px;}
 .rev-sentence{font-size:16px;font-weight:700;line-height:1.7;margin:8px 0;}
+.skip-btn{background:var(--card2);border:1px dashed var(--brd);border-radius:12px;
+padding:9px;font-size:12px;font-weight:800;color:var(--mut);cursor:pointer;width:100%;
+margin-bottom:6px;text-align:center;}
+.skip-btn:active{opacity:.7;}
 .streak-badge{display:inline-block;font-size:11px;font-weight:900;color:var(--wrn);
 margin-left:6px;animation:pulse .4s ease;}
 @keyframes pulse{0%{transform:scale(1);}50%{transform:scale(1.2);}100%{transform:scale(1);}}
@@ -184,9 +188,7 @@ display:flex;align-items:center;gap:7px;text-align:left;transition:all .15s;}
       <div style="font-size:18px;font-weight:980;">G&uuml;nl&uuml;k</div>
       <button class="btn bp bsm" data-act="newjournal">+ Yeni</button>
     </div>
-    <div class="card" style="font-size:12px;color:var(--mut);line-height:1.6;margin-bottom:10px;">
-      &#128221; Yaz &rarr; Kaydet &rarr; Kopyala &rarr; Claude&apos;a yapıştır &rarr; D&uuml;zelt &rarr; Yeni kelimeleri ekle
-    </div>
+
     <div id="journal-list"></div>
   </div>
   <div id="jform-wrap" style="display:none;">
@@ -214,7 +216,9 @@ display:flex;align-items:center;gap:7px;text-align:left;transition:all .15s;}
     <span class="muted" style="font-size:11px;font-weight:800;" id="word-count">0</span>
   </div>
   <input id="word-search" placeholder="&#128269; Ara&hellip;" style="margin-bottom:8px;">
-  <div class="catscroll" id="word-cats"></div>
+  <select id="word-cat-sel" style="margin-bottom:8px;padding:10px;font-size:13px;font-weight:700;">
+    <option value="Tümü">Tümü</option>
+  </select>
   <div class="card" style="padding:12px;margin-bottom:10px;">
     <div class="fl" style="margin-bottom:8px;">+ Yeni Kelime</div>
     <div class="row" style="margin-bottom:6px;">
@@ -335,6 +339,7 @@ display:flex;align-items:center;gap:7px;text-align:left;transition:all .15s;}
   </div>
   <p class="muted" style="text-align:center;font-size:10px;margin-top:12px;">Vocabify v6 · Kağan · 2026</p>
 </section>
+<div id="extract-modal" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.7);padding:20px;overflow-y:auto;"></div>
 </div>
 
 <nav>
@@ -346,7 +351,7 @@ display:flex;align-items:center;gap:7px;text-align:left;transition:all .15s;}
 <div class="toast" id="toast"></div>
 <script>
 var WORDS_DATA=[{"ru": "да", "tr": "evet", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "нет", "tr": "hayır", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "привет", "tr": "merhaba", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "пока", "tr": "hoşça kal", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "спасибо", "tr": "teşekkür ederim", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "пожалуйста", "tr": "lütfen / rica ederim", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "извините", "tr": "afedersiniz", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "доброе утро", "tr": "günaydın", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "добрый день", "tr": "iyi günler", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "добрый вечер", "tr": "iyi akşamlar", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "спокойной ночи", "tr": "iyi geceler", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "как дела?", "tr": "nasılsın?", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "хорошо", "tr": "iyi", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "плохо", "tr": "kötü", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "очень", "tr": "çok", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "большой", "tr": "büyük", "cat": "sıfat", "tip": "sıfat", "zaman": "", "sahis": "", "box": 0}, {"ru": "маленький", "tr": "küçük", "cat": "sıfat", "tip": "sıfat", "zaman": "", "sahis": "", "box": 0}, {"ru": "красивый", "tr": "güzel", "cat": "sıfat", "tip": "sıfat", "zaman": "", "sahis": "", "box": 0}, {"ru": "молодой", "tr": "genç", "cat": "sıfat", "tip": "sıfat", "zaman": "", "sahis": "", "box": 0}, {"ru": "старый", "tr": "yaşlı / eski", "cat": "sıfat", "tip": "sıfat", "zaman": "", "sahis": "", "box": 0}, {"ru": "новый", "tr": "yeni", "cat": "sıfat", "tip": "sıfat", "zaman": "", "sahis": "", "box": 0}, {"ru": "давай", "tr": "hadi", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "можно", "tr": "mümkün / olur", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "нужно", "tr": "gerekli / lazım", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "идти", "tr": "gitmek (yürüyerek)", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "видеть", "tr": "görmek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "делать", "tr": "yapmak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "говорить", "tr": "konuşmak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "давать", "tr": "vermek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "знать", "tr": "bilmek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "любить", "tr": "sevmek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "понимать", "tr": "anlamak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "думать", "tr": "düşünmek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "работать", "tr": "çalışmak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "жить", "tr": "yaşamak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "ехать", "tr": "gitmek (araçla)", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "пить", "tr": "içmek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "кушать", "tr": "yemek yemek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "брать", "tr": "almak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "спрашивать", "tr": "sormak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "отвечать", "tr": "cevap vermek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "помогать", "tr": "yardım etmek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "смотреть", "tr": "izlemek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "слушать", "tr": "dinlemek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "хотеть", "tr": "istemek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "мочь", "tr": "yapabilmek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "ждать", "tr": "beklemek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "находить", "tr": "bulmak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "терять", "tr": "kaybetmek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "играть", "tr": "oynamak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "искать", "tr": "aramak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "сидеть", "tr": "oturmak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "стоять", "tr": "ayakta durmak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "начинать", "tr": "başlamak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "заканчивать", "tr": "bitirmek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "лето", "tr": "yaz", "cat": "zaman", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "зима", "tr": "kış", "cat": "zaman", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "весна", "tr": "ilkbahar", "cat": "zaman", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "осень", "tr": "sonbahar", "cat": "zaman", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "дом", "tr": "ev", "cat": "yer", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "улица", "tr": "sokak", "cat": "yer", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "город", "tr": "şehir", "cat": "yer", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "страна", "tr": "ülke", "cat": "yer", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "мир", "tr": "dünya", "cat": "yer", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "семья", "tr": "aile", "cat": "insan", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "ребёнок", "tr": "çocuk", "cat": "insan", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "друг", "tr": "arkadaş", "cat": "insan", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "имя", "tr": "isim", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "мужчина", "tr": "erkek", "cat": "insan", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "женщина", "tr": "kadın", "cat": "insan", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "время", "tr": "zaman", "cat": "zaman", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "час", "tr": "saat", "cat": "zaman", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "день", "tr": "gün", "cat": "zaman", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "неделя", "tr": "hafta", "cat": "zaman", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "месяц", "tr": "ay", "cat": "zaman", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "год", "tr": "yıl", "cat": "zaman", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "утро", "tr": "sabah", "cat": "zaman", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "вечер", "tr": "akşam", "cat": "zaman", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "ночь", "tr": "gece", "cat": "zaman", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "вода", "tr": "su", "cat": "yiyecek", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "еда", "tr": "yemek", "cat": "yiyecek", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "хлеб", "tr": "ekmek", "cat": "yiyecek", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "молоко", "tr": "süt", "cat": "yiyecek", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "машина", "tr": "araba", "cat": "ulaşım", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "поезд", "tr": "tren", "cat": "ulaşım", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "аэропорт", "tr": "havaalanı", "cat": "ulaşım", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "билет", "tr": "bilet", "cat": "ulaşım", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "место", "tr": "yer", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "номер", "tr": "numara", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "книга", "tr": "kitap", "cat": "eşya", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "журнал", "tr": "dergi", "cat": "eşya", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "газета", "tr": "gazete", "cat": "eşya", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "школа", "tr": "okul", "cat": "yer", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "университет", "tr": "üniversite", "cat": "yer", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "работа", "tr": "iş", "cat": "yer", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "магазин", "tr": "mağaza", "cat": "yer", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "ресторан", "tr": "restoran", "cat": "yer", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "кафе", "tr": "kafe", "cat": "yer", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "аптека", "tr": "eczane", "cat": "yer", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "больница", "tr": "hastane", "cat": "yer", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "полиция", "tr": "polis", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "деньги", "tr": "para", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "вопрос", "tr": "soru", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "ответ", "tr": "cevap", "cat": "temel", "tip": "temel", "zaman": "", "sahis": "", "box": 0}, {"ru": "на", "tr": "...de/da / işe", "cat": "edat", "tip": "edat", "zaman": "", "sahis": "", "box": 0}, {"ru": "в", "tr": "...e / içinde", "cat": "edat", "tip": "edat", "zaman": "", "sahis": "", "box": 0}, {"ru": "для", "tr": "için", "cat": "edat", "tip": "edat", "zaman": "", "sahis": "", "box": 0}, {"ru": "чтобы", "tr": "-mek için / amaç", "cat": "bağlaç", "tip": "bağlaç", "zaman": "", "sahis": "", "box": 0}, {"ru": "болеть", "tr": "hasta olmak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "проснуться", "tr": "uyanmak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "принять душ", "tr": "duş almak", "cat": "kalıp", "tip": "kalıp", "zaman": "", "sahis": "", "box": 0}, {"ru": "пойти", "tr": "gitmek (yürüyerek, tamamlanmış)", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "прийти", "tr": "gelmek / varmak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "выйти", "tr": "çıkmak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "есть", "tr": "yemek yemek (süreç)", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "поесть", "tr": "yemek yiyip bitirmek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "спать", "tr": "uyumak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "лечь спать", "tr": "uyumaya yatmak", "cat": "kalıp", "tip": "kalıp", "zaman": "", "sahis": "", "box": 0}, {"ru": "лечь", "tr": "yatmak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "встать", "tr": "kalkmak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "быть", "tr": "olmak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "зайти", "tr": "uğramak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "приготовить", "tr": "hazırlamak / pişirmek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "скачать", "tr": "indirmek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "стройка", "tr": "şantiye", "cat": "isim", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "дорога", "tr": "yol", "cat": "isim", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "пешком", "tr": "yürüyerek", "cat": "zarf", "tip": "zarf", "zaman": "", "sahis": "", "box": 0}, {"ru": "продавец", "tr": "satıcı", "cat": "insan", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "кто?", "tr": "kim?", "cat": "soru", "tip": "soru", "zaman": "", "sahis": "", "box": 0}, {"ru": "кому?", "tr": "kime?", "cat": "soru", "tip": "soru", "zaman": "", "sahis": "", "box": 0}, {"ru": "конец", "tr": "son / bitiş", "cat": "isim", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "никто", "tr": "hiç kimse", "cat": "zamir", "tip": "zamir", "zaman": "", "sahis": "", "box": 0}, {"ru": "ещё", "tr": "yine / bir daha / daha", "cat": "zarf", "tip": "zarf", "zaman": "", "sahis": "", "box": 0}, {"ru": "домой", "tr": "eve", "cat": "zarf", "tip": "zarf", "zaman": "", "sahis": "", "box": 0}, {"ru": "по дороге домой", "tr": "eve giderken", "cat": "kalıp", "tip": "kalıp", "zaman": "", "sahis": "", "box": 0}, {"ru": "зашёл", "tr": "uğradım", "cat": "fiil-geçmiş", "tip": "fiil", "zaman": "geçmiş", "sahis": "я/он", "box": 0}, {"ru": "позавтракал", "tr": "kahvaltı yaptım", "cat": "fiil-geçmiş", "tip": "fiil", "zaman": "geçmiş", "sahis": "я/он", "box": 0}, {"ru": "убрал", "tr": "temizledim", "cat": "fiil-geçmiş", "tip": "fiil", "zaman": "geçmiş", "sahis": "я/он", "box": 0}, {"ru": "кухня", "tr": "mutfak", "cat": "isim", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "сесть", "tr": "binmek / oturmak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "такси", "tr": "taksi", "cat": "ulaşım", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "приехал", "tr": "geldim (araçla)", "cat": "fiil-geçmiş", "tip": "fiil", "zaman": "geçmiş", "sahis": "я/он", "box": 0}, {"ru": "пришёл", "tr": "geldim (yürüyerek)", "cat": "fiil-geçmiş", "tip": "fiil", "zaman": "geçmiş", "sahis": "я/он", "box": 0}, {"ru": "после этого", "tr": "ondan sonra", "cat": "kalıp", "tip": "kalıp", "zaman": "", "sahis": "", "box": 0}, {"ru": "учить", "tr": "öğrenmek / öğretmek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "читать", "tr": "okumak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "умыться", "tr": "yüz yıkamak", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "одеться", "tr": "giyinmek", "cat": "fiil", "tip": "fiil", "zaman": "mastar", "sahis": "", "box": 0}, {"ru": "дождь", "tr": "yağmur", "cat": "isim", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "внизу", "tr": "aşağıda", "cat": "zarf", "tip": "zarf", "zaman": "", "sahis": "", "box": 0}, {"ru": "немного", "tr": "biraz", "cat": "zarf", "tip": "zarf", "zaman": "", "sahis": "", "box": 0}, {"ru": "ужин", "tr": "akşam yemeği", "cat": "isim", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "рано", "tr": "erken", "cat": "zarf", "tip": "zarf", "zaman": "", "sahis": "", "box": 0}, {"ru": "трудно", "tr": "zor", "cat": "zarf", "tip": "zarf", "zaman": "", "sahis": "", "box": 0}, {"ru": "каждый", "tr": "her / her bir", "cat": "sıfat", "tip": "sıfat", "zaman": "", "sahis": "", "box": 0}, {"ru": "снова", "tr": "yeniden / tekrar", "cat": "zarf", "tip": "zarf", "zaman": "", "sahis": "", "box": 0}, {"ru": "цель", "tr": "hedef / amaç", "cat": "isim", "tip": "isim", "zaman": "", "sahis": "", "box": 0}, {"ru": "умылся", "tr": "yüzümü yıkadım", "cat": "fiil-geçmiş", "tip": "fiil", "zaman": "geçmiş", "sahis": "я/он", "box": 0}, {"ru": "оделся", "tr": "giyindim", "cat": "fiil-geçmiş", "tip": "fiil", "zaman": "geçmiş", "sahis": "я/он", "box": 0}, {"ru": "пошёл дождь", "tr": "yağmur yağdı", "cat": "kalıp", "tip": "kalıp", "zaman": "", "sahis": "", "box": 0}, {"ru": "кое-что", "tr": "bir şeyler", "cat": "zamir", "tip": "zamir", "zaman": "", "sahis": "", "box": 0}, {"ru": "сделал", "tr": "yaptım", "cat": "fiil-geçmiş", "tip": "fiil", "zaman": "geçmiş", "sahis": "я/он", "box": 0}, {"ru": "пойду", "tr": "gideceğim", "cat": "fiil-gelecek", "tip": "fiil", "zaman": "gelecek", "sahis": "я", "box": 0}, {"ru": "сяду", "tr": "oturacağım", "cat": "fiil-gelecek", "tip": "fiil", "zaman": "gelecek", "sahis": "я", "box": 0}, {"ru": "вот это здорово!", "tr": "işte bu harika!", "cat": "kalıp", "tip": "kalıp", "zaman": "", "sahis": "", "box": 0}, {"ru": "никого нету", "tr": "hiç kimse yok", "cat": "kalıp", "tip": "kalıp", "zaman": "", "sahis": "", "box": 0}, {"ru": "весь день", "tr": "bütün gün", "cat": "kalıp", "tip": "kalıp", "zaman": "", "sahis": "", "box": 0}];
-var STORIES_DATA=[{"title": "Первый день на работе", "title_tr": "İşteki İlk Gün", "level": "A1-A2", "ru": "Меня зовут Каан. Я инженер из Турции. Сегодня мой первый день на объекте в Казахстане. Утром я встал рано. Было очень холодно. Я выпил кофе и пошёл на работу. На объекте я встретил бригадира. Он сказал: Доброе утро! Надень каску. Я надел каску и жилет. Насос не работал. Мы работали весь день. Вечером я очень устал, но был доволен.", "tr": "Adım Kaan. Mühendisim. Bugün sahada ilk günüm. Sabah erken kalktım. Çok soğuktu. Kahve içtim, işe gittim. Ekip başıyla tanıştım. Pompa çalışmıyordu. Bütün gün çalıştık. Yoruldum ama memnundum."}, {"title": "В магазине", "title_tr": "Markette", "level": "A1", "ru": "После работы я пошёл в магазин. Мне нужны были хлеб, вода и молоко. Я спросил продавца: Извините, где вода? Она ответила: Вода там, справа. На кассе я спросил: Сколько с меня? Продавец сказала: Тысяча тенге. Я заплатил картой и сказал спасибо.", "tr": "İşten sonra markete gittim. Ekmek, su, süt lazımdı. Su nerede? diye sordum. Sağda, dedi. Bin tenge öded."}, {"title": "Авария на объекте", "title_tr": "Sahada Kaza", "level": "A2", "ru": "Однажды на объекте произошла авария. Большая труба лопнула, и вода пошла в шахту. Бригадир крикнул: Все наверх! Быстро! Никто не пострадал. Мы выключили насос и генератор. Через два часа мы починили трубу. Безопасность это самое важное.", "tr": "Bir gün sahada kaza oldu. Boru patladı. Kimse zarar görmedi. Pompayı kapattık. Güvenlik en önemli şey."}, {"title": "Изучаю русский язык", "title_tr": "Rusça Öğreniyorum", "level": "A2", "ru": "Я живу в Казахстане, но не говорю по-русски хорошо. На работе все говорят по-русски. Поэтому я решил учить язык. Каждый вечер я учу новые слова. Сначала было очень трудно. Но теперь я знаю много слов. Я думаю, что всё возможно, если стараться.", "tr": "Kazakistan'dayım ama Rusça bilmiyorum. Herkes Rusça konuşuyor. Öğrenmeye karar verdim. Her gün kelime öğreniyorum. Çok zor ama mümkün."}, {"title": "Выходной день", "title_tr": "İzin Günü", "level": "A2-B1", "ru": "В субботу у меня был выходной. Я не работал. Утром я долго спал. Потом выпил кофе и читал книгу. Погода была хорошая. Я пошёл в центр города. Там был большой рынок. Я купил фрукты и сидел в кафе. Рядом сидел один мужчина. Он спросил откуда я. Я ответил что из Турции. Добро пожаловать в Казахстан, сказал он.", "tr": "Cumartesi izin günümdü. Uzun uyudum. Kahve içtim. Merkeze gittim. Bir adam nereli olduğumu sordu. Türkiye'den dedim. Hoş geldin dedi."}];
+var STORIES_DATA=[{"title": "Первый день на работе", "title_tr": "İşteki İlk Gün", "level": "A1-A2", "ru": "Меня зовут Каан. Я инженер из Турции. Сегодня мой первый день на объекте в Казахстане. Утром я встал рано. Было очень холодно. Я выпил кофе и пошёл на работу. На объекте я встретил бригадира. Он сказал: Доброе утро! Надень каску. Я надел каску и жилет. Насос не работал. Мы работали весь день. Вечером я очень устал, но был доволен.", "tr": "Adım Kaan. Türkiye'den bir mühendisim. Bugün Kazakistan'daki sahada ilk günüm. Sabah erken kalktım. Hava çok soğuktu. Bir kahve içtim ve işe gittim. Sahada ekip başıyla tanıştım. Günaydın! Baret tak, dedi. Bareti ve yeleği giydim. Pompa çalışmıyordu. Bütün gün çalıştık. Akşam çok yoruldum ama memnundum."}, {"title": "В магазине", "title_tr": "Markette", "level": "A1", "ru": "После работы я пошёл в магазин. Мне нужны были хлеб, вода и молоко. Я спросил продавца: Извините, где вода? Она ответила: Вода там, справа. На кассе я спросил: Сколько с меня? Продавец сказала: Тысяча тенге. Я заплатил картой и сказал спасибо.", "tr": "İşten sonra markete gittim. Ekmek, su ve süt lazımdı. Satıcıya sordum: Affedersiniz, su nerede? Sağda, diye cevap verdi. Kasada sordum: Benden ne kadar? Satıcı bin tenge dedi. Kartla ödedim ve teşekkür ettim."}, {"title": "Авария на объекте", "title_tr": "Sahada Kaza", "level": "A2", "ru": "Однажды на объекте произошла авария. Большая труба лопнула, и вода пошла в шахту. Бригадир крикнул: Все наверх! Быстро! Никто не пострадал. Мы выключили насос и генератор. Через два часа мы починили трубу. Безопасность это самое важное.", "tr": "Bir gün sahada kaza oldu. Büyük bir boru patladı ve su maden ocağına doldu. Ekip başı bağırdı: Herkes yukarı! Çabuk! Kimse zarar görmedi. Pompayı ve jeneratörü kapattık. İki saat sonra boruyu tamir ettik. Güvenlik en önemli şeydir."}, {"title": "Изучаю русский язык", "title_tr": "Rusça Öğreniyorum", "level": "A2", "ru": "Я живу в Казахстане, но не говорю по-русски хорошо. На работе все говорят по-русски. Поэтому я решил учить язык. Каждый вечер я учу новые слова. Сначала было очень трудно. Но теперь я знаю много слов. Я думаю, что всё возможно, если стараться.", "tr": "Kazakistan'da yaşıyorum ama Rusçayı iyi konuşamıyorum. İşte herkes Rusça konuşuyor. Bu yüzden dili öğrenmeye karar verdim. Her akşam yeni kelimeler öğreniyorum. Başta çok zordu. Ama artık çok kelime biliyorum. Çabalarsan her şeyin mümkün olduğunu düşünüyorum."}, {"title": "Выходной день", "title_tr": "İzin Günü", "level": "A2-B1", "ru": "В субботу у меня был выходной. Я не работал. Утром я долго спал. Потом выпил кофе и читал книгу. Погода была хорошая. Я пошёл в центр города. Там был большой рынок. Я купил фрукты и сидел в кафе. Рядом сидел один мужчина. Он спросил откуда я. Я ответил что из Турции. Добро пожаловать в Казахстан, сказал он.", "tr": "Cumartesi izin günümdü. Çalışmadım. Sabah uzun uyudum. Sonra kahve içtim ve kitap okudum. Hava güzeldi. Şehrin merkezine gittim. Büyük bir pazar vardı. Meyve aldım ve bir kafede oturdum. Yanımda bir adam oturuyordu. Nereli olduğumu sordu. Türkiye'den olduğumu söyledim. Kazakistan'a hoş geldin, dedi."}];
 /* ===== DATA: WORDS_DATA, STORIES_DATA injected ===== */
 
 /* ===== DB ===== */
@@ -513,9 +518,14 @@ var _wcat='Tümü',_wsearch='';
 function renderWords(){
   var cats=['Tümü'];var seen={};
   db.cards.forEach(function(c){if(c.cat&&!seen[c.cat]){seen[c.cat]=1;cats.push(c.cat);}});
-  $('word-cats').innerHTML=cats.map(function(c){
-    return '<button class="catbtn'+(c===_wcat?' on':'')+'" data-act="wcat" data-cat="'+esc(c)+'">'+esc(c)+'</button>';
-  }).join('');
+  var sel=$('word-cat-sel');
+  if(sel){
+    var cur=sel.value||_wcat;
+    sel.innerHTML=cats.map(function(c){
+      return '<option value="'+esc(c)+'"'+(c===cur?' selected':'')+'>'+esc(c)+'</option>';
+    }).join('');
+    _wcat=sel.value;
+  }
   renderWordList();
 }
 function renderWordList(){
@@ -795,6 +805,7 @@ function showQuestion(){
   });
   html+='</div>';
   html+='<div id="feedback-area"></div>';
+  html+='<button class="skip-btn" id="skip-btn" data-act="skipq">❔ Bilmiyorum — geç ve yanlış say</button>';
   html+='<button class="btn bs" id="next-btn" style="display:none;width:100%;margin-top:8px;" data-act="nextq">Sonraki →</button>';
 
   w.innerHTML=html;
@@ -936,7 +947,7 @@ function drawStory(){
       (_stTr?'Türkçeyi gizle':'Türkçe çeviriyi göster')+'</button>'+
     (_stTr?'<div class="card" style="margin-top:8px;border-left:3px solid var(--pri);"><div style="font-size:14px;line-height:1.7;">'+esc(st.tr)+'</div></div>':'');
 }
-function closeStory(){$('story-reader').style.display='none';$('story-list').style.display='block';}
+function closeStory(){stopSpeak();$('story-reader').style.display='none';$('story-list').style.display='block';}
 
 /* ════════════════════════════════
    TTS
@@ -977,6 +988,55 @@ function resetAll(){
   renderWords();renderJournalList();renderRevHome();
 }
 
+
+/* ── Günlükten kelime çıkar ── */
+function extractJournalWords(id){
+  var j=(db.journals||[]).find(function(x){return x.id===id;});
+  if(!j||!j.ru){toast('Önce günlük yaz');return;}
+  var known={};
+  db.cards.forEach(function(c){known[ruStem(c.ru.toLowerCase())]=c.ru;});
+  var words=j.ru.split(/[\s.,!?;:«»"'—\-]+/).map(function(w){
+    return w.replace(/[^\u0410-\u044f\u0451]/gi,'').toLowerCase();
+  }).filter(function(w){return w.length>2;});
+  /* unique stems not in known list */
+  var seen={};var newWords=[];
+  words.forEach(function(w){
+    var st=ruStem(w);
+    if(!known[st]&&!seen[st]){seen[st]=1;newWords.push(w);}
+  });
+  showExtractModal(newWords, id);
+}
+function showExtractModal(words, jid){
+  var el=$('extract-modal');
+  if(!el) return;
+  if(!words.length){
+    el.innerHTML='<div class="card"><div style="font-size:14px;color:var(--ok);font-weight:800;text-align:center;padding:12px;">✓ Günlükteki tüm kelimeler zaten listende!</div></div>';
+    el.style.display='block';return;
+  }
+  el.innerHTML='<div class="card"><div style="font-weight:900;font-size:14px;margin-bottom:10px;">Listende olmayan kelimeler ('+words.length+'):</div>'+
+    words.map(function(w){
+      return '<div class="item" style="margin-bottom:6px;">'+
+        '<div style="flex:1;"><div class="rw">'+esc(w)+'</div></div>'+
+        '<button class="ibtn" data-act="speak" data-w="'+esc(w)+'">🔊</button>'+
+        '<button class="btn bp bsm" data-act="quickadd" data-ru="'+esc(w)+'" style="font-size:11px;">+ Ekle</button>'+
+      '</div>';
+    }).join('')+
+    '<button class="btn bs" style="margin-top:8px;width:100%;" data-act="closeextract">Kapat</button>'+
+  '</div>';
+  el.style.display='block';
+}
+function quickAdd(ru){
+  if(db.cards.some(function(c){return c.ru.toLowerCase()===ru.toLowerCase();})){
+    toast('Zaten var');return;
+  }
+  db.cards.unshift({id:uid(),ru:ru,tr:'',cat:'günlük',tip:'',zaman:'',sahis:'',box:0,due:Date.now(),cr:Date.now()});
+  lsSave();toast('Eklendi - Kelimelerde Turkcesini gir');
+  /* update button */
+  document.querySelectorAll('[data-act="quickadd"][data-ru="'+esc(ru)+'"]').forEach(function(b){
+    b.textContent='✓'; b.disabled=true; b.className='btn bo bsm'; b.style.fontSize='11px';
+  });
+}
+
 /* ════════════════════════════════
    EVENT DELEGATION
 ════════════════════════════════ */
@@ -1012,6 +1072,29 @@ function handleAct(act,node,e){
     case 'setcnt': document.querySelectorAll('.cnt-btn').forEach(function(b){b.classList.remove('on');});node.classList.add('on');$('rev-count-sel').value=node.getAttribute('data-n'); break;
     case 'answer': answerQ(node.getAttribute('data-val'),node); break;
     case 'nextq': nextQ(); break;
+    case 'skipq':
+      if(!_ses.answered){
+        /* treat as wrong: show answer, add to wrongs */
+        _ses.answered=true;
+        var qd=_ses.queue[_ses.cur];
+        document.querySelectorAll('.choice-btn').forEach(function(b){
+          if(b.getAttribute('data-val')===qd.correct)b.classList.add('correct');
+          b.disabled=true;
+        });
+        if(!_ses.retryRound&&_ses.wrongs.indexOf(qd.card)<0)_ses.wrongs.push(qd.card);
+        _ses.streak=0;
+        qd.card.box=Math.max(0,qd.card.box-1);
+        qd.card.due=Date.now()+LBOX[qd.card.box]*86400000;
+        lsSave();
+        var fb2=document.createElement('div');
+        fb2.className='feedback err';
+        fb2.innerHTML='❔ Geçildi — doğru: <strong>'+esc(qd.correct)+'</strong>';
+        $('feedback-area').appendChild(fb2);
+        speak(qd.correct);
+        var sb=$('skip-btn');if(sb)sb.style.display='none';
+        var nb=$('next-btn');if(nb)nb.style.display='block';
+      }
+      break;
     case 'restartrev': beginSession(); break;
     case 'revhome': showRevPanel('rev-home'); renderRevHome(); break;
     case 'speakbosluk': e.stopPropagation(); speak(node.getAttribute('data-s')); break;
@@ -1027,6 +1110,9 @@ function handleAct(act,node,e){
     case 'speaktest': speak('Сегодня утром я проснулся и умылся. Я поехал на стройку.'); break;
     /* settings */
     case 'settings': go('settings'); break;
+    case 'quickadd': quickAdd(node.getAttribute('data-ru')); break;
+    case 'closeextract': var em=$('extract-modal');if(em)em.style.display='none'; break;
+    case 'extractwords': extractJournalWords(node.getAttribute('data-id')); break;
     case 'themeset': setTheme(node.getAttribute('data-theme')); break;
     case 'export': exportData(); break;
     case 'pickimport': $('imp-in').click(); break;
@@ -1036,6 +1122,9 @@ function handleAct(act,node,e){
 
 document.addEventListener('input',function(e){
   if(e.target&&e.target.id==='word-search'){_wsearch=e.target.value;renderWordList();}
+});
+document.addEventListener('change',function(e){
+  if(e.target&&e.target.id==='word-cat-sel'){_wcat=e.target.value;renderWordList();}
 });
 document.addEventListener('keydown',function(e){
   if(e.key==='Enter'&&e.target&&e.target.id==='new-ru'){$('new-tr').focus();}
